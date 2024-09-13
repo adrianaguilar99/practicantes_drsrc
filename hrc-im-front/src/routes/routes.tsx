@@ -1,12 +1,18 @@
 import { BrowserRouter, Route, Routes} from 'react-router-dom';
+import { GoogleButtonComponent } from '../components/buttons/google_button.component';
 import Login from '../pages/login/login.page';
-export const RoutesConfig = () =>{
- 
-        <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={< Login />} />
+import Home from '../pages/home/home.page';
+function RoutesConfig (){
+ return (
+    <BrowserRouter>
+    <Routes>
+        <Route path="/" element={< Login />} />
+        <Route path="/home" element={< Home />} />
+    </Routes>
+</BrowserRouter>
 
-            </Routes>
-        </BrowserRouter>
+ );
 
 }
+
+export default RoutesConfig
