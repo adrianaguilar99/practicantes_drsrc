@@ -6,31 +6,25 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Typography from "@mui/material/Typography";
 import { DrawerNav } from "./drawer.component";
-import { Badge, Tooltip, Divider } from "@mui/material"; // Importamos el nuevo componente
-import { notifications, NotificationsMenu } from "../notifications/notifications-menu.components";
+import { Badge, Tooltip, Divider} from "@mui/material"; // Importamos el nuevo componente
+import { notifications, NotificationsMenu } from "../notifications/notifications.components";
 
 export const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  // Función para abrir el drawer
+  const toggleNotificationMenu = () => {
+    setNotificationMenuOpen(prevState => !prevState);
+  };
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
 
-  // Función para abrir el menú de notificaciones
-  const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  // Función para cerrar el menú de notificaciones
-  const handleNotificationClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>
@@ -53,23 +47,19 @@ export const Navbar = () => {
             />
           </Typography>
 
-          <Tooltip title="Mensajes" arrow>
-            <IconButton color="inherit">
-              <Badge badgeContent={3} color="error">
-                <MailOutlineIcon />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-
           {/* Icono de Notificaciones con menú desplegable */}
-          <IconButton color="inherit" onClick={handleNotificationClick}>
+          <div className="notifications-container">
+          <IconButton color="inherit" onClick={toggleNotificationMenu} >
             <Badge badgeContent={notifications.length} color="error">
               <NotificationsNoneIcon />
             </Badge>
           </IconButton>
+          </div>
+          
 
           {/* Menú de Notificaciones como componente separado */}
-          <NotificationsMenu anchorEl={anchorEl} onClose={handleNotificationClose} />
+          
+          <NotificationsMenu   anchorEl={isNotificationMenuOpen} />
 
           <Divider
             orientation="vertical"

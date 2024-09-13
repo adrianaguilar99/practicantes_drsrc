@@ -8,12 +8,13 @@ import { GoogleButtonComponent } from "../../components/buttons/google_button.co
 const LoginPage = () => {
   return (
     <div className="main-container">
-          <div className="container">
-      <div className="left-section">
-        <div className="logos-container">
+      <div className="logos-container">
           <img className="rcd-logo" src={RCDLogo} alt="RCD Logo" />
           <img className="hard-rock-logo" src={HardRock} alt="Hard Rock Logo" />
         </div>
+          <div className="container">
+      <div className="left-section">
+        
 
         <div className="lines-logo-container">
         <img className="lines-logo" src={LinesLogo} alt="Lines Logo" />
