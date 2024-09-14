@@ -153,51 +153,67 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, opacity 0.3s ease;
     width: 70px; /* Tamaño cerrado */
-    position:fixed;
+    position: fixed;
     color: #555;
-  }
-  
-  .sidebar-open {
-    width: 200px; /* Tamaño abierto */
-  }
-  
-  .sidebar-closed {
-    width: 70px; /* Tamaño cerrado */
-  }
-  
-  .menu-item {
+    overflow: hidden; 
+}
+
+.sidebar-open {
+    width: 200px;
+}
+
+.sidebar-closed {
+    width: 70px; 
+}
+
+.menu-item {
     display: flex;
     align-items: center;
     padding: 10%;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
     cursor: pointer;
-  }
-  
-  .menu-item .icon {
+    opacity: 1;
+}
+
+.menu-item .icon {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 24px;
-  }
-  
-  .menu-item .label {
-    margin-left: 10px;
-  }
-  
-  .sidebar-closed .label {
-    opacity: 0; /* Oculta el texto cuando el sidebar está cerrado */
-  }
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
 
-  .menu-item.active {
+.menu-item .label {
+    margin-left: 10px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: translateX(0); 
+}
+
+.sidebar-closed .label {
+    opacity: 0;
+    transform: translateX(-20px); 
+}
+
+.menu-item.active {
     background-color: #EDEDED;
     border-style: solid;
     border-color: #BFBFBF;
     border-width: 0.5px 0px 0.5px 10px;
-  }
-  
-  .menu-item:hover {
+    transition: background-color 0.3s , transform 0.3s;
+}
+
+.menu-item:hover {
     background-color: #EDEDED;
-  }
-  
+    transform: scale(1.05);
+}
+
+.sidebar-closed .menu-item .icon {
+    transform: scale(0.9); /* Reduce ligeramente el tamaño de los íconos cuando está cerrado */
+}
+
+.sidebar-open .menu-item .icon {
+    transform: scale(1.1); /* Aumenta ligeramente el tamaño de los íconos cuando está abierto */
+}

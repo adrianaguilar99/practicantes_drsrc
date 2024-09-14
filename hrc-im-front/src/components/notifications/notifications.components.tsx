@@ -14,46 +14,13 @@ import { useNavigate } from "react-router-dom";
 
 export const notifications = (): NotificationsInterface[] => {
   return [
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
-    {
-      type: "ENTRADA",
-      date: "05 de septiembre a las 08:55 a. m.",
-      color: "green",
-    },
+      {
+        type: "ENTRADA",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "green",
+      },
+
+
 
   ];
 };
