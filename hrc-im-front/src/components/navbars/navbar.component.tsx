@@ -1,5 +1,4 @@
-// navbar.component.tsx
-import { useState } from "react";
+import { useDispatch } from 'react-redux';
 import HardRockLogo from "../../assets/images/white_hard_rock_logo.png";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,22 +8,29 @@ import Avatar from "@mui/material/Avatar";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Typography from "@mui/material/Typography";
 import { DrawerNav } from "./drawer.component";
-import { Badge, Tooltip, Divider} from "@mui/material"; // Importamos el nuevo componente
+import { Badge, Divider } from "@mui/material";
 import { notifications, NotificationsMenu } from "../notifications/notifications.components";
+import { Sidebar } from "./sidebar.component";
+import { toggleSidebar } from '../../redux/sidebar-redux/sidebarSlice';
+import { AppDispatch } from '../../redux/sidebar-redux/store';
+import { useState } from 'react';
 
 export const Navbar = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const toggleNotificationMenu = () => {
     setNotificationMenuOpen(prevState => !prevState);
   };
+
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
 
-
+  const handleSidebarToggle = () => {
+    dispatch(toggleSidebar());
+  };
 
   return (
     <>
@@ -35,6 +41,7 @@ export const Navbar = () => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={handleSidebarToggle}
           >
             <MenuIcon />
           </IconButton>
@@ -47,38 +54,36 @@ export const Navbar = () => {
             />
           </Typography>
 
-          {/* Icono de Notificaciones con menú desplegable */}
           <div className="notifications-container">
-          <IconButton color="inherit" onClick={toggleNotificationMenu} >
-            <Badge badgeContent={notifications.length} color="error">
-              <NotificationsNoneIcon />
-            </Badge>
-          </IconButton>
+            <NotificationsMenu   anchorEl={isNotificationMenuOpen} />
+            <IconButton color="inherit" onClick={toggleNotificationMenu} >
+              <Badge badgeContent={notifications().length} color="error">
+                <NotificationsNoneIcon />
+              </Badge>
+            </IconButton>
           </div>
-          
 
-          {/* Menú de Notificaciones como componente separado */}
-          
-          <NotificationsMenu   anchorEl={isNotificationMenuOpen} />
-
-          <Divider
-            orientation="vertical"
-            variant="middle"
-            flexItem
-            style={{
-              marginRight: "10px",
-              borderColor: "white",
-              marginLeft: "10px",
-            }}
-          />
-          <h3>Leonardo</h3>
-          <IconButton edge="end" onClick={() => toggleDrawer(true)}>
-            <Avatar alt="Profile Picture" src="Leonardo.png" />
-          </IconButton>
+          <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => toggleDrawer(true)}>
+            <Divider
+              orientation="vertical"
+              variant="middle"
+              flexItem
+              style={{
+                marginRight: "10px",
+                borderColor: "white",
+                marginLeft: "10px",
+              }}
+            />
+            <h3>Leonardo</h3>
+            <IconButton edge="end">
+              <Avatar alt="Profile Picture" src="Leonardo.png" />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
 
       <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} />
+      <Sidebar  />
     </>
   );
 };

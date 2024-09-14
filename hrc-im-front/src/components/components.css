@@ -45,14 +45,34 @@
 */
 
 .notifications-menu {
-    width: 300px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin: 0 auto;
     position: absolute;
-    transform: translateX(170%) translateY(60%);
+    top: 50px; /* Ajusta la altura para que el menú se muestre justo debajo del icono */
+    right: 60px; /* Alinea el menú a la derecha para que quede bajo el icono */
+    min-width: 15vw; /* Ajusta el ancho según tus necesidades */
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 0 0 20px 0;
+    z-index: 1000;
+    overflow: hidden; /* Asegura que el contenido no desborde */
+}
+
+.notifications-menu::before {
+    content: "";
+    position: absolute;
+    top: -60px; /* Ajusta la posición de la flecha */
+    right: 20px; /* Ajusta para que la flecha quede centrada bajo el icono */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #ffffff;
+    z-index: 1001;
+}
+
+.notifications-menu p{
+    text-align: center;
+    color: #555;
 }
 
 .notifications-header {
@@ -71,6 +91,7 @@
 .notifications-list {
     max-height: 400px;
     overflow-y: auto;
+    margin: 0 5%;
 }
 
 .notification-item {
@@ -81,6 +102,7 @@
     border: 1px solid #E0E0E0;
     border-radius: 8px;
     margin-bottom: 10px;
+    font-size: 12px;
 }
 
 .notification-type {
@@ -117,4 +139,65 @@
     font-size: 0.9em;
 }
 
+
+
+
+/*
+    Menu lateral desplegable
+*/
+
+
+
+.sidebar {
+    background-color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    width: 70px; /* Tamaño cerrado */
+    position:fixed;
+    color: #555;
+  }
+  
+  .sidebar-open {
+    width: 200px; /* Tamaño abierto */
+  }
+  
+  .sidebar-closed {
+    width: 70px; /* Tamaño cerrado */
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .menu-item .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+  }
+  
+  .menu-item .label {
+    margin-left: 10px;
+  }
+  
+  .sidebar-closed .label {
+    opacity: 0; /* Oculta el texto cuando el sidebar está cerrado */
+  }
+
+  .menu-item.active {
+    background-color: #EDEDED;
+    border-style: solid;
+    border-color: #BFBFBF;
+    border-width: 0.5px 0px 0.5px 10px;
+  }
+  
+  .menu-item:hover {
+    background-color: #EDEDED;
+  }
   
