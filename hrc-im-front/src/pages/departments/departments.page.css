@@ -1,0 +1,20 @@
+.container-departments{
+    display: flex;
+}
+
+
+.departments-left-container{
+    min-width: 14vw;
+}
+
+.departments-right-container{
+    padding: 1% 0%;
+    min-width: 80vw;
+    min-height: 90vh;
+}
+
+.departments-data-container{
+    overflow: scroll;
+    overflow-x: hidden;
+    max-height: 75vh;
+}

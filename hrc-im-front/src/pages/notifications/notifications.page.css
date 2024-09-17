@@ -5,26 +5,16 @@
     max-height: 100vh;
 
 }
-
-
-.container-interns{
+.container-notifications{
     display: flex;
 }
 
-
-.interns-left-container{
+.notificacions-left-container{
     min-width: 14vw;
 }
 
-.interns-right-container{
+.notificacions-right-container{
     padding: 1% 0%;
     min-width: 80vw;
     min-height: 90vh;
 }
-
-.interns-data-container{
-    overflow: scroll;
-    overflow-x: hidden;
-    max-height: 75vh;
-}
-

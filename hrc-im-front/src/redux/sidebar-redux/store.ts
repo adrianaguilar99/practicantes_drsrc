@@ -4,7 +4,7 @@ import sidebarReducer from './sidebarSlice';
 const saveState = (state: any) => {
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem('sidebarState', serializedState);
+    sessionStorage.setItem('sidebarState', serializedState);
   } catch (e) {
     console.error("No se pudo guardar el estado", e);
   }
@@ -12,7 +12,7 @@ const saveState = (state: any) => {
 
 const loadState = () => {
   try {
-    const serializedState = localStorage.getItem('sidebarState');
+    const serializedState = sessionStorage.getItem('sidebarState');
     if (serializedState === null) {
       return undefined;
     }

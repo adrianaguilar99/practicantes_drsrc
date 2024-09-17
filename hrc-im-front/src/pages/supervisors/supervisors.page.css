@@ -7,24 +7,23 @@
 }
 
 
-.container-interns{
+.container-supervisors{
     display: flex;
 }
 
 
-.interns-left-container{
+.supervisors-left-container{
     min-width: 14vw;
 }
 
-.interns-right-container{
+.supervisors-right-container{
     padding: 1% 0%;
     min-width: 80vw;
     min-height: 90vh;
 }
 
-.interns-data-container{
+.supervisors-data-container{
     overflow: scroll;
     overflow-x: hidden;
     max-height: 75vh;
 }
-

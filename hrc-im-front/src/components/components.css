@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
+
+/*
+    Button component
+*/
+
 .ButtonComponent{
     display: flex;
     align-items: center;
@@ -41,27 +46,28 @@
 
 
 /*
-    Menu de notificaciones
+    Notifications menu
 */
 
 .notifications-menu {
     position: absolute;
-    top: 50px; /* Ajusta la altura para que el menú se muestre justo debajo del icono */
-    right: 60px; /* Alinea el menú a la derecha para que quede bajo el icono */
-    min-width: 15vw; /* Ajusta el ancho según tus necesidades */
+    top: 50px; 
+    right: 60px; 
+    min-width: 15vw;
+    max-width: 355px;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     padding: 0 0 20px 0;
     z-index: 1000;
-    overflow: hidden; /* Asegura que el contenido no desborde */
+    overflow: hidden; 
 }
 
 .notifications-menu::before {
     content: "";
     position: absolute;
-    top: -60px; /* Ajusta la posición de la flecha */
-    right: 20px; /* Ajusta para que la flecha quede centrada bajo el icono */
+    top: -60px; 
+    right: 20px; 
     width: 0;
     height: 0;
     border-left: 10px solid transparent;
@@ -143,7 +149,7 @@
 
 
 /*
-    Menu lateral desplegable
+    Sidebar menu component
 */
 
 
@@ -154,14 +160,14 @@
     display: flex;
     flex-direction: column;
     transition: width 0.3s ease, opacity 0.3s ease;
-    width: 70px; /* Tamaño cerrado */
+    width: 10vw; /* Tamaño cerrado */
     position: fixed;
     color: #555;
     overflow: hidden; 
 }
 
 .sidebar-open {
-    width: 200px;
+    width: 10vw;
 }
 
 .sidebar-closed {
@@ -189,6 +195,8 @@
     margin-left: 10px;
     transition: opacity 0.3s ease, transform 0.3s ease;
     opacity: 1;
+    font-size: 90%;
+    font-family: 'Lato', sans-serif;
     transform: translateX(0); 
 }
 
@@ -202,7 +210,7 @@
     border-style: solid;
     border-color: #BFBFBF;
     border-width: 0.5px 0px 0.5px 10px;
-    transition: background-color 0.3s , transform 0.3s;
+    transition: background-color 0.3s , transform 1s;
 }
 
 .menu-item:hover {
@@ -217,3 +225,479 @@
 .sidebar-open .menu-item .icon {
     transform: scale(1.1); /* Aumenta ligeramente el tamaño de los íconos cuando está abierto */
 }
+
+
+
+
+/*
+    Filters
+*/
+
+.filters-container{
+    display: flex;
+    gap: 5%;
+    padding: 2% 0;
+}
+
+
+/*
+   Search
+*/
+
+.filters-search{
+    display: flex;
+    width: 100%;
+    padding: 1vh 30px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: auto;
+}
+.filters-search input {
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    padding: 5px;
+    outline: none;
+}
+
+.filters-search input:focus, 
+.filters-search input:active {
+    outline: none; 
+    box-shadow: none; 
+}
+.filters-search button{
+    background-color: transparent;
+    border-style: none;
+    cursor: pointer;
+}
+
+.filters-search ::selection{
+    width: 100%;
+    background-color: #253442;
+    color: #ffffff;
+}
+
+
+/*
+    Fitters Button
+*/
+
+
+.filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border-radius: 30px; 
+    padding: 10px 20px; 
+    border: 1px solid rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    gap: 8px; 
+    font-size: 16px;
+    font-weight: bold; 
+    color: #757575; 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+  }
+  
+  .filter-button:hover {
+    background-color: #f7f7f7; 
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); 
+  }
+  
+
+  /*
+    add button
+*/
+
+.add-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #639F46;
+    border-radius: 30px; 
+    padding: 10px 20px; 
+    border: 1px solid rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    gap: 8px; 
+    font-size: 16px;
+    font-weight: bold; 
+    color: #ffffff; 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+}
+
+.add-button:hover{
+    background-color: #4f7a34;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+
+
+.interns-table{
+    margin: 1% 1%;
+   
+  }
+
+  .table-headers {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f0f0f0; 
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    color: #4e4e4e;
+    margin-bottom: 10px; 
+    padding: 0 5%;
+  }
+  
+  .table-headers span {
+    flex: 1; /* Permite que los elementos se distribuyan equitativamente */
+    text-align: center; /* Centra el texto dentro de cada columna */
+  }
+  
+  .table-headers span:first-child {
+    text-align: left; /* Alinea el primer encabezado a la izquierda */
+  }
+  
+  .table-headers span:last-child {
+    text-align: right; /* Alinea el último encabezado a la derecha */
+  }
+
+
+.intern-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; 
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1%;
+    height: 80px; 
+    overflow: hidden;
+    min-height: 8vh;
+    transition: 0.5s;
+}
+
+
+.intern-card:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.26);
+}
+
+
+.intern-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px 0px 0px 10px;
+    height: 100%;
+}
+
+
+.intern-type span {
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    font-size: .9em;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Estilos para diferenciar interno y externo */
+.intern-type.interno {
+    background-color: #b88a54;
+}
+
+.intern-type.externo {
+    background-color: #3C5368;
+}
+  
+  .intern-card-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .intern-card.interno {
+    border-left: 10px solid #b88a54;
+  }
+  
+  .intern-card.externo {
+    border-left: 10px solid #3b547c;
+  }
+  
+  .info-section {
+    flex: 3;
+    color: #4E4E4E;
+  }
+
+ 
+  
+  
+  .info-section  h3 {
+    margin: 0;
+    font-size: 1.0em;
+    color: #2B2B2B;
+  }
+  
+  .info-section p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  .progress-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .progress-section span {
+    color: #4E4E4E;
+    margin-bottom: 2px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 15px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+  
+  .progress {
+    height: 100%;
+    background-color: #7FB685;
+    transition: width 0.3s;
+  }
+  
+  .actions {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    color: #4E4E4E;
+  }
+  .actions button{
+    color: #4E4E4E;
+  }
+  
+  button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  
+
+
+  /*
+    Notifications page
+  */
+
+  .notification-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    width: 100%; /* O ajusta al ancho deseado */
+}
+
+.notification-title {
+    flex: 1;
+}
+
+.notification-type {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.notification-description-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.notification-description-icon svg {
+    font-size: 24px; /* Tamaño del ícono */
+}
+
+.notification-date {
+    margin-left: auto;
+    font-size: 11px;
+    color: #555;
+    text-align: end;
+}
+
+/* Colores para cada tipo de notificación */
+.notification-type.entrada {
+    color: #2d9c44; /* Verde */
+}
+
+.notification-type.salida {
+    color: #2d9c44; /* Verde */
+}
+
+.notification-type.salida-no-registrada {
+    color: #b24040; /* Rojo */
+}
+
+.notification-type.retardo {
+    color: #e4a90e; /* Amarillo */
+}
+
+/* Estilo para íconos */
+.notification-description-icon .MuiSvgIcon-root {
+    font-size: 32px;
+}
+
+.notification-description-icon svg.check-icon {
+    color: #2d9c44; /* Verde para "check" */
+}
+
+.notification-description-icon svg.cancel-icon {
+    color: #b24040; /* Rojo para "cancel" */
+}
+
+.notification-description-icon svg.error-icon {
+    color: #e4a90e; /* Amarillo para "error" */
+}
+
+.notification-description-icon svg.falta-icon {
+    color: #b24040; /* Rojo oscuro para "falta" */
+}
+
+
+.notifications-table{
+    max-height: 75vh;
+    padding: 0% 10%;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+
+
+/*
+  Custom table
+*/
+
+.generic-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; 
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1%;
+    height: 80px; 
+    overflow: hidden;
+    min-height: 8vh;
+    transition: 0.5s;
+}
+
+.generic-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; 
+    color: #2B2B2B;
+    padding: 1% 5%;
+    width: 100%;
+}
+
+.generic-card-info-extra{
+    display: flex;
+    gap: 20px;
+}
+
+.generic-card-info-column{
+    width: 50%;
+    text-align: center;
+}
+
+
+.generic-card-actions {
+    display: flex;
+    gap: 20px;
+    padding: 0 5%;
+}
+  
+.generic-card-actions button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color:  #4E4E4E;
+}
+  
+  .table-row {
+    background-color: #fff;
+    
+    
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para un efecto elevado */
+  }
+  
+ 
+
+  /*
+    Audits components
+  */
+/* Estado inicial de la animación */
+/* Estado inicial de la animación */
+.entity-info-modal {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    position: fixed;
+    overflow: hidden;
+    max-width: 250px;
+    opacity: 0; 
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+        transform: translate(0, 0%);
+      opacity: 0;
+    }
+    to {
+        transform: translate(30%, 1%);
+      opacity: 1;
+    }
+  }
+  
+  
+.entity-info-modal-header{
+    text-align: center;
+    background-color: #253442;
+    color: #ffffff;
+    height: 40px;
+    margin-top: -40px;
+}
+
+.entity-info-modal-body{
+    padding: 5px 10px;
+}
+
+.entity-info-modal-info{
+    font-size: 12px;
+    color: #5A5A5A;
+}
+
+.entity-info-modal-name{
+    font-size: 14px;
+    font-weight: bold;
+}
+

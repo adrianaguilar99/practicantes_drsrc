@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
-import PersonIcon from "@mui/icons-material/Person";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SchoolIcon from "@mui/icons-material/School";
-import AssignmentIcon from "@mui/icons-material/Assignment";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import "../components.css";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 export const Sidebar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [rol] = useState("Supervisor");
+  const [rol] = useState("Admin");
 
   const index = useSelector((state: RootState) => state.sidebar.index);
   const openMenu = useSelector((state: RootState) => state.sidebar.openMenu);
@@ -22,16 +22,16 @@ export const Sidebar: React.FC = () => {
 
   const menuItemsAdmin = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
-    { icon: <PersonIcon />, label: "Encargados", path: "/home" },
-    { icon: <DeleteIcon />, label: "Departamentos", path: "/departamentos" },
-    { icon: <SchoolIcon />, label: "Practicantes", path: "/interns" },
-    { icon: <AssignmentIcon />, label: "Auditorías", path: "/auditorias" },
+    { icon: <PersonOutlineOutlinedIcon />, label: "Encargados", path: "/supervisors" },
+    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    { icon: <SchoolOutlinedIcon />, label: "Practicantes", path: "/interns" },
+    { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
   ];
 
   const menuItemsSupervisor = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
-    { icon: <SchoolIcon />, label: "Practicantes", path: "/interns" },
-    { icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/entradas-salidas" },
+    { icon: <SchoolOutlinedIcon />, label: "Practicantes", path: "/interns" },
+    { icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout" },
   ];
 
   const getMenuItems = () => {

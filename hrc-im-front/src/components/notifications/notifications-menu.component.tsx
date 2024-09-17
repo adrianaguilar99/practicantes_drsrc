@@ -9,7 +9,7 @@ import {
   NotificationsInterface,
   NotificationsMenuProps,
 } from "../../interfaces/notifications/notifications-menu/notification-menu.interface";
-import { Fade } from "@mui/material";
+import {  Grow } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export const notifications = (): NotificationsInterface[] => {
@@ -18,6 +18,31 @@ export const notifications = (): NotificationsInterface[] => {
         type: "ENTRADA",
         date: "05 de septiembre a las 08:55 a. m.",
         color: "green",
+      },
+      {
+        type: "ENTRADA",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "green",
+      },
+      {
+        type: "RETARDO REGISTRADO",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "yellow",
+      },
+      {
+        type: "FALTA",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "grey",
+      },
+      {
+        type: "RETARDO REGISTRADO",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "yellow",
+      },
+      {
+        type: "RETARDO REGISTRADO",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "yellow",
       },
 
 
@@ -40,11 +65,11 @@ export const NotificationsMenu: React.FC<NotificationsMenuProps> = ({anchorEl,})
     : initialNotifications.slice(0, 4);
 
     const SeeMore = () => {
-      navigate('/notificaciones'); 
+      navigate('/notifications'); 
     };
 
   return (
-    <Fade in={Boolean(anchorEl)}>
+    <Grow in={Boolean(anchorEl)}>
       <div className="notifications-menu">
         <div className="notifications-header">
           <h6>Notificaciones</h6>
@@ -84,6 +109,6 @@ export const NotificationsMenu: React.FC<NotificationsMenuProps> = ({anchorEl,})
   </button>
 )}
       </div>
-    </Fade>
+    </Grow>
   );
 };
