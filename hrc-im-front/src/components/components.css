@@ -167,7 +167,7 @@
 }
 
 .sidebar-open {
-    width: 10vw;
+    width: 11vw;
 }
 
 .sidebar-closed {
@@ -195,7 +195,7 @@
     margin-left: 10px;
     transition: opacity 0.3s ease, transform 0.3s ease;
     opacity: 1;
-    font-size: 90%;
+    font-size: 80%;
     font-family: 'Lato', sans-serif;
     transform: translateX(0); 
 }
@@ -252,11 +252,12 @@
     border-radius: 20px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: auto;
+    max-height: 5vh;
 }
 .filters-search input {
     width: 100%;
     border: none;
-    font-size: 16px;
+    font-size: 80%;
     padding: 5px;
     outline: none;
 }
@@ -601,9 +602,9 @@
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 1%;
-    height: 80px; 
+    height: 2vh; 
     overflow: hidden;
-    min-height: 8vh;
+    min-height: 9vh;
     transition: 0.5s;
 }
 
@@ -615,6 +616,10 @@
     padding: 1% 5%;
     width: 100%;
     
+}
+
+.generic-card-info p{
+    font-size: 0.9rem;
 }
 
 .generic-card-info-extra{
