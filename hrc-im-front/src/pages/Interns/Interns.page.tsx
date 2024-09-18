@@ -5,6 +5,7 @@ import { SearchComponent } from "../../components/search/search.component";
 import { useState } from "react";
 import { PokemonInterface } from "../../interfaces/tests/tests.interface";
 import InternsTable from "../../components/interns/interns-table.component";
+import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 
 
 
@@ -19,7 +20,7 @@ export const InternsPage = () => {
 
         </section>
         <section className="interns-right-container">
-          
+         <Breadcrumb/>
          <SearchComponent setData={setData}/>
         <div className="interns-data-container">
          <InternsTable/>

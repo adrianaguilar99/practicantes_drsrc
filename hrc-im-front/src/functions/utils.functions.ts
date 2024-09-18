@@ -1,3 +1,6 @@
+import { setIndex } from "../redux/sidebar-redux/sidebarSlice";
+import { store } from "../redux/sidebar-redux/store";
+
 //Get url from path
 export function GetUrl() {
     const path = window.location.pathname; 
@@ -32,3 +35,17 @@ export  function stringAvatar(name: string) {
     };
   }
   
+
+
+  //Reset index if home
+
+export const resetIndexIfHome = () => {
+    const currentUrl = window.location.pathname;
+
+    if (currentUrl != '/home') {
+        store.dispatch(setIndex(0));
+        const currentSidebarState = JSON.parse(sessionStorage.getItem('sidebarState') || '{}');
+        currentSidebarState.index = 0;
+        sessionStorage.setItem('sidebarState', JSON.stringify(currentSidebarState));
+    }
+};

@@ -1,6 +1,7 @@
 import { DepartmentsTable } from "../../components/departments-table/departments-table.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
+import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import './departments.page.css';
 
 const DepartmentsPage = () => {
@@ -10,6 +11,7 @@ const DepartmentsPage = () => {
       <div className="container-departments">
         <section className="departments-left-container"></section>
         <section className="departments-right-container">
+          <Breadcrumb/>
           <SearchComponent setData={function (data: any): void {
                       throw new Error("Function not implemented.");
                   } }/>

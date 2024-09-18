@@ -236,7 +236,7 @@
 .filters-container{
     display: flex;
     gap: 5%;
-    padding: 2% 0;
+    padding: 1% 0;
 }
 
 
@@ -614,6 +614,7 @@
     color: #2B2B2B;
     padding: 1% 5%;
     width: 100%;
+    
 }
 
 .generic-card-info-extra{
@@ -652,8 +653,6 @@
   /*
     Audits components
   */
-/* Estado inicial de la animación */
-/* Estado inicial de la animación */
 .entity-info-modal {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -663,8 +662,9 @@
     position: fixed;
     overflow: hidden;
     max-width: 250px;
+    min-width: 10vw;
     opacity: 0; 
-    animation: fadeInUp 0.4s ease-out forwards;
+    animation: fadeInUp 0.35s ease-out forwards;
   }
 
   @keyframes fadeInUp {
@@ -701,3 +701,64 @@
     font-weight: bold;
 }
 
+.audits-table{
+    margin: 1% 1%; 
+}
+
+.entity-card{
+    cursor: pointer;
+    color: #1F4E74;
+    font-weight: bold;
+    text-align: start;
+    width: 100%;
+}
+
+.date-card{
+    width: 30%;
+    text-align: start;
+}
+
+.responsable-name{
+    width: 100%;
+}
+
+
+.intern-type-card {
+    font-weight: bold;
+    text-align: center;
+    justify-content: space-between;
+    align-items: stretch; 
+    width: 100%;
+    text-align: start;
+
+}
+
+.intern-type-card.insertion {
+    color: #639F46;
+}
+
+.intern-type-card.update {
+    color: #D6802A;
+}
+
+
+.intern-type-card.delete {
+    color: #861717;
+}
+
+
+
+/*
+   Breadcrumb
+*/
+
+.active-segment{
+    color: #686868;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.breadcrumb-icon{
+    color: #4E4E4E;
+    size: 12px;
+}
