@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRoles } from 'src/common/enums/userRoles.enum';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const newUser = this.userRepository.create(createUserDto);
+
+    try {
+      return await this.userRepository.save(newUser);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error interno al crear el usuario. Detalles: ${error.message}`,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    return users;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  // DIRECTAMENTE DE LA ENTIDAD USUARIO POR AHORA NO SE PUEDE EDITAR NADA
+  // update(id: number, updateUserDto: UpdateUserDto) {}
+
+  async remove(id: string): Promise<User> {
+    const userToRemove = await this.findOne(id);
+    await this.userRepository.remove(userToRemove);
+
+    return userToRemove;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async removeAllUsers() {
+    const query = this.userRepository.createQueryBuilder('user');
+
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      return error;
+    }
   }
 }
