@@ -10,7 +10,7 @@ export class User {
   email: string;
 
   @Column({ type: 'enum', enum: UserRoles, nullable: false })
-  userRoles: string;
+  userRol: string;
 
   @Column({
     type: 'timestamp',
@@ -33,13 +33,13 @@ export class User {
     const domain = this.email.split('@')[1];
     switch (domain) {
       case 'google.com':
-        this.userRoles = UserRoles.ADMINISTRATOR;
+        this.userRol = UserRoles.ADMINISTRATOR;
         break;
       case 'facebook.com':
-        this.userRoles = UserRoles.SUPERVISOR;
+        this.userRol = UserRoles.SUPERVISOR;
         break;
       default:
-        this.userRoles = UserRoles.INTERN;
+        this.userRol = UserRoles.INTERN;
     }
   }
 
