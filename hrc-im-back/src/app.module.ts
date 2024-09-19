@@ -7,6 +7,8 @@ import { getPgConfig } from './configs/db.config';
 import { JoiValidationSchema } from './configs/joi-validation.config';
 import { AuditsModule } from './audits/audits.module';
 import { UsersModule } from './users/users.module';
+import { SeedingModule } from './seeding/seeding.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { UsersModule } from './users/users.module';
     }),
     AuditsModule,
     UsersModule,
+    SeedingModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

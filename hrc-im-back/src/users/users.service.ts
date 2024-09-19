@@ -3,12 +3,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -18,13 +21,21 @@ export class UsersService {
       return await this.userRepository.save(newUser);
     } catch (error) {
       throw new InternalServerErrorException(
-        `Error interno al crear el usuario. Detalles: ${error.message}`,
+        `Something went wrong when creating the user. Details: ${error.message}`,
       );
     }
   }
 
-  async findAll(): Promise<User[]> {
-    const users = await this.userRepository.find();
+  async findAll(paginationDto: PaginationDto): Promise<User[]> {
+    const {
+      limit = this.configService.getOrThrow<number>('LIMIT_RECORDS'),
+      offset = this.configService.getOrThrow<number>('OFFSET_RECORDS'),
+    } = paginationDto;
+
+    const users = await this.userRepository.find({
+      take: limit,
+      skip: offset,
+    });
     return users;
   }
 
