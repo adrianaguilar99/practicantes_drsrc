@@ -19,7 +19,7 @@ function RoutesConfig (){
         <Route path="/supervisors" element={< SupervisorsPage />} />
         <Route path="/departments" element={< DepartmentsPage />} />
         <Route path="/audits" element={< AuditsPage />} />
-        <Route path="/intern-information" element={< InternInformationPage />} />
+        <Route path="/interns/intern-information/:userId" element={< InternInformationPage />} />
     </Routes>
 </BrowserRouter>
 

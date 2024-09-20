@@ -9,6 +9,10 @@ export const Breadcrumb = () => {
     return (
         <div>
             {breadcrumbItems.map((segment, index) => {
+                if (segment === 'intern-information') {
+                    breadcrumbItems.length = index + 1;
+                }
+
                 const to = index === 0 ? '/home' : `/${breadcrumbItems.slice(1, index + 1).join('/')}`;
 
                 return (

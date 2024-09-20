@@ -1,4 +1,4 @@
-import { DepartmentsTable } from "../../components/departments-table/departments-table.component";
+import { DepartmentsTable } from "../../components/departments/departments-table.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";

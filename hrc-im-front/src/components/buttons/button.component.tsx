@@ -6,7 +6,7 @@ export const ButtonComponent = ({text} : {text: string} ) =>{
     
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = () => {
+    const handleLoading = () => {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
@@ -19,7 +19,7 @@ export const ButtonComponent = ({text} : {text: string} ) =>{
         <>
              <Button
                 variant="contained"
-                onClick={handleLogin}
+                onClick={handleLoading}
                 className="ButtonComponent"
                 style={{
                     fontFamily: '"Lato", sans-serif',

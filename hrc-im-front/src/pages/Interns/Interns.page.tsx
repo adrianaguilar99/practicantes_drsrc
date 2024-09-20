@@ -4,7 +4,7 @@ import "./interns.page.css";
 import { SearchComponent } from "../../components/search/search.component";
 import { useState } from "react";
 import { PokemonInterface } from "../../interfaces/tests/tests.interface";
-import InternsTable from "../../components/interns/interns-table.component";
+import InternsTable from "../../components/interns/interns-table/interns-table.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 
 
