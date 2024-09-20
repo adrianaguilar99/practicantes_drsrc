@@ -3,26 +3,23 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { getPgConfig } from './configs/db.config';
-import { JoiValidationSchema } from './configs/joi-validation.config';
-import { AuditsModule } from './audits/audits.module';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { SeedingModule } from './seeding/seeding.module';
 import { CommonModule } from './common/common.module';
+import { JoiValidationSchema, getDatabaseConfig } from './configs';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       validationSchema: JoiValidationSchema,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: getPgConfig,
+      useFactory: getDatabaseConfig,
     }),
-    AuditsModule,
-    UsersModule,
+    UserModule,
     SeedingModule,
     CommonModule,
   ],

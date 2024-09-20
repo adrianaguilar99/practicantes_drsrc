@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UserService } from 'src/user/user.service';
 import { initialData } from './data/seed.data';
 
 @Injectable()
 export class SeedingService {
-  constructor(private readonly userRepositoy: UsersService) {}
+  constructor(private readonly userRepositoy: UserService) {}
 
   async runSeed() {
     await this.insertNewUsers();

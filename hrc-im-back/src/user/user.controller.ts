@@ -8,15 +8,15 @@ import {
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @ApiTags('Users')
 @Controller('users')
-export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -24,8 +24,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.userService.findAll(paginationDto);
+  findAll() {
+    return this.userService.findAll();
+  }
+
+  @Get('paginated')
+  findAllPaginated(@Query() paginationDto: PaginationDto) {
+    return this.userService.findAllPaginated(paginationDto);
   }
 
   @Get(':id')

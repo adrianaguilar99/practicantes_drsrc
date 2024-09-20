@@ -7,7 +7,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -26,17 +26,17 @@ export class UsersService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<User[]> {
-    const {
-      limit = this.configService.getOrThrow<number>('LIMIT_RECORDS'),
-      offset = this.configService.getOrThrow<number>('OFFSET_RECORDS'),
-    } = paginationDto;
+  async findAll() {
+    const users = await this.userRepository.find();
+    return { users, records: users.length };
+  }
 
+  async findAllPaginated({ limit = 3, offset = 0 }: PaginationDto) {
     const users = await this.userRepository.find({
       take: limit,
       skip: offset,
     });
-    return users;
+    return { users, records: users.length };
   }
 
   async findOne(id: string): Promise<User> {
