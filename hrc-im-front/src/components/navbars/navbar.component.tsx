@@ -105,7 +105,7 @@ export const Navbar = () => {
                 marginLeft: "10px",
               }}
             />
-            <h3>Leonardo</h3>
+            <h3 className='user-name-navbar'>Leonardo</h3>
             <IconButton edge="end" onClick={handleOpenUserMenu}>
               <Avatar alt="Profile Picture" src={AvatarTest} />
             </IconButton>

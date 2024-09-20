@@ -21,9 +21,3 @@
     min-width: 80vw;
     min-height: 90vh;
 }
-
-.supervisors-data-container{
-    overflow: scroll;
-    overflow-x: hidden;
-    max-height: 75vh;
-}

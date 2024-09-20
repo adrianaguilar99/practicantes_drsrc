@@ -1,3 +1,4 @@
+import { Pagination } from '@mui/material';
 import '../components.css';
 import { DepartmentsCard } from './departments-card.component';
 
@@ -42,16 +43,17 @@ export const DepartmentsTable = () => {
       },
   ];
   return (
-  <div className='interns-table'>
+  <div >
    <div className="table-headers">
     <span>Nombre departamento</span>
     <span>Acciones</span>
   </div>
-  <div >
+  <div className='interns-table'>
           {deparments.map((department, index) => (
       <DepartmentsCard key={index} name={department.name} />
     ))}
     </div>
+    <Pagination count={10} variant="outlined" shape="rounded"/>
   </div>
   
 

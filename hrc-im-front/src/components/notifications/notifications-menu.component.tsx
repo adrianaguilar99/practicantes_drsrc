@@ -44,6 +44,21 @@ export const notifications = (): NotificationsInterface[] => {
         date: "05 de septiembre a las 08:55 a. m.",
         color: "yellow",
       },
+      {
+        type: "RETARDO REGISTRADO",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "yellow",
+      },
+      {
+        type: "RETARDO REGISTRADO",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "yellow",
+      },
+      {
+        type: "RETARDO REGISTRADO",
+        date: "05 de septiembre a las 08:55 a. m.",
+        color: "yellow",
+      },
 
 
 

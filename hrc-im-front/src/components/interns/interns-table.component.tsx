@@ -17,7 +17,7 @@ const InternsTable = () => {
     { nombre: 'CRYSTIAN ADAMIR CARRERA RIVAS', departamento: 'COCINA', progreso: 87, tipo: 'EXTERNO' },
   ];
 return (
-  <div className="interns-table">
+  <div >
   {/* Encabezados */}
   <div className="table-headers">
     <span>Tipo practicante</span>
@@ -27,6 +27,7 @@ return (
   </div>
   
   {/* Filas de datos */}
+  <div className="interns-table">
   {practicantes.map((practicante, index) => (
     <InternCardComponent
       key={index}
@@ -38,6 +39,8 @@ return (
       onDelete={() => alert(`Eliminando a ${practicante.nombre}`)}
     />
   ))}
+  </div>
+  
 </div>
 );
 

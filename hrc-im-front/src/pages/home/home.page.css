@@ -33,7 +33,6 @@
     text-align: center;
   
 }
-
 .home-container h2 {
     position: absolute;
     top: 50%;
@@ -46,3 +45,33 @@
     text-align: center;
   
 }
+
+
+
+@media screen and (max-width: 768px) {
+    .home-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .home-lines-container{
+        margin-top: 30%;
+        width: 70%;
+        max-height: fit-content;
+        z-index: 1000000;
+        margin-left: 10%;
+    }
+
+    .lines-logo{
+        height: 70vh;
+        position: relative;
+        max-height: 50vh;
+        width: 100%;
+    }
+
+    .home-container h2 {
+        font-size: 1.6rem;
+    }
+    
+}
+
+

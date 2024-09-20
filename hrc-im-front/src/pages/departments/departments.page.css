@@ -13,8 +13,14 @@
     min-height: 90vh;
 }
 
-.departments-data-container{
-    overflow: scroll;
-    overflow-x: hidden;
-    max-height: 75vh;
+
+@media screen and (max-width: 767px) {
+    .departments-left-container{
+        display: none;
+    }
+    .departments-right-container{
+        padding: 2% 2%;
+        min-width: 80vw;
+        min-height: 90vh;
+    }
 }

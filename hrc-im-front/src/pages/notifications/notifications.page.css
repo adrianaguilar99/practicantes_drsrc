@@ -18,3 +18,16 @@
     min-width: 80vw;
     min-height: 90vh;
 }
+
+@media screen and (max-width: 767px) {
+
+    .notificacions-left-container{
+        display: none;
+    }
+
+    .notificacions-right-container{
+        width: 100%;
+        min-height: 90vh;
+    }
+    
+}
