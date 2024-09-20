@@ -65,28 +65,35 @@
     background-color: #2F4858; /* Fondo azul oscuro */
     color: #fff;
     padding: 0 4vw 0 15vw;
-    text-align: end;
-    font-size: 12px;
-    font-weight: 100;
+   
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
     max-width: 8%;
 }
 
+.interns-information-title-type h2 {
+    color: #fff;
+    text-align: end;
+    font-size: 1rem;
+}
+
 .interns-information-title-name {
     flex: 1;
-    color: #333;
-    font-size: 12px;
-    text-align: center;
-    font-weight: bold;
     position: relative;
+}
+
+.interns-information-title-name h1{
+    flex: 1;
+    color: #333;
+    font-size: .9rem;
+    text-align: center;
 }
 
 .interns-information-title-name:after {
     content: "";
     position: absolute;
     right: -30px;
-    top: -9px;
+    top: -15px;
     bottom: 0;
     width: 0;
     border-left: 35px solid #B0B0B0; /* Color del triángulo igual al fondo */
@@ -112,9 +119,24 @@
     width: 100%;
 }
 
+.info-section{
+    max-height: 80vh;
+    overflow: scroll;
+    overflow-x: hidden;
+    
+}
+
 .info-section-left{
     width: 50%;
     margin-right: 4%;
+}
+
+.info-section-left h3{
+    margin: 0;
+    text-align: start;
+    font-size: 1.0em;
+    color: #2B2B2B;
+    margin-bottom: 4%
 }
 
 .info-section-right{
@@ -122,4 +144,32 @@
 }
 
 
+.info-section-right-options{
+    display: flex;
+    width: 100%;
+    margin-bottom: 1%;
+}
 
+.info-section-right-options img {
+    width: 25%;
+    height: 25%;
+    margin-bottom: 2%;
+    border-radius: 50%; 
+    object-fit: cover;
+}
+
+
+.info-section-right-options-buttons{
+    display: flex;
+    flex-direction: column;
+    margin-left: 5%;
+    gap: 5%;
+}
+
+.intern-progress-space{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}

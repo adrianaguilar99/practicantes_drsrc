@@ -9,8 +9,9 @@
     display: flex;
     align-items: center;
     width: 150px;
-    height: 40px;
-   
+    height: 30%;
+    font-size: 0.8rem;
+    width: 100%;
 
 }
 
@@ -588,20 +589,21 @@ Navbar-Elements
     cursor: pointer;
   }
 
-/* Estilo general para los inputs en modo edición */
 .edit-mode {
     width: 60%;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: .85rem;
     background-color: #fff;
     color: #333;
+    font-family: 'Lato', sans-serif;
     outline: none;
     transition: border-color 0.3s ease;
     resize: none; 
     overflow: hidden;   
   text-overflow: ellipsis; 
+  transition: 0.5s;
 }
 
 .edit-mode:focus {
@@ -610,18 +612,21 @@ Navbar-Elements
 
 
 .view-mode {
+
     width: 60%;
     padding: 0;
     border: none;
     background-color: transparent;
-    font-size: 16px;
+    font-size: .85rem;
     color: #333;
+    font-family: 'Lato', sans-serif;
     cursor: default; 
     outline: none;
     pointer-events: none; 
     overflow: hidden;  
     resize: none; 
   text-overflow: ellipsis;
+  transition: 0.5s;
 }
 
 
@@ -644,6 +649,7 @@ Navbar-Elements
     font-weight: bold;
     margin-right: 10px;
     width: 40%;
+    font-size: .95rem;
     text-align: start;
 }
 
@@ -936,4 +942,32 @@ Navbar-Elements
 .breadcrumb-icon{
     color: #4E4E4E;
     size: 12px;
+}
+
+
+/*
+  Comments components
+*/
+
+.comments-table{
+    padding: 0% 5% 0% 0%;
+}
+
+.comments-title{    
+    color: #333;
+    font-size: 1.4rem;
+    font-family: 'Lato', sans-serif;
+    text-align: start;
+    margin-bottom: 5%
+}
+
+
+.comment-card{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 15px;
 }
