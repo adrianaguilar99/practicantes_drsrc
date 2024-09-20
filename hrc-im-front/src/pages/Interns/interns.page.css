@@ -24,10 +24,102 @@
     
 }
 
+.nav-space{
+    min-width: 14vw;
+}
+
 .interns-right-container{
     padding: 1% 0%;
     min-width: 80vw;
     min-height: 90vh;
 }
+
+
+
+/* 
+  Interns information page
+
+*/
+
+.interns-information-right-container{
+    padding: 1% 0%;
+    min-width: 80vw;
+}
+
+
+.interns-information{
+   display: grid;
+}
+
+.interns-information-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #B0B0B0; /* Fondo gris */
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+}
+
+.interns-information-title-type {
+    background-color: #2F4858; /* Fondo azul oscuro */
+    color: #fff;
+    padding: 0 4vw 0 15vw;
+    text-align: end;
+    font-size: 12px;
+    font-weight: 100;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    max-width: 8%;
+}
+
+.interns-information-title-name {
+    flex: 1;
+    color: #333;
+    font-size: 12px;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+}
+
+.interns-information-title-name:after {
+    content: "";
+    position: absolute;
+    right: -30px;
+    top: -9px;
+    bottom: 0;
+    width: 0;
+    border-left: 35px solid #B0B0B0; /* Color del triángulo igual al fondo */
+    border-top: 35px solid transparent;
+    border-bottom: 35px solid transparent;
+}
+
+.interns-information-body {
+    display: flex;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    padding-right: 5%;
+}
+
+.info-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.info-section-left{
+    width: 50%;
+    margin-right: 4%;
+}
+
+.info-section-right{
+    width: 40%;
+}
+
 
 

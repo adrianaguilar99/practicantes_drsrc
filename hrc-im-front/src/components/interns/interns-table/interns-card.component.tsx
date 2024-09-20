@@ -1,9 +1,11 @@
 import React from 'react';
-import '../components.css';
+import '../../components.css';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { useNavigate } from 'react-router-dom';
 
 interface InternCardProps {
+  id: string;
   nombre: string;
   departamento: string;
   progreso: number; // porcentaje de progreso
@@ -13,6 +15,7 @@ interface InternCardProps {
 }
 
 const InternCardComponent: React.FC<InternCardProps> = ({
+  id,
   nombre,
   departamento,
   progreso,
@@ -21,9 +24,15 @@ const InternCardComponent: React.FC<InternCardProps> = ({
   onDelete
 }) => {
 
+  const navigator = useNavigate();
+
+  const handleClick = () => {
+    navigator(`/interns/intern-information/${id}`);
+  }
+
 
   return (
-    <div className='intern-card'>
+    <div className='intern-card' onClick={ handleClick}>
     <div className={`intern-type  ${tipo === 'INTERNO' ? 'interno' : 'externo'}`}>
          <span >{`PRACTICANTE ${tipo}`}</span>
     </div>

@@ -425,7 +425,9 @@ Navbar-Elements
 }
 
 
-
+/* 
+    Interns Table and Components
+*/
 
 .interns-table{
     margin: 1% 1%;
@@ -500,7 +502,6 @@ Navbar-Elements
     color: #ffffff;
 }
 
-/* Estilos para diferenciar interno y externo */
 .intern-type.interno {
     background-color: #b88a54;
 }
@@ -586,6 +587,83 @@ Navbar-Elements
     border: none;
     cursor: pointer;
   }
+
+/* Estilo general para los inputs en modo edición */
+.edit-mode {
+    width: 60%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease;
+    resize: none; 
+    overflow: hidden;   
+  text-overflow: ellipsis; 
+}
+
+.edit-mode:focus {
+    border-color: #007bff; 
+}
+
+
+.view-mode {
+    width: 60%;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    color: #333;
+    cursor: default; 
+    outline: none;
+    pointer-events: none; 
+    overflow: hidden;  
+    resize: none; 
+  text-overflow: ellipsis;
+}
+
+
+.info-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 4%;
+    
+}
+
+.info-row label {
+    font-weight: bold;
+    margin-right: 10px;
+    width: 40%;
+    text-align: start;
+}
+
+/* Estilo responsive */
+@media (max-width: 768px) {
+    .info-row {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .info-row label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .edit-mode, .view-mode {
+        width: 100%;
+    }
+}
+
   
   
 
