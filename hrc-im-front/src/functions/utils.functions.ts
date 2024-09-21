@@ -49,3 +49,5 @@ export const resetIndexIfHome = () => {
         sessionStorage.setItem('sidebarState', JSON.stringify(currentSidebarState));
     }
 };
+
+

@@ -1,3 +1,5 @@
+import { TimeAgo } from "./date-conversor.component";
+
 interface CommentCardProps {
     name: string;
     time: string;
@@ -8,9 +10,12 @@ interface CommentCardProps {
 export const CommentCard : React.FC<CommentCardProps> = ({ name, time, comment}) => {
     return (
         <div className="comment-card">
-            <p>{name}</p>
-            <p>{comment}</p>
-            <p>{time}</p>
+            <div className="comment-card-header">
+              <h4>{name}</h4><TimeAgo date={time} />
+            </div>
+            <div className="comment-card-body">
+              <p>{comment}</p>
+            </div>
 
         </div>
     );

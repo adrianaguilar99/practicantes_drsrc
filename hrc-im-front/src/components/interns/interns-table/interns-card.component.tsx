@@ -26,13 +26,13 @@ const InternCardComponent: React.FC<InternCardProps> = ({
 
   const navigator = useNavigate();
 
-  const handleClick = () => {
+  const Click = () => {
     navigator(`/interns/intern-information/${id}`);
   }
 
 
   return (
-    <div className='intern-card' onClick={ handleClick}>
+    <div className='intern-card' onClick={ Click}>
     <div className={`intern-type  ${tipo === 'INTERNO' ? 'interno' : 'externo'}`}>
          <span >{`PRACTICANTE ${tipo}`}</span>
     </div>

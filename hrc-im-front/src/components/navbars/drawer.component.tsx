@@ -4,7 +4,7 @@ import Drawer from '@mui/material/Drawer';
 
 interface DrawerNavProps {
   open: boolean;
-  onClose: () => void; // Nueva prop para manejar el cierre
+  onClose: () => void; 
 }
 
 export const DrawerNav = ({ open, onClose }: DrawerNavProps) => {
@@ -12,7 +12,7 @@ export const DrawerNav = ({ open, onClose }: DrawerNavProps) => {
     <Drawer
       anchor="right"
       open={open}
-      onClose={onClose} // Usa la prop para cerrar el drawer
+      onClose={onClose} 
       PaperProps={{
         sx: {
           backgroundColor: '#2c3e50',

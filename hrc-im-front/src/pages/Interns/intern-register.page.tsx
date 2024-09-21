@@ -6,7 +6,7 @@ import MyAvatar from "../../assets/images/avatar-test.jpg";
 import { ButtonComponent } from "../../components/buttons/button.component";
 import { CommentsTable } from "../../components/interns/interns-components/comments-table.component";
 
-const InternInformationPage = () => {
+const InternRegisterPage = () => {
   const [editable, setEditable] = useState(false);
   const [progreso, setProgreso] = useState(45);
   const EditPage = () => {
@@ -28,11 +28,8 @@ const InternInformationPage = () => {
       </div>
       <div className="interns-information">
         <section className="interns-information-header">
-          <div className="interns-information-title-type">
-            <h2>PRACTICANTE EXTERNO</h2>
-          </div>
           <div className="interns-information-title-name">
-            <h1>INFORMACION DEL PRACTICANTE</h1>
+            <h1>Registrar información del practicante</h1>
           </div>
         </section>
         <section className="interns-information-body">
@@ -99,27 +96,6 @@ const InternInformationPage = () => {
               </section>
 
               <section className="info-section-right">
-                <div className="info-section-right-options">
-                  <img src={MyAvatar} />
-                  <div className="info-section-right-options-buttons">
-                    <ButtonComponent
-                      text="Editar información"
-                      onClick={EditPage}
-                    />
-                    <ButtonComponent
-                      text="Generar reporte semanal"
-                      onClick={function (): void {
-                        throw new Error("Function not implemented.");
-                      }}
-                    />
-                    <ButtonComponent
-                      text="Generar reporte mensual"
-                      onClick={function (): void {
-                        throw new Error("Function not implemented.");
-                      }}
-                    />
-                  </div>
-                </div>
                 <InfoRow
                   label="Fecha de inicio:"
                   value="01-01-2022"
@@ -163,23 +139,6 @@ const InternInformationPage = () => {
                   editable={editable}
                 />
               </section>
-              <div className="intern-progress-space">
-                <p>Progreso del practicante</p>
-                <div className="progress-section">
-                  <span>
-                    {progreso === 100 ? "¡Completado!" : `${progreso}%`}
-                  </span>
-                  <div className="progress-bar">
-                    <div
-                      className="progress"
-                      style={{ width: `${progreso}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="comments-container">
-              <CommentsTable />
             </div>
           </div>
         </section>
@@ -188,4 +147,4 @@ const InternInformationPage = () => {
   );
 };
 
-export default InternInformationPage;
+export default InternRegisterPage;

@@ -958,16 +958,129 @@ Navbar-Elements
     font-size: 1.4rem;
     font-family: 'Lato', sans-serif;
     text-align: start;
-    margin-bottom: 5%
+    margin-bottom: 1%
 }
 
 
 .comment-card{
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: #fff;
+    flex-direction: column;
+    background-color: #F9F9F9;
     border-radius: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 1%;
 }
+
+.comment-card-header{
+    display: flex;
+    align-items: center;
+    padding-left: 3%;
+    gap: 2%;
+}
+
+.comment-card-header h4{
+    font-size: .95rem;
+    
+    font-weight: bold;
+}
+
+.comment-card-header p{
+    font-size: .90rem;
+    font-weight: 100;
+}
+
+.comment-card-body{
+    padding-left: 3%;
+    text-align: start;
+    font-size: .90rem;
+    font-weight: 100;
+}
+
+.add-new-comment{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0% 5% 0% 0%;
+    border-style: solid;
+    border-color: #4e4e4e;
+    border-width: 0px 0px 1px 0px;
+    margin-bottom: 2%;
+    margin-right: 5%;
+}
+
+.add-new-comment textarea{
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #4e4e4e;
+    padding: 10px;
+    font-family: 'Lato', sans-serif;
+    resize: none;
+    height: auto;
+} 
+
+
+.add-new-comment button{
+    display: flex;
+    width: 15%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size: .90rem;
+    color: #4e4e4e;
+    padding: 10px;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    font-weight: bold;
+    align-items: center;
+    gap: 10px;
+    border-radius: 10px;
+    transition: .5s;
+} 
+
+
+.add-new-comment button:hover{
+    background-color: #d8d8d8;
+    color: #2b2b2b;
+    transition: .5s;
+} 
+
+
+
+/*
+  Check-in-check-out components
+*/
+
+.checkincheckout-info-section{
+  display: flex;
+  width: 60%;
+  justify-content: space-between;
+}
+
+.date-separator {
+    margin-top: 20px;
+    font-weight: bold;
+    padding-bottom: 10px;
+    color: #666;
+  }
+  .checkincheckout-info-section h3{
+    font-size: .95rem;
+    text-align: center;
+  }
+  
+  .checkincheckout-bad-type{
+    color: #2e2e2e;
+    font-weight: bold;
+    background-color: #df6c6c;
+    padding: 1% 2%;
+    border-radius: 10px;
+  }
+
+  .checkincheckout-good-type{
+    color: #639F46;
+  }
+
+  .checkincheckout-warning-type{
+    color: #D6802A;
+  }
