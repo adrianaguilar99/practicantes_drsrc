@@ -4,14 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { ConfigService } from '@nestjs/config';
+import { LIMIT_RECORDS, OFFSET_RECORDS } from 'src/common/constants/constants';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly configService: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -31,7 +30,10 @@ export class UserService {
     return { users, records: users.length };
   }
 
-  async findAllPaginated({ limit = 3, offset = 0 }: PaginationDto) {
+  async findAllPaginated({
+    limit = LIMIT_RECORDS,
+    offset = OFFSET_RECORDS,
+  }: PaginationDto) {
     const users = await this.userRepository.find({
       take: limit,
       skip: offset,
@@ -42,6 +44,12 @@ export class UserService {
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ id });
     return user;
+  }
+
+  async findByEmail(email: string) {
+    return await this.userRepository.findOne({
+      where: { email },
+    });
   }
 
   // DIRECTAMENTE DE LA ENTIDAD USUARIO POR AHORA NO SE PUEDE EDITAR NADA

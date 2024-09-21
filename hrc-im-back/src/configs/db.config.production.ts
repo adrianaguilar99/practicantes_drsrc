@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 export default registerAs(
-  'dbConfig.development.env',
+  'dbConfig.production.env',
   (): PostgresConnectionOptions => ({
     type: 'postgres',
     host: process.env.DB_HOST,
@@ -11,6 +11,6 @@ export default registerAs(
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: true,
+    synchronize: false,
   }),
 );

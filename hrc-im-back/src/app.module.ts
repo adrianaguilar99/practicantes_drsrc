@@ -1,27 +1,32 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { SeedingModule } from './seeding/seeding.module';
 import { CommonModule } from './common/common.module';
-import { JoiValidationSchema, getDatabaseConfig } from './configs';
+import { JoiValidationSchema } from './configs';
+import { AuthModule } from './auth/auth.module';
+import dbConfig from './configs/db.config';
+import dbConfigProduction from './configs/db.config.production';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: '.env.development.local',
+      expandVariables: true,
+      load: [dbConfig, dbConfigProduction],
       validationSchema: JoiValidationSchema,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getDatabaseConfig,
+      useFactory:
+        process.env.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
     }),
     UserModule,
     SeedingModule,
     CommonModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
