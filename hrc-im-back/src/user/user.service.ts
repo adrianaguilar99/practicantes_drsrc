@@ -1,10 +1,19 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { LIMIT_RECORDS, OFFSET_RECORDS } from 'src/common/constants/constants';
+import {
+  LIMIT_RECORDS,
+  OFFSET_RECORDS,
+  SUCCESSFUL_DELETION,
+  USER_NOT_FOUND,
+} from 'src/common/constants/constants';
 
 @Injectable()
 export class UserService {
@@ -13,11 +22,15 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
+    return this.userRepository.update({ id: userId }, { hashedRefreshToken });
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(createUserDto);
-
+    const savedUser = await this.userRepository.save(newUser);
     try {
-      return await this.userRepository.save(newUser);
+      return savedUser;
     } catch (error) {
       throw new InternalServerErrorException(
         `Something went wrong when creating the user. Details: ${error.message}`,
@@ -42,7 +55,10 @@ export class UserService {
   }
 
   async findOne(id: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: ['id', 'email', 'userRole', 'createdAt', 'hashedRefreshToken'],
+    });
     return user;
   }
 
@@ -55,11 +71,14 @@ export class UserService {
   // DIRECTAMENTE DE LA ENTIDAD USUARIO POR AHORA NO SE PUEDE EDITAR NADA
   // update(id: number, updateUserDto: UpdateUserDto) {}
 
-  async remove(id: string): Promise<User> {
+  async remove(id: string) {
     const userToRemove = await this.findOne(id);
-    await this.userRepository.remove(userToRemove);
-
-    return userToRemove;
+    try {
+      const removedUser = await this.userRepository.remove(userToRemove);
+      return { message: SUCCESSFUL_DELETION, removedUser };
+    } catch (error) {
+      if (!userToRemove) throw new BadRequestException(USER_NOT_FOUND);
+    }
   }
 
   async removeAllUsers() {

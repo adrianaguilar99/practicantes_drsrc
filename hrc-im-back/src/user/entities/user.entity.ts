@@ -1,4 +1,4 @@
-import { UserRoles } from 'src/common/enums/userRoles.enum';
+import { UserRole } from 'src/common/enums/user-role.enum';
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
@@ -12,10 +12,13 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar', nullable: true })
-  password: string;
+  hashedPassword: string;
 
-  @Column({ type: 'enum', enum: UserRoles, nullable: false })
-  userRol: string;
+  @Column({ type: 'text', nullable: true })
+  hashedRefreshToken: string;
+
+  @Column({ type: 'enum', enum: UserRole, nullable: false })
+  userRole: UserRole;
 
   @Column({
     type: 'timestamp',
@@ -36,19 +39,22 @@ export class User {
   }
 
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, BCRYPT_SALT_ROUNDS);
+    this.hashedPassword = await bcrypt.hash(
+      this.hashedPassword,
+      BCRYPT_SALT_ROUNDS,
+    );
   }
   private setUserRole() {
     const domain = this.email.split('@')[1];
     switch (domain) {
       case 'google.com':
-        this.userRol = UserRoles.ADMINISTRATOR;
+        this.userRole = UserRole.ADMINISTRATOR;
         break;
       case 'facebook.com':
-        this.userRol = UserRoles.SUPERVISOR;
+        this.userRole = UserRole.SUPERVISOR;
         break;
       default:
-        this.userRol = UserRoles.INTERN;
+        this.userRole = UserRole.INTERN;
     }
   }
 

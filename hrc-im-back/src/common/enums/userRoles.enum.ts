@@ -1,5 +1,0 @@
-export enum UserRoles {
-  INTERN = 'INTERN',
-  SUPERVISOR = 'SUPERVISOR',
-  ADMINISTRATOR = 'ADMINISTRATOR',
-}

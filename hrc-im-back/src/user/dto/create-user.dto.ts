@@ -10,7 +10,7 @@ export class CreateUserDto {
     message:
       'Password must be at least 10 characters long, contain one uppercase letter, and one special character.',
   })
-  password: string;
+  hashedPassword: string;
 
   createdAt?: string;
 }

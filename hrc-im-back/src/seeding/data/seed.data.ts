@@ -1,11 +1,11 @@
-import { UserRoles } from 'src/common/enums/userRoles.enum';
+import { UserRole } from 'src/common/enums/user-role.enum';
 import { v4 as uuidv4 } from 'uuid';
 
 interface SeedUser {
   id: string;
   email: string;
-  password: string;
-  userRol: UserRoles;
+  hashedPassword: string;
+  userRole: UserRole;
   createdAt: string;
 }
 
@@ -18,71 +18,71 @@ export const initialData: SeedData = {
     {
       id: uuidv4(),
       email: 'john.doe@google.com',
-      password: '',
-      userRol: UserRoles.ADMINISTRATOR,
+      hashedPassword: '',
+      userRole: UserRole.ADMINISTRATOR,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'jane.doe@facebook.com',
-      password: '',
-      userRol: UserRoles.SUPERVISOR,
+      hashedPassword: '',
+      userRole: UserRole.SUPERVISOR,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'mark.smith@intern.com',
-      password: '',
-      userRol: UserRoles.INTERN,
+      hashedPassword: '',
+      userRole: UserRole.INTERN,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'susan.lee@google.com',
-      password: '',
-      userRol: UserRoles.ADMINISTRATOR,
+      hashedPassword: '',
+      userRole: UserRole.ADMINISTRATOR,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'michael.jones@facebook.com',
-      password: '',
-      userRol: UserRoles.SUPERVISOR,
+      hashedPassword: '',
+      userRole: UserRole.SUPERVISOR,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'anna.johnson@intern.com',
-      password: '',
-      userRol: UserRoles.INTERN,
+      hashedPassword: '',
+      userRole: UserRole.INTERN,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'charles.brown@google.com',
-      password: '',
-      userRol: UserRoles.ADMINISTRATOR,
+      hashedPassword: '',
+      userRole: UserRole.ADMINISTRATOR,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'emily.white@facebook.com',
-      password: '',
-      userRol: UserRoles.SUPERVISOR,
+      hashedPassword: '',
+      userRole: UserRole.SUPERVISOR,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'peter.miller@intern.com',
-      password: '',
-      userRol: UserRoles.INTERN,
+      hashedPassword: '',
+      userRole: UserRole.INTERN,
       createdAt: new Date().toISOString(),
     },
     {
       id: uuidv4(),
       email: 'laura.wilson@intern.com',
-      password: '',
-      userRol: UserRoles.INTERN,
+      hashedPassword: '',
+      userRole: UserRole.INTERN,
       createdAt: new Date().toISOString(),
     },
   ],
