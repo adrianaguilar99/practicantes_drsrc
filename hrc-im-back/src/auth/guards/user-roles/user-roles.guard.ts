@@ -13,7 +13,7 @@ export class UserRolesGuard implements CanActivate {
     );
     if (!requiredUserRoles) return true;
     const user = context.switchToHttp().getRequest().user;
-    console.log(user);
+    // console.log(user);   // para ver roles
 
     const hasRequiredUserRole = requiredUserRoles.some(
       (userRole) => user.userRole === userRole,
