@@ -13,8 +13,9 @@ export const INVALID_CREDENTIALS = 'Email or password is incorrect';
 export const INVALID_USER_OR_MISSING_REFRESH_TOKEN = 'Invalid refresh token';
 export const REFRESH_TOKEN_DOES_NOT_MATCH = 'Invalid refresh token';
 
-// ROLES
+// DECORATOR KEYS
 export const USER_ROLES_KEY = 'userRoles';
+export const IS_PUBLIC_KEY = 'IS_PUBLIC';
 
 // MESSAGES FOR RESPONSES
 // 200 - 299
@@ -25,6 +26,7 @@ export const SUCCESSFUL_FETCH = 'Data fetched successfully.';
 export const LOGIN_SUCCESS = 'Login successful.';
 export const LOGOUT_SUCCESS = 'Logout successful.';
 export const USER_REGISTERED = 'User registered successfully.';
+export const PASSWORD_REQUIRED = 'Please provide the password';
 // 400 - 499
 export const BAD_REQUEST = 'Bad request. Please check your input.';
 export const UNAUTHORIZED_ACCESS = 'Unauthorized access. Please login.';

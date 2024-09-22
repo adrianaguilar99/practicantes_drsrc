@@ -12,6 +12,7 @@ import {
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
 import { AuthJwtPayload, CurrentUser } from './types';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -88,5 +89,11 @@ export class AuthService {
 
     const currentUser: CurrentUser = { id: user.id, userRole: user.userRole };
     return currentUser;
+  }
+
+  async validateGoogleUser(googleUser: CreateUserDto) {
+    const user = await this.userService.findByEmail(googleUser.email);
+    if (user) return user;
+    return await this.userService.create(googleUser);
   }
 }

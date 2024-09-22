@@ -15,4 +15,8 @@ export const JoiValidationSchema = Joi.object({
   JWT_EXPIRE_IN: Joi.string().required(),
   REFRESH_JWT_SECRET: Joi.string().required(),
   REFRESH_JWT_EXPIRE_IN: Joi.string().required(),
+  // GOOGLE
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_SECRET: Joi.string().required(),
+  GOOGLE_CALLBACK_URL: Joi.string().required(),
 });

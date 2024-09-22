@@ -14,16 +14,16 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
-import { UserRoles } from 'src/auth/decorators/user-roles.decorator';
+import { Public, UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { UserRolesGuard } from 'src/auth/guards/user-roles/user-roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards';
 
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -41,6 +41,7 @@ export class UserController {
 
   // TODO --> ELIMINAR ESTE ENDPOINT EJEMPLO: SOLO USUARIOS AUTENTIFICADOS PUEDEN ACCEDER MEDIANTE JwtAuthGuard
   @UseGuards(JwtAuthGuard)
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR)
   @Get('profile')
   getProfile(@Req() req) {
     return this.userService.findOne(req.user.id);
@@ -59,8 +60,6 @@ export class UserController {
 
   // @SetMetadata('role', [UserRole.ADMINISTRATOR])
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR)
-  @UseGuards(UserRolesGuard)
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
