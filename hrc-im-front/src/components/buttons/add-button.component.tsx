@@ -4,7 +4,8 @@ import { Modal, Box, Typography, Button } from '@mui/material'; // Importar el M
 import DomainAddIcon from '@mui/icons-material/DomainAdd';
 import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
 import { GetUrl } from '../../functions/utils.functions'; // Supongo que tienes esta función
-import { CustomModal } from '../modals/general-modal.component';
+import { ConfirmationModal } from '../modals/confirmation-modal.component';
+import { FormModal } from '../modals/form-modal.component';
 
 export const AddButton = () => {
   const [url, setUrl] = useState("");
@@ -50,8 +51,7 @@ export const AddButton = () => {
         </button>
       ) : null}
 
-      {/* Modal de Material UI */}
-      <CustomModal open={open} ModalState={ModalState}/>
+      <FormModal open={open} onConfirm={handleClose} onCancel={handleClose} title="Agregar" type="Add" entity={url} message={''} />
     </>
   );
 };

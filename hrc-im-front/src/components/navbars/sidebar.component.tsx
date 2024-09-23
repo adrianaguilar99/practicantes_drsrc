@@ -14,7 +14,7 @@ import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 export const Sidebar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [rol] = useState("Supervisor");
+  const [rol] = useState("Admin");
 
   const index = useSelector((state: RootState) => state.sidebar.index);
   const openMenu = useSelector((state: RootState) => state.sidebar.openMenu);

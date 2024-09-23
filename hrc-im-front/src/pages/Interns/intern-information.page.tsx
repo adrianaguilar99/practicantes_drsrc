@@ -3,18 +3,35 @@ import { Navbar } from "../../components/navbars/navbar.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { useState } from "react";
 import MyAvatar from "../../assets/images/avatar-test.jpg";
-import { ButtonComponent } from "../../components/buttons/button.component";
+import { ButtonComponent, EditButton } from "../../components/buttons/buttons.component";
 import { CommentsTable } from "../../components/interns/interns-components/comments-table.component";
+import { ConfirmationModal } from "../../components/modals/confirmation-modal.component";
 
 const InternInformationPage = () => {
   const [editable, setEditable] = useState(false);
+  const [saveEdit, setSaveEdit] = useState(false); 
   const [progreso, setProgreso] = useState(45);
+  const [showModal, setShowModal] = useState(false);  // Nuevo estado para controlar el modal
+
   const EditPage = () => {
     if (editable) {
-      setEditable(false);
+      setSaveEdit(true);
     } else {
-      setEditable(true);
+      setEditable(true); 
+      setSaveEdit(false);
     }
+  };
+
+  const handleConfirmSave = () => {
+    setEditable(false);  
+    setSaveEdit(false);
+    setShowModal(false);
+  };
+
+
+  const handleCancelSave = () => {
+    setSaveEdit(false); 
+    setShowModal(false); 
   };
 
   return (
@@ -102,9 +119,14 @@ const InternInformationPage = () => {
                 <div className="info-section-right-options">
                   <img src={MyAvatar} />
                   <div className="info-section-right-options-buttons">
-                    <ButtonComponent
-                      text="Editar información"
-                      onClick={EditPage}
+                    <EditButton onClick={EditPage} />
+                    {/* Modal para confirmar guardado */}
+                    <ConfirmationModal
+                      open={saveEdit}
+                      onConfirm={handleConfirmSave}  // Confirma y guarda
+                      onCancel={handleCancelSave}   // Cancela el guardado
+                      title="Confirmación de guardado"
+                      message="¿Estás seguro que deseas guardar los cambios?"
                     />
                     <ButtonComponent
                       text="Generar reporte semanal"
