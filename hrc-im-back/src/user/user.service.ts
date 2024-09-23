@@ -2,18 +2,20 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import {
+  INTERNAL_SERVER_ERROR,
   LIMIT_RECORDS,
   OFFSET_RECORDS,
   SUCCESSFUL_DELETION,
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -23,35 +25,60 @@ export class UserService {
   ) {}
 
   async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
-    return this.userRepository.update({ id: userId }, { hashedRefreshToken });
+    try {
+      const result = await this.userRepository.update(
+        { id: userId },
+        { hashedRefreshToken },
+      );
+      if (result.affected === 0) {
+        throw new NotFoundException(`${USER_NOT_FOUND}, User id: ${userId}`);
+      }
+      return result;
+    } catch (error) {
+      this.internalServerErrorMessage(error.message);
+    }
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(createUserDto);
-    const savedUser = await this.userRepository.save(newUser);
     try {
+      const savedUser = await this.userRepository.save(newUser);
       return savedUser;
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Something went wrong when creating the user. Details: ${error.message}`,
-      );
+      this.internalServerErrorMessage(error.message);
     }
   }
 
+  private internalServerErrorMessage(message: string) {
+    throw new InternalServerErrorException(
+      `${INTERNAL_SERVER_ERROR}. Details: ${message}`,
+    );
+  }
+
   async findAll() {
-    const users = await this.userRepository.find();
-    return { users, records: users.length };
+    try {
+      const users = await this.userRepository.find();
+      return { users, records: users.length };
+    } catch (error) {
+      this.internalServerErrorMessage(error.message);
+    }
   }
 
   async findAllPaginated({
     limit = LIMIT_RECORDS,
     offset = OFFSET_RECORDS,
   }: PaginationDto) {
-    const users = await this.userRepository.find({
-      take: limit,
-      skip: offset,
-    });
-    return { users, records: users.length };
+    try {
+      const users = await this.userRepository.find({
+        take: limit,
+        skip: offset,
+      });
+      return { users, records: users.length };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `${INTERNAL_SERVER_ERROR}. Details: ${error.message}`,
+      );
+    }
   }
 
   async findOne(id: string): Promise<User> {
