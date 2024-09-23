@@ -8,11 +8,17 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', nullable: false })
+  firstName: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  lastName: string;
+
   @Column({ type: 'varchar', unique: false, nullable: false })
   email: string;
 
   @Column({ type: 'varchar', nullable: true })
-  hashedPassword: string;
+  password: string;
 
   @Column({ type: 'text', nullable: true })
   hashedRefreshToken: string;
@@ -24,7 +30,7 @@ export class User {
     type: 'timestamp',
     nullable: false,
   })
-  createdAt: string;
+  createdAt: Date;
 
   /*
    Agregamos el decorador para manejar la fecha antes de insertar el registro
@@ -39,10 +45,7 @@ export class User {
   }
 
   async hashPassword() {
-    this.hashedPassword = await bcrypt.hash(
-      this.hashedPassword,
-      BCRYPT_SALT_ROUNDS,
-    );
+    this.password = await bcrypt.hash(this.password, BCRYPT_SALT_ROUNDS);
   }
   private setUserRole() {
     const domain = this.email.split('@')[1];
@@ -59,6 +62,6 @@ export class User {
   }
 
   private setCreationDate() {
-    this.createdAt = new Date().toISOString();
+    this.createdAt = new Date();
   }
 }

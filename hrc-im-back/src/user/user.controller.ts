@@ -52,12 +52,6 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  // DIRECTAMENTE DE LA ENTIDAD USUARIO POR AHORA NO SE PUEDE EDITAR NADA
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(id, updateUserDto);
-  // }
-
   // @SetMetadata('role', [UserRole.ADMINISTRATOR])
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR)
   @Delete(':id')

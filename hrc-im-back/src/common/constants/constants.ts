@@ -23,10 +23,6 @@ export const SUCCESSFUL_CREATION = 'Resource successfully created.';
 export const SUCCESSFUL_DELETION = 'Resource successfully deleted.';
 export const SUCCESSFUL_UPDATE = 'Resource successfully updated.';
 export const SUCCESSFUL_FETCH = 'Data fetched successfully.';
-export const LOGIN_SUCCESS = 'Login successful.';
-export const LOGOUT_SUCCESS = 'Logout successful.';
-export const USER_REGISTERED = 'User registered successfully.';
-export const PASSWORD_REQUIRED = 'Please provide the password';
 // 400 - 499
 export const BAD_REQUEST = 'Bad request. Please check your input.';
 export const UNAUTHORIZED_ACCESS = 'Unauthorized access. Please login.';
@@ -49,6 +45,13 @@ export const RESOURCE_CREATION_FAILED =
   'Failed to create resource. Please try again.';
 export const RESOURCE_DELETION_FAILED =
   'Failed to delete resource. Please try again.';
+
+// LOGIN
+export const LOGIN_SUCCESS = 'Login successful.';
+export const LOGOUT_SUCCESS = 'Logout successful.';
+export const USER_REGISTERED = 'User registered successfully.';
+export const PASSWORD_REQUIRED = 'Please provide the password';
+export const USER_NOT_REGISTERED = 'User is not registered in the company';
 
 //   export const INVALID_PAYLOAD = 'Invalid data provided. Please verify your input.';
 // export const REFRESH_TOKEN_EXPIRED = 'Your refresh token has expired.';

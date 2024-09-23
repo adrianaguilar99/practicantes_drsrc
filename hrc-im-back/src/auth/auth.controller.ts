@@ -39,13 +39,15 @@ export class AuthController {
       user: { id },
     } = req;
 
+    console.log(req);
+
     return this.authService.refreshToken(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('sign-out')
   signOut(@Req() req) {
-    this.authService.signOut(req.user.id);
+    return this.authService.signOut(req.user.id);
   }
 
   @Public()
@@ -58,6 +60,8 @@ export class AuthController {
   @Get('google/callback')
   async googleCallback(@Req() req, @Res() res) {
     const response = await this.authService.login(req.user.id);
+    console.log({ response });
+
     res.redirect(`http://localhost:5173?token=${response.accessToken}`);
   }
 }
