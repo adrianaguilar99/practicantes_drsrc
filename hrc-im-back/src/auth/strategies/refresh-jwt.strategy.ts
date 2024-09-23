@@ -2,7 +2,7 @@ import { ConfigType } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthJwtPayload } from '../types';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import refreshJwtConfig from 'src/configs/refresh-jwt.config';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
@@ -30,6 +30,11 @@ export class RefreshJwtStrategy extends PassportStrategy(
   validate(req: Request, payload: AuthJwtPayload) {
     const refreshToken = req.get('authorization').replace('Bearer', '').trim();
     const { sub: userId } = payload;
-    return this.authService.validateRefreshToken(userId, refreshToken);
+    const user = this.authService.validateRefreshToken(userId, refreshToken);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    return user;
   }
 }

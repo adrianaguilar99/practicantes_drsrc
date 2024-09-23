@@ -10,6 +10,7 @@ import {
   INVALID_USER_OR_MISSING_REFRESH_TOKEN,
   REFRESH_TOKEN_DOES_NOT_MATCH,
   USER_NOT_FOUND,
+  USER_NOT_REGISTERED,
 } from 'src/common/constants/constants';
 import { AuthJwtPayload, CurrentUser } from './types';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -27,7 +28,7 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
     if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
 
-    const isPasswordMatch = await compare(password, user.hashedPassword);
+    const isPasswordMatch = await compare(password, user.password);
     if (!isPasswordMatch) throw new UnauthorizedException(INVALID_CREDENTIALS);
 
     // console.log(user); // aqui salen todas las props del usuario
@@ -44,7 +45,8 @@ export class AuthService {
   }
 
   async generateTokens(userId: string) {
-    const payload: AuthJwtPayload = { sub: userId };
+    const user = await this.userService.findOne(userId);
+    const payload: AuthJwtPayload = { sub: userId, role: user.userRole };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, this.refreshTokenConfiguration),
@@ -66,6 +68,10 @@ export class AuthService {
 
   async validateRefreshToken(userId: string, refreshToken: string) {
     const user = await this.userService.findOne(userId);
+    // console.log('Usuario:', user);
+    // console.log('Refresh Token enviado:', refreshToken);
+    // console.log('Refresh Token guardado:', user.hashedRefreshToken);
+
     if (!user || !user.hashedRefreshToken)
       throw new UnauthorizedException(INVALID_USER_OR_MISSING_REFRESH_TOKEN);
 
@@ -73,27 +79,33 @@ export class AuthService {
       user.hashedRefreshToken,
       refreshToken,
     );
+
+    // console.log('Resultado de la comparación:', refreshTokenMatches);
+
     if (!refreshTokenMatches)
       throw new UnauthorizedException(REFRESH_TOKEN_DOES_NOT_MATCH);
 
     return { id: userId };
   }
 
-  async signOut(userId) {
+  async signOut(userId: string) {
     await this.userService.updateHashedRefreshToken(userId, null);
+    return { message: 'Sign out successfully' };
   }
 
-  async validateJwtUser(userId: string) {
-    const user = await this.userService.findOne(userId);
-    if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
+  // valido cuando el rol es dinamico
+  // async validateJwtUser(userId: string) {
+  //   const user = await this.userService.findOne(userId);
+  //   if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
 
-    const currentUser: CurrentUser = { id: user.id, userRole: user.userRole };
-    return currentUser;
-  }
+  //   const currentUser: CurrentUser = { id: user.id, userRole: user.userRole };
+  //   return currentUser;
+  // }
 
   async validateGoogleUser(googleUser: CreateUserDto) {
     const user = await this.userService.findByEmail(googleUser.email);
+
     if (user) return user;
-    return await this.userService.create(googleUser);
+    throw new UnauthorizedException(USER_NOT_REGISTERED);
   }
 }

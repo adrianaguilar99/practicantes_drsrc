@@ -68,9 +68,6 @@ export class UserService {
     });
   }
 
-  // DIRECTAMENTE DE LA ENTIDAD USUARIO POR AHORA NO SE PUEDE EDITAR NADA
-  // update(id: number, updateUserDto: UpdateUserDto) {}
-
   async remove(id: string) {
     const userToRemove = await this.findOne(id);
     try {
