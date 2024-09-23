@@ -15,10 +15,11 @@ export class UserRolesGuard implements CanActivate {
     const user = context.switchToHttp().getRequest().user;
     // console.log(user);   // para ver roles
 
-    const hasRequiredUserRole = requiredUserRoles.some(
-      (userRole) => user.userRole === userRole,
-    );
+    // valido cuando el rol es dinamico
+    // const hasRequiredUserRole = requiredUserRoles.some(
+    //   (userRole) => user.userRole === userRole,
+    // );
 
-    return hasRequiredUserRole;
+    return requiredUserRoles.includes(user.role);
   }
 }

@@ -45,7 +45,8 @@ export class AuthService {
   }
 
   async generateTokens(userId: string) {
-    const payload: AuthJwtPayload = { sub: userId };
+    const user = await this.userService.findOne(userId);
+    const payload: AuthJwtPayload = { sub: userId, role: user.userRole };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, this.refreshTokenConfiguration),
@@ -67,9 +68,9 @@ export class AuthService {
 
   async validateRefreshToken(userId: string, refreshToken: string) {
     const user = await this.userService.findOne(userId);
-    console.log('Usuario:', user);
-    console.log('Refresh Token enviado:', refreshToken);
-    console.log('Refresh Token guardado:', user.hashedRefreshToken);
+    // console.log('Usuario:', user);
+    // console.log('Refresh Token enviado:', refreshToken);
+    // console.log('Refresh Token guardado:', user.hashedRefreshToken);
 
     if (!user || !user.hashedRefreshToken)
       throw new UnauthorizedException(INVALID_USER_OR_MISSING_REFRESH_TOKEN);
@@ -79,7 +80,7 @@ export class AuthService {
       refreshToken,
     );
 
-    console.log('Resultado de la comparación:', refreshTokenMatches);
+    // console.log('Resultado de la comparación:', refreshTokenMatches);
 
     if (!refreshTokenMatches)
       throw new UnauthorizedException(REFRESH_TOKEN_DOES_NOT_MATCH);
@@ -92,13 +93,14 @@ export class AuthService {
     return { message: 'Sign out successfully' };
   }
 
-  async validateJwtUser(userId: string) {
-    const user = await this.userService.findOne(userId);
-    if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
+  // valido cuando el rol es dinamico
+  // async validateJwtUser(userId: string) {
+  //   const user = await this.userService.findOne(userId);
+  //   if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
 
-    const currentUser: CurrentUser = { id: user.id, userRole: user.userRole };
-    return currentUser;
-  }
+  //   const currentUser: CurrentUser = { id: user.id, userRole: user.userRole };
+  //   return currentUser;
+  // }
 
   async validateGoogleUser(googleUser: CreateUserDto) {
     const user = await this.userService.findByEmail(googleUser.email);
