@@ -4,17 +4,81 @@ import { SetStateAction, useState } from "react";
 import "./interns.page.css";
 import { RegisterRow } from "../../components/interns/interns-components/register-row.component";
 import { ButtonComponent } from "../../components/buttons/buttons.component";
+import { TestEnvio } from "../../api/api-request";
 
 const InternRegisterPage = () => {
-  // Estado para almacenar el tipo seleccionado
   const [selectedType, setSelectedType] = useState("Interno");
 
-  // Función para manejar el cambio en el selector
-  const handleTypeChange = (e: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setSelectedType(e.target.value);
+  const [InternName, setInternName] = useState("");
+  const [InternEmail, setInternEmail] = useState("");
+  const [InternType, setInternType] = useState("Interno");
+
+  const [InternUniversity, setInternUniversity] = useState("");
+  const [InternProgram, setInternProgram] = useState("");
+  const [InternID, setInternID] = useState("");
+  const [InternInstitutePhone, setInternInstitutePhone] = useState("");
+
+  const [InternPhone, setInternPhone] = useState("");
+  const [InternSupervisor, setInternSupervisor] = useState("");
+  const [InternDepartment, setInternDepartment] = useState("");
+
+  const [InternOldDepartment, setInternOldDepartment] = useState("");
+
+  const [InterBeginDate, setInternBeginDate] = useState("");
+  const [InternEndDate, setInternEndDate] = useState("");
+  const [InternCheckIn, setInternCheckIn] = useState("");
+  const [InternCheckOut, setInternCheckOut] = useState("");
+  const [InternTotalTime, setInternTotalTime] = useState("");
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedType(e.target.value); // `e.target.value` es de tipo `string`
+    setInternType(e.target.value);   // Si `setInternType` espera un `string`, esto funcionará bien
   };
+  
+
+  const RegisterNewIntern = () => {
+    TestEnvio({
+      name: InternName,
+      email: InternEmail,
+      type: InternType,
+      university: InternUniversity,
+      program: InternProgram,
+      universityId: InternID,
+      universityphone: InternInstitutePhone,
+      oldDepartment: InternOldDepartment,
+      phone: InternPhone,
+      supervisor: InternSupervisor,
+      department: InternDepartment,
+      beginDate: InterBeginDate,
+      endDate: InternEndDate,
+      checkin: InternCheckIn,
+      checkout: InternCheckOut,
+      totalTime: InternTotalTime,
+    })
+  };
+
+  const Universidades = [
+    "Universidad Politecnica de Quintana Roo",
+    "Universidad del Caribe",
+    "Universidad Nacional",
+    "Universidad Tecnologica de la Mixteca",
+    "Instituto de Investigaciones Fundamental",
+    "Instituto Politecnico Nacional",
+    "Universidad de Guadalajara",
+    "Universidad de San Martin de Porres",
+    "Universidad Politecnica de Guadalajara",
+    "Universidad de Guanajuato",
+    "Universidad Tecnologica de la Costa",
+    "Universidad de San Juan de los Llanos",
+    "Universidad Autonoma de Zacatecas",
+    "Universidad Politecnica de Hidalgo",
+    "Universidad de Guzman",
+    "Universidad Politecnica de Pachuca",
+    "Universidad de Tijuana",
+    "Universidad Politecnica de Chihuahua",
+    "Universidad Politecnica de Guanajuato",
+    "Universidad Politecnica de San Luis Potosi",
+  ];
 
   return (
     <div className="body-page">
@@ -26,11 +90,6 @@ const InternRegisterPage = () => {
         </section>
       </div>
       <div className="interns-register">
-        <section className="interns-register-header">
-          <div className="interns-register-title-name">
-            <h1>Registrar información del practicante</h1>
-          </div>
-        </section>
         <section className="interns-register-body">
           <div className="nav-space"></div>
 
@@ -40,17 +99,18 @@ const InternRegisterPage = () => {
                 <section className="register-section-left">
                   <RegisterRow
                     label="Nombre del practicante:"
-                    value="LEONARDO DAVID REBOLLO CUPUL"
+                    onChange={(value) => setInternName(value || "")} 
                     id="nombre"
                     type="text"
-                    show={true} 
+                    show={true}
                   />
-                      <RegisterRow
+
+                  <RegisterRow
                     label="Correo:"
-                    value="leonardod.rebollo@gmail.com"
+                    onChange={(value) => setInternEmail(value || "")}
                     id="email"
                     type="text"
-                    show={true} 
+                    show={true}
                   />
                   <div className="info-row">
                     <label htmlFor="type">Tipo:</label>
@@ -66,98 +126,98 @@ const InternRegisterPage = () => {
                   </div>
                   <RegisterRow
                     label="Institución de procedencia:"
-                    value="UNIVERSIDAD POLITÉCNICA DE QUINTANA ROO"
+                    onChange={(value) => setInternUniversity(value || "")}
                     id="institution"
                     type="autocomplete"
-                    coincidences={["Universidad Política de Quintana Roo", "Universidad del Caribe", "Instituto Político Nacional"]}
-                    show={selectedType === "Externo"} 
+                    coincidences={Universidades}
+                    show={selectedType === "Externo"}
                   />
                   <RegisterRow
                     label="Carrera:"
-                    value="INGENIERÍA EN SOFTWARE"
+                    onChange={(value) => setInternProgram(value || "")}
                     id="career"
                     type="autocomplete"
                     coincidences={["Ingeniería en Software", "Ingeniería Civil", "Ingeniería Industrial"]}
-                    show={selectedType === "Externo"} 
+                    show={selectedType === "Externo"}
                   />
                   <RegisterRow
                     label="Matrícula escolar:"
-                    value="202100167"
+                    onChange={(value) => setInternID(value || "")}
                     id="matricula"
                     type="number"
-                    show={selectedType === "Externo"} 
+                    show={selectedType === "Externo"}
                   />
                   <RegisterRow
                     label="Tel Institucional:"
-                    value="998 476 8123"
+                    onChange={(value) => setInternInstitutePhone(value || "")}
                     type="number"
                     id="telInstitutional"
-                    show={selectedType === "Externo"} 
+                    show={selectedType === "Externo"}
                   />
                   <RegisterRow
                     label="Tel Personal:"
-                    value="998 476 8156"
+                    onChange={(value) => setInternPhone(value || "")}
                     id="telPersonal"
                     type="number"
-                    show={true} 
+                    show={true}
                   />
-              
+
                   <RegisterRow
                     label="Encargado:"
-                    value="BRIAN WILFRIDO ROMERO CUPUL"
+                    onChange={(value) => setInternSupervisor(value || "")}
                     id="encargado"
                     type="text"
-                    show={true} 
+                    show={true}
                   />
-                       <RegisterRow
+                  <RegisterRow
                     label="Departamento de procedencia:"
-                    value="Tecnologías de la Información"
+                    onChange={(value) => setInternDepartment(value || "")}
                     id="department"
                     type="text"
                     show={selectedType === "Interno"}
                   />
                   <RegisterRow
                     label="Departamento de practicas:"
-                    value="Tecnologías de la Información"
+                    onChange={(value) => setInternOldDepartment(value || "")}
                     id="department"
                     type="text"
                     show={true}
                   />
-              
+
                 </section>
 
                 <section className="register-section-right">
                   <RegisterRow
                     label="Fecha de inicio:"
-                    value="01-01-2022"
+                    onChange={(value) => setInternBeginDate(value || "")}
                     id="startDate"
                     type="date"
-                    show={true} 
+                    show={true}
                   />
                   <RegisterRow
                     label="Fecha de fin:"
-                    value="01-01-2022"
+                    onChange={(value) => setInternEndDate(value || "")}
                     id="endDate"
                     type="date"
                     show={true}
                   />
                   <RegisterRow
                     label="Hora entrada:"
-                    value="09:00 a.m."
+                    onChange={(value) => setInternCheckIn(value || "")}
                     id="horaEntrada"
                     type="time"
                     show={true}
                   />
                   <RegisterRow
                     label="Hora salida:"
-                    value="17:00 p.m."
+                    onChange={(value) => setInternCheckOut(value || "")}
                     id="horaSalida"
                     type="time"
                     show={true}
                   />
                   <RegisterRow
                     label="Total de tiempo a cubrir:"
-                    value="600 horas"
+                    onChange={(value) => setInternTotalTime(value || "")}
                     id="tiempoTotal"
                     type="number"
                     show={true}
@@ -170,6 +230,7 @@ const InternRegisterPage = () => {
               <ButtonComponent
                 text="Guardar"
                 onClick={() => {
+                  RegisterNewIntern();
                 }}
               />
               <ButtonComponent

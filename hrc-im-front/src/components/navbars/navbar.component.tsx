@@ -65,7 +65,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: "#2c3e50" }}>
+      <AppBar position="static" sx={{ backgroundColor: "#2c3e50" , maxHeight : "8.5vh"}}>
         <Toolbar>
           <IconButton
             edge="start"

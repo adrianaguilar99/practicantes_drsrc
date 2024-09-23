@@ -39,7 +39,7 @@ interface FormModalProps {
               justifyContent: 'space-between',
             }}
           >
-            <Typography variant="h6" component="h3">
+            <Typography variant="h6" component="h3" sx={{ fontSize: '.90rem', fontWeight: 'bold' }}>
               {title}
             </Typography>
           </Box>

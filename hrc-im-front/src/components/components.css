@@ -566,6 +566,7 @@ Navbar-Elements
   }
   .progress-section span {
     color: #4E4E4E;
+    font-size: .75rem;
     margin-bottom: 2px;
   }
 
@@ -605,7 +606,7 @@ Navbar-Elements
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: .85rem;
+    font-size: .75rem;
     background-color: #fff;
     color: #333;
     font-family: 'Lato', sans-serif;
@@ -628,7 +629,7 @@ Navbar-Elements
     padding: 0;
     border: none;
     background-color: transparent;
-    font-size: .85rem;
+    font-size: .80rem;
     color: #333;
     font-family: 'Lato', sans-serif;
     cursor: default; 
@@ -659,8 +660,8 @@ Navbar-Elements
 .info-row label {
     font-weight: bold;
     margin-right: 10px;
-    width: 40%;
-    font-size: .95rem;
+    width: 50%;
+    font-size: .80rem;
     text-align: start;
 }
 
@@ -989,13 +990,13 @@ Navbar-Elements
 }
 
 .comment-card-header h4{
-    font-size: .95rem;
+    font-size: .80rem;
     
     font-weight: bold;
 }
 
 .comment-card-header p{
-    font-size: .90rem;
+    font-size: .80rem;
     font-weight: 100;
 }
 

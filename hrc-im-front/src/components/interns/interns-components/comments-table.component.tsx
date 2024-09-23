@@ -6,7 +6,7 @@ export const CommentsTable = () => {
     {
         id: 1,
         name: "JUAN JOSE",
-        time: "2024-09-20T19:30:00",
+        time: "2024-01-20T19:30:00.005Z",
         comment: "Me parece muy bien! 🙌👍",
     },
     {

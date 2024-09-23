@@ -5,8 +5,9 @@ import { useSpring, animated } from "@react-spring/web";
 
 interface RegisterRowProps {
   label: string;
+  onChange: (value?: string) => void;
   type?: "text" | "number" | "date" | "time" | "select" | "autocomplete";
-  value: string;
+  value?: string;
   id: string;
   show: boolean;
   options?: string[];
@@ -17,6 +18,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   label,
   value,
   id,
+  onChange,
   type,
   show,
   options = [],
@@ -30,6 +32,12 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
     config: { tension: 280, friction: 10 },
   });
 
+  // Función para manejar cambios y propagar al padre
+  const handleChange = (newValue: string) => {
+    setInputValue(newValue);
+    onChange(newValue); // Envía el valor al componente padre
+  };
+
   return (
     show && (
       <animated.div style={animationStyles}>
@@ -40,7 +48,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="text"
               id={id}
               defaultValue={value}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)} // Aquí llamamos a handleChange
               className="edit-mode"
             />
           )}
@@ -49,7 +57,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="number"
               id={id}
               defaultValue={value}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               className="edit-mode"
             />
           )}
@@ -58,7 +66,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="date"
               id={id}
               defaultValue={value}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               className="edit-mode"
             />
           )}
@@ -67,7 +75,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="time"
               id={id}
               defaultValue={value}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               className="edit-mode"
             />
           )}
@@ -75,7 +83,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <select
               id={id}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               className="edit-mode"
             >
               {options.map((option) => (
@@ -87,42 +95,40 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
           )}
           {type === "autocomplete" && (
             <Autocomplete
-            options={coincidences}
-            sx={{ 
-              '& .MuiInputBase-root': { // Estilos para la base del input
-                fontSize: '.85rem', // Tamaño de fuente del Autocomplete
-                padding: '0 10px',  // Padding horizontal
-                height: '40px',     // Altura fija para alinearse con otros inputs
-              },
-            }}
-            value={inputValue}
-            onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                size="small" 
-                InputProps={{
-                  ...params.InputProps,
-                  className: 'edit-mode',
-                  style: {
-                    fontSize: '.85rem',  
-                    padding: '10px',    
-                    height: '40px',      
-                  },
-                }}
-                sx={{
-                  fontSize: '.85rem', 
-                }}
-                fullWidth
-              />
-            )}
-            fullWidth
-          />
-          
-          
+              options={coincidences}
+              sx={{
+                "& .MuiInputBase-root": {
+                  fontSize: ".75rem",
+                  padding: "0 10px",
+                  height: "40px",
+                },
+              }}
+              value={inputValue}
+              onInputChange={(event, newInputValue) => {
+                handleChange(newInputValue); // Llamamos a handleChange aquí también
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    ...params.InputProps,
+                    className: "edit-mode",
+                    style: {
+                      fontSize: ".75rem",
+                      padding: "10px",
+                      height: "40px",
+                    },
+                  }}
+                  sx={{
+                    fontSize: ".75rem",
+                  }}
+                  fullWidth
+                />
+              )}
+              fullWidth
+            />
           )}
         </div>
       </animated.div>
