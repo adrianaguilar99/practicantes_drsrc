@@ -14,7 +14,7 @@ export class User {
   @Column({ type: 'varchar', nullable: false })
   lastName: string;
 
-  @Column({ type: 'varchar', unique: false, nullable: false })
+  @Column({ type: 'varchar', unique: true, nullable: false })
   email: string;
 
   @Column({ type: 'varchar', nullable: true })
@@ -23,7 +23,7 @@ export class User {
   @Column({ type: 'text', nullable: true })
   hashedRefreshToken: string;
 
-  @Column({ type: 'enum', enum: UserRole, nullable: false })
+  @Column({ type: 'enum', enum: UserRole, nullable: true })
   userRole: UserRole;
 
   @Column({
@@ -40,26 +40,26 @@ export class User {
   async setCreation() {
     this.email = this.email.toLowerCase();
     await this.hashPassword();
-    this.setUserRole();
+    // this.setUserRole();
     this.setCreationDate();
   }
 
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, BCRYPT_SALT_ROUNDS);
   }
-  private setUserRole() {
-    const domain = this.email.split('@')[1];
-    switch (domain) {
-      case 'google.com':
-        this.userRole = UserRole.ADMINISTRATOR;
-        break;
-      case 'facebook.com':
-        this.userRole = UserRole.SUPERVISOR;
-        break;
-      default:
-        this.userRole = UserRole.INTERN;
-    }
-  }
+  // private setUserRole() {
+  //   const domain = this.email.split('@')[1];
+  //   switch (domain) {
+  //     case 'google.com':
+  //       this.userRole = UserRole.ADMINISTRATOR;
+  //       break;
+  //     case 'facebook.com':
+  //       this.userRole = UserRole.SUPERVISOR;
+  //       break;
+  //     default:
+  //       this.userRole = UserRole.INTERN;
+  //   }
+  // }
 
   private setCreationDate() {
     this.createdAt = new Date();
