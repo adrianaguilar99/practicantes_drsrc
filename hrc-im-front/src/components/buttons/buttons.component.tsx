@@ -36,6 +36,7 @@ export const ButtonComponent = ({ text, onClick }: ButtonComponentProps) => {
         fontWeight: 800,
         fontStyle: "normal",
         fontSize: "0.7rem",
+        minHeight: "40px",
       }}
     >
       {loading && (
@@ -53,9 +54,13 @@ export const ButtonComponent = ({ text, onClick }: ButtonComponentProps) => {
 
 // Edit Button
 
+interface EditButtonProps {
+  onClick: () => void;
+  editing?: boolean;
+}
 
-export const EditButton = ({ onClick }: { onClick: () => void }) => {
-  const [state, setState] = useState(false);  // Estado para alternar entre 'Guardar' y 'Editar'
+export const EditButton : React.FC<EditButtonProps> = ({ onClick , editing }) => {
+  const [state, setState] = useState(false); 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
@@ -63,6 +68,7 @@ export const EditButton = ({ onClick }: { onClick: () => void }) => {
   const handleLoading = () => {
     if (!disabled) {
       if (state) {  
+        setState(!state);
       } else {
         setLoading(true);
         setDisabled(true);
@@ -89,7 +95,9 @@ export const EditButton = ({ onClick }: { onClick: () => void }) => {
           fontWeight: 800,
           fontStyle: "normal",
           fontSize: "0.7rem",
-          backgroundColor: state ? "#1976d2" :  "#b88a54",
+          backgroundColor: editing ? "#1976d2" :  "#b88a54",
+          minHeight: "30px",
+          maxHeight: "40px",
         }}
       >
         {loading && (
@@ -99,7 +107,7 @@ export const EditButton = ({ onClick }: { onClick: () => void }) => {
             style={{ marginRight: "8px" }}
           />
         )}
-        {state ? <p>Guardar</p> : <p>Editar</p>}
+        {editing ? <p>Guardar</p> : <p>Editar</p>}
       </Button>
     </>
   );

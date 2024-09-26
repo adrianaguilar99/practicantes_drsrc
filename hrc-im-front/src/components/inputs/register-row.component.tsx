@@ -31,6 +31,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
     transform: show ? "translateY(0px)" : "translateY(20px)",
     config: { tension: 280, friction: 10 },
   });
+  
 
   // Función para manejar cambios y propagar al padre
   const handleChange = (newValue: string) => {
@@ -81,17 +82,17 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
           )}
           {type === "select" && (
             <select
-              id={id}
-              value={inputValue}
-              onChange={(e) => handleChange(e.target.value)}
-              className="edit-mode"
-            >
-              {options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+            id={id}
+            value={inputValue}
+            onChange={(e) => handleChange(e.target.value)}
+            className="edit-mode"
+          >
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
           )}
           {type === "autocomplete" && (
             <Autocomplete

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
 import { DepartmentFormModal, SupervisorFormModal } from './modal-forms.component';
 
@@ -11,7 +11,18 @@ interface FormModalProps {
     entity: string;
     message: string;       
   }
+
   export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, title, type, entity }) => {
+    const [Supervisordata, setSupervisordata] = React.useState<any>({});
+
+
+    const SupervisorData = { name: "Luis Alberto", email: "q7YpK@example.com", department: "Sistemas" }
+
+    useEffect (() => {
+      setSupervisordata(SupervisorData);
+    }, []);
+
+
     return (
       <Modal open={open} onClose={onCancel}>
         <Box
@@ -20,7 +31,7 @@ interface FormModalProps {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '30vw',
+            width: '35vw',
             bgcolor: '#EDEDED',
             borderRadius: '8px',
             boxShadow: 24,
@@ -50,8 +61,8 @@ interface FormModalProps {
               p: 3,
             }}
           >
-            {entity === "departments" ? <DepartmentFormModal type={type} onCancel={onCancel} /> : null}
-            {entity === "supervisors" ? <SupervisorFormModal type={type} onCancel={onCancel} /> : null}
+            {entity === "departments" ? <DepartmentFormModal data={type} type={type} onCancel={onCancel} /> : null}
+            {entity === "supervisors" ? <SupervisorFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
           </Box>
         </Box>
       </Modal>

@@ -17,10 +17,11 @@ import { AppDispatch } from '../../redux/sidebar-redux/store';
 import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 import { NavMenu } from '../menus/nav-menu.component';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [userRol, setUserRol] = useState("Supervisor");
+  const [userRol, setUserRol] = useState("Intern");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
@@ -67,6 +68,7 @@ export const Navbar = () => {
     <>
       <AppBar position="static" sx={{ backgroundColor: "#2c3e50" , maxHeight : "8.5vh"}}>
         <Toolbar>
+          {userRol != "Intern" ? 
           <IconButton
             edge="start"
             color="inherit"
@@ -75,14 +77,17 @@ export const Navbar = () => {
             onClick={SidebarToggle}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> : null}
+          
 
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            <Link to="/" style={{ textDecoration: "none" }}>
             <img
               src={HardRockLogo}
               alt="Hard Rock Logo"
               style={{ height: "40px", display: "block" }}
             />
+            </Link>
           </Typography>
 
           <div className="notifications-container" ref={notificationMenuRef}>
@@ -115,7 +120,7 @@ export const Navbar = () => {
 
       {userRol === "Intern" ? <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} /> : null}
       {userRol === "Admin" || userRol === "Supervisor" ? <NavMenu anchorEl={anchorEl} closeUserMenu={handleCloseUserMenu} /> : null}
-      <Sidebar />
+      <Sidebar userRol={userRol}/>
     </>
   );
 };

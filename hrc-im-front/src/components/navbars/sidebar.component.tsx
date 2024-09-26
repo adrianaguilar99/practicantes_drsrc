@@ -11,10 +11,12 @@ import { setIndex } from '../../redux/sidebar-redux/sidebarSlice';
 import { useState } from 'react';
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 
-export const Sidebar: React.FC = () => {
+interface MenuItem {
+  userRol: string;
+}
+export const Sidebar: React.FC<MenuItem> = ({userRol}) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [rol] = useState("Admin");
 
   const index = useSelector((state: RootState) => state.sidebar.index);
   const openMenu = useSelector((state: RootState) => state.sidebar.openMenu);
@@ -35,16 +37,16 @@ export const Sidebar: React.FC = () => {
   ];
 
   const getMenuItems = () => {
-    if (rol === "Admin") {
+    if (userRol === "Admin") {
       return menuItemsAdmin;
-    } else if (rol === "Supervisor") {
+    } else if (userRol === "Supervisor") {
       return menuItemsSupervisor;
     }
     return [];
   };
 
   return (
-    <div className={`sidebar ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
+    <div className={`sidebar ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`} style={userRol === "Intern" ? { display: "none" } : { display: "block" }}>
       {getMenuItems().map((item, idx) => (
         <div
           key={idx}

@@ -1,4 +1,4 @@
-import { InfoRow } from "../../components/interns/interns-components/info-row.component";
+import { InfoRow } from "../../components/inputs/info-row.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { useState } from "react";
@@ -11,7 +11,26 @@ const InternInformationPage = () => {
   const [editable, setEditable] = useState(false);
   const [saveEdit, setSaveEdit] = useState(false); 
   const [progreso, setProgreso] = useState(45);
-  const [showModal, setShowModal] = useState(false);  // Nuevo estado para controlar el modal
+  const [showModal, setShowModal] = useState(false);  
+  const [InternType, setInternType] = useState("Externo");
+
+
+  const [InternName, setInternName] = useState("");
+  const [InternEmail, setInternEmail] = useState("");
+  const [InternUniversity, setInternUniversity] = useState("");
+  const [InternProgram, setInternProgram] = useState("");
+  const [InternID, setInternID] = useState("");
+  const [InternInstitutePhone, setInternInstitutePhone] = useState("");
+  const [InternPhone, setInternPhone] = useState("");
+  const [InternSupervisor, setInternSupervisor] = useState("");
+  const [InternDepartment, setInternDepartment] = useState("");
+  const [InternOldDepartment, setInternOldDepartment] = useState("");
+  const [InterBeginDate, setInternBeginDate] = useState("");
+  const [InternEndDate, setInternEndDate] = useState("");
+  const [InternCheckIn, setInternCheckIn] = useState("");
+  const [InternCheckOut, setInternCheckOut] = useState("");
+  const [InternTotalTime, setInternTotalTime] = useState("");
+
 
   const EditPage = () => {
     if (editable) {
@@ -46,7 +65,7 @@ const InternInformationPage = () => {
       <div className="interns-information">
         <section className="interns-information-header">
           <div className="interns-information-title-type">
-            <h2>PRACTICANTE EXTERNO</h2>
+            <h2>PRACTICANTE {InternType.toUpperCase()}</h2>
           </div>
           <div className="interns-information-title-name">
             <h1>INFORMACION DEL PRACTICANTE</h1>
@@ -63,6 +82,8 @@ const InternInformationPage = () => {
                   value="UNIVERSIDAD POLITÉCNICA DE QUINTANA ROO"
                   id="institution"
                   editable={editable}
+                  show={InternType === "Externo"}
+                  onChange={(value) => setInternUniversity(value || "")}
                 />
                 <InfoRow
                   label="Carrera:"
@@ -70,6 +91,8 @@ const InternInformationPage = () => {
                   id="career"
                   type="text"
                   editable={editable}
+                  show={InternType === "Externo"}
+                  onChange={(value) => setInternProgram(value || "")}
                 />
                 <InfoRow
                   label="Matrícula escolar:"
@@ -77,6 +100,8 @@ const InternInformationPage = () => {
                   id="matricula"
                   type="text"
                   editable={editable}
+                  show={InternType === "Externo"}
+                  onChange={(value) => setInternID(value || "")}
                 />
                 <InfoRow
                   label="Tel Institucional:"
@@ -84,6 +109,8 @@ const InternInformationPage = () => {
                   type="text"
                   id="telInstitutional"
                   editable={editable}
+                  show={InternType === "Externo"}
+                  onChange={(value) => setInternInstitutePhone(value || "")}
                 />
                 <InfoRow
                   label="Tel Personal:"
@@ -91,13 +118,17 @@ const InternInformationPage = () => {
                   id="telPersonal"
                   type="text"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternPhone(value || "")}
                 />
                 <InfoRow
                   label="Correo:"
                   value="leonardod.rebollo@gmail.com"
                   id="email"
-                  type="email"
+                  type="text"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternEmail(value || "")}
                 />
                 <InfoRow
                   label="Encargado:"
@@ -105,6 +136,17 @@ const InternInformationPage = () => {
                   id="encargado"
                   type="text"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternSupervisor(value || "")}
+                />
+                <InfoRow
+                  label="Departamento de procedencia:"
+                  value="Tecnologías de la Información"
+                  id="department"
+                  type="text"
+                  editable={editable}
+                  show={InternType === "Interno"}
+                  onChange={(value) => setInternOldDepartment(value || "")}
                 />
                 <InfoRow
                   label="Departamento:"
@@ -112,6 +154,8 @@ const InternInformationPage = () => {
                   id="department"
                   type="text"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternOldDepartment(value || "")}
                 />
               </section>
 
@@ -119,27 +163,22 @@ const InternInformationPage = () => {
                 <div className="info-section-right-options">
                   <img src={MyAvatar} />
                   <div className="info-section-right-options-buttons">
-                    <EditButton onClick={EditPage} />
-                    {/* Modal para confirmar guardado */}
+                    <EditButton onClick={EditPage} editing={editable}/>
+                  
                     <ConfirmationModal
                       open={saveEdit}
-                      onConfirm={handleConfirmSave}  // Confirma y guarda
-                      onCancel={handleCancelSave}   // Cancela el guardado
+                      onConfirm={handleConfirmSave}  
+                      onCancel={handleCancelSave}  
                       title="Confirmación de guardado"
                       message="¿Estás seguro que deseas guardar los cambios?"
                     />
                     <ButtonComponent
-                      text="Generar reporte semanal"
+                      text="Generar Tarjeta del practicante"
                       onClick={function (): void {
                         throw new Error("Function not implemented.");
                       }}
                     />
-                    <ButtonComponent
-                      text="Generar reporte mensual"
-                      onClick={function (): void {
-                        throw new Error("Function not implemented.");
-                      }}
-                    />
+                    
                   </div>
                 </div>
                 <InfoRow
@@ -148,6 +187,8 @@ const InternInformationPage = () => {
                   id="startDate"
                   type="date"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternBeginDate(value || "")}
                 />
                 <InfoRow
                   label="Fecha de fin:"
@@ -155,6 +196,8 @@ const InternInformationPage = () => {
                   id="startDate"
                   type="date"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternEndDate(value || "")}
                 />
                 <InfoRow
                   label="Hora entrada:"
@@ -162,6 +205,8 @@ const InternInformationPage = () => {
                   id="startDate"
                   type="date"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternCheckIn(value || "")}
                 />
                 <InfoRow
                   label="Hora salida:"
@@ -169,6 +214,8 @@ const InternInformationPage = () => {
                   id="startDate"
                   type="date"
                   editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternCheckOut(value || "")}
                 />
                 <InfoRow
                   label="Total de tiempo a cubrir:"
@@ -176,15 +223,19 @@ const InternInformationPage = () => {
                   id="startDate"
                   type="date"
                   editable={editable}
-                />
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  onChange={(value) => setInternTotalTime(value || "")} />
                 <InfoRow
                   label="Tiempo cubierto:"
                   value="254 horas"
                   id="startDate"
                   type="date"
-                  editable={editable}
+                  show={InternType === "Externo" || InternType === "Interno"}
+                  editable={false} 
+                              
                 />
               </section>
+              <div className="intern-progress-space-container">
               <div className="intern-progress-space">
                 <p>Progreso del practicante</p>
                 <div className="progress-section">
@@ -198,7 +249,25 @@ const InternInformationPage = () => {
                     ></div>
                   </div>
                 </div>
+                
               </div>
+              <div className="intern-progress-space-buttons">
+              <ButtonComponent
+                      text="Generar reporte semanal"
+                      onClick={function (): void {
+                        throw new Error("Function not implemented.");
+                      }}
+                    />
+                    <ButtonComponent
+                      text="Generar reporte mensual"
+                      onClick={function (): void {
+                        throw new Error("Function not implemented.");
+                      }}
+                    />
+              </div>
+            
+              </div>
+           
             </div>
             <div className="comments-container">
               <CommentsTable />

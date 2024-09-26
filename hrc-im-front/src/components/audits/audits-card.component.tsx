@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { EntityInfoModal } from "./audits-infomodal.component";
+import { Avatar, Tooltip } from "@mui/material";
+import { stringAvatar } from "../../functions/utils.functions";
 
 interface DepartmentCardProps {
   action: string;
@@ -26,13 +28,15 @@ export const AuditsCard: React.FC<DepartmentCardProps> = ({
   return (
     <div className="generic-card">
       <div className="generic-card-info">
+      <Tooltip title={`Se ha realizado la ${action} de ${entity[0].name} en la base de datos`} arrow>
         <p
           className={`intern-type-card ${action === "INSERCCIÓN" ? "insertion" : action === "ACTUALIZACIÓN" ? "update" : "delete"}`}
         >
           {action}
         </p>
+      </Tooltip>
 
-        <p className="responsable-name">{responsable}</p>
+      <Avatar {...stringAvatar(responsable)} /><p className="supervisor-name">{responsable}</p>
         <p className="entity-card">
           {entity.map((ent, index) => (
             <span

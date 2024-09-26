@@ -2,7 +2,7 @@ import { Navbar } from "../../components/navbars/navbar.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { SetStateAction, useState } from "react";
 import "./interns.page.css";
-import { RegisterRow } from "../../components/interns/interns-components/register-row.component";
+import { RegisterRow } from "../../components/inputs/register-row.component";
 import { ButtonComponent } from "../../components/buttons/buttons.component";
 import { TestEnvio } from "../../api/api-request";
 

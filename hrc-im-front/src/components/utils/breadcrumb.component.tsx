@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { resetIndexIfHome } from '../../functions/utils.functions';
+import '../components.css';
 
 export const Breadcrumb = () => {
     const path = window.location.pathname;
@@ -7,7 +8,7 @@ export const Breadcrumb = () => {
     const breadcrumbItems = ['home', ...segments];
 
     return (
-        <div>
+        <div className='breadcrumb'>
             {breadcrumbItems.map((segment, index) => {
                 if (segment === 'intern-information') {
                     breadcrumbItems.length = index + 1;
@@ -18,21 +19,19 @@ export const Breadcrumb = () => {
                 return (
                     <span key={index}>
                         {index < breadcrumbItems.length - 1 ? (
-                            <>
-                                <Link
-                                    to={to}
-                                    onClick={() => {
-                                        if (segment === 'home') {
-                                            resetIndexIfHome();
-                                        }
-                                    }}
-                                >
-                                    {segment}
-                                </Link>
-                                {' > '}
-                            </>
+                            <Link
+                                className="breadcrumb-link"
+                                to={to}
+                                onClick={() => {
+                                    if (segment === 'home') {
+                                        resetIndexIfHome();
+                                    }
+                                }}
+                            >
+                                {segment}
+                            </Link>
                         ) : (
-                            <span className='active-segment'>{segment}</span>
+                            <p className='active-segment'>{segment}</p>
                         )}
                     </span>
                 );

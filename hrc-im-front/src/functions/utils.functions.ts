@@ -25,6 +25,25 @@ export function stringToColor(string: string) {
     return color;
   }
 
+  export function LightstringToColor(string: string, alpha: number = 0.5) {
+    let hash = 0;
+    let i;
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = [0, 0, 0];
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color[i] = value;
+    }
+  
+    // Devuelve el color en formato rgba, donde `alpha` es la transparencia
+    return `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
+  }
+  
+
   // Get avatar from string {Function from MUI}
 export  function stringAvatar(name: string) {
     return {

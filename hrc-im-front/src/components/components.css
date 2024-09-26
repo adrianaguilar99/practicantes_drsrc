@@ -807,7 +807,7 @@ Navbar-Elements
 }
 
 .generic-card-info p{
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .generic-card-info-extra{
@@ -818,6 +818,7 @@ Navbar-Elements
 .generic-card-info-column{
     width: 50%;
     text-align: center;
+    font-family: 'Lato', sans-serif;
 }
 
 
@@ -911,8 +912,10 @@ Navbar-Elements
     text-align: start;
 }
 
-.responsable-name{
+.supervisor-name{
     width: 100%;
+    text-align: start;
+    margin-left: 2%;
 }
 
 
@@ -921,22 +924,41 @@ Navbar-Elements
     text-align: center;
     justify-content: space-between;
     align-items: stretch; 
-    width: 100%;
+    font-family: 'Lato', sans-serif;
+    width: 20%;
+    cursor: pointer;
     text-align: start;
+    font-size: .80rem;
+    display: flex;
+    align-self: start;
 
 }
 
 .intern-type-card.insertion {
-    color: #639F46;
+    background-color: #a3e28363;
+    padding: 10px;
+    color: rgb(43, 43, 43);
+    border-radius: 10px;
+    margin-right: 25%;
 }
 
 .intern-type-card.update {
-    color: #D6802A;
+    color: rgb(43, 43, 43);
+    background-color: #ffe488b9;
+    padding: 10px;
+    color: rgb(43, 43, 43);
+    border-radius: 10px;
+    margin-right: 23%;
 }
 
 
 .intern-type-card.delete {
-    color: #861717;
+    color: rgb(43, 43, 43);
+    background-color: #ce5c5c9a;
+    padding: 10px;
+    color: rgb(43, 43, 43);
+    border-radius: 10px;
+    margin-right: 24%;
 }
 
 
@@ -945,17 +967,79 @@ Navbar-Elements
    Breadcrumb
 */
 
-.active-segment{
-    color: #686868;
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+.breadcrumb span {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb .breadcrumb-link {
+    padding: 0.3rem 1.2rem;
+    border: 1px solid #ccc;
+    border-right: none;
+    color: #555;
+    text-decoration: none;
+    background-color: #fff;
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    clip-path: polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0 100%);
+}
+
+
+.breadcrumb .breadcrumb-link:hover {
+    background-color: #f5f5f5;
+    color: #000;
+}
+
+.breadcrumb .breadcrumb-link:last-child {
+    border-right: 1px solid #ccc;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.breadcrumb .active-segment {
+    padding: 0.3rem 1.2rem;
+    border: 1px solid #3C5368;
+    background-color: #f0f0f0;
+    color: #3C5368;
     font-weight: bold;
-    font-size: 16px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    border-radius: 0px 20px 0px 0px;
+
 }
 
-.breadcrumb-icon{
-    color: #4E4E4E;
-    size: 12px;
+.breadcrumb .breadcrumb-link:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -1px;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 10px solid #fff;
+    z-index: 1;
 }
 
+.breadcrumb .breadcrumb-link:hover:before {
+    border-left-color: #f5f5f5;
+}
+
+.breadcrumb .breadcrumb-link:last-child:before {
+    display: none;
+}
+
+.breadcrumb .active-segment:before {
+    display: none;
+}
+
+
+
+  
 
 /*
   Comments components
@@ -1096,3 +1180,5 @@ Navbar-Elements
   .checkincheckout-warning-type{
     color: #D6802A;
   }
+
+

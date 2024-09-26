@@ -6,10 +6,10 @@ interface ConfirmationModalProps {
   onConfirm: () => void;  
   onCancel: () => void;   
   title: string;        
-  message: string;       
+  message: string;     
 }
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, title, message }) => {
+export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, title, message}) => {
   return (
     <Modal open={open} onClose={onCancel}>
       <Box
