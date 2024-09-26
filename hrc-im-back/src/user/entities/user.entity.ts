@@ -1,7 +1,7 @@
-import { UserRole } from 'src/common/enums/user-role.enum';
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
+import { UserRole } from 'src/common';
 
 @Entity('users')
 export class User {

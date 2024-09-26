@@ -1,7 +1,6 @@
 // dtos
-
+export { PaginationDto } from './dtos/pagination.dto';
 // enums
-
+export { UserRole } from './enums/user-role.enum';
 // interfaces
-
-// TODO hacer las exportaciones del common y refactorizar importaciones del mismo
+export { IApiResponse } from './interfaces/response.interface';
