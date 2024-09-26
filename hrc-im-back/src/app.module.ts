@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
 import { SeedingModule } from './seeding/seeding.module';
 import { CommonModule } from './common/common.module';
 import { JoiValidationSchema } from './configs';
@@ -23,7 +23,7 @@ import dbConfigProduction from './configs/db.config.production';
       useFactory:
         process.env.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
     }),
-    UserModule,
+    UsersModule,
     SeedingModule,
     CommonModule,
     AuthModule,

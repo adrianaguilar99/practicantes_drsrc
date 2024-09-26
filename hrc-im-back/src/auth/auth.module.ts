@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UserModule } from 'src/user/user.module';
+import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy, LocalStrategy, RefreshJwtStrategy } from './strategies';
 import { JwtAuthGuard, UserRolesGuard } from './guards';
@@ -14,7 +14,7 @@ import { GoogleStrategy } from './strategies/google.stategy';
 
 @Module({
   imports: [
-    UserModule,
+    UsersModule,
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ConfigModule.forFeature(refreshJwtConfig),

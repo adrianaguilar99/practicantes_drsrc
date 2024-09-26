@@ -11,7 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public, UserRoles } from 'src/auth/decorators';
@@ -24,8 +24,8 @@ import { IApiResponse, PaginationDto, UserRole } from 'src/common';
 
 @ApiTags('Users')
 @Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
   @Public()
   @Post()
@@ -33,14 +33,14 @@ export class UserController {
   async create(
     @Body() createUserDto: CreateUserDto,
   ): Promise<IApiResponse<any>> {
-    const createdUser = await this.userService.create(createUserDto);
+    const createdUser = await this.usersService.create(createUserDto);
     return { message: USER_REGISTERED, data: createdUser };
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(): Promise<IApiResponse<any>> {
-    const allUsers = await this.userService.findAll();
+    const allUsers = await this.usersService.findAll();
     return {
       message: SUCCESSFUL_FETCH,
       data: allUsers,
@@ -54,7 +54,7 @@ export class UserController {
     @Query() paginationDto: PaginationDto,
   ): Promise<IApiResponse<any>> {
     const paginatedUsers =
-      await this.userService.findAllPaginated(paginationDto);
+      await this.usersService.findAllPaginated(paginationDto);
     return {
       message: SUCCESSFUL_FETCH,
       data: paginatedUsers,
@@ -65,7 +65,7 @@ export class UserController {
   @Get('profile')
   @HttpCode(HttpStatus.OK)
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
-    const user = await this.userService.findByEmail(req.user.id);
+    const user = await this.usersService.findByEmail(req.user.id);
     const { password, ...userWithoutPassword } = user;
     return {
       message: SUCCESSFUL_FETCH,
@@ -78,7 +78,7 @@ export class UserController {
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
-    const user = await this.userService.findOne(id);
+    const user = await this.usersService.findOne(id);
     return {
       message: SUCCESSFUL_FETCH,
       data: user,
@@ -91,14 +91,14 @@ export class UserController {
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
-    const userRemoved = await this.userService.remove(id);
+    const userRemoved = await this.usersService.remove(id);
     return { message: SUCCESSFUL_DELETION, data: userRemoved };
   }
 
   @Delete()
   @HttpCode(HttpStatus.OK)
   async removeAll(): Promise<IApiResponse<any>> {
-    const usersRemoved = await this.userService.removeAllUsers();
+    const usersRemoved = await this.usersService.removeAllUsers();
     return { message: SUCCESSFUL_DELETION, data: usersRemoved };
   }
 }
