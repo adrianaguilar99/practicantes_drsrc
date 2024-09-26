@@ -1,19 +1,21 @@
 import {
-  BadRequestException,
+  ConflictException,
   Injectable,
-  InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import {
   LIMIT_RECORDS,
+  NOT_FOUND,
   OFFSET_RECORDS,
-  SUCCESSFUL_DELETION,
+  USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import { handleInternalServerError } from 'src/common/utils';
 
 @Injectable()
 export class UserService {
@@ -21,70 +23,100 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-
   async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
-    return this.userRepository.update({ id: userId }, { hashedRefreshToken });
+    try {
+      const result = await this.userRepository.update(
+        { id: userId },
+        { hashedRefreshToken },
+      );
+      if (result.affected === 0) {
+        throw new NotFoundException(`${USER_NOT_FOUND}, User id: ${userId}`);
+      }
+      return result;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
-    const savedUser = await this.userRepository.save(newUser);
     try {
-      return savedUser;
+      const savedUser = await this.userRepository.save(newUser);
+      const { password, ...createdUser } = savedUser;
+      return createdUser;
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Something went wrong when creating the user. Details: ${error.message}`,
-      );
+      if (error.code === '23505')
+        throw new ConflictException(`${USER_ALREADY_EXISTS}`);
+      handleInternalServerError(error.message);
     }
   }
 
   async findAll() {
-    const users = await this.userRepository.find();
-    return { users, records: users.length };
+    try {
+      const users = await this.userRepository.find();
+      const withoutPassword = users.map(({ password, ...rest }) => rest);
+      return withoutPassword;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
   }
 
   async findAllPaginated({
     limit = LIMIT_RECORDS,
     offset = OFFSET_RECORDS,
   }: PaginationDto) {
-    const users = await this.userRepository.find({
-      take: limit,
-      skip: offset,
-    });
-    return { users, records: users.length };
+    try {
+      const users = await this.userRepository.find({
+        take: limit,
+        skip: offset,
+      });
+      const withoutPassword = users.map(({ password, ...rest }) => rest);
+      return withoutPassword;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string) {
     const user = await this.userRepository.findOne({
       where: { id },
-      select: ['id', 'email', 'userRole', 'createdAt', 'hashedRefreshToken'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'userRole',
+        'createdAt',
+        'hashedRefreshToken',
+      ],
     });
+    if (!user) throw new NotFoundException(`${USER_NOT_FOUND}`);
     return user;
   }
 
   async findByEmail(email: string) {
-    return await this.userRepository.findOne({
-      where: { email },
-    });
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new NotFoundException(`${NOT_FOUND}`);
+    return user;
   }
 
   async remove(id: string) {
     const userToRemove = await this.findOne(id);
     try {
       const removedUser = await this.userRepository.remove(userToRemove);
-      return { message: SUCCESSFUL_DELETION, removedUser };
+      return removedUser;
     } catch (error) {
-      if (!userToRemove) throw new BadRequestException(USER_NOT_FOUND);
+      handleInternalServerError(error.message);
     }
   }
 
   async removeAllUsers() {
     const query = this.userRepository.createQueryBuilder('user');
-
     try {
-      return await query.delete().where({}).execute();
+      const usersRemoved = await query.delete().where({}).execute();
+      return usersRemoved;
     } catch (error) {
-      return error;
+      handleInternalServerError(error.message);
     }
   }
 }

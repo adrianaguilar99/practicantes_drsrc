@@ -1,4 +1,4 @@
-import { UserRole } from 'src/common/enums/user-role.enum';
+import { UserRole } from 'src/common';
 import { v4 as uuidv4 } from 'uuid';
 
 interface SeedUser {

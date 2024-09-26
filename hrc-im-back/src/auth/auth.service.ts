@@ -8,11 +8,12 @@ import * as argon2 from 'argon2';
 import {
   INVALID_CREDENTIALS,
   INVALID_USER_OR_MISSING_REFRESH_TOKEN,
+  LOGOUT_SUCCESS,
   REFRESH_TOKEN_DOES_NOT_MATCH,
   USER_NOT_FOUND,
   USER_NOT_REGISTERED,
 } from 'src/common/constants/constants';
-import { AuthJwtPayload, CurrentUser } from './types';
+import { AuthJwtPayload } from './types';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
@@ -26,12 +27,14 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
-    if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
+    // console.log(user); // aqui salen todas las props del usuario
+    if (!user)
+      throw new UnauthorizedException(
+        `${USER_NOT_FOUND} or ${USER_NOT_REGISTERED}`,
+      );
 
     const isPasswordMatch = await compare(password, user.password);
     if (!isPasswordMatch) throw new UnauthorizedException(INVALID_CREDENTIALS);
-
-    // console.log(user); // aqui salen todas las props del usuario
 
     return { id: user.id }; // AQUI DEVOLVEMOS TODAS LAS PROPIEDADES DEL USUARIO QUE NECESITEMOS
   }
@@ -90,7 +93,7 @@ export class AuthService {
 
   async signOut(userId: string) {
     await this.userService.updateHashedRefreshToken(userId, null);
-    return { message: 'Sign out successfully' };
+    return { message: `${LOGOUT_SUCCESS}` };
   }
 
   // valido cuando el rol es dinamico

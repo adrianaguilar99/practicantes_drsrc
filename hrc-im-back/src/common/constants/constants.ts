@@ -20,7 +20,7 @@ export const IS_PUBLIC_KEY = 'IS_PUBLIC';
 // MESSAGES FOR RESPONSES
 // 200 - 299
 export const SUCCESSFUL_CREATION = 'Resource successfully created.';
-export const SUCCESSFUL_DELETION = 'Resource successfully deleted.';
+export const SUCCESSFUL_DELETION = 'Resource(s) successfully deleted.';
 export const SUCCESSFUL_UPDATE = 'Resource successfully updated.';
 export const SUCCESSFUL_FETCH = 'Data fetched successfully.';
 // 400 - 499
@@ -46,16 +46,15 @@ export const RESOURCE_CREATION_FAILED =
 export const RESOURCE_DELETION_FAILED =
   'Failed to delete resource. Please try again.';
 
-// LOGIN
-export const LOGIN_SUCCESS = 'Login successful.';
+// LOGIN AND REGISTER
 export const LOGOUT_SUCCESS = 'Logout successful.';
+export const PASSWORD_REQUIRED = 'Please provide the password.';
 export const USER_REGISTERED = 'User registered successfully.';
-export const PASSWORD_REQUIRED = 'Please provide the password';
 export const USER_NOT_REGISTERED = 'User is not registered in the company';
 
 //   export const INVALID_PAYLOAD = 'Invalid data provided. Please verify your input.';
 // export const REFRESH_TOKEN_EXPIRED = 'Your refresh token has expired.';
 // export const INVALID_REFRESH_TOKEN = 'Invalid refresh token provided.';
-// export const USER_ALREADY_EXISTS = 'User already exists with this email.';
+export const USER_ALREADY_EXISTS = 'User already exists with this email.';
 // export const PASSWORD_RESET_SUCCESS = 'Password reset successfully.';
 // export const EMAIL_VERIFICATION_SUCCESS = 'Email verified successfully.';
