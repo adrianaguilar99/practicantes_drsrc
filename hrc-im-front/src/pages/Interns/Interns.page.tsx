@@ -6,6 +6,7 @@ import { useState } from "react";
 import { PokemonInterface } from "../../interfaces/tests/tests.interface";
 import InternsTable from "../../components/interns/interns-table/interns-table.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
+import { Footer } from "../../components/navbars/footer.component";
 
 
 
@@ -30,6 +31,7 @@ export const InternsPage = () => {
         </section>
         
       </div>
+      <Footer />
     </div>
   );
 };

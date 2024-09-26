@@ -1,20 +1,40 @@
 import React from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./interns.page.css";
-import { Navbar } from "../../components/navbars/navbar.component";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import LinesLogo from "../../assets/images/lines_logo.png";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
 import PieChartRoundedIcon from "@mui/icons-material/PieChartRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import { motion } from "framer-motion"; // Importamos Framer Motion
+import { Footer } from "../../components/navbars/footer.component";
 
-const InternViewPage = () => {
+export const InternViewPage = () => {
+  const navigate = useNavigate(); // Utilizamos para cambiar de vista
   const customColors = ["#4AAF80", "#C2C2C2"];
 
+  // Variantes de animación
+  const pageVariants = {
+    initial: { opacity: 0, scale: 0.8 },
+    in: { opacity: 1, scale: 1 },
+    out: { opacity: 0, scale: 0.8 },
+  };
+
+  const pageTransition = {
+    type: "spring",
+    stiffness: 50,
+    damping: 20,
+  };
+
   return (
-    <div className="body-page">
-      <Navbar />
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      transition={pageTransition}
+    >
       <section className="intern-view-name-container">
         <h1>BIENVENIDO LEONARDO DANIEL REBOLLO CALERO</h1>
       </section>
@@ -23,43 +43,57 @@ const InternViewPage = () => {
         <section className="intern-view-left-container">
           <div className="intern-view-grid-container">
             {/* Mi perfil */}
-
             <Link to="/profile" style={{ textDecoration: "none" }}>
-              <div className="intern-view-card">
+              <motion.div
+                className="intern-view-card"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
                 <PersonRoundedIcon sx={{ fontSize: "4.5rem" }} />
                 <h3>Mi perfil</h3>
-              </div>
+              </motion.div>
             </Link>
 
-            {/* Registrar entrada/salida */}
+            {/* Notificaciones */}
             <Link to="/notifications" style={{ textDecoration: "none" }}>
-              <div className="intern-view-card">
+              <motion.div
+                className="intern-view-card"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
                 <NotificationsActiveRoundedIcon sx={{ fontSize: "4.5rem" }} />
                 <h3>Notificaciones</h3>
-              </div>
+              </motion.div>
             </Link>
 
             {/* Mi progreso */}
-            <Link to="/progress" style={{ textDecoration: "none" }}>
-              <div className="intern-view-card">
-                <PieChartRoundedIcon sx={{ fontSize: "4.5rem" }} />
-                <h3>Mi progreso</h3>
-              </div>
-            </Link>
+            <motion.div
+              className="intern-view-card"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => navigate("/progress")} // Navegamos a la página de progreso
+            >
+              <PieChartRoundedIcon sx={{ fontSize: "4.5rem" }} />
+              <h3>Mi progreso</h3>
+            </motion.div>
 
             {/* Configuración */}
             <Link to="/settings" style={{ textDecoration: "none" }}>
-              <div className="intern-view-card">
+              <motion.div
+                className="intern-view-card"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
                 <SettingsRoundedIcon sx={{ fontSize: "4.5rem" }} />
                 <h3>Configuración</h3>
-              </div>
+              </motion.div>
             </Link>
           </div>
         </section>
         <section className="intern-view-right-container">
           <h2>Mi progreso</h2>
           <div className="intern-view-pie-container">
-            <PieChart 
+            <PieChart
               series={[
                 {
                   arcLabel: (item) => `${item.value}%`,
@@ -74,15 +108,21 @@ const InternViewPage = () => {
               sx={{
                 [`& .${pieArcLabelClasses.root}`]: {
                   fontWeight: "bold",
-                  fill: "white", zIndex: 1
+                  fill: "white",
+                  zIndex: 1,
                 },
               }}
             />
-            <img className="intern-view-lines-logo" src={LinesLogo} alt="Lines Logo" />
+            <img
+              className="intern-view-lines-logo"
+              src={LinesLogo}
+              alt="Lines Logo"
+            />
           </div>
         </section>
       </div>
-    </div>
+      <Footer />
+    </motion.div>
   );
 };
 
@@ -98,5 +138,3 @@ const data = {
     },
   ],
 };
-
-export default InternViewPage;

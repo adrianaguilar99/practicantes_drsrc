@@ -10,6 +10,7 @@ interface InternCardProps {
   departamento: string;
   progreso: number; // porcentaje de progreso
   tipo: 'INTERNO' | 'EXTERNO';
+  onClick?: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }

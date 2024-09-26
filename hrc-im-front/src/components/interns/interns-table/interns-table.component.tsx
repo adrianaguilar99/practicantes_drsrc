@@ -16,6 +16,8 @@ const InternsTable = () => {
     { id : "95debf2f-f87d-4363-b310-4833376a8d60", nombre: 'CRYSTIAN ADAMIR CARRERA RIVAS', departamento: 'COCINA', progreso: 54, tipo: 'EXTERNO' },
     { id : "95debf2f-f87d-4363-b310-4833376a8d61", nombre: 'CRYSTIAN ADAMIR CARRERA RIVAS', departamento: 'COCINA', progreso: 87, tipo: 'EXTERNO' },
   ];
+
+
 return (
   <div className="interns-table">
   {/* Encabezados */}

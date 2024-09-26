@@ -6,6 +6,7 @@ import MyAvatar from "../../assets/images/avatar-test.jpg";
 import { ButtonComponent, EditButton } from "../../components/buttons/buttons.component";
 import { CommentsTable } from "../../components/interns/interns-components/comments-table.component";
 import { ConfirmationModal } from "../../components/modals/confirmation-modal.component";
+import { Footer } from "../../components/navbars/footer.component";
 
 const InternInformationPage = () => {
   const [editable, setEditable] = useState(false);
@@ -102,15 +103,6 @@ const InternInformationPage = () => {
                   editable={editable}
                   show={InternType === "Externo"}
                   onChange={(value) => setInternID(value || "")}
-                />
-                <InfoRow
-                  label="Tel Institucional:"
-                  value="998 476 8123"
-                  type="text"
-                  id="telInstitutional"
-                  editable={editable}
-                  show={InternType === "Externo"}
-                  onChange={(value) => setInternInstitutePhone(value || "")}
                 />
                 <InfoRow
                   label="Tel Personal:"
@@ -275,6 +267,7 @@ const InternInformationPage = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

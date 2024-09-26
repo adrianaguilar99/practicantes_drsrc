@@ -1,4 +1,5 @@
 import { CheckInCheckOutTable } from "../../components/check-in-check-out/check-in-check-out-tables/check-in-check-out-table.component";
+import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
@@ -22,6 +23,7 @@ const CheckInCheckOutPage = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

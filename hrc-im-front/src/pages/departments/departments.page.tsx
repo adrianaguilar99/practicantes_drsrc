@@ -1,4 +1,5 @@
 import { DepartmentsTable } from "../../components/departments/departments-table.component";
+import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
@@ -21,6 +22,7 @@ const DepartmentsPage = () => {
          
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

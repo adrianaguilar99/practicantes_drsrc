@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import HardRockLogo from "../../assets/images/white_hard_rock_logo.png";
 import AvatarTest from "../../assets/images/avatar-test.jpg";
 import AppBar from "@mui/material/AppBar";
@@ -10,25 +10,28 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Typography from "@mui/material/Typography";
 import { DrawerNav } from "./drawer.component";
 import { Badge, Divider } from "@mui/material";
-import { notifications, NotificationsMenu } from "../notifications/notifications-menu.component";
+import {
+  notifications,
+  NotificationsMenu,
+} from "../notifications/notifications-menu.component";
 import { Sidebar } from "./sidebar.component";
-import { toggleSidebar } from '../../redux/sidebar-redux/sidebarSlice';
-import { AppDispatch } from '../../redux/sidebar-redux/store';
-import { useEffect, useRef, useState } from 'react';
-import React from 'react';
-import { NavMenu } from '../menus/nav-menu.component';
-import { Link } from 'react-router-dom';
+import { toggleSidebar } from "../../redux/sidebar-redux/sidebarSlice";
+import { AppDispatch } from "../../redux/sidebar-redux/store";
+import { useEffect, useRef, useState } from "react";
+import React from "react";
+import { NavMenu } from "../menus/nav-menu.component";
+import { Link } from "react-router-dom";
 
 export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [userRol, setUserRol] = useState("Intern");
+  const [userRol, setUserRol] = useState("Admin");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const toggleNotificationMenu = () => {
-    setNotificationMenuOpen(prevState => !prevState);
+    setNotificationMenuOpen((prevState) => !prevState);
   };
 
   const toggleDrawer = (open: boolean) => {
@@ -40,17 +43,27 @@ export const Navbar = () => {
   };
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget); 
+    setAnchorEl(event.currentTarget);
   };
 
   const handleCloseUserMenu = () => {
-    setAnchorEl(null); 
+    setAnchorEl(null);
+  };
+  const MenuValidation = (event: React.MouseEvent<HTMLElement>) => {
+    if (userRol === "Intern") {
+      toggleDrawer(true);
+    } else {
+      handleOpenUserMenu(event);
+    }
   };
 
   useEffect(() => {
     const ClickOutside = (event: MouseEvent) => {
-      if (notificationMenuRef.current && !notificationMenuRef.current.contains(event.target as Node)) {
-        setNotificationMenuOpen(false); 
+      if (
+        notificationMenuRef.current &&
+        !notificationMenuRef.current.contains(event.target as Node)
+      ) {
+        setNotificationMenuOpen(false);
       }
     };
 
@@ -66,27 +79,30 @@ export const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: "#2c3e50" , maxHeight : "8.5vh"}}>
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: "#2c3e50", maxHeight: "8.5vh" }}
+      >
         <Toolbar>
-          {userRol != "Intern" ? 
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={SidebarToggle}
-          >
-            <MenuIcon />
-          </IconButton> : null}
-          
+          {userRol != "Intern" ? (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+              onClick={SidebarToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : null}
 
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            <Link to="/" style={{ textDecoration: "none" }}>
-            <img
-              src={HardRockLogo}
-              alt="Hard Rock Logo"
-              style={{ height: "40px", display: "block" }}
-            />
+            <Link to="/home" style={{ textDecoration: "none" }}>
+              <img
+                src={HardRockLogo}
+                alt="Hard Rock Logo"
+                style={{ height: "40px", display: "block" }}
+              />
             </Link>
           </Typography>
 
@@ -99,7 +115,10 @@ export const Navbar = () => {
             </IconButton>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => toggleDrawer(true)}>
+          <div
+            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            onClick={(event) => MenuValidation(event)} // Pasa el evento aquí
+          >
             <Divider
               orientation="vertical"
               variant="middle"
@@ -110,17 +129,21 @@ export const Navbar = () => {
                 marginLeft: "10px",
               }}
             />
-            <h3 className='user-name-navbar'>Leonardo</h3>
-            <IconButton edge="end" onClick={handleOpenUserMenu}>
+            <h3 className="user-name-navbar">Leonardo</h3>
+            <IconButton edge="end">
               <Avatar alt="Profile Picture" src={AvatarTest} />
             </IconButton>
           </div>
         </Toolbar>
       </AppBar>
 
-      {userRol === "Intern" ? <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} /> : null}
-      {userRol === "Admin" || userRol === "Supervisor" ? <NavMenu anchorEl={anchorEl} closeUserMenu={handleCloseUserMenu} /> : null}
-      <Sidebar userRol={userRol}/>
+      {userRol === "Intern" ? (
+        <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} />
+      ) : null}
+      {userRol === "Admin" || userRol === "Supervisor" ? (
+        <NavMenu anchorEl={anchorEl} closeUserMenu={handleCloseUserMenu} />
+      ) : null}
+      <Sidebar userRol={userRol} />
     </>
   );
 };

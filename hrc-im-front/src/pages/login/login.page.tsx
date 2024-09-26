@@ -4,6 +4,7 @@ import HardRock from "../../assets/images/black_hard_rock_logo.png";
 import RCDLogo from "../../assets/images/rcd_logo.png";
 import "./login.page.css";
 import { GoogleButtonComponent } from "../../components/buttons/google_button.component";
+import { Footer } from "../../components/navbars/footer.component";
 
 const LoginPage = () => {
   return (
@@ -31,6 +32,7 @@ const LoginPage = () => {
         <GoogleButtonComponent />
       </div>
     </div>
+    <Footer />
     </div>
 
   );

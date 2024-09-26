@@ -1,4 +1,5 @@
 import { AuditsTable } from "../../components/audits/audits-table.component";
+import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
@@ -21,7 +22,7 @@ const AuditsPage = () => {
             </section>
               
             </div>
-           
+           <Footer />
         </div>
     );
 }

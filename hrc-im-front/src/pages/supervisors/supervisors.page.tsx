@@ -1,3 +1,4 @@
+import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { SupervisorsTable } from "../../components/supervisors/supervisors-table.components";
@@ -22,6 +23,7 @@ const SupervisorsPage = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

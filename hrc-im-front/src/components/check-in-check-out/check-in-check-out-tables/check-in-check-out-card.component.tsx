@@ -24,7 +24,7 @@ export const CheckInCheckOutCard : React.FC<InternCardProps> = ({
     };
 
     return (
-        <div className='intern-card'>
+        <div className='intern-card-variation'>
         <div className={`intern-type  ${tipo === 'INTERNO' ? 'interno' : 'externo'}`}>
              <span >{`PRACTICANTE ${tipo}`}</span>
         </div>

@@ -5,6 +5,7 @@ import "./interns.page.css";
 import { RegisterRow } from "../../components/inputs/register-row.component";
 import { ButtonComponent } from "../../components/buttons/buttons.component";
 import { TestEnvio } from "../../api/api-request";
+import { Footer } from "../../components/navbars/footer.component";
 
 const InternRegisterPage = () => {
   const [selectedType, setSelectedType] = useState("Interno");
@@ -242,6 +243,7 @@ const InternRegisterPage = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };
