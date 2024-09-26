@@ -32,7 +32,7 @@ async function bootstrap() {
 
   logger.log('Server information');
   logger.log(`Server running on: ${baseUrl}`);
-  logger.log(`Welcome on: ${baseUrl}/bienvenida`);
+  logger.log(`Welcome on: ${baseUrl}/test`);
   logger.log(`Swagger documentation available at: ${baseUrl}/api`);
 }
 bootstrap();

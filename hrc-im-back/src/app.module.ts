@@ -14,7 +14,7 @@ import dbConfigProduction from './configs/db.config.production';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env.development.local',
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       expandVariables: true,
       load: [dbConfig, dbConfigProduction],
       validationSchema: JoiValidationSchema,
