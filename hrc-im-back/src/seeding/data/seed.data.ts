@@ -22,7 +22,7 @@ export const initialData: SeedData = {
       firstName: 'MARTIN',
       lastName: 'MARTINEZ ARIAS',
       email: 'for.any.app.testing@gmail.com',
-      password: 'for.any.app.testing',
+      password: 'Generico2024$$',
       userRole: UserRole.ADMINISTRATOR,
       createdAt: new Date(),
     },

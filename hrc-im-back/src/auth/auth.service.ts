@@ -8,8 +8,8 @@ import * as argon2 from 'argon2';
 import {
   INVALID_CREDENTIALS,
   INVALID_USER_OR_MISSING_REFRESH_TOKEN,
-  LOGOUT_SUCCESS,
   REFRESH_TOKEN_DOES_NOT_MATCH,
+  USER_LOGGED,
   USER_NOT_FOUND,
   USER_NOT_REGISTERED,
 } from 'src/common/constants/constants';
@@ -97,9 +97,9 @@ export class AuthService {
     return { id: userId };
   }
 
-  async signOut(userId: string) {
+  async logout(userId: string) {
     await this.usersService.updateHashedRefreshToken(userId, null);
-    return { message: `${LOGOUT_SUCCESS}` };
+    return { message: `${USER_LOGGED}` };
   }
 
   // valido cuando el rol es dinamico

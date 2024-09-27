@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsEnum,
@@ -8,30 +9,47 @@ import {
 import { UserRole } from 'src/common';
 
 export class CreateUserDto {
+  @ApiProperty({
+    example: 'Martin',
+    nullable: false,
+  })
   @IsNotEmpty()
   @IsString()
   firstName: string;
 
+  @ApiProperty({
+    example: 'Martinez Arias',
+    nullable: false,
+  })
   @IsNotEmpty()
   @IsString()
   lastName: string;
 
+  @ApiProperty({
+    example: 'martin@gmail.com',
+    description: "The user's email. Only unique emails.",
+    uniqueItems: true,
+    nullable: false,
+  })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @ApiProperty({
+    example: 'martin-password',
+    description:
+      "The user's password. This can be empty by the login through google but it is optional.",
+    nullable: true,
+  })
   @IsString()
-  // LA CONTRASEÑA PUEDE MANDARSE PERO NO ES NECESARIA PARA LA CREACION
-  // YA QUE CUANDO INICIEN SESION CON GOOGLE, EL PROVEEDOR DE GOOGLE NOS DARA LA CONTRASEÑA
-  // @Matches(/^(?=.*[A-Z])(?=.*[!@#$&*])[A-Za-z\d!@#$&*]{10,}$/, {
-  //   message:
-  //     'Password must be at least 10 characters long, contain one uppercase letter, and one special character.',
-  // })
   password: string;
 
+  @ApiProperty({
+    example: UserRole,
+    description: 'The possible role that the user can obtain.',
+    nullable: true,
+  })
   @IsEnum(UserRole)
   @IsOptional()
   userRole?: UserRole;
-
-  createdAt?: Date;
 }

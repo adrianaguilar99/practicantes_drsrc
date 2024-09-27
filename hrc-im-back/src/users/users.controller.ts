@@ -9,27 +9,55 @@ import {
   Query,
   Req,
   HttpCode,
-  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { Public, UserRoles } from 'src/auth/decorators';
 import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserRoles } from 'src/auth/decorators';
+import {
+  BAD_REQUEST,
+  CONFLICT_ERROR,
+  CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
+  INTERNAL_SERVER_ERROR,
+  READ_ALL_RECORDS,
+  READ_ALL_RECORDS_PAGINATED,
+  READ_RECORD,
+  REMOVE_ALL_RECORDS,
+  REMOVE_RECORD,
+  SUCCESSFUL_CREATION,
   SUCCESSFUL_DELETION,
   SUCCESSFUL_FETCH,
+  UNAUTHORIZED_ACCESS,
   USER_REGISTERED,
 } from 'src/common/constants/constants';
 import { IApiResponse, PaginationDto, UserRole } from 'src/common';
+import { User } from './entities/user.entity';
 
 @ApiTags('Users')
+@ApiBearerAuth()
+@ApiResponse({ status: 401, description: UNAUTHORIZED_ACCESS })
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Public()
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: CREATE_RECORD })
+  @ApiResponse({
+    status: 201,
+    description: SUCCESSFUL_CREATION,
+    type: User,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(201)
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createUserDto: CreateUserDto,
   ): Promise<IApiResponse<any>> {
@@ -37,8 +65,15 @@ export class UsersController {
     return { message: USER_REGISTERED, data: createdUser };
   }
 
+  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [User],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Get()
-  @HttpCode(HttpStatus.OK)
   async findAll(): Promise<IApiResponse<any>> {
     const allUsers = await this.usersService.findAll();
     return {
@@ -48,8 +83,15 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: READ_ALL_RECORDS_PAGINATED })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [User],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Get('paginated')
-  @HttpCode(HttpStatus.OK)
   async findAllPaginated(
     @Query() paginationDto: PaginationDto,
   ): Promise<IApiResponse<any>> {
@@ -62,8 +104,15 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: READ_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: User,
+  })
+  @ApiResponse({ status: 404, description: BAD_REQUEST })
+  @HttpCode(200)
   @Get('profile')
-  @HttpCode(HttpStatus.OK)
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
     const user = await this.usersService.findByEmail(req.user.id);
     const { password, ...userWithoutPassword } = user;
@@ -73,8 +122,15 @@ export class UsersController {
     };
   }
 
+  @ApiOperation({ summary: READ_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: User,
+  })
+  @ApiResponse({ status: 404, description: BAD_REQUEST })
+  @HttpCode(200)
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
@@ -85,9 +141,17 @@ export class UsersController {
     };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR)
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_DELETION,
+    type: User,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Delete(':id')
-  @HttpCode(HttpStatus.OK)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
@@ -95,8 +159,15 @@ export class UsersController {
     return { message: SUCCESSFUL_DELETION, data: userRemoved };
   }
 
+  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_DELETION,
+    type: User,
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Delete()
-  @HttpCode(HttpStatus.OK)
   async removeAll(): Promise<IApiResponse<any>> {
     const usersRemoved = await this.usersService.removeAllUsers();
     return { message: SUCCESSFUL_DELETION, data: usersRemoved };
