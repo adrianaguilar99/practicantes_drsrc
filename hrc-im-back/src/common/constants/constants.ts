@@ -22,6 +22,8 @@ export const SUCCESSFUL_SEED = 'Action to register users using a seed.';
 export const SUCCESSFUL_DELETION = 'Resource(s) successfully deleted.';
 export const SUCCESSFUL_UPDATE = 'Resource successfully updated.';
 export const SUCCESSFUL_FETCH = 'Data fetched successfully.';
+export const SUCCESSFUL_MARKED_DELETED = 'User marked as deleted.';
+export const SUCCESSFUL_ALL_MARKED_DELETED = 'All users marked as deleted.';
 
 // 400 - 499
 export const UNAUTHORIZED_ACCESS = 'Unauthorized access.';

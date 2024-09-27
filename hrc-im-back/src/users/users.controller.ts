@@ -30,14 +30,17 @@ import {
   READ_RECORD,
   REMOVE_ALL_RECORDS,
   REMOVE_RECORD,
+  SUCCESSFUL_ALL_MARKED_DELETED,
   SUCCESSFUL_CREATION,
-  SUCCESSFUL_DELETION,
   SUCCESSFUL_FETCH,
+  SUCCESSFUL_MARKED_DELETED,
   UNAUTHORIZED_ACCESS,
   USER_REGISTERED,
 } from 'src/common/constants/constants';
-import { IApiResponse, PaginationDto, UserRole } from 'src/common';
 import { User } from './entities/user.entity';
+import { UserRole } from 'src/common/enums';
+import { IApiResponse } from 'src/common/interfaces/response.interface';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -145,7 +148,7 @@ export class UsersController {
   @ApiOperation({ summary: REMOVE_RECORD })
   @ApiResponse({
     status: 200,
-    description: SUCCESSFUL_DELETION,
+    description: SUCCESSFUL_MARKED_DELETED,
     type: User,
   })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
@@ -156,20 +159,20 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
     const userRemoved = await this.usersService.remove(id);
-    return { message: SUCCESSFUL_DELETION, data: userRemoved };
+    return { message: SUCCESSFUL_MARKED_DELETED, data: userRemoved };
   }
 
   @ApiOperation({ summary: REMOVE_ALL_RECORDS })
   @ApiResponse({
     status: 200,
-    description: SUCCESSFUL_DELETION,
+    description: SUCCESSFUL_ALL_MARKED_DELETED,
     type: User,
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    const usersRemoved = await this.usersService.removeAllUsers();
-    return { message: SUCCESSFUL_DELETION, data: usersRemoved };
+    await this.usersService.removeAllUsers();
+    return { message: SUCCESSFUL_ALL_MARKED_DELETED };
   }
 }

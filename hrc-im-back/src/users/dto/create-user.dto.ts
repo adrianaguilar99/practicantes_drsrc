@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UserRole } from 'src/common';
+import { UserRole } from 'src/common/enums';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -36,12 +36,13 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    example: 'martin-password',
+    example: 'generic-password',
     description:
-      "The user's password. This can be empty by the login through google but it is optional.",
-    nullable: true,
+      "The user's password. It is required and can be generic if the user logs in through Google.",
+    nullable: false,
   })
   @IsString()
+  @IsNotEmpty()
   password: string;
 
   @ApiProperty({

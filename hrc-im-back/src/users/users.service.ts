@@ -53,7 +53,9 @@ export class UsersService {
 
   async findAll() {
     try {
-      const users = await this.usersRepository.find();
+      const users = await this.usersRepository.find({
+        where: { isDeleted: false },
+      });
       const withoutPassword = users.map(({ password, ...rest }) => rest);
       return withoutPassword;
     } catch (error) {
@@ -67,6 +69,7 @@ export class UsersService {
   }: PaginationDto) {
     try {
       const users = await this.usersRepository.find({
+        where: { isDeleted: false },
         take: limit,
         skip: offset,
       });
@@ -79,7 +82,7 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this.usersRepository.findOne({
-      where: { id },
+      where: { id, isDeleted: false },
       select: [
         'id',
         'firstName',
@@ -95,15 +98,19 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.usersRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({
+      where: { email, isDeleted: false },
+    });
     if (!user) throw new NotFoundException(`${NOT_FOUND}`);
     return user;
   }
 
   async remove(id: string) {
     const userToRemove = await this.findOne(id);
+    if (!userToRemove) throw new NotFoundException(`${USER_NOT_FOUND}`);
+    userToRemove.isDeleted = true;
     try {
-      const removedUser = await this.usersRepository.remove(userToRemove);
+      const removedUser = await this.usersRepository.save(userToRemove);
       return removedUser;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -111,10 +118,8 @@ export class UsersService {
   }
 
   async removeAllUsers() {
-    const query = this.usersRepository.createQueryBuilder('user');
     try {
-      const usersRemoved = await query.delete().where({}).execute();
-      return usersRemoved;
+      await this.usersRepository.update({}, { isDeleted: true });
     } catch (error) {
       handleInternalServerError(error.message);
     }
