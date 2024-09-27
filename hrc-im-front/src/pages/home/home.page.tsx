@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Footer } from "../../components/navbars/footer.component";
 
 const HomePage = () => {
-  const [userRol, setUserRol] = useState("Admin");
+  const [userRol, setUserRol] = useState("Supervisor");
 
   const pageVariants = {
     initial: { opacity: 0, scale: 0.8 },
