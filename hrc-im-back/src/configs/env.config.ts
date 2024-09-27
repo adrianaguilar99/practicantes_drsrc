@@ -34,4 +34,5 @@ export const ENV = {
     SECRET: process.env.GOOGLE_SECRET,
     CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
   },
+  FRONT_URL_REDIRECT: process.env.FRONT_URL_REDIRECT,
 };
