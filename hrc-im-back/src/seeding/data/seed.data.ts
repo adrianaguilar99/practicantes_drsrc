@@ -1,4 +1,4 @@
-import { UserRole } from 'src/common';
+import { UserRole } from 'src/common/enums';
 import { v4 as uuidv4 } from 'uuid';
 
 interface SeedUser {
@@ -22,7 +22,7 @@ export const initialData: SeedData = {
       firstName: 'MARTIN',
       lastName: 'MARTINEZ ARIAS',
       email: 'for.any.app.testing@gmail.com',
-      password: 'for.any.app.testing',
+      password: 'Generico2024$$',
       userRole: UserRole.ADMINISTRATOR,
       createdAt: new Date(),
     },
