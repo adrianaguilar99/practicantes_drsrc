@@ -518,6 +518,12 @@ padding-right: 5%;
     size: 10vh;
   }
   
+
+.intern-view-left-container{
+    display: flex;
+    align-items: center;
+}
+
   .intern-view-name-container {
     display: flex;
     justify-content: center;

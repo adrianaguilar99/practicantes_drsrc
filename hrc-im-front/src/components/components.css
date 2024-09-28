@@ -812,7 +812,7 @@ Navbar-Elements
 
 
 .notifications-table{
-    max-height: 75vh;
+    max-height: 65vh;
     padding: 0% 10%;
     overflow: scroll;
     overflow-x: hidden;

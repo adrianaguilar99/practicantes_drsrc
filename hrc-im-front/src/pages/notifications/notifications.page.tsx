@@ -8,7 +8,7 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { Footer } from "../../components/navbars/footer.component";
 
 const NotificationsPage = () => {
-  const [userRol, setUserRol] = useState<string>("Intern");
+  const [userRol, setUserRol] = useState<string>("Admin");
   return (
     <div className="body-page">
       <Navbar />

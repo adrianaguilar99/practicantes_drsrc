@@ -15,7 +15,8 @@
     flex-direction: column;
     width: 100%;
     padding: 0% 5%;
-    gap: 5%;    
+    overflow: auto;
+    max-height: 80vh;
 }
 .profile-data-container-left-column{
     width: 60%;
@@ -40,8 +41,10 @@
 .profile-data-container-header{
     display: flex;
     gap: 5%;
+    font-family: 'Lato', sans-serif;
     align-items: center;
     margin-bottom: 5%;
+    color: #444444;
 }
 
 @media screen and (max-width: 767px) {
@@ -111,5 +114,6 @@ Progress Section
     padding: 5%;
     border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 5%;
 }
 

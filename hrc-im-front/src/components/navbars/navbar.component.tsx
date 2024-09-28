@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 
 export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [userRol, setUserRol] = useState("Admin");
+  const [userRol, setUserRol] = useState("Intern");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);

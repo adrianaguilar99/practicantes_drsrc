@@ -7,8 +7,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
 import PieChartRoundedIcon from "@mui/icons-material/PieChartRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import { motion } from "framer-motion"; // Importamos Framer Motion
-import { Footer } from "../../components/navbars/footer.component";
+import { motion } from "framer-motion";
 
 export const InternViewPage = () => {
   const navigate = useNavigate(); // Utilizamos para cambiar de vista
@@ -65,29 +64,6 @@ export const InternViewPage = () => {
                 <h3>Notificaciones</h3>
               </motion.div>
             </Link>
-
-            {/* Mi progreso */}
-            <motion.div
-              className="intern-view-card"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => navigate("/progress")} // Navegamos a la página de progreso
-            >
-              <PieChartRoundedIcon sx={{ fontSize: "4.5rem" }} />
-              <h3>Mi progreso</h3>
-            </motion.div>
-
-            {/* Configuración */}
-            <Link to="/settings" style={{ textDecoration: "none" }}>
-              <motion.div
-                className="intern-view-card"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <SettingsRoundedIcon sx={{ fontSize: "4.5rem" }} />
-                <h3>Configuración</h3>
-              </motion.div>
-            </Link>
           </div>
         </section>
         <section className="intern-view-right-container">
@@ -121,7 +97,6 @@ export const InternViewPage = () => {
           </div>
         </section>
       </div>
-      <Footer />
     </motion.div>
   );
 };
