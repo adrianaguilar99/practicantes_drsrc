@@ -18,14 +18,14 @@ import { User } from './entities/user.entity';
 import { handleInternalServerError } from 'src/common/utils';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
   ) {}
   async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
     try {
-      const result = await this.userRepository.update(
+      const result = await this.usersRepository.update(
         { id: userId },
         { hashedRefreshToken },
       );
@@ -39,9 +39,9 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const newUser = this.userRepository.create(createUserDto);
+    const newUser = this.usersRepository.create(createUserDto);
     try {
-      const savedUser = await this.userRepository.save(newUser);
+      const savedUser = await this.usersRepository.save(newUser);
       const { password, ...createdUser } = savedUser;
       return createdUser;
     } catch (error) {
@@ -53,7 +53,9 @@ export class UserService {
 
   async findAll() {
     try {
-      const users = await this.userRepository.find();
+      const users = await this.usersRepository.find({
+        where: { isDeleted: false },
+      });
       const withoutPassword = users.map(({ password, ...rest }) => rest);
       return withoutPassword;
     } catch (error) {
@@ -66,7 +68,8 @@ export class UserService {
     offset = OFFSET_RECORDS,
   }: PaginationDto) {
     try {
-      const users = await this.userRepository.find({
+      const users = await this.usersRepository.find({
+        where: { isDeleted: false },
         take: limit,
         skip: offset,
       });
@@ -78,8 +81,8 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    const user = await this.userRepository.findOne({
-      where: { id },
+    const user = await this.usersRepository.findOne({
+      where: { id, isDeleted: false },
       select: [
         'id',
         'firstName',
@@ -95,15 +98,19 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({
+      where: { email, isDeleted: false },
+    });
     if (!user) throw new NotFoundException(`${NOT_FOUND}`);
     return user;
   }
 
   async remove(id: string) {
     const userToRemove = await this.findOne(id);
+    if (!userToRemove) throw new NotFoundException(`${USER_NOT_FOUND}`);
+    userToRemove.isDeleted = true;
     try {
-      const removedUser = await this.userRepository.remove(userToRemove);
+      const removedUser = await this.usersRepository.save(userToRemove);
       return removedUser;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -111,10 +118,8 @@ export class UserService {
   }
 
   async removeAllUsers() {
-    const query = this.userRepository.createQueryBuilder('user');
     try {
-      const usersRemoved = await query.delete().where({}).execute();
-      return usersRemoved;
+      await this.usersRepository.update({}, { isDeleted: true });
     } catch (error) {
       handleInternalServerError(error.message);
     }

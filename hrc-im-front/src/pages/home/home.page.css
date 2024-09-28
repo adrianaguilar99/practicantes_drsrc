@@ -25,6 +25,7 @@
     position: absolute;
     top: 10%;
     left: 50%;
+    z-index: 1;
     transform: translate(-50%, -50%);
     color: #ffffff;
     font-family: "Major Mono Display", monospace;
