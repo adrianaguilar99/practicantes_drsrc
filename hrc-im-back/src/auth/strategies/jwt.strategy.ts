@@ -21,9 +21,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: AuthJwtPayload) {
-    const { sub: userId, role } = payload;
+    const { sub: userId, lastName, firstName, role } = payload;
     // valido cuando el rol del usuario es dinamico
     // return this.authService.validateJwtUser(userId);
-    return { userId, role };
+    return { userId, lastName, firstName, role };
   }
 }

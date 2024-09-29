@@ -5,13 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  LIMIT_RECORDS,
   NOT_FOUND,
-  OFFSET_RECORDS,
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -54,7 +51,7 @@ export class UsersService {
   async findAll() {
     try {
       const users = await this.usersRepository.find({
-        where: { isDeleted: false },
+        where: { isActive: true },
       });
       const withoutPassword = users.map(({ password, ...rest }) => rest);
       return withoutPassword;
@@ -63,26 +60,26 @@ export class UsersService {
     }
   }
 
-  async findAllPaginated({
-    limit = LIMIT_RECORDS,
-    offset = OFFSET_RECORDS,
-  }: PaginationDto) {
-    try {
-      const users = await this.usersRepository.find({
-        where: { isDeleted: false },
-        take: limit,
-        skip: offset,
-      });
-      const withoutPassword = users.map(({ password, ...rest }) => rest);
-      return withoutPassword;
-    } catch (error) {
-      handleInternalServerError(error.message);
-    }
-  }
+  // async findAllPaginated({
+  //   limit = LIMIT_RECORDS,
+  //   offset = OFFSET_RECORDS,
+  // }: PaginationDto) {
+  //   try {
+  //     const users = await this.usersRepository.find({
+  //       where: { isActive: true },
+  //       take: limit,
+  //       skip: offset,
+  //     });
+  //     const withoutPassword = users.map(({ password, ...rest }) => rest);
+  //     return withoutPassword;
+  //   } catch (error) {
+  //     handleInternalServerError(error.message);
+  //   }
+  // }
 
   async findOne(id: string) {
     const user = await this.usersRepository.findOne({
-      where: { id, isDeleted: false },
+      where: { id, isActive: true },
       select: [
         'id',
         'firstName',
@@ -99,7 +96,7 @@ export class UsersService {
 
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
-      where: { email, isDeleted: false },
+      where: { email, isActive: true },
     });
     if (!user) throw new NotFoundException(`${NOT_FOUND}`);
     return user;
@@ -108,7 +105,7 @@ export class UsersService {
   async remove(id: string) {
     const userToRemove = await this.findOne(id);
     if (!userToRemove) throw new NotFoundException(`${USER_NOT_FOUND}`);
-    userToRemove.isDeleted = true;
+    userToRemove.isActive = false;
     try {
       const removedUser = await this.usersRepository.save(userToRemove);
       return removedUser;
@@ -117,9 +114,9 @@ export class UsersService {
     }
   }
 
-  async removeAllUsers() {
+  async removeAll() {
     try {
-      await this.usersRepository.update({}, { isDeleted: true });
+      await this.usersRepository.update({}, { isActive: false });
     } catch (error) {
       handleInternalServerError(error.message);
     }
