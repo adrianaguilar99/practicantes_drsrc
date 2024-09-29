@@ -34,6 +34,7 @@ import {
   USER_LOGOUT,
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
+import { ENV } from 'src/configs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -44,6 +45,7 @@ export class AuthController {
   @ApiOperation({ summary: LOGIN_USER })
   @ApiResponse({ status: 201, description: USER_LOGGED })
   @ApiResponse({ status: 401, description: INVALID_CREDENTIALS })
+  @ApiResponse({ status: 404, description: USER_NOT_FOUND })
   @HttpCode(201)
   @Post('login')
   async login(@Body() loginAuthDto: LoginAuthDto, @Request() req) {
@@ -94,7 +96,7 @@ export class AuthController {
     const { id } = req.user;
     const { accessToken, refreshToken } = await this.authService.login(id);
     res.redirect(
-      `http://localhost:5173?token=${accessToken}&refreshToken=${refreshToken}`,
+      `${ENV.FRONT_URL_REDIRECT}?token=${accessToken}&refreshToken=${refreshToken}`,
     );
   }
 }

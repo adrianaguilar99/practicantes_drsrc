@@ -10,6 +10,7 @@ import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
 import { ApiProperty } from '@nestjs/swagger';
 import { Career } from 'src/careers/entities/career.entity';
 import { UserRole } from 'src/common/enums';
+import { getCurrentTimestamp } from 'src/common/utils/';
 
 @Entity('users')
 export class User {
@@ -52,7 +53,7 @@ export class User {
     nullable: false,
   })
   @Column({ type: 'varchar', nullable: false })
-  password: string;
+  password?: string;
 
   @ApiProperty({
     example: '[jwt-token]',
@@ -81,25 +82,23 @@ export class User {
     example: '2024-01-01 00:00:00.000',
     description: 'The time the user was created.',
   })
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @Column({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ type: 'boolean', default: false })
-  isDeleted: boolean;
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   @OneToMany(() => Career, (careers) => careers.submittedBy)
   careers: Career[];
 
   @BeforeInsert()
-  async setPasswordAndEmail() {
+  async setCreation?() {
     this.email = this.email.toLowerCase();
     await this.hashPassword();
+    this.createdAt = getCurrentTimestamp();
   }
 
-  private async hashPassword() {
+  private async hashPassword?() {
     this.password = await bcrypt.hash(this.password, BCRYPT_SALT_ROUNDS);
   }
 }

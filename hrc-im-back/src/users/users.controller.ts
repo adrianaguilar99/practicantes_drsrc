@@ -26,7 +26,6 @@ import {
   FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   READ_ALL_RECORDS,
-  READ_ALL_RECORDS_PAGINATED,
   READ_RECORD,
   REMOVE_ALL_RECORDS,
   REMOVE_RECORD,
@@ -40,11 +39,13 @@ import {
 import { User } from './entities/user.entity';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@ApiResponse({ status: 401, description: UNAUTHORIZED_ACCESS })
+@ApiResponse({
+  status: 401,
+  description: `${UNAUTHORIZED_ACCESS} Please login`,
+})
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -86,26 +87,26 @@ export class UsersController {
     };
   }
 
-  @ApiOperation({ summary: READ_ALL_RECORDS_PAGINATED })
-  @ApiResponse({
-    status: 200,
-    description: SUCCESSFUL_FETCH,
-    type: [User],
-  })
-  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Get('paginated')
-  async findAllPaginated(
-    @Query() paginationDto: PaginationDto,
-  ): Promise<IApiResponse<any>> {
-    const paginatedUsers =
-      await this.usersService.findAllPaginated(paginationDto);
-    return {
-      message: SUCCESSFUL_FETCH,
-      data: paginatedUsers,
-      records: paginatedUsers.length,
-    };
-  }
+  // @ApiOperation({ summary: READ_ALL_RECORDS_PAGINATED })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: SUCCESSFUL_FETCH,
+  //   type: [User],
+  // })
+  // @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  // @HttpCode(200)
+  // @Get('paginated')
+  // async findAllPaginated(
+  //   @Query() paginationDto: PaginationDto,
+  // ): Promise<IApiResponse<any>> {
+  //   const paginatedUsers =
+  //     await this.usersService.findAllPaginated(paginationDto);
+  //   return {
+  //     message: SUCCESSFUL_FETCH,
+  //     data: paginatedUsers,
+  //     records: paginatedUsers.length,
+  //   };
+  // }
 
   @ApiOperation({ summary: READ_RECORD })
   @ApiResponse({
@@ -172,7 +173,7 @@ export class UsersController {
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    await this.usersService.removeAllUsers();
+    await this.usersService.removeAll();
     return { message: SUCCESSFUL_ALL_MARKED_DELETED };
   }
 }

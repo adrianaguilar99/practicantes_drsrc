@@ -26,7 +26,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifyCallback,
   ) {
-    // console.log({ profile, photos: profile.photos }); // para ver el perfil que regresa google hay que ir al endpoint login de google
     const user = await this.authService.validateGoogleUser({
       firstName: profile.name.givenName,
       lastName: profile.name.familyName,

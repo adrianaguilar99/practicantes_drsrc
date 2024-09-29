@@ -15,6 +15,9 @@ export const SUCCESSFUL_REFRESH_TOKEN = 'Token successfully refreshed.';
 export const USER_ROLES_KEY = 'userRoles';
 export const IS_PUBLIC_KEY = 'IS_PUBLIC';
 
+// CORS
+export const CORS_POLICY = 'CORS policy: This origin is not allowed.';
+
 // MESSAGES FOR RESPONSES
 // 200 - 299
 export const SUCCESSFUL_CREATION = 'Resource successfully created.';
