@@ -12,7 +12,7 @@ export class SeedingService {
   }
 
   private async insertNewUsers() {
-    await this.usersRepositoy.removeAllUsers();
+    await this.usersRepositoy.removeAll();
 
     const users = initialData.users;
 

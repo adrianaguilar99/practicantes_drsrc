@@ -8,52 +8,148 @@ import {
   Delete,
   Req,
   ParseUUIDPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { CareersService } from './careers.service';
 import { CreateCareerDto } from './dto/create-career.dto';
 import { UpdateCareerDto } from './dto/update-career.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserRole } from 'src/common/enums';
 import { UserRoles } from 'src/auth/decorators';
-import { User } from 'src/users/entities/user.entity';
+import {
+  CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  READ_ALL_RECORDS,
+  READ_RECORD,
+  REMOVE_ALL_RECORDS,
+  REMOVE_RECORD,
+  SUCCESSFUL_CREATION,
+  SUCCESSFUL_DELETION,
+  SUCCESSFUL_FETCH,
+  SUCCESSFUL_UPDATE,
+  UNAUTHORIZED_ACCESS,
+  UPDATE_RECORD,
+} from 'src/common/constants/constants';
+import { Career } from './entities/career.entity';
+import { IApiResponse } from 'src/common/interfaces/response.interface';
 
 @ApiTags('Careers')
 @Controller('careers')
+@ApiResponse({
+  status: 401,
+  description: `${UNAUTHORIZED_ACCESS} Please login`,
+})
 export class CareersController {
   constructor(private readonly careersService: CareersService) {}
 
-  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR)
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({ summary: CREATE_RECORD })
+  @ApiResponse({ status: 201, description: SUCCESSFUL_CREATION, type: Career })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(201)
   @Post()
-  async create(@Body() createCareerDto: CreateCareerDto, @Req() req) {
-    const user: User = req.user;
-    return await this.careersService.create(createCareerDto, user);
+  async create(
+    @Body() createCareerDto: CreateCareerDto,
+    @Req() req,
+  ): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const createdCareer = await this.careersService.create(
+      createCareerDto,
+      user,
+    );
+    return { message: SUCCESSFUL_CREATION, data: createdCareer };
   }
 
+  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @ApiResponse({ status: 200, description: SUCCESSFUL_FETCH, type: [Career] })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Get()
-  findAll() {
-    return this.careersService.findAll();
+  async findAll(@Req() req): Promise<IApiResponse<any>> {
+    const user = req.user;
+    console.log(user);
+
+    const allCareers = await this.careersService.findAll(user);
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allCareers,
+      records: allCareers.length,
+    };
   }
 
+  @ApiOperation({ summary: READ_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: Career,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.careersService.findOne(id);
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IApiResponse<any>> {
+    const career = await this.careersService.findOne(id);
+    return { message: SUCCESSFUL_FETCH, data: career };
   }
+
   @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: UPDATE_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_UPDATE,
+    type: Career,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCareerDto: UpdateCareerDto,
     @Req() req,
-  ) {
-    const user: User = req.user;
-    console.log(user);
-    return this.careersService.update(id, updateCareerDto, user);
+  ): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const updatedCareer = await this.careersService.update(
+      id,
+      updateCareerDto,
+      user,
+    );
+    return { message: SUCCESSFUL_UPDATE, data: updatedCareer };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_DELETION,
+  })
+  @HttpCode(200)
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
-    const user: User = req.user;
-    return this.careersService.remove(id, user);
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
+  ): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const deletedCareer = await this.careersService.remove(id, user);
+    return { message: SUCCESSFUL_DELETION, data: deletedCareer };
+  }
+
+  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_DELETION,
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Delete()
+  async removeAll(): Promise<IApiResponse<any>> {
+    await this.careersService.removeAll();
+    return { message: SUCCESSFUL_DELETION };
   }
 }

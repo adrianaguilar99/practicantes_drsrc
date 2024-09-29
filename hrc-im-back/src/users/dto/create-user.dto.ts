@@ -43,7 +43,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  password: string;
+  password?: string;
 
   @ApiProperty({
     example: UserRole,

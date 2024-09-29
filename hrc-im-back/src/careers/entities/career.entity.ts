@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SubmissionStatus } from 'src/common/enums';
+import { getCurrentTimestamp } from 'src/common/utils/';
 import { User } from 'src/users/entities/user.entity';
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -32,10 +34,7 @@ export class Career {
     example: '2024-01-01 00:00:00.000',
     description: 'The time the career was submitted.',
   })
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @Column({ type: 'timestamp' })
   submission_date: Date;
 
   @ApiProperty({
@@ -64,4 +63,9 @@ export class Career {
   })
   @JoinColumn({ name: 'userId' })
   submittedBy: User;
+
+  @BeforeInsert()
+  setCreation() {
+    this.submission_date = getCurrentTimestamp();
+  }
 }

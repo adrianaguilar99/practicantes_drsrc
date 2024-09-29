@@ -33,5 +33,3 @@ import dbConfigProduction from './configs/db.config.production';
   providers: [AppService],
 })
 export class AppModule {}
-
-// console.log(ENV);
