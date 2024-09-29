@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { login } from '../redux/auth-redux/authSlice'; // Asegúrate de que la ruta sea correcta
+import { login, logout } from '../redux/auth-redux/authSlice'; // Asegúrate de que la ruta sea correcta
 import { encryptData } from './encrypt-data.function';
 import { se } from 'date-fns/locale';
 
@@ -57,4 +57,15 @@ export function convertToken(accessToken: string) {
     const tokenData = JSON.parse(decodedPayload);
     console.log('tokenData', tokenData);
     return tokenData; 
+}
+
+
+export function useLogout() {
+    const dispatch = useDispatch();
+    const logoutfunction = () => {
+        sessionStorage.clear();
+        dispatch(login(''));
+        dispatch(logout());
+    };
+    return logoutfunction ;
 }

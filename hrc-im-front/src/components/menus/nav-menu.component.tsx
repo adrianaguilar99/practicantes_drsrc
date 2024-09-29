@@ -1,6 +1,7 @@
 import { Menu, MenuItem, Typography } from "@mui/material";
 import React from "react";
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
+import { useLogout } from "../../functions/auth.function";
 
 interface NavMenuProps {
     anchorEl: null | HTMLElement;
@@ -33,7 +34,7 @@ export const NavMenu: React.FC<NavMenuProps> = ({ anchorEl, closeUserMenu }) => 
             onClose={closeUserMenu} 
         >
             {settings.map((setting) => (
-                <MenuItem key={setting.name} onClick={closeUserMenu}>
+                <MenuItem key={setting.name} onClick={useLogout()}>
                     {setting.icon}
                     <Typography sx={{ textAlign: "center", ml: 1 }}>
                         {setting.name}

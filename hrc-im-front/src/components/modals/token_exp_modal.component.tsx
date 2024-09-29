@@ -29,10 +29,14 @@ export function ManageTokenModal() {
     }, []);
 
     const handleConfirmSave = async () => {
-        setSaveEdit(false);
+       
         const token = await getNewToken(sessionStorage.getItem('_refreshToken') as string);
         if (token) {
+            sessionStorage.setItem('_Token', token.accessToken);
+            sessionStorage.setItem('_refreshToken', token.refreshToken);
+            sessionStorage.setItem('_exp_token', token.exp);
             console.log(token);
+            setSaveEdit(false);
             enqueueSnackbar('La sesión se ha actualizado', { variant: 'success' });
         }
         else{

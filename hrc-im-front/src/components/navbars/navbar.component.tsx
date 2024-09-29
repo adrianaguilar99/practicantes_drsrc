@@ -147,7 +147,7 @@ export const Navbar = () => {
       {userRol === "INTERN" ? (
         <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} />
       ) : null}
-      {userRol === "ADMINISTRATOR" || userRol === "Supervisor" ? (
+      {userRol === "ADMINISTRATOR" || userRol === "SUPERVISOR" ||  userRol === "SUPERVISOR_RH"   ? (
         <NavMenu anchorEl={anchorEl} closeUserMenu={handleCloseUserMenu} />
       ) : null}
       <Sidebar/>
