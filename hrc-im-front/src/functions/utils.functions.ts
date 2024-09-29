@@ -1,5 +1,5 @@
 import { setIndex } from "../redux/sidebar-redux/sidebarSlice";
-import { store } from "../redux/sidebar-redux/store";
+import { store } from "../redux/store";
 
 //Get url from path
 export function GetUrl() {

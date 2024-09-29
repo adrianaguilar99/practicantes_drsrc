@@ -4,7 +4,6 @@ import { SetStateAction, useState } from "react";
 import "./interns.page.css";
 import { RegisterRow } from "../../components/inputs/register-row.component";
 import { ButtonComponent } from "../../components/buttons/buttons.component";
-import { TestEnvio } from "../../api/api-request";
 import { Footer } from "../../components/navbars/footer.component";
 
 const InternRegisterPage = () => {
@@ -38,24 +37,24 @@ const InternRegisterPage = () => {
   
 
   const RegisterNewIntern = () => {
-    TestEnvio({
-      name: InternName,
-      email: InternEmail,
-      type: InternType,
-      university: InternUniversity,
-      program: InternProgram,
-      universityId: InternID,
-      universityphone: InternInstitutePhone,
-      oldDepartment: InternOldDepartment,
-      phone: InternPhone,
-      supervisor: InternSupervisor,
-      department: InternDepartment,
-      beginDate: InterBeginDate,
-      endDate: InternEndDate,
-      checkin: InternCheckIn,
-      checkout: InternCheckOut,
-      totalTime: InternTotalTime,
-    })
+    // TestEnvio({
+    //   name: InternName,
+    //   email: InternEmail,
+    //   type: InternType,
+    //   university: InternUniversity,
+    //   program: InternProgram,
+    //   universityId: InternID,
+    //   universityphone: InternInstitutePhone,
+    //   oldDepartment: InternOldDepartment,
+    //   phone: InternPhone,
+    //   supervisor: InternSupervisor,
+    //   department: InternDepartment,
+    //   beginDate: InterBeginDate,
+    //   endDate: InternEndDate,
+    //   checkin: InternCheckIn,
+    //   checkout: InternCheckOut,
+    //   totalTime: InternTotalTime,
+    // })
   };
 
   const Universidades = [

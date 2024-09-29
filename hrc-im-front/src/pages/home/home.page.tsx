@@ -5,9 +5,12 @@ import { useState } from "react";
 import { InternViewPage } from "../Interns/intern-view.page";
 import { motion } from "framer-motion";
 import { Footer } from "../../components/navbars/footer.component";
+import { useSelector } from "react-redux";
+import { decryptData } from "../../functions/encrypt-data.function";
+import { RootState } from "../../redux/store";
 
 const HomePage = () => {
-  const [userRol, setUserRol] = useState("Admin");
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
 
   const pageVariants = {
     initial: { opacity: 0, scale: 0.8 },
@@ -25,7 +28,7 @@ const HomePage = () => {
     <>
       <div className="body-page">
         <Navbar />
-        {userRol === "Intern" ? (
+        {userRol === "INTERN" ? (
           <InternViewPage />
         ) : (
           <motion.div

@@ -6,16 +6,17 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import "../components.css";
 import { useNavigate } from "react-router-dom";
-import { AppDispatch, RootState } from '../../redux/sidebar-redux/store';
-import { setIndex } from '../../redux/sidebar-redux/sidebarSlice';
-import { useState } from 'react';
+import { AppDispatch, RootState } from '../../redux/store';
+import { setIndex, setSidebarOpen } from '../../redux/sidebar-redux/sidebarSlice'; // Importamos la acción para cerrar el sidebar
+import { useEffect } from 'react';
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
+import { decryptData } from '../../functions/encrypt-data.function';
 
-interface MenuItem {
-  userRol: string;
-}
-export const Sidebar: React.FC<MenuItem> = ({userRol}) => {
+
+
+export const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const navigate = useNavigate();
 
   const index = useSelector((state: RootState) => state.sidebar.index);
@@ -37,16 +38,35 @@ export const Sidebar: React.FC<MenuItem> = ({userRol}) => {
   ];
 
   const getMenuItems = () => {
-    if (userRol === "Admin") {
+    if (userRol === "ADMINISTRATOR") {
       return menuItemsAdmin;
-    } else if (userRol === "Supervisor") {
+    } else if (userRol === "SUPERVISOR" || userRol === "SUPERVISOR_RH") {
       return menuItemsSupervisor;
     }
     return [];
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebarElement = document.querySelector('.sidebar');
+
+      // Verifica si el ancho de la pantalla es menor a 768px y si el sidebar está abierto
+      if (window.innerWidth < 768 && isSidebarOpen && sidebarElement && !sidebarElement.contains(event.target as Node)) {
+        dispatch(setSidebarOpen(false)); // Cerrar el sidebar
+      }
+    };
+
+    // Añade el event listener para los clics fuera del sidebar
+    document.addEventListener('click', handleClickOutside);
+    
+    // Limpiar el event listener cuando el componente se desmonte
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isSidebarOpen, dispatch]);
+
   return (
-    <div className={`sidebar ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`} style={userRol === "Intern" ? { display: "none" } : { display: "block" }}>
+    <div className={`sidebar ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`} style={userRol === "INTERN" ? { display: "none" } : {}}>
       {getMenuItems().map((item, idx) => (
         <div
           key={idx}

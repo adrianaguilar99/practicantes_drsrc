@@ -1,7 +1,6 @@
 import { Search } from "@mui/icons-material";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useEffect, useState } from "react";
-import { fetchPokemon } from "../../api/api-request";
 import { AddButton } from "../buttons/add-button.component";
 
 interface SearchProps {
@@ -12,8 +11,7 @@ export const SearchComponent: React.FC<SearchProps> = ({ setData }) => {
   
 
   const handleSearch = async () => {
-    const result = await fetchPokemon(query);
-    setData(result);
+    
   };
 
   return (

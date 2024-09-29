@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import HardRockLogo from "../../assets/images/white_hard_rock_logo.png";
 import AvatarTest from "../../assets/images/avatar-test.jpg";
 import AppBar from "@mui/material/AppBar";
@@ -10,35 +10,40 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Typography from "@mui/material/Typography";
 import { DrawerNav } from "./drawer.component";
 import { Badge, Divider } from "@mui/material";
-import {
-  notifications,
-  NotificationsMenu,
-} from "../notifications/notifications-menu.component";
+import { notifications, NotificationsMenu } from "../notifications/notifications-menu.component";
 import { Sidebar } from "./sidebar.component";
-import { toggleSidebar } from "../../redux/sidebar-redux/sidebarSlice";
-import { AppDispatch } from "../../redux/sidebar-redux/store";
+import { toggleSidebar, setSidebarOpen } from "../../redux/sidebar-redux/sidebarSlice";
+import { AppDispatch, RootState } from "../../redux/store";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { NavMenu } from "../menus/nav-menu.component";
 import { Link } from "react-router-dom";
+import { decryptData } from "../../functions/encrypt-data.function";
 
 export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [userRol, setUserRol] = useState("Intern");
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  
+  const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isSidebarOpen);
+  
+  // Ref para el botón de sidebar
+  const sidebarToggleRef = useRef<HTMLButtonElement>(null);
 
   const toggleNotificationMenu = () => {
     setNotificationMenuOpen((prevState) => !prevState);
   };
 
+  
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
 
-  const SidebarToggle = () => {
+  const SidebarToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevenir que el clic cierre el sidebar
     dispatch(toggleSidebar());
   };
 
@@ -49,8 +54,9 @@ export const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
   };
+
   const MenuValidation = (event: React.MouseEvent<HTMLElement>) => {
-    if (userRol === "Intern") {
+    if (userRol === "INTERN") {
       toggleDrawer(true);
     } else {
       handleOpenUserMenu(event);
@@ -58,39 +64,40 @@ export const Navbar = () => {
   };
 
   useEffect(() => {
-    const ClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebarElement = document.querySelector('.sidebar');
+
       if (
-        notificationMenuRef.current &&
-        !notificationMenuRef.current.contains(event.target as Node)
+        window.innerWidth < 768 &&
+        isSidebarOpen &&
+        sidebarElement &&
+        !sidebarElement.contains(event.target as Node) &&
+        sidebarToggleRef.current && 
+        !sidebarToggleRef.current.contains(event.target as Node)
       ) {
-        setNotificationMenuOpen(false);
+        dispatch(setSidebarOpen(false));
       }
     };
 
-    if (isNotificationMenuOpen) {
-      document.addEventListener("mousedown", ClickOutside);
-    } else {
-      document.removeEventListener("mousedown", ClickOutside);
-    }
+    document.addEventListener("click", handleClickOutside);
+
     return () => {
-      document.removeEventListener("mousedown", ClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
-  }, [isNotificationMenuOpen]);
+  }, [isSidebarOpen, dispatch]);
 
   return (
     <>
-      <AppBar
-        position="static"
-        sx={{ backgroundColor: "#2c3e50", maxHeight: "8.5vh" }}
-      >
+      <AppBar position="static" sx={{ backgroundColor: "#2c3e50", maxHeight: "8.5vh" }}>
         <Toolbar>
-          {userRol != "Intern" ? (
+          {userRol != "INTERN" ? (
             <IconButton
+              ref={sidebarToggleRef} 
               edge="start"
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
-              onClick={SidebarToggle}
+              onClick={SidebarToggle} 
             >
               <MenuIcon />
             </IconButton>
@@ -137,13 +144,13 @@ export const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      {userRol === "Intern" ? (
+      {userRol === "INTERN" ? (
         <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} />
       ) : null}
-      {userRol === "Admin" || userRol === "Supervisor" ? (
+      {userRol === "ADMINISTRATOR" || userRol === "Supervisor" ? (
         <NavMenu anchorEl={anchorEl} closeUserMenu={handleCloseUserMenu} />
       ) : null}
-      <Sidebar userRol={userRol} />
+      <Sidebar/>
     </>
   );
 };

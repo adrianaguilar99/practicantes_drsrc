@@ -9,9 +9,21 @@ interface ConfirmationModalProps {
   message: string;     
 }
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, title, message}) => {
+export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, title, message }) => {
+
+  // Evita que el modal se cierre al hacer clic fuera de la caja modal o con la tecla "Escape"
+  const handleClose = (event: {}, reason: "backdropClick" | "escapeKeyDown") => {
+    if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
+      onCancel();  // Solo permitir que se cierre con las opciones
+    }
+  };
+
   return (
-    <Modal open={open} onClose={onCancel}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      disableEscapeKeyDown // Evita que el modal se cierre con la tecla Escape
+    >
       <Box
         sx={{
           position: 'absolute',
@@ -41,30 +53,17 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCo
           </Typography>
         </Box>
 
-
-        <Box
-          sx={{
-            p: 3,
-          }}
-        >
+        <Box sx={{ p: 3 }}>
           <Typography variant="body1" mb={2}>
             {message}
           </Typography>
 
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
               variant="contained"
               color="primary"
-              sx={{
-                bgcolor: '#007BFF',
-                '&:hover': { bgcolor: '#0056b3' },
-              }}
-              onClick={onConfirm}  // Llamada a confirmar
+              sx={{ bgcolor: '#007BFF', '&:hover': { bgcolor: '#0056b3' } }}
+              onClick={onConfirm}
             >
               Confirmar
             </Button>
@@ -72,11 +71,8 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCo
             <Button
               variant="contained"
               color="secondary"
-              sx={{
-                bgcolor: '#A0522D',
-                '&:hover': { bgcolor: '#8b4513' },
-              }}
-              onClick={onCancel}  // Llamada a cancelar
+              sx={{ bgcolor: '#A0522D', '&:hover': { bgcolor: '#8b4513' } }}
+              onClick={onCancel}
             >
               Cancelar
             </Button>

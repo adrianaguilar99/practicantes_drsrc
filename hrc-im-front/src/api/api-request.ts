@@ -1,75 +1,36 @@
+import { ca } from "date-fns/locale";
+
+export async function testApiConnection(refreshToken: string) {
+  try{
 
 
-export const fetchPokemon = async (query: string) => {
-    try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
-      console.log("Se ejecuta la petición");
-      
-      const data = await response.json();
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      return [];
-    }
-  };
-
-// Definir la interfaz
-interface InternRegister {
-  name: string;
-  email: string;
-  type: string;
-  university?: string;
-  program?: string;
-  universityId?: string;
-  universityphone?: string;
-  oldDepartment?: string;
-  phone: string;
-  supervisor: string;
-  department: string;
-  beginDate: string;
-  endDate: string;
-  checkin: string;
-  checkout: string;
-  totalTime: string;
+    await fetch("http://localhost:3000/api/auth/refresh-token", {
+    });
+  }catch(error){
+    console.error(error);
+  }
 }
 
-// Función que recibe un objeto del tipo InternRegister
-export function TestEnvio({
- name,
-  email,
-  type,
-  university,
-  program,
-  universityId,
-  universityphone,
-  oldDepartment,
-  phone,
-  supervisor,
-  department,
-  beginDate,
-  endDate,
-  checkin,
-  checkout,
-  totalTime,
-}: InternRegister) {
-  console.log(
-    'nombre: ',name,
-    'email: ',email,
-    'type: ',type,
-    'university: ',university,
-    'program: ',program,
-    'universityId: ',universityId,
-    'universityphone: ',universityphone,
-    'oldDepartment: ',oldDepartment,
-    'phone: ',phone,
-    'supervisor: ',supervisor,
-    'department: ',department,
-    'beginDate: ',beginDate,
-    'endDate: ',endDate,
-    'checkin: ',checkin,
-    'checkout: ',checkout,
-    'totalTime: ',totalTime
-    
-  );
+
+export async function getNewToken(refreshToken: string) {
+  try {
+    console.log(refreshToken);
+    const response = await fetch("http://localhost:3000/api/auth/refresh-token", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${refreshToken}`,  // Corregido a Authorization y con "Bearer"
+      }
+    });
+console.log(response);
+    if (!response.ok) {
+      console.error("Error al obtener el nuevo token");
+      throw new Error('Error al obtener el nuevo token');
+    }
+
+    // En caso de éxito, devuelve el resultado de la respuesta
+    return await response.json(); // Obtener el JSON de la respuesta
+  } catch (error) {
+    console.error(error);
+    return null; // Retorna null en caso de error
+  }
 }

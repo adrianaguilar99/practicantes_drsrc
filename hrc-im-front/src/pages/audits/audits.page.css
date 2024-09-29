@@ -7,6 +7,7 @@
     min-width: 14vw;
 }
 
+
 .audits-right-container{
     padding: 1% 0%;
     min-width: 80vw;
@@ -14,7 +15,20 @@
 }
 
 .audits-data-container{
-    overflow: scroll;
+    overflow: auto;
     overflow-x: hidden;
     max-height: 75vh;
+}
+
+
+@media screen and (max-width: 767px) {
+    .audits-left-container{
+        display: none;
+    }
+    .audits-right-container{
+        padding: 2% 2%;
+        min-width: 80vw;
+        min-height: 90vh;
+    }
+    
 }

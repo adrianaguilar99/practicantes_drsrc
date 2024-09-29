@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import sidebarReducer from './sidebarSlice';
+import sidebarReducer from './sidebar-redux/sidebarSlice';
+import authReducer from './auth-redux/authSlice';
 
 const saveState = (state: any) => {
   try {
     const serializedState = JSON.stringify(state);
-    sessionStorage.setItem('sidebarState', serializedState);
+    sessionStorage.setItem('appState', serializedState);
   } catch (e) {
     console.error("No se pudo guardar el estado", e);
   }
@@ -12,7 +13,7 @@ const saveState = (state: any) => {
 
 const loadState = () => {
   try {
-    const serializedState = sessionStorage.getItem('sidebarState');
+    const serializedState = sessionStorage.getItem('appState');
     if (serializedState === null) {
       return undefined;
     }
@@ -23,20 +24,27 @@ const loadState = () => {
   }
 };
 
-
+// Cargar el estado persistido del sessionStorage
 const persistedState = loadState();
 
 export const store = configureStore({
   reducer: {
     sidebar: sidebarReducer,
+    auth: authReducer,
   },
-  preloadedState: {
-    sidebar: persistedState || undefined,
-  },
+  // Asegúrate de que `persistedState` esté correctamente asignado a cada reducer.
+  preloadedState: persistedState ? {
+    sidebar: persistedState.sidebar,
+    auth: persistedState.auth,
+  } : undefined,
 });
 
 store.subscribe(() => {
-  saveState(store.getState().sidebar);
+  // Solo guarda los estados de `sidebar` y `auth` para evitar guardar otros estados innecesarios.
+  saveState({
+    sidebar: store.getState().sidebar,
+    auth: store.getState().auth,
+  });
 });
 
 export type RootState = ReturnType<typeof store.getState>;

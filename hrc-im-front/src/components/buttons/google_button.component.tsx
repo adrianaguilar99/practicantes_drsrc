@@ -1,16 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import '../components.css';
+import { hr } from 'date-fns/locale';
+import { useEffect } from 'react';
+import { SnackbarProvider, VariantType, enqueueSnackbar, useSnackbar } from 'notistack';
 
-export const GoogleButtonComponent = () => {
-  const navigate = useNavigate();
+interface GoogleButtonProps {
+  onClick: () => void;
+}
 
-  const handleLogin = () => {
-    // Simulación de autenticación y luego redirección
-    navigate('/home');
-  };
+export const GoogleButtonComponent: React.FC<GoogleButtonProps> = ({ onClick}) => {
+  
 
+
+  
   return (
-    <button className="google-btn" onClick={handleLogin}>
+    <button className="google-btn" onClick={onClick}>
       <img
         src="https://w7.pngwing.com/pngs/326/85/png-transparent-google-logo-google-text-trademark-logo-thumbnail.png"
         alt="Google icon"
