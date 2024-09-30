@@ -9,8 +9,8 @@ export class CreateCareerDto {
     uniqueItems: true,
     nullable: false,
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @ApiProperty({

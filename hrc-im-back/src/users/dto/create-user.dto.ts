@@ -13,16 +13,16 @@ export class CreateUserDto {
     example: 'Martin',
     nullable: false,
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   firstName: string;
 
   @ApiProperty({
     example: 'Martinez Arias',
     nullable: false,
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   lastName: string;
 
   @ApiProperty({
