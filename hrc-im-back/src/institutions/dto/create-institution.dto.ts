@@ -15,8 +15,8 @@ export class CreateInstitutionDto {
     uniqueItems: true,
     nullable: false,
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @ApiProperty({

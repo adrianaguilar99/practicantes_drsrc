@@ -25,6 +25,7 @@ export class Institution {
   @ApiProperty({
     example: 'Universidad Politécnica de Quintana Roo',
     description: 'Name of the institution.',
+    uniqueItems: true,
     nullable: false,
   })
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })

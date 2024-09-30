@@ -26,6 +26,7 @@ export class Career {
   @ApiProperty({
     example: 'Software Engineering',
     description: 'Name of the career.',
+    uniqueItems: true,
     nullable: false,
   })
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
