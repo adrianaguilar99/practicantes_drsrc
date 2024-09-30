@@ -1,3 +1,4 @@
+import { DateConversor } from "../../../functions/date-conversor.function";
 import { AddNewComment } from "./add-new-comment.component";
 import { CommentCard } from "./comments-card.component";
 
@@ -6,13 +7,13 @@ export const CommentsTable = () => {
     {
         id: 1,
         name: "JUAN JOSE",
-        time: "2024-01-20T19:30:00.005Z",
+        time: DateConversor("29/9/2024, 3:14:33 p.m."),
         comment: "Me parece muy bien! 🙌👍",
     },
     {
         id: 2,
         name: "BRIAN WILFRIDO ROMERO CUPUL",
-        time: "2024-01-20T17:30:00",
+        time: DateConversor("29/9/2024, 2:14:33 p.m."),
         comment: "Comentario 2",
     },
     {

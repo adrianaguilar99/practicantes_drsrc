@@ -48,7 +48,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCo
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h6" component="h3">
+          <Typography sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
             {title}
           </Typography>
         </Box>

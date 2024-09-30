@@ -10,96 +10,184 @@ import ProfilePage from '../pages/profile/profile.page';
 import InternRegisterPage from '../pages/Interns/intern-register.page';
 import SupervisorsPage from '../pages/supervisors/supervisors.page';
 import CheckInCheckOutPage from '../pages/check-in-check-out/check-in-check-out.page';
+import InternsCarrersPage from '../pages/Interns/interns-carrers.page';
+import InternsInstitutionsPage from '../pages/Interns/interns-institutions.page';
 import { InternsPage } from '../pages/Interns/Interns.page';
 import ProtectedRoute from '../components/utils/protect-routes.component';
+import { useState } from 'react';
 
 function RoutesConfig() {
+  const [mode, setMode] = useState('');
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/404" element={<NotFoundPage />} />
+        {mode != 'dev' ? (
+          <>
+         <Route path="/404" element={<NotFoundPage />} />
+         <Route path="/" element={<Login />} />
+         <Route
+           path="/home"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH', 'INTERN']}>
+               <Home />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/interns"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
+               <InternsPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/notifications"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH', 'INTERN']}>
+               <Notifications />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/supervisors"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+               <SupervisorsPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/departments"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+               <DepartmentsPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/audits"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+               <AuditsPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/profile"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH', 'INTERN']}>
+               <ProfilePage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/interns/intern-information/:userId"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
+               <InternInformationPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/interns/intern-register"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
+               <InternRegisterPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/checkin-checkout"
+           element={
+             <ProtectedRoute allowedRoles={['SUPERVISOR', 'SUPERVISOR_RH']}>
+               <CheckInCheckOutPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/interns/interns-carrers"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+               <InternsCarrersPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/interns/interns-institutions"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+               <InternsInstitutionsPage />
+             </ProtectedRoute>
+           }
+         />
+        </>
+        
+           ) :(
+            <>
+
+        <Route path="*" element={<NotFoundPage />} />
         <Route path="/" element={<Login />} />
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH', 'INTERN']}>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/interns"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
-              <InternsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH', 'INTERN']}>
-              <Notifications />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/supervisors"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
-              <SupervisorsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/departments"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
-              <DepartmentsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/audits"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
-              <AuditsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH', 'INTERN']}>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/interns/intern-information/:userId"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
-              <InternInformationPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/interns/intern-register"
-          element={
-            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
-              <InternRegisterPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/checkin-checkout"
-          element={
-            <ProtectedRoute allowedRoles={['SUPERVISOR', 'SUPERVISOR_RH']}>
-              <CheckInCheckOutPage />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+          <Route
+            path="/home"
+           
+  
+            element={<Home />}
+          />
+          <Route
+            path="/interns"
+            element={<InternsPage />}
+          />
+          <Route
+            path="/notifications"
+           element={<Notifications />}
+          />
+          <Route
+            path="/supervisors"
+            element={<SupervisorsPage/>}
+          />
+          <Route
+            path="/departments"
+            element={<DepartmentsPage />}
+          />
+          <Route
+            path="/audits"
+            element={<AuditsPage />}
+          />
+          <Route
+            path="/profile"
+            element={<ProfilePage />}
+          />
+          <Route
+            path="/interns/intern-information/:userId"
+            element={<InternInformationPage />}
+          />
+          <Route
+            path="/interns/intern-register"
+            element={<InternRegisterPage />}
+          />
+          <Route
+            path="/checkin-checkout"
+           element={<CheckInCheckOutPage />}
+            
+          />
+          <Route
+            path="/interns/interns-carrers"
+            element={<InternsCarrersPage />}
+          />
+          <Route
+            path="/interns/interns-institutions"
+            element={<InternsInstitutionsPage />}
+          />
+          </>
+          
+        )};
+       
+     
+
+
+     
+         </Routes>
     </BrowserRouter>
   );
 }

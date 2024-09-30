@@ -85,6 +85,8 @@
     font-family: 'Lato', sans-serif;
 }
 
+
+
 @media screen and (max-width: 767px) {
     
 .interns-information-header {
@@ -138,6 +140,38 @@
     border-left: 35px solid #B0B0B0; /* Color del triángulo igual al fondo */
     border-top: 35px solid transparent;
     border-bottom: 35px solid transparent;
+}
+
+
+@media screen and (max-width: 1375px) {
+    .interns-information-title-type h2 {
+        color: #fff;
+        text-align: end;
+        font-size: .7rem;
+        font-family: 'Lato', sans-serif;
+    }
+
+    
+.interns-information-title-name:after {
+    content: "";
+    position: absolute;
+    right: -16px;
+    top: -7px;
+    bottom: 0;
+    width: 0;
+    border-left: 20px solid #B0B0B0; /* Color del triángulo igual al fondo */
+    border-top: 20px solid transparent;
+    border-bottom: 21px solid transparent;
+}
+
+.interns-information-title-name h1{
+    flex: 1;
+    color: #333;
+    font-size: .6rem;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+}
+
 }
 
 .interns-information-body {

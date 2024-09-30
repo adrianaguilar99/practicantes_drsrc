@@ -4,6 +4,7 @@ import { ConfirmationModal } from './confirmation-modal.component';
 import { logout } from '../../redux/auth-redux/authSlice';
 import { enqueueSnackbar } from 'notistack';
 import { getNewToken } from '../../api/api-request';
+import { convertToken } from '../../functions/auth.function';
 
 export function ManageTokenModal() {
     const dispatch = useDispatch();
@@ -31,10 +32,12 @@ export function ManageTokenModal() {
     const handleConfirmSave = async () => {
        
         const token = await getNewToken(sessionStorage.getItem('_refreshToken') as string);
+        
         if (token) {
+            const parsedToken = convertToken(token.accessToken);
             sessionStorage.setItem('_Token', token.accessToken);
             sessionStorage.setItem('_refreshToken', token.refreshToken);
-            sessionStorage.setItem('_exp_token', token.exp);
+            sessionStorage.setItem('_exp_token', parsedToken.exp.toString());
             console.log(token);
             setSaveEdit(false);
             enqueueSnackbar('La sesión se ha actualizado', { variant: 'success' });

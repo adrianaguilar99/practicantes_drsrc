@@ -22,7 +22,8 @@ import { decryptData } from "../../functions/encrypt-data.function";
 
 export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
+  // const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
+  const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);

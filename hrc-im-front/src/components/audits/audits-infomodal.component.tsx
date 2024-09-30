@@ -13,14 +13,14 @@ export const EntityInfoModal: React.FC<EntityInfoModalProps> = ({ entity }) => {
   return (
     <div className="entity-info-modal">
       <section className="entity-info-modal-header">
-        <p>{entity.type}</p>
+        <h6>{entity.type}</h6>
       </section>
       <section className="entity-info-modal-body">
-        <p className="entity-info-modal-name">{entity.name}</p>
+        <h6 className="entity-info-modal-name">{entity.name}</h6>
         {entity.type === "INTERN" && (
           <>
-            <p className="entity-info-modal-info">Email: {entity.email}</p>
-            <p className="entity-info-modal-info">Tel: {entity.phone}</p>
+            <h6 className="entity-info-modal-info">Email: {entity.email}</h6>
+            <h6 className="entity-info-modal-info">Tel: {entity.phone}</h6>
           </>
         )}
       </section>
