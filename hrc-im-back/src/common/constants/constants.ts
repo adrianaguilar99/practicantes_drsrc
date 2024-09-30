@@ -36,6 +36,8 @@ export const BAD_REQUEST = 'Bad request. Please check your input.';
 export const NOT_FOUND = 'Resource not found.';
 export const CONFLICT_ERROR =
   'There is a conflict with the current state of the resource.';
+export const RESOURCE_NAME_ALREADY_EXISTS =
+  'A resource with the same name already exists. Please choose a different name.';
 
 // 500 - 599
 export const INTERNAL_SERVER_ERROR =
