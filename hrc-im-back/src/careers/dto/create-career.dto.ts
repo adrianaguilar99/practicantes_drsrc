@@ -6,6 +6,7 @@ export class CreateCareerDto {
   @ApiProperty({
     example: 'Software Engineering',
     description: 'Name of the career.',
+    uniqueItems: true,
     nullable: false,
   })
   @IsNotEmpty()
@@ -15,7 +16,7 @@ export class CreateCareerDto {
   @ApiProperty({
     example: SubmissionStatus.PENDING,
     description:
-      'The status of the career submission. Only ADMINISTRATOR and SUPERVISOR can set this field.',
+      'The status of the career submission. Only RH ADMINISTRATOR and SUPERVISOR can set this field.',
     nullable: true,
   })
   @IsEnum(SubmissionStatus)

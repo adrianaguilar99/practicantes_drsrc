@@ -10,17 +10,15 @@ import {
   ParseUUIDPipe,
   HttpCode,
 } from '@nestjs/common';
-import { CareersService } from './careers.service';
-import { CreateCareerDto } from './dto/create-career.dto';
-import { UpdateCareerDto } from './dto/update-career.dto';
+import { InstitutionsService } from './institutions.service';
+import { CreateInstitutionDto } from './dto/create-institution.dto';
+import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRole } from 'src/common/enums';
-import { UserRoles } from 'src/auth/decorators';
 import {
   CREATE_RECORD,
   FORBIDDEN_RESOURCE,
@@ -37,50 +35,59 @@ import {
   UNAUTHORIZED_ACCESS,
   UPDATE_RECORD,
 } from 'src/common/constants/constants';
-import { Career } from './entities/career.entity';
-import { IApiResponse } from 'src/common/interfaces/response.interface';
+import { UserRoles } from 'src/auth/decorators';
+import { UserRole } from 'src/common/enums';
+import { Institution } from './entities/institution.entity';
+import { IApiResponse } from 'src/common/interfaces';
 
-@ApiTags('Careers')
+@ApiTags('Institutions')
 @ApiBearerAuth()
 @ApiResponse({
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
 })
-@Controller('careers')
-export class CareersController {
-  constructor(private readonly careersService: CareersService) {}
+@Controller('institutions')
+export class InstitutionsController {
+  constructor(private readonly institutionsService: InstitutionsService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: CREATE_RECORD })
-  @ApiResponse({ status: 201, description: SUCCESSFUL_CREATION, type: Career })
+  @ApiResponse({
+    status: 201,
+    description: SUCCESSFUL_CREATION,
+    type: Institution,
+  })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(201)
   @Post()
   async create(
-    @Body() createCareerDto: CreateCareerDto,
+    @Body() createInstitutionDto: CreateInstitutionDto,
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const createdCareer = await this.careersService.create(
-      createCareerDto,
+    const createdInstitution = await this.institutionsService.create(
+      createInstitutionDto,
       user,
     );
-    return { message: SUCCESSFUL_CREATION, data: createdCareer };
+    return { message: SUCCESSFUL_CREATION, data: createdInstitution };
   }
-
   @ApiOperation({ summary: READ_ALL_RECORDS })
-  @ApiResponse({ status: 200, description: SUCCESSFUL_FETCH, type: [Career] })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [Institution],
+  })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
   async findAll(@Req() req): Promise<IApiResponse<any>> {
     const user = req.user;
-    const allCareers = await this.careersService.findAll(user);
+    const allInstitutions = await this.institutionsService.findAll(user);
     return {
       message: SUCCESSFUL_FETCH,
-      data: allCareers,
-      records: allCareers.length,
+      data: allInstitutions,
+      records: allInstitutions.length,
     };
   }
 
@@ -88,7 +95,7 @@ export class CareersController {
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
-    type: Career,
+    type: Institution,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @HttpCode(200)
@@ -98,8 +105,8 @@ export class CareersController {
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const career = await this.careersService.findOne(id, user);
-    return { message: SUCCESSFUL_FETCH, data: career };
+    const institution = await this.institutionsService.findOne(id, user);
+    return { message: SUCCESSFUL_FETCH, data: institution };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
@@ -107,7 +114,7 @@ export class CareersController {
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
-    type: Career,
+    type: Institution,
   })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
@@ -116,16 +123,16 @@ export class CareersController {
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateCareerDto: UpdateCareerDto,
+    @Body() updateInstitutionDto: UpdateInstitutionDto,
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const updatedCareer = await this.careersService.update(
+    const updatedInstitution = await this.institutionsService.update(
       id,
-      updateCareerDto,
+      updateInstitutionDto,
       user,
     );
-    return { message: SUCCESSFUL_UPDATE, data: updatedCareer };
+    return { message: SUCCESSFUL_UPDATE, data: updatedInstitution };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
@@ -140,11 +147,9 @@ export class CareersController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const deletedCareer = await this.careersService.remove(id, user);
-    return { message: SUCCESSFUL_DELETION, data: deletedCareer };
+    const deletedInstitution = await this.institutionsService.remove(id);
+    return { message: SUCCESSFUL_DELETION, data: deletedInstitution };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
@@ -157,7 +162,7 @@ export class CareersController {
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    await this.careersService.removeAll();
+    await this.institutionsService.removeAll();
     return { message: SUCCESSFUL_DELETION };
   }
 }
