@@ -6,6 +6,7 @@ import PieChartIcon from '@mui/icons-material/PieChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useLogout } from "../../functions/auth.function";
+import { stringAvatar } from "../../functions/utils.functions";
 
 interface DrawerNavProps {
   open: boolean;
@@ -28,10 +29,8 @@ export const DrawerNav = ({ open, onClose }: DrawerNavProps) => {
       }}
     >
       <Box sx={{ padding: '20px', display: 'flex', alignItems: 'center' }}>
-        <Avatar sx={{ bgcolor: '#f39c12', width: 56, height: 56, marginRight: '10px' }}>
-          M
-        </Avatar>
-        <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '1rem' }}>MARTIN AREAS</Typography>
+      <Avatar {...stringAvatar(sessionStorage.getItem('_ProfileName') ?? '')}/>
+        <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '1rem' , marginLeft: '10px'}}>{sessionStorage.getItem('_ProfileName')}</Typography>
       </Box>
 
       <List sx={{ paddingTop: '0' }}>

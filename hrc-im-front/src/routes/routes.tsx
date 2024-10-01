@@ -12,6 +12,7 @@ import SupervisorsPage from '../pages/supervisors/supervisors.page';
 import CheckInCheckOutPage from '../pages/check-in-check-out/check-in-check-out.page';
 import InternsCarrersPage from '../pages/Interns/interns-carrers.page';
 import InternsInstitutionsPage from '../pages/Interns/interns-institutions.page';
+import LoadingPage from '../pages/login/loading.page';
 import { InternsPage } from '../pages/Interns/Interns.page';
 import ProtectedRoute from '../components/utils/protect-routes.component';
 import { useState } from 'react';
@@ -24,6 +25,7 @@ function RoutesConfig() {
         {mode != 'dev' ? (
           <>
          <Route path="/not-found-page" element={<NotFoundPage />} />
+         <Route path="*" element={<NotFoundPage />} />
          <Route path="/" element={<Login />} />
          <Route
            path="/home"
@@ -121,11 +123,14 @@ function RoutesConfig() {
              </ProtectedRoute>
            }
          />
+           <Route path="/loading-page-login" element={<LoadingPage type={'login'} />} />
+           <Route path="/loading-page" element={<LoadingPage type={''} />} />
         </>
         
            ) :(
             <>
-
+         <Route path="/loading-page-login" element={<LoadingPage type={'login'} />} />
+         <Route path="/loading-page" element={<LoadingPage type={''} />} />
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/" element={<Login />} />
           <Route

@@ -1,8 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { login, logout } from '../redux/auth-redux/authSlice'; // Asegúrate de que la ruta sea correcta
 import { encryptData } from './encrypt-data.function';
-import { se, tr } from 'date-fns/locale';
-import { getProfileData } from '../api/api-request';
 import { clearUserName } from '../redux/auth-redux/profileSlice';
 
 

@@ -18,9 +18,6 @@ const LoginPage = () => {
     };
 
     useEffect(() => {
-        if(sessionStorage.getItem("_Token")) {
-            navigate('/home');
-        }
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const refreshToken = urlParams.get('refreshToken');
@@ -32,7 +29,7 @@ const LoginPage = () => {
                 const tokenData = getAccessToken(); 
                 if (tokenData) {
                     enqueueSnackbar('Autenticación exitosa', { variant: 'success' });
-                   navigate('/home');
+                    navigate('/loading-page-login');
                 }     
                 return;
             } catch (error) {

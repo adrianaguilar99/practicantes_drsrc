@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
     }
   }, [userRole, dispatch]);
   if (!userRole && !sessionStorage.getItem('_Rol')) {
-    return <Navigate to="/" />; 
+    return <Navigate to="/loading-page" />; 
   }
   if (userRole) {
     const decryptedRole = decryptData(userRole); 
