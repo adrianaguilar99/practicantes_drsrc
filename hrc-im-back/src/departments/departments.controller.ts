@@ -6,25 +6,23 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
   ParseUUIDPipe,
   HttpCode,
 } from '@nestjs/common';
-import { CareersService } from './careers.service';
-import { CreateCareerDto } from './dto/create-career.dto';
-import { UpdateCareerDto } from './dto/update-career.dto';
+import { DepartmentsService } from './departments.service';
+import { CreateDepartmentDto } from './dto/create-department.dto';
+import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { UserRoles } from 'src/auth/decorators';
+import { UserRole } from 'src/common/enums';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRole } from 'src/common/enums';
-import { UserRoles } from 'src/auth/decorators';
 import {
   CONFLICT_ERROR,
   CREATE_RECORD,
-  FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   READ_ALL_RECORDS,
@@ -38,51 +36,53 @@ import {
   UNAUTHORIZED_ACCESS,
   UPDATE_RECORD,
 } from 'src/common/constants/constants';
-import { Career } from './entities/career.entity';
-import { IApiResponse } from 'src/common/interfaces/response.interface';
+import { IApiResponse } from 'src/common/interfaces';
+import { Department } from './entities/department.entity';
 
-@ApiTags('Careers')
+@UserRoles(UserRole.ADMINISTRATOR)
+@ApiTags('Departments')
 @ApiBearerAuth()
 @ApiResponse({
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
 })
-@Controller('careers')
-export class CareersController {
-  constructor(private readonly careersService: CareersService) {}
+@Controller('departments')
+export class DepartmentsController {
+  constructor(private readonly departmentsService: DepartmentsService) {}
 
-  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: CREATE_RECORD })
-  @ApiResponse({ status: 201, description: SUCCESSFUL_CREATION, type: Career })
-  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({
+    status: 201,
+    description: SUCCESSFUL_CREATION,
+    type: Department,
+  })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(201)
   @Post()
   async create(
-    @Body() createCareerDto: CreateCareerDto,
-    @Req() req,
+    @Body() createDepartmentDto: CreateDepartmentDto,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const createdCareer = await this.careersService.create(
-      createCareerDto,
-      user,
-    );
-    return { message: SUCCESSFUL_CREATION, data: createdCareer };
+    const createdDepartment =
+      await this.departmentsService.create(createDepartmentDto);
+    return { message: SUCCESSFUL_CREATION, data: createdDepartment };
   }
 
   @ApiOperation({ summary: READ_ALL_RECORDS })
-  @ApiResponse({ status: 200, description: SUCCESSFUL_FETCH, type: [Career] })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [Department],
+  })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
-  async findAll(@Req() req): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const allCareers = await this.careersService.findAll(user);
+  async findAll(): Promise<IApiResponse<any>> {
+    const allDepartments = await this.departmentsService.findAll();
     return {
       message: SUCCESSFUL_FETCH,
-      data: allCareers,
-      records: allCareers.length,
+      data: allDepartments,
+      records: allDepartments.length,
     };
   }
 
@@ -90,28 +90,24 @@ export class CareersController {
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
-    type: Career,
+    type: Department,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @HttpCode(200)
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const career = await this.careersService.findOne(id, user);
-    return { message: SUCCESSFUL_FETCH, data: career };
+    const department = await this.departmentsService.findOne(id);
+    return { message: SUCCESSFUL_FETCH, data: department };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({ summary: UPDATE_RECORD })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
-    type: Career,
+    type: Department,
   })
-  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
@@ -119,19 +115,15 @@ export class CareersController {
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateCareerDto: UpdateCareerDto,
-    @Req() req,
+    @Body() updateDepartmentDto: UpdateDepartmentDto,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const updatedCareer = await this.careersService.update(
+    const updatedDepartment = await this.departmentsService.update(
       id,
-      updateCareerDto,
-      user,
+      updateDepartmentDto,
     );
-    return { message: SUCCESSFUL_UPDATE, data: updatedCareer };
+    return { message: SUCCESSFUL_UPDATE, data: updatedDepartment };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({ summary: REMOVE_RECORD })
   @ApiResponse({
     status: 200,
@@ -143,14 +135,11 @@ export class CareersController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const deletedCareer = await this.careersService.remove(id, user);
-    return { message: SUCCESSFUL_DELETION, data: deletedCareer };
+    const deletedDepartment = await this.departmentsService.remove(id);
+    return { message: SUCCESSFUL_DELETION, data: deletedDepartment };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({ summary: REMOVE_ALL_RECORDS })
   @ApiResponse({
     status: 200,
@@ -160,7 +149,7 @@ export class CareersController {
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    await this.careersService.removeAll();
+    await this.departmentsService.removeAll();
     return { message: SUCCESSFUL_DELETION };
   }
 }

@@ -103,11 +103,12 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    const userToRemove = await this.findOne(id);
-    if (!userToRemove) throw new NotFoundException(`${USER_NOT_FOUND}`);
-    userToRemove.isActive = false;
+    await this.findOne(id);
     try {
-      const removedUser = await this.usersRepository.save(userToRemove);
+      const removedUser = await this.usersRepository.update(
+        { id },
+        { isActive: false },
+      );
       return removedUser;
     } catch (error) {
       handleInternalServerError(error.message);

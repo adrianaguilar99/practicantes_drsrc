@@ -2,6 +2,7 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +13,8 @@ import { UserRole, SubmissionStatus } from 'src/common/enums';
 import { handleInternalServerError } from 'src/common/utils';
 import { UsersService } from 'src/users/users.service';
 import { IRequestUser } from 'src/common/interfaces';
+import { RESOURCE_NAME_ALREADY_EXISTS } from 'src/common/constants/constants';
+import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 
 @Injectable()
 export class CareersService {
@@ -19,42 +22,70 @@ export class CareersService {
     @InjectRepository(Career)
     private readonly careerRepository: Repository<Career>,
     private readonly userService: UsersService,
+    private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
   async create(createCareerDto: CreateCareerDto, { userId }: IRequestUser) {
-    try {
-      const user = await this.userService.findOne(userId);
-      if (user.userRole === UserRole.SUPERVISOR_RH) {
-        if (
-          createCareerDto.status &&
-          createCareerDto.status !== SubmissionStatus.PENDING
-        ) {
-          throw new ForbiddenException(
-            `Supervisors can only create careers with the status ${SubmissionStatus.PENDING}`,
-          );
-        }
-        createCareerDto.status = SubmissionStatus.PENDING;
+    const user = await this.userService.findOne(userId);
+    if (user.userRole === UserRole.SUPERVISOR_RH) {
+      if (
+        createCareerDto.status &&
+        createCareerDto.status !== SubmissionStatus.PENDING
+      ) {
+        throw new ForbiddenException(
+          `RH supervisors can only create careers with the status ${SubmissionStatus.PENDING}`,
+        );
       }
-
-      const career = this.careerRepository.create({
+    }
+    try {
+      const careerToCreate = this.careerRepository.create({
         ...createCareerDto,
         submittedBy: user,
       });
-      return await this.careerRepository.save(career);
+
+      const createdCareer = await this.careerRepository.save(careerToCreate);
+
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: user.id,
+          fullName: `${user.firstName} ${user.lastName}`,
+          role: user.userRole,
+        },
+        'CREATE',
+        { id: createdCareer.id, name: createdCareer.name },
+        'SUCCESS',
+      );
+
+      return createdCareer;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: user.id,
+          fullName: `${user.firstName} ${user.lastName}`,
+          role: user.userRole,
+        },
+        'CREATE',
+        { id: null, name: createCareerDto.name },
+        'ERROR',
+        error.message,
+      );
+      if (error.code === '23505') {
+        throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
+      }
       handleInternalServerError(error.message);
     }
   }
 
   async findAll(reqUser: IRequestUser) {
+    let careers: Career[] = [];
     try {
-      let careers: Career[];
-      if (reqUser.role === UserRole.SUPERVISOR_RH) {
+      if (reqUser.role === UserRole.ADMINISTRATOR) {
+        careers = await this.careerRepository.find();
+      } else {
         careers = await this.careerRepository.find({
           where: { status: SubmissionStatus.ACCEPTED },
         });
-      } else if (reqUser.role === UserRole.ADMINISTRATOR)
-        careers = await this.careerRepository.find();
+      }
 
       const secureCareers = careers.map(({ submittedBy, ...rest }) => {
         const { password, ...secureUser } = submittedBy;
@@ -66,37 +97,106 @@ export class CareersService {
     }
   }
 
-  async findOne(id: string) {
-    const career = await this.careerRepository.findOne({ where: { id } });
+  async findOne(id: string, reqUser: IRequestUser) {
+    let career: Career;
+    if (reqUser.role === UserRole.ADMINISTRATOR) {
+      career = await this.careerRepository.findOne({
+        where: { id },
+      });
+    } else {
+      career = await this.careerRepository.findOne({
+        where: { id, status: SubmissionStatus.ACCEPTED },
+      });
+    }
     if (!career) throw new NotFoundException('Career not found.');
 
     const { password, ...secureSubmittedBy } = career.submittedBy;
     career.submittedBy = secureSubmittedBy;
     return career;
   }
-
   async update(
     id: string,
     updateCareerDto: UpdateCareerDto,
     reqUser: IRequestUser,
   ) {
-    const career = await this.findOne(id);
-    if (updateCareerDto.status === SubmissionStatus.REJECTED) {
-      await this.remove(id, reqUser);
-      return { message: 'Career has been rejected and deleted.' };
-    } else if (updateCareerDto.status) {
-      career.status = updateCareerDto.status;
-      return await this.careerRepository.save(career);
+    const { firstName, lastName } = await this.userService.findOne(
+      reqUser.userId,
+    );
+    const career = await this.findOne(id, reqUser);
+    if (updateCareerDto.status === SubmissionStatus.REJECTED)
+      return await this.remove(id, reqUser);
+    try {
+      const careerToUpdate = await this.careerRepository.preload({
+        id,
+        ...updateCareerDto,
+      });
+      const updatedCareer = await this.careerRepository.save(careerToUpdate);
+
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: reqUser.userId,
+          fullName: `${firstName} ${lastName}`,
+          role: reqUser.role,
+        },
+        'UPDATE',
+        { id: updatedCareer.id, name: updatedCareer.name },
+        'SUCCESS',
+      );
+
+      return { ...updatedCareer, submmitedBy: career.submittedBy };
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: reqUser.userId,
+          fullName: `${firstName} ${lastName}`,
+          role: reqUser.role,
+        },
+        'UPDATE',
+        { id, name: 'Update Error' },
+        'ERROR',
+        error.message,
+      );
+      if (error.code === '23505')
+        throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
+      handleInternalServerError(error.message);
     }
-    return career;
   }
 
-  async remove(id: string, { userId }: IRequestUser) {
-    // NECESITO ESAS TRES LINEAS DE CODIGO INNECESARIAS PARA DESPUES HACER LA TABLA DE AUDITS
-    const user = await this.userService.findOne(userId);
-    if (user.userRole !== UserRole.ADMINISTRATOR)
-      throw new ForbiddenException('Only administrators can delete careers.');
-    return await this.careerRepository.delete(id);
+  async remove(id: string, reqUser: IRequestUser) {
+    const { firstName, lastName } = await this.userService.findOne(
+      reqUser.userId,
+    );
+    try {
+      const deletedCareer = await this.careerRepository.delete(id);
+      if (!deletedCareer.affected)
+        throw new NotFoundException('Career not found.');
+
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: reqUser.userId,
+          fullName: `${firstName} ${lastName}`,
+          role: reqUser.role,
+        },
+        'DELETE',
+        { id, name: 'Career' },
+        'SUCCESS',
+      );
+
+      return deletedCareer.affected;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: reqUser.userId,
+          fullName: `${firstName} ${lastName}`,
+          role: reqUser.role,
+        },
+        'DELETE',
+        { id, name: 'Career' },
+        'ERROR',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
   }
 
   async removeAll() {

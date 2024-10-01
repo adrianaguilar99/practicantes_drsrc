@@ -9,6 +9,10 @@ import { CommonModule } from './common/common.module';
 import { ENV, JoiValidationSchema } from './configs';
 import { AuthModule } from './auth/auth.module';
 import { CareersModule } from './careers/careers.module';
+import { InstitutionsModule } from './institutions/institutions.module';
+import { PropertiesModule } from './properties/properties.module';
+import { DepartmentsModule } from './departments/departments.module';
+import { SystemAuditsModule } from './system-audits/system-audits.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -28,6 +32,10 @@ import dbConfigProduction from './configs/db.config.production';
     CommonModule,
     AuthModule,
     CareersModule,
+    InstitutionsModule,
+    PropertiesModule,
+    DepartmentsModule,
+    SystemAuditsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

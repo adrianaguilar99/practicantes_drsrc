@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SubmissionStatus } from 'src/common/enums';
 import { normalizeString } from 'src/common/utils';
-// import { dateToFormattedTimestamp } from 'src/common/utils/';
 import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
@@ -13,11 +12,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('careers')
-export class Career {
+@Entity('institutions')
+export class Institution {
   @ApiProperty({
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
-    description: 'Career ID',
+    description: 'Institution ID',
     uniqueItems: true,
     nullable: false,
   })
@@ -25,8 +24,8 @@ export class Career {
   id: string;
 
   @ApiProperty({
-    example: 'Software Engineering',
-    description: 'Name of the career.',
+    example: 'Universidad Politécnica de Quintana Roo',
+    description: 'Name of the institution.',
     uniqueItems: true,
     nullable: false,
   })
@@ -34,15 +33,23 @@ export class Career {
   name: string;
 
   @ApiProperty({
+    example: '9988774455',
+    description: 'Institution cell phone.',
+    nullable: false,
+  })
+  @Column({ type: 'varchar', length: 10, nullable: false })
+  phone: string;
+
+  @ApiProperty({
     example: '2024-01-01 00:00:00.000',
-    description: 'The time the career was submitted.',
+    description: 'The time the institution was submitted.',
   })
   @Column({ type: 'timestamp' })
   submissionDate: Date;
 
   @ApiProperty({
     example: SubmissionStatus.PENDING,
-    description: 'The current status of the career submission.',
+    description: 'The current status of the institution submission.',
     default: SubmissionStatus.PENDING,
     nullable: true,
   })
@@ -60,7 +67,7 @@ export class Career {
     description: 'User ID to make the relationship.',
     nullable: false,
   })
-  @ManyToOne(() => User, (user) => user.careers, {
+  @ManyToOne(() => User, (user) => user.institutions, {
     eager: true,
     nullable: false,
   })
@@ -70,8 +77,6 @@ export class Career {
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.name = normalizeString(this.name);
-    // const dateString = new Date().toLocaleString();
-    // this.submissionDate = dateToFormattedTimestamp(dateString);
     this.submissionDate = new Date();
   }
 

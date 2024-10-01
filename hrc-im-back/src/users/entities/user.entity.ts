@@ -10,7 +10,8 @@ import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
 import { ApiProperty } from '@nestjs/swagger';
 import { Career } from 'src/careers/entities/career.entity';
 import { UserRole } from 'src/common/enums';
-import { getCurrentTimestamp } from 'src/common/utils/';
+import { dateToFormattedTimestamp } from 'src/common/utils/';
+import { Institution } from 'src/institutions/entities/institution.entity';
 
 @Entity('users')
 export class User {
@@ -91,11 +92,15 @@ export class User {
   @OneToMany(() => Career, (careers) => careers.submittedBy)
   careers: Career[];
 
+  @OneToMany(() => Institution, (institutions) => institutions.submittedBy)
+  institutions: Institution[];
+
   @BeforeInsert()
   async setCreation?() {
     this.email = this.email.toLowerCase();
     await this.hashPassword();
-    this.createdAt = getCurrentTimestamp();
+    // const dateString = new Date().toLocaleString();
+    this.createdAt = new Date();
   }
 
   private async hashPassword?() {
