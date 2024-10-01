@@ -4,6 +4,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { useLogout } from "../../functions/auth.function";
 
 interface DrawerNavProps {
   open: boolean;
@@ -66,6 +68,15 @@ export const DrawerNav = ({ open, onClose }: DrawerNavProps) => {
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary="Configuración" />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding onClick={useLogout()}>
+          <ListItemButton>
+            <ListItemIcon sx={{ color: 'white' }}>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Cerrar sesión" />
           </ListItemButton>
         </ListItem>
       </List>

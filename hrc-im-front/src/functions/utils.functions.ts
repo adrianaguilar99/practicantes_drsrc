@@ -45,14 +45,19 @@ export function stringToColor(string: string) {
   
 
   // Get avatar from string {Function from MUI}
-export  function stringAvatar(name: string) {
+  export function stringAvatar(name: string) {
+    const nameParts = name.split(' ');
+  
     return {
       sx: {
         bgcolor: stringToColor(name),
       },
-      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+      children: nameParts.length === 1 
+        ? `${nameParts[0][0]}`
+        : `${nameParts[0][0]}${nameParts[1][0]}`,
     };
   }
+  
   
 
 

@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import sidebarReducer from './sidebar-redux/sidebarSlice';
 import authReducer from './auth-redux/authSlice';
+import profileReducer from './auth-redux/profileSlice';
 
 const saveState = (state: any) => {
   try {
@@ -31,11 +32,13 @@ export const store = configureStore({
   reducer: {
     sidebar: sidebarReducer,
     auth: authReducer,
+    profile: profileReducer,
   },
   // Asegúrate de que `persistedState` esté correctamente asignado a cada reducer.
   preloadedState: persistedState ? {
     sidebar: persistedState.sidebar,
     auth: persistedState.auth,
+    profile: persistedState.profile,
   } : undefined,
 });
 
@@ -44,6 +47,7 @@ store.subscribe(() => {
   saveState({
     sidebar: store.getState().sidebar,
     auth: store.getState().auth,
+    profile: store.getState().profile,
   });
 });
 

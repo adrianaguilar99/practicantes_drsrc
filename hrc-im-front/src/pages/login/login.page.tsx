@@ -28,12 +28,13 @@ const LoginPage = () => {
         if (token && refreshToken) {
             sessionStorage.setItem("_Token", token as string);
             sessionStorage.setItem("_refreshToken", refreshToken as string);
-
-            // Llamar a getAccessToken para procesar el token y guardar el rol
             try {
-                const tokenData = getAccessToken(); // Llama a la función para obtener el token
-                enqueueSnackbar('Autenticación exitosa', { variant: 'success' });
-                navigate('/home');
+                const tokenData = getAccessToken(); 
+                if (tokenData) {
+                    enqueueSnackbar('Autenticación exitosa', { variant: 'success' });
+                   navigate('/home');
+                }     
+                return;
             } catch (error) {
                 console.error("Error al procesar el token:", error);
                 enqueueSnackbar('Error al procesar el token', { variant: 'error' });

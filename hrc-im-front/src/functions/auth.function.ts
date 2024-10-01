@@ -1,7 +1,9 @@
 import { useDispatch } from 'react-redux';
 import { login, logout } from '../redux/auth-redux/authSlice'; // Asegúrate de que la ruta sea correcta
 import { encryptData } from './encrypt-data.function';
-import { se } from 'date-fns/locale';
+import { se, tr } from 'date-fns/locale';
+import { getProfileData } from '../api/api-request';
+import { clearUserName } from '../redux/auth-redux/profileSlice';
 
 
 export function useGetAccessToken() {
@@ -16,19 +18,18 @@ export function useGetAccessToken() {
             throw new Error('No se encontró el token en sessionStorage');
         }
 
-        const tokenData = convertToken(token); // Convierte el token para obtener los datos necesarios
+        const tokenData = convertToken(token);
 
-        // Guardar el rol en Redux al iniciar sesión
         if (tokenData.role) {
-            const encryptedRole = encryptData(tokenData.role); // Encriptamos el rol
-            sessionStorage.setItem('_Role', encryptedRole); // Guarda el rol encriptado bajo la clave '_Rol'
-            dispatch(login(encryptedRole)); // Despachamos el rol no encriptado a Redux
+            const encryptedRole = encryptData(tokenData.role); 
+            sessionStorage.setItem('_Role', encryptedRole); 
+            dispatch(login(encryptedRole)); 
         } else {
             throw new Error('No se encontró el rol en el token');
         }
 
         // Verifica si el token ha expirado
-        const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+        const currentTime = Math.floor(Date.now() / 1000);
         if (tokenData.exp && currentTime > tokenData.exp) {
             throw new Error('El token ha expirado');
         } else if (tokenData.exp) {
@@ -37,7 +38,7 @@ export function useGetAccessToken() {
             console.log(`El token expira el: ${expirationDate.toLocaleString()}`);
         }
 
-        return tokenData; // Retorna los datos del token
+        return tokenData; 
     };
 
     return getAccessToken;
@@ -66,6 +67,9 @@ export function useLogout() {
         sessionStorage.clear();
         dispatch(login(''));
         dispatch(logout());
+        dispatch(clearUserName());
     };
     return logoutfunction ;
 }
+
+

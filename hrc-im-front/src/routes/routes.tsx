@@ -23,7 +23,7 @@ function RoutesConfig() {
       <Routes>
         {mode != 'dev' ? (
           <>
-         <Route path="/404" element={<NotFoundPage />} />
+         <Route path="/not-found-page" element={<NotFoundPage />} />
          <Route path="/" element={<Login />} />
          <Route
            path="/home"

@@ -1,4 +1,5 @@
 import { ca } from "date-fns/locale";
+import { ProfileData, ProfileInterface } from "../interfaces/profile.interface";
 
 export async function testApiConnection(refreshToken: string) {
   try{
@@ -32,5 +33,28 @@ console.log(response);
   } catch (error) {
     console.error(error);
     return null; // Retorna null en caso de error
+  }
+}
+
+export async function getProfileData(Token: string): Promise<ProfileInterface | null> {
+  try {
+    const response = await fetch("http://localhost:3000/api/users/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${Token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Error al obtener los datos del perfil");
+      throw new Error("Error al obtener los datos del perfil");
+    }
+
+    const profileData: ProfileInterface = await response.json(); 
+    console.log('se recuperaron los datos del perfil:' + profileData.data.firstName);
+    return profileData;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
   }
 }

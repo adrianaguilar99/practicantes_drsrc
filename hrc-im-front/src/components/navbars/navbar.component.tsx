@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import HardRockLogo from "../../assets/images/white_hard_rock_logo.png";
-import AvatarTest from "../../assets/images/avatar-test.jpg";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
@@ -19,11 +18,17 @@ import React from "react";
 import { NavMenu } from "../menus/nav-menu.component";
 import { Link } from "react-router-dom";
 import { decryptData } from "../../functions/encrypt-data.function";
+import { stringAvatar } from "../../functions/utils.functions";
+import { getProfileData } from "../../api/api-request";
+import { enqueueSnackbar } from "notistack";
+import { ProfileInterface } from "../../interfaces/profile.interface";
+import { setUserNameRedux } from "../../redux/auth-redux/profileSlice";
 
 export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  // const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
-  const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
+  const [userName, getProfile] = useGetProfile(sessionStorage.getItem("_Token") || "");
+  // const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
@@ -64,7 +69,49 @@ export const Navbar = () => {
     }
   };
 
+  
+  function useGetProfile(token: string): [string, () => void] {
+    const dispatch = useDispatch();
+    const userNameRedux = useSelector((state: RootState) => state.profile.userName); 
+    const [userName, setUserName] = useState<string>(userNameRedux || ""); 
+  
+    const getProfile = async () => {
+      if (userNameRedux) {
+        setUserName(userNameRedux);
+        return;
+      }
+      try {
+        const profileData = await getProfileData(token);
+        if (profileData) {
+          const fullName = `${profileData.data.firstName} ${profileData.data.lastName}`;
+          setUserName(fullName);
+          dispatch(setUserNameRedux(fullName)); 
+        }
+      } catch (error) {
+        enqueueSnackbar('Error al obtener los datos del perfil', { variant: 'error' });
+      }
+    };
+  
+    useEffect(() => {
+
+      if (!userNameRedux) {
+        getProfile();
+      }
+    }, [userNameRedux, token, dispatch]); 
+  
+    return [userName, getProfile];
+  }
+  
+  
+  
+  
+
+  
+  
+  
+
   useEffect(() => {
+    getProfile();
     const handleClickOutside = (event: MouseEvent) => {
       const sidebarElement = document.querySelector('.sidebar');
 
@@ -85,7 +132,7 @@ export const Navbar = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [isSidebarOpen, dispatch]);
+  }, [isSidebarOpen, , getProfile]);
 
   return (
     <>
@@ -137,9 +184,9 @@ export const Navbar = () => {
                 marginLeft: "10px",
               }}
             />
-            <h3 className="user-name-navbar">Leonardo</h3>
+            <h3 className="user-name-navbar">{userName.split(" ")[0]}</h3>
             <IconButton edge="end">
-              <Avatar alt="Profile Picture" src={AvatarTest} />
+            <Avatar {...stringAvatar(userName)} />
             </IconButton>
           </div>
         </Toolbar>

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from '../../redux/store';
 import { setIndex, setSidebarOpen, setInternsDropdownOpen } from '../../redux/sidebar-redux/sidebarSlice'; // Nueva acción
 import { useEffect, useState } from 'react';
+import { decryptData } from '../../functions/encrypt-data.function';
 
 interface MenuItem {
   icon: JSX.Element;
@@ -23,9 +24,9 @@ interface MenuItem {
 
 export const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
+  // const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
   const navigate = useNavigate();
-
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const index = useSelector((state: RootState) => state.sidebar.index);
   const openMenu = useSelector((state: RootState) => state.sidebar.openMenu);
   const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isSidebarOpen);
