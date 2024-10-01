@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { normalizeString } from 'src/common/utils';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -29,7 +30,7 @@ export class Property {
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
-    this.name = this.name.toUpperCase().trim().replace(/\s+/g, ' ');
+    this.name = normalizeString(this.name);
   }
 
   @BeforeUpdate()

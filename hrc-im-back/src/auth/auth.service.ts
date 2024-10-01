@@ -36,7 +36,7 @@ export class AuthService {
     const isPasswordMatch = await compare(password, user.password);
     if (!isPasswordMatch) throw new UnauthorizedException(INVALID_CREDENTIALS);
 
-    return { id: user.id }; // AQUI DEVOLVEMOS TODAS LAS PROPIEDADES DEL USUARIO QUE NECESITEMOS
+    return { id: user.id };
   }
 
   async login(userId: string) {
@@ -54,8 +54,6 @@ export class AuthService {
     const user = await this.usersService.findOne(userId);
     const payload: AuthJwtPayload = {
       sub: userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
       role: user.userRole,
     };
     const [accessToken, refreshToken] = await Promise.all([

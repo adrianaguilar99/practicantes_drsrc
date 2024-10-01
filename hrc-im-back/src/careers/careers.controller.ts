@@ -22,6 +22,7 @@ import {
 import { UserRole } from 'src/common/enums';
 import { UserRoles } from 'src/auth/decorators';
 import {
+  CONFLICT_ERROR,
   CREATE_RECORD,
   FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
@@ -54,6 +55,7 @@ export class CareersController {
   @ApiOperation({ summary: CREATE_RECORD })
   @ApiResponse({ status: 201, description: SUCCESSFUL_CREATION, type: Career })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(201)
   @Post()
@@ -111,6 +113,7 @@ export class CareersController {
   })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Patch(':id')
