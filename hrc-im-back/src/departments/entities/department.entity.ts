@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { normalizeString } from 'src/common/utils';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('departments')
 export class Department {
@@ -20,4 +27,14 @@ export class Department {
   })
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   name: string;
+
+  @BeforeInsert()
+  checkFieldsBeforeInsert() {
+    this.name = normalizeString(this.name);
+  }
+
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.checkFieldsBeforeInsert();
+  }
 }

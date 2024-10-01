@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SubmissionStatus } from 'src/common/enums';
+import { normalizeString } from 'src/common/utils';
 // import { dateToFormattedTimestamp } from 'src/common/utils/';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -68,7 +69,7 @@ export class Career {
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
-    this.name = this.name.toUpperCase().trim().replace(/\s+/g, ' ');
+    this.name = normalizeString(this.name);
     // const dateString = new Date().toLocaleString();
     // this.submissionDate = dateToFormattedTimestamp(dateString);
     this.submissionDate = new Date();
@@ -76,6 +77,6 @@ export class Career {
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.name = this.name.toUpperCase().trim().replace(/\s+/g, ' ');
+    this.name = normalizeString(this.name);
   }
 }

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SubmissionStatus } from 'src/common/enums';
+import { normalizeString } from 'src/common/utils';
 import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
@@ -75,12 +76,12 @@ export class Institution {
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
-    this.name = this.name.toUpperCase().trim().replace(/\s+/g, ' ');
+    this.name = normalizeString(this.name);
     this.submissionDate = new Date();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.name = this.name.toUpperCase().trim().replace(/\s+/g, ' ');
+    this.name = normalizeString(this.name);
   }
 }

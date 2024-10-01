@@ -103,6 +103,8 @@ export class CareersService {
       const updatedCareer = await this.careerRepository.save(careerToUpdate);
       return { ...updatedCareer, submmitedBy: career.submittedBy };
     } catch (error) {
+      if (error.code === '23505')
+        throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
       handleInternalServerError(error.message);
     }
   }
@@ -114,6 +116,9 @@ export class CareersService {
       throw new ForbiddenException('Only administrators can delete careers.');
     try {
       const deletedCareer = await this.careerRepository.delete(id);
+      if (!deletedCareer.affected)
+        throw new NotFoundException('Career not found.');
+
       return deletedCareer.affected;
     } catch (error) {
       handleInternalServerError(error.message);

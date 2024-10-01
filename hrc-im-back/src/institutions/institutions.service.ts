@@ -34,16 +34,16 @@ export class InstitutionsService {
         createInstitutionDto.status !== SubmissionStatus.PENDING
       ) {
         throw new ForbiddenException(
-          `RH supervisors can only create careers with the status ${SubmissionStatus.PENDING}`,
+          `RH supervisors can only create institutions with the status ${SubmissionStatus.PENDING}`,
         );
       }
     }
     try {
-      const career = this.institutionRepository.create({
+      const newInstitution = this.institutionRepository.create({
         ...createInstitutionDto,
         submittedBy: user,
       });
-      return await this.institutionRepository.save(career);
+      return await this.institutionRepository.save(newInstitution);
     } catch (error) {
       if (error.code === '23505')
         throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
@@ -101,22 +101,27 @@ export class InstitutionsService {
     if (updateInstitutionDto.status === SubmissionStatus.REJECTED)
       return await this.remove(id);
     try {
-      const careerToUpdate = await this.institutionRepository.preload({
+      const institutionToUpdate = await this.institutionRepository.preload({
         id,
         ...updateInstitutionDto,
       });
 
       const updatedInstitution =
-        await this.institutionRepository.save(careerToUpdate);
+        await this.institutionRepository.save(institutionToUpdate);
       return { ...updatedInstitution, submmitedBy: institution.submittedBy };
     } catch (error) {
+      if (error.code === '23505')
+        throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
       handleInternalServerError(error.message);
     }
   }
   async remove(id: string) {
     try {
-      const deletedCareer = await this.institutionRepository.delete(id);
-      return deletedCareer.affected;
+      const deletedInstitution = await this.institutionRepository.delete(id);
+      if (!deletedInstitution.affected)
+        throw new NotFoundException('Institution not found.');
+
+      return deletedInstitution.affected;
     } catch (error) {
       handleInternalServerError(error.message);
     }

@@ -7,15 +7,37 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
 import { UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UNAUTHORIZED_ACCESS } from 'src/common/constants/constants';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  CONFLICT_ERROR,
+  CREATE_RECORD,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  READ_ALL_RECORDS,
+  READ_RECORD,
+  REMOVE_ALL_RECORDS,
+  REMOVE_RECORD,
+  SUCCESSFUL_CREATION,
+  SUCCESSFUL_DELETION,
+  SUCCESSFUL_FETCH,
+  SUCCESSFUL_UPDATE,
+  UNAUTHORIZED_ACCESS,
+  UPDATE_RECORD,
+} from 'src/common/constants/constants';
 import { IApiResponse } from 'src/common/interfaces';
+import { Department } from './entities/department.entity';
 
 @UserRoles(UserRole.ADMINISTRATOR)
 @ApiTags('Departments')
@@ -28,29 +50,68 @@ import { IApiResponse } from 'src/common/interfaces';
 export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
+  @ApiOperation({ summary: CREATE_RECORD })
+  @ApiResponse({
+    status: 201,
+    description: SUCCESSFUL_CREATION,
+    type: Department,
+  })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(201)
   @Post()
   async create(
     @Body() createDepartmentDto: CreateDepartmentDto,
   ): Promise<IApiResponse<any>> {
     const createdDepartment =
       await this.departmentsService.create(createDepartmentDto);
-    return;
+    return { message: SUCCESSFUL_CREATION, data: createdDepartment };
   }
 
+  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [Department],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Get()
   async findAll(): Promise<IApiResponse<any>> {
     const allDepartments = await this.departmentsService.findAll();
-    return;
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allDepartments,
+      records: allDepartments.length,
+    };
   }
 
+  @ApiOperation({ summary: READ_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: Department,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @HttpCode(200)
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
     const department = await this.departmentsService.findOne(id);
-    return;
+    return { message: SUCCESSFUL_FETCH, data: department };
   }
 
+  @ApiOperation({ summary: UPDATE_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_UPDATE,
+    type: Department,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -60,14 +121,35 @@ export class DepartmentsController {
       id,
       updateDepartmentDto,
     );
-    return;
+    return { message: SUCCESSFUL_UPDATE, data: updatedDepartment };
   }
 
+  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_DELETION,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
-    const removedDepartment = await this.departmentsService.remove(id);
-    return;
+    const deletedDepartment = await this.departmentsService.remove(id);
+    return { message: SUCCESSFUL_DELETION, data: deletedDepartment };
+  }
+
+  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_DELETION,
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Delete()
+  async removeAll(): Promise<IApiResponse<any>> {
+    await this.departmentsService.removeAll();
+    return { message: SUCCESSFUL_DELETION };
   }
 }
