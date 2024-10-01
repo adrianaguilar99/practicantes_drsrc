@@ -39,6 +39,7 @@ import {
 import { User } from './entities/user.entity';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
+import { IRequestUser } from 'src/common/interfaces';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -118,11 +119,13 @@ export class UsersController {
   @HttpCode(200)
   @Get('profile')
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
-    const user = await this.usersService.findByEmail(req.user.id);
-    const { password, ...userWithoutPassword } = user;
+    const { userId }: IRequestUser = req.user;
+    // console.log({ user: req.user });
+
+    const user = await this.usersService.findOne(userId);
     return {
       message: SUCCESSFUL_FETCH,
-      data: userWithoutPassword,
+      data: user,
     };
   }
 

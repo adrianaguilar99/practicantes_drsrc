@@ -54,8 +54,6 @@ export class AuthService {
     const user = await this.usersService.findOne(userId);
     const payload: AuthJwtPayload = {
       sub: userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
       role: user.userRole,
     };
     const [accessToken, refreshToken] = await Promise.all([
@@ -82,9 +80,6 @@ export class AuthService {
 
   async validateRefreshToken(userId: string, refreshToken: string) {
     const user = await this.usersService.findOne(userId);
-    // console.log('Usuario:', user);
-    // console.log('Refresh Token enviado:', refreshToken);
-    // console.log('Refresh Token guardado:', user.hashedRefreshToken);
 
     if (!user || !user.hashedRefreshToken)
       throw new UnauthorizedException(INVALID_USER_OR_MISSING_REFRESH_TOKEN);
@@ -93,9 +88,6 @@ export class AuthService {
       user.hashedRefreshToken,
       refreshToken,
     );
-
-    // console.log('Resultado de la comparación:', refreshTokenMatches);
-
     if (!refreshTokenMatches)
       throw new UnauthorizedException(REFRESH_TOKEN_DOES_NOT_MATCH);
 
