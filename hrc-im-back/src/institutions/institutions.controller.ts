@@ -52,7 +52,9 @@ export class InstitutionsController {
   constructor(private readonly institutionsService: InstitutionsService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: CREATE_RECORD })
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
@@ -76,7 +78,9 @@ export class InstitutionsController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -96,7 +100,9 @@ export class InstitutionsController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: READ_RECORD })
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -115,7 +121,7 @@ export class InstitutionsController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: UPDATE_RECORD })
+  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
@@ -142,7 +148,7 @@ export class InstitutionsController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiOperation({ summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
@@ -161,7 +167,9 @@ export class InstitutionsController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,

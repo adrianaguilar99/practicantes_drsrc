@@ -40,7 +40,6 @@ import {
 import { IApiResponse } from 'src/common/interfaces';
 import { Property } from './entities/property.entity';
 
-@UserRoles(UserRole.ADMINISTRATOR)
 @ApiTags('Properties')
 @ApiBearerAuth()
 @ApiResponse({
@@ -51,7 +50,10 @@ import { Property } from './entities/property.entity';
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
-  @ApiOperation({ summary: CREATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
@@ -73,7 +75,10 @@ export class PropertiesController {
     return { message: SUCCESSFUL_CREATION, data: createdProperty };
   }
 
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -91,7 +96,10 @@ export class PropertiesController {
     };
   }
 
-  @ApiOperation({ summary: READ_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -107,7 +115,8 @@ export class PropertiesController {
     return { message: SUCCESSFUL_FETCH, data: property };
   }
 
-  @ApiOperation({ summary: UPDATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
@@ -132,7 +141,8 @@ export class PropertiesController {
     return { message: SUCCESSFUL_UPDATE, data: updatedProperty };
   }
 
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
@@ -150,7 +160,10 @@ export class PropertiesController {
     return { message: SUCCESSFUL_DELETION, data: deletedProperty };
   }
 
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
