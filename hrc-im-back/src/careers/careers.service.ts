@@ -25,9 +25,12 @@ export class CareersService {
     private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
-  async create(createCareerDto: CreateCareerDto, { userId }: IRequestUser) {
+  async create(
+    createCareerDto: CreateCareerDto,
+    { fullName, role, userId }: IRequestUser,
+  ) {
     const user = await this.userService.findOne(userId);
-    if (user.userRole === UserRole.SUPERVISOR_RH) {
+    if (role === UserRole.SUPERVISOR_RH) {
       if (
         createCareerDto.status &&
         createCareerDto.status !== SubmissionStatus.PENDING
@@ -38,20 +41,20 @@ export class CareersService {
       }
     }
     try {
-      const careerToCreate = this.careerRepository.create({
+      const newCareer = this.careerRepository.create({
         ...createCareerDto,
         submittedBy: user,
       });
 
-      const createdCareer = await this.careerRepository.save(careerToCreate);
+      const createdCareer = await this.careerRepository.save(newCareer);
 
       await this.systemAuditsService.createSystemAudit(
         {
-          id: user.id,
-          fullName: `${user.firstName} ${user.lastName}`,
-          role: user.userRole,
+          id: userId,
+          fullName,
+          role,
         },
-        'CREATE',
+        'CREATE CAREER',
         { id: createdCareer.id, name: createdCareer.name },
         'SUCCESS',
       );
@@ -60,13 +63,13 @@ export class CareersService {
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
-          id: user.id,
-          fullName: `${user.firstName} ${user.lastName}`,
-          role: user.userRole,
+          id: userId,
+          fullName,
+          role,
         },
-        'CREATE',
+        'TRY TO CREATE CAREER',
         { id: null, name: createCareerDto.name },
-        'ERROR',
+        'FAILED TO CREATE CAREER',
         error.message,
       );
       if (error.code === '23505') {
@@ -76,10 +79,10 @@ export class CareersService {
     }
   }
 
-  async findAll(reqUser: IRequestUser) {
+  async findAll({ role }: IRequestUser) {
     let careers: Career[] = [];
     try {
-      if (reqUser.role === UserRole.ADMINISTRATOR) {
+      if (role === UserRole.ADMINISTRATOR) {
         careers = await this.careerRepository.find();
       } else {
         careers = await this.careerRepository.find({
@@ -97,9 +100,9 @@ export class CareersService {
     }
   }
 
-  async findOne(id: string, reqUser: IRequestUser) {
+  async findOne(id: string, { role }: IRequestUser) {
     let career: Career;
-    if (reqUser.role === UserRole.ADMINISTRATOR) {
+    if (role === UserRole.ADMINISTRATOR) {
       career = await this.careerRepository.findOne({
         where: { id },
       });
@@ -108,7 +111,8 @@ export class CareersService {
         where: { id, status: SubmissionStatus.ACCEPTED },
       });
     }
-    if (!career) throw new NotFoundException('Career not found.');
+    if (!career)
+      throw new NotFoundException(`Career with id: ${id} not found.`);
 
     const { password, ...secureSubmittedBy } = career.submittedBy;
     career.submittedBy = secureSubmittedBy;
@@ -119,9 +123,6 @@ export class CareersService {
     updateCareerDto: UpdateCareerDto,
     reqUser: IRequestUser,
   ) {
-    const { firstName, lastName } = await this.userService.findOne(
-      reqUser.userId,
-    );
     const career = await this.findOne(id, reqUser);
     if (updateCareerDto.status === SubmissionStatus.REJECTED)
       return await this.remove(id, reqUser);
@@ -135,10 +136,10 @@ export class CareersService {
       await this.systemAuditsService.createSystemAudit(
         {
           id: reqUser.userId,
-          fullName: `${firstName} ${lastName}`,
+          fullName: reqUser.fullName,
           role: reqUser.role,
         },
-        'UPDATE',
+        'UPDATE CAREER',
         { id: updatedCareer.id, name: updatedCareer.name },
         'SUCCESS',
       );
@@ -148,12 +149,12 @@ export class CareersService {
       await this.systemAuditsService.createSystemAudit(
         {
           id: reqUser.userId,
-          fullName: `${firstName} ${lastName}`,
+          fullName: reqUser.fullName,
           role: reqUser.role,
         },
-        'UPDATE',
+        'TRY TO UPDATE CAREER',
         { id, name: 'Update Error' },
-        'ERROR',
+        'FAILED TO UPDATE CAREER',
         error.message,
       );
       if (error.code === '23505')
@@ -162,22 +163,19 @@ export class CareersService {
     }
   }
 
-  async remove(id: string, reqUser: IRequestUser) {
-    const { firstName, lastName } = await this.userService.findOne(
-      reqUser.userId,
-    );
+  async remove(id: string, { fullName, role, userId }: IRequestUser) {
     try {
       const deletedCareer = await this.careerRepository.delete(id);
       if (!deletedCareer.affected)
-        throw new NotFoundException('Career not found.');
+        throw new NotFoundException(`Career with id: ${id} not found.`);
 
       await this.systemAuditsService.createSystemAudit(
         {
-          id: reqUser.userId,
-          fullName: `${firstName} ${lastName}`,
-          role: reqUser.role,
+          id: userId,
+          fullName,
+          role,
         },
-        'DELETE',
+        'DELETE CAREER',
         { id, name: 'Career' },
         'SUCCESS',
       );
@@ -186,13 +184,13 @@ export class CareersService {
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
-          id: reqUser.userId,
-          fullName: `${firstName} ${lastName}`,
-          role: reqUser.role,
+          id: userId,
+          fullName,
+          role,
         },
-        'DELETE',
+        'TRY TO DELETE CAREER',
         { id, name: 'Career' },
-        'ERROR',
+        'FAILED TO DELETE CAREER',
         error.message,
       );
       handleInternalServerError(error.message);

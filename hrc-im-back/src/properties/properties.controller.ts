@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   HttpCode,
+  Req,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -62,9 +63,13 @@ export class PropertiesController {
   @Post()
   async create(
     @Body() createPropertyDto: CreatePropertyDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const createdProperty =
-      await this.propertiesService.create(createPropertyDto);
+    const user = req.user;
+    const createdProperty = await this.propertiesService.create(
+      createPropertyDto,
+      user,
+    );
     return { message: SUCCESSFUL_CREATION, data: createdProperty };
   }
 
@@ -116,10 +121,13 @@ export class PropertiesController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePropertyDto: UpdatePropertyDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     const updatedProperty = await this.propertiesService.update(
       id,
       updatePropertyDto,
+      user,
     );
     return { message: SUCCESSFUL_UPDATE, data: updatedProperty };
   }
@@ -135,8 +143,10 @@ export class PropertiesController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const deletedProperty = await this.propertiesService.remove(id);
+    const user = req.user;
+    const deletedProperty = await this.propertiesService.remove(id, user);
     return { message: SUCCESSFUL_DELETION, data: deletedProperty };
   }
 

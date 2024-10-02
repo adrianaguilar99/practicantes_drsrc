@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { initialData } from './data/seed.data';
+import { IRequestUser } from 'src/common/interfaces';
 
 @Injectable()
 export class SeedingService {
   constructor(private readonly usersRepositoy: UsersService) {}
 
-  async runSeed() {
-    await this.insertNewUsers();
+  async runSeed(reqUser: IRequestUser) {
+    await this.insertNewUsers(reqUser);
     return 'Seed executed!';
   }
 
-  private async insertNewUsers() {
+  private async insertNewUsers(reqUser: IRequestUser) {
     await this.usersRepositoy.removeAll();
 
     const users = initialData.users;
@@ -19,7 +20,7 @@ export class SeedingService {
     const insertPromises = [];
 
     users.forEach((user) => {
-      insertPromises.push(this.usersRepositoy.create(user));
+      insertPromises.push(this.usersRepositoy.create(user, reqUser));
     });
 
     await Promise.all(insertPromises);

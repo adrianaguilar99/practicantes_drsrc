@@ -151,8 +151,10 @@ export class InstitutionsController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const deletedInstitution = await this.institutionsService.remove(id);
+    const user = req.user;
+    const deletedInstitution = await this.institutionsService.remove(id, user);
     return { message: SUCCESSFUL_DELETION, data: deletedInstitution };
   }
 

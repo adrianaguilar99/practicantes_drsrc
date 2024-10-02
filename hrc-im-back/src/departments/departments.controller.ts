@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   HttpCode,
+  Req,
 } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
@@ -62,9 +63,13 @@ export class DepartmentsController {
   @Post()
   async create(
     @Body() createDepartmentDto: CreateDepartmentDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const createdDepartment =
-      await this.departmentsService.create(createDepartmentDto);
+    const user = req.user;
+    const createdDepartment = await this.departmentsService.create(
+      createDepartmentDto,
+      user,
+    );
     return { message: SUCCESSFUL_CREATION, data: createdDepartment };
   }
 
@@ -116,10 +121,13 @@ export class DepartmentsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDepartmentDto: UpdateDepartmentDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     const updatedDepartment = await this.departmentsService.update(
       id,
       updateDepartmentDto,
+      user,
     );
     return { message: SUCCESSFUL_UPDATE, data: updatedDepartment };
   }
@@ -135,8 +143,10 @@ export class DepartmentsController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const deletedDepartment = await this.departmentsService.remove(id);
+    const user = req.user;
+    const deletedDepartment = await this.departmentsService.remove(id, user);
     return { message: SUCCESSFUL_DELETION, data: deletedDepartment };
   }
 

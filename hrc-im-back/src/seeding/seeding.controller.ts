@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get, HttpCode, Req } from '@nestjs/common';
 import { SeedingService } from './seeding.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/decorators';
@@ -16,7 +16,8 @@ export class SeedingController {
   })
   @HttpCode(200)
   @Get()
-  executeSeed() {
-    return this.seedingService.runSeed();
+  executeSeed(@Req() req) {
+    const user = req.user;
+    return this.seedingService.runSeed(user);
   }
 }

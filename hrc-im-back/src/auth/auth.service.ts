@@ -54,6 +54,7 @@ export class AuthService {
     const user = await this.usersService.findOne(userId);
     const payload: AuthJwtPayload = {
       sub: userId,
+      fullName: `${user.firstName} ${user.lastName}`,
       role: user.userRole,
     };
     const [accessToken, refreshToken] = await Promise.all([

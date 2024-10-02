@@ -15,10 +15,10 @@ export class SystemAudit {
   entityAffected: { id: string; name: string };
 
   @Column({ type: 'varchar', length: 20, nullable: false })
-  status: string; // Nuevo campo para indicar el estado ('SUCCESS', 'ERROR')
+  status: string;
 
   @Column({ type: 'text', nullable: true })
-  errorMessage: string; // Nuevo campo para registrar mensajes de error si los hay
+  errorMessage: string;
 
   @Column({ type: 'timestamp' })
   auditDate: Date;
