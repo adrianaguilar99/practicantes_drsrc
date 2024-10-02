@@ -72,6 +72,11 @@ export class UsersController {
     return { message: USER_REGISTERED, data: createdUser };
   }
 
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
   @ApiOperation({ summary: READ_ALL_RECORDS })
   @ApiResponse({
     status: 200,
@@ -131,6 +136,11 @@ export class UsersController {
     };
   }
 
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
   @ApiOperation({ summary: READ_RECORD })
   @ApiResponse({
     status: 200,

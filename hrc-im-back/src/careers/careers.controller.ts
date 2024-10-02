@@ -71,6 +71,7 @@ export class CareersController {
     return { message: SUCCESSFUL_CREATION, data: createdCareer };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: READ_ALL_RECORDS })
   @ApiResponse({ status: 200, description: SUCCESSFUL_FETCH, type: [Career] })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
@@ -86,6 +87,7 @@ export class CareersController {
     };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: READ_RECORD })
   @ApiResponse({
     status: 200,
