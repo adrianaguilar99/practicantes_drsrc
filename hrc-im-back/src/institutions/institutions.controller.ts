@@ -75,6 +75,7 @@ export class InstitutionsController {
     return { message: SUCCESSFUL_CREATION, data: createdInstitution };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: READ_ALL_RECORDS })
   @ApiResponse({
     status: 200,
@@ -94,6 +95,7 @@ export class InstitutionsController {
     };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: READ_RECORD })
   @ApiResponse({
     status: 200,
