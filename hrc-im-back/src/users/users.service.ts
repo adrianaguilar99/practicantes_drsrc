@@ -13,12 +13,15 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { handleInternalServerError } from 'src/common/utils';
+import { IRequestUser } from 'src/common/interfaces';
+import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly systemAuditsService: SystemAuditsService,
   ) {}
   async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
     try {
@@ -35,13 +38,43 @@ export class UsersService {
     }
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(
+    createUserDto: CreateUserDto,
+    { fullName, role, userId }: IRequestUser,
+  ) {
     const newUser = this.usersRepository.create(createUserDto);
     try {
       const savedUser = await this.usersRepository.save(newUser);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'CREATE USER',
+        {
+          id: savedUser.id,
+          name: `${savedUser.firstName} ${savedUser.lastName}`,
+        },
+        'SUCCESS',
+      );
       const { password, ...createdUser } = savedUser;
       return createdUser;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO CREATE USER',
+        {
+          id: null,
+          name: `${createUserDto.firstName} ${createUserDto.lastName}`,
+        },
+        'FAILED TO CREATE USER',
+        error.message,
+      );
       if (error.code === '23505')
         throw new ConflictException(`${USER_ALREADY_EXISTS}`);
       handleInternalServerError(error.message);
@@ -102,15 +135,36 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: string) {
+  async remove(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
       const removedUser = await this.usersRepository.update(
         { id },
         { isActive: false },
       );
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE USER',
+        { id, name: 'User' },
+        'SUCCESS',
+      );
       return removedUser;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE USER',
+        { id, name: 'User' },
+        'FAILED TO DELETE User',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

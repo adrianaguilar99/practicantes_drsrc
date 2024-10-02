@@ -13,6 +13,7 @@ import { InstitutionsModule } from './institutions/institutions.module';
 import { PropertiesModule } from './properties/properties.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { SystemAuditsModule } from './system-audits/system-audits.module';
+import { SupervisorsModule } from './supervisors/supervisors.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -27,15 +28,16 @@ import dbConfigProduction from './configs/db.config.production';
     TypeOrmModule.forRootAsync({
       useFactory: ENV.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
     }),
+    AuthModule,
     UsersModule,
     SeedingModule,
     CommonModule,
-    AuthModule,
     CareersModule,
     InstitutionsModule,
     PropertiesModule,
     DepartmentsModule,
     SystemAuditsModule,
+    SupervisorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

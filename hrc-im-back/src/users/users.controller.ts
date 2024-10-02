@@ -51,7 +51,7 @@ import { IRequestUser } from 'src/common/interfaces';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UserRoles(UserRole.ADMINISTRATOR)
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({ summary: CREATE_RECORD })
   @ApiResponse({
     status: 201,
@@ -65,8 +65,10 @@ export class UsersController {
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const createdUser = await this.usersService.create(createUserDto);
+    const user = req.user;
+    const createdUser = await this.usersService.create(createUserDto, user);
     return { message: USER_REGISTERED, data: createdUser };
   }
 
@@ -120,7 +122,7 @@ export class UsersController {
   @Get('profile')
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
     const { userId }: IRequestUser = req.user;
-    // console.log({ user: req.user });
+    console.log({ user: req.user });
 
     const user = await this.usersService.findOne(userId);
     return {
@@ -161,11 +163,14 @@ export class UsersController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const userRemoved = await this.usersService.remove(id);
+    const user = req.user;
+    const userRemoved = await this.usersService.remove(id, user);
     return { message: SUCCESSFUL_MARKED_DELETED, data: userRemoved };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({ summary: REMOVE_ALL_RECORDS })
   @ApiResponse({
     status: 200,

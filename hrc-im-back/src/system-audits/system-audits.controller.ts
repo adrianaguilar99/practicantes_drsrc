@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { SystemAuditsService } from './system-audits.service';
 import { UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
@@ -26,7 +26,7 @@ export class SystemAuditsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.systemAuditsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.systemAuditsService.findOne(id);
   }
 }

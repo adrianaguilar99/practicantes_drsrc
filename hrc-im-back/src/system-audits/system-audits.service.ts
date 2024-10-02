@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SystemAudit } from './entities/system-audit.entity';
 import { Repository } from 'typeorm';
@@ -47,7 +47,13 @@ export class SystemAuditsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} audit`;
+  async findOne(id: string) {
+    const systemAudit = await this.systemAuditsRepository.findOne({
+      where: { id },
+    });
+    if (!systemAudit)
+      throw new NotFoundException(`Audit with id: ${id} not found.`);
+
+    return systemAudit;
   }
 }
