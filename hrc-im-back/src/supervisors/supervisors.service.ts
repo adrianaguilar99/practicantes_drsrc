@@ -71,9 +71,9 @@ export class SupervisorsService {
           fullName,
           role,
         },
-        'TRY TO CREATE PROPERTY',
-        { id: null, name: `${createSupervisorDto}` },
-        'FAILED TO CREATE PROPERTY',
+        'TRY TO CREATE SUPERVISOR',
+        { id: null, name: `${user.firstName} ${user.lastName}` },
+        'FAILED TO CREATE SUPERVISOR',
         error.message,
       );
     }
@@ -102,14 +102,13 @@ export class SupervisorsService {
     updateSupervisorDto: UpdateSupervisorDto,
     { fullName, role, userId }: IRequestUser,
   ) {
-    await this.findOne(id);
+    const existingSupervisor = await this.findOne(id);
     try {
       const supervisorToUpdate = await this.supervisorsRepository.preload({
         id,
         ...updateSupervisorDto,
       });
-      const updatedSupervisor =
-        await this.supervisorsRepository.save(supervisorToUpdate);
+      await this.supervisorsRepository.save(supervisorToUpdate);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -118,12 +117,12 @@ export class SupervisorsService {
         },
         'UPDATE SUPERVISOR',
         {
-          id: updatedSupervisor.id,
-          name: `${updatedSupervisor.user.firstName} ${updatedSupervisor.user.lastName}`,
+          id: existingSupervisor.id,
+          name: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
         },
         'SUCCESS',
       );
-      return updatedSupervisor;
+      return existingSupervisor;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
@@ -139,6 +138,7 @@ export class SupervisorsService {
       handleInternalServerError(error.message);
     }
   }
+  // TODO problema con la actualizacion del supervisor o encargado
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
