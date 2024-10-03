@@ -54,7 +54,17 @@ export const Sidebar = () => {
   // Menú para supervisores
   const menuItemsSupervisor: MenuItem[] = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
-    { icon: <SchoolOutlinedIcon />, label: "Practicantes", path: "/interns" },
+    {
+      icon: <SchoolOutlinedIcon />,
+      label: "Practicantes",
+      path: "/interns",
+      isDropdown: true,  // Indica que esta opción tiene un desplegable
+      dropdownItems: [
+        { label: "Opciones Escolares", isTitle: true },  // Título en el dropdown
+        { label: "Instituciones", path: "/interns/interns-institutions" },
+        { label: "Carreras", path: "/interns/interns-carrers" },
+      ],
+    },
     { icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout" },
   ];
 
@@ -91,7 +101,7 @@ export const Sidebar = () => {
               dispatch(setIndex(idx));
               navigate(item.path);
               if (item.isDropdown) {
-                dispatch(setInternsDropdownOpen(!isInternsDropdownOpen)); // Actualizar estado global del dropdown
+                dispatch(setInternsDropdownOpen(!isInternsDropdownOpen)); 
               }
             }}
           >
@@ -109,7 +119,9 @@ export const Sidebar = () => {
                 <div
                   key={subIdx}
                   className={`dropdown-item ${dropdownItem.isTitle ? "dropdown-title" : ""}`}
-                  onClick={() => !dropdownItem.isTitle && navigate(dropdownItem.path)}
+                  onClick={() => {!dropdownItem.isTitle && navigate(dropdownItem.path);
+                     dispatch(setIndex(3));
+                  }}
                 >
                   {dropdownItem.label}
                 </div>

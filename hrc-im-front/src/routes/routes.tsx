@@ -110,7 +110,7 @@ function RoutesConfig() {
          <Route
            path="/interns/interns-carrers"
            element={
-             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR','SUPERVISOR_RH']}>
                <InternsCarrersPage />
              </ProtectedRoute>
            }
@@ -118,7 +118,7 @@ function RoutesConfig() {
          <Route
            path="/interns/interns-institutions"
            element={
-             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR','SUPERVISOR_RH']}>
                <InternsInstitutionsPage />
              </ProtectedRoute>
            }

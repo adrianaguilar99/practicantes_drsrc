@@ -10,10 +10,9 @@ import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import { motion } from "framer-motion";
 
 export const InternViewPage = () => {
-  const navigate = useNavigate(); // Utilizamos para cambiar de vista
+  const navigate = useNavigate();
   const customColors = ["#4AAF80", "#C2C2C2"];
 
-  // Variantes de animación
   const pageVariants = {
     initial: { opacity: 0, scale: 0.8 },
     in: { opacity: 1, scale: 1 },
@@ -41,7 +40,6 @@ export const InternViewPage = () => {
       <div className="intern-view-container">
         <section className="intern-view-left-container">
           <div className="intern-view-grid-container">
-            {/* Mi perfil */}
             <Link to="/profile" style={{ textDecoration: "none" }}>
               <motion.div
                 className="intern-view-card"
@@ -53,7 +51,6 @@ export const InternViewPage = () => {
               </motion.div>
             </Link>
 
-            {/* Notificaciones */}
             <Link to="/notifications" style={{ textDecoration: "none" }}>
               <motion.div
                 className="intern-view-card"

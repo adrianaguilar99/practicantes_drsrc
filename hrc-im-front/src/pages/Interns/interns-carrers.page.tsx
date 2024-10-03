@@ -1,3 +1,4 @@
+import { CarrersTable } from "../../components/interns/interns-carrers-table/interns-carrers-table.component";
 import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
@@ -16,7 +17,9 @@ const InternsCarrersPage = () => {
       <section className="interns-right-container">
         <Breadcrumb />
         <SearchComponent setData={setData} />
-        <div className="interns-data-container"></div>
+        <div className="interns-data-container">
+          <CarrersTable />
+        </div>
       </section>
       </div>
       <Footer />

@@ -12,7 +12,7 @@ export const DepartmentsCard: React.FC<DepartmentCardProps> = ({ name }) => {
   return (
     <div className="generic-card">
       <div className="generic-card-info">
-        <p style={{ backgroundColor,padding: '10px', borderRadius: '10px', maxWidth: '15vw', fontWeight: 'bold' }}>{name}</p>
+        <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '15vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{name}</p>
       </div>
       <div className="generic-card-actions">
         <button >

@@ -16,7 +16,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ( { type }) => {
             navigate("/");
         }
    
-    }, 3000); 
+    }, 2000); 
     return () => clearTimeout(timer);
   }, [navigate]);
 

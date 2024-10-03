@@ -1,7 +1,9 @@
 import { Search } from "@mui/icons-material";
-import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
+
 import { useEffect, useState } from "react";
 import { AddButton } from "../buttons/add-button.component";
+import { FiltersButton } from "../utils/filters.component";
+import { SearchBar } from "./search-bar.component";
 
 interface SearchProps {
   setData: (data: any) => void; 
@@ -16,23 +18,15 @@ export const SearchComponent: React.FC<SearchProps> = ({ setData }) => {
 
   return (
     <div className="filters-container">
-      <div className="filters-search">
-        <input
-          type="text"
-          placeholder="Buscar..."
-          typeof="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button onClick={handleSearch}>
-          <Search />
-        </button>
-      </div>
+      <SearchBar
+        query={query}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)} 
+        onClick={handleSearch} 
+      />
 
-      <button className="filter-button">
-        Filtros
-        <FilterListRoundedIcon />
-      </button>
+      <FiltersButton />
+
+     
       <AddButton />
 
       

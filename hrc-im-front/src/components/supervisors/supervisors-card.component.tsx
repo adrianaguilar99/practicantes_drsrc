@@ -41,7 +41,7 @@ export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name, departmen
                 <Avatar {...stringAvatar(name)} /><p>{name}</p>
                 </div>
                 <div className='generic-card-info-column'>
-                <p style={{ backgroundColor,padding: '10px', borderRadius: '10px', maxWidth: '15vw', fontWeight: 'bold' }}>{department}</p>
+                <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '15vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{department}</p>
                 </div>
                
                

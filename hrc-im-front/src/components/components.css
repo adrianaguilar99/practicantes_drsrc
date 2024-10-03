@@ -394,23 +394,7 @@ Navbar-Elements
     padding: auto;
 }
 
-@media screen and (max-width: 1920px) {
-    .filters-container{
-        display: flex;
-        gap: 5%;
-        padding: 1% 0;
-        max-height: 5vh;
-    }
-    
-}
 
-
-@media screen and (max-width: 767px) {
-    .filters-search{
-        display: none;
-    }
-    
-}
 
 .filters-search input {
     width: 100%;
@@ -449,7 +433,8 @@ Navbar-Elements
     justify-content: center;
     background-color: #ffffff;
     border-radius: 30px; 
-    padding: 1% 1.5%; 
+    height: 100%;
+    width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.1); 
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -463,7 +448,103 @@ Navbar-Elements
     background-color: #f7f7f7; 
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); 
   }
-  
+
+
+  .filter-rectangle{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+    font-size: .8rem;
+    background-color: #ffffff;
+    border-radius: 10px; 
+    border: 1px solid rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1% 1%;
+    gap: 8px; 
+    position: absolute;
+  }
+
+
+  .filters-option label{
+    cursor: pointer;
+    
+  }
+
+  .filters-option input{
+    cursor: pointer;
+    
+  }
+
+  .filter-divider{
+    border-style: solid;
+    width: 100%;
+    padding: 10% 0;
+    border-width: 0 0 1px 0;
+    color: #2b2b2b;
+    border-color: #aaaaaa;
+    
+  }
+
+
+  @media screen and (max-width: 1920px) {
+    .filters-container{
+        display: flex;
+        gap: 5%;
+        padding: 1% 0;
+        max-height: 5vh;
+    }
+    .filters-search.phone{
+        display: none;
+    }
+
+    
+    
+}
+
+
+@media screen and (max-width: 767px) {
+    .filters-search{
+        display: none;
+    }
+    .filters-search.phone{
+        display: flex;
+        padding: 0;
+    }
+
+    .filter-rectangle{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 97.5%;
+        justify-content: start;
+        font-size: 1rem;
+        background-color: #ffffff;
+        border-radius: 0px 0px 10px 10px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 4% 1%;
+        gap: 8px;
+        animation: slideDown 0.5s ease-in-out forwards; /* Corrige el nombre de la animación */
+        height: 50vh;
+        z-index: 1;
+        position: absolute; /* Añade position: absolute para que top funcione */
+        top: -150px; /* Posición inicial fuera de la pantalla */
+    }
+}
+
+/* Definición de la animación */
+@keyframes slideDown {
+    0% {
+      top: -150px; 
+    }
+    100% {
+      top: 0;
+    }
+}
+
+
+
 
   /*
     add button
@@ -607,6 +688,35 @@ Navbar-Elements
   .intern-card.externo {
     border-left: 10px solid #3b547c;
   }
+
+.intern-carrers-type-card{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px; 
+    padding: 1% 1.5%; 
+    border: 1px solid rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    gap: 8px; 
+    font-weight: bold; 
+    color: #4e4e4e; 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+    font-size: 0.9rem;
+}
+
+.intern-carrers-type-card.pendiente{
+     background-color: #ffe488b9;
+}
+
+.intern-carrers-type-card.aceptado{
+    background-color: #a3e28363;
+}
+
+
+/* 
+    Interns Table info
+*/
+
   
   .info-section {
     flex: 3;

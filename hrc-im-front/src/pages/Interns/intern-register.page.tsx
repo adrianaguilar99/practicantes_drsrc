@@ -5,6 +5,7 @@ import "./interns.page.css";
 import { RegisterRow } from "../../components/inputs/register-row.component";
 import { ButtonComponent } from "../../components/buttons/buttons.component";
 import { Footer } from "../../components/navbars/footer.component";
+import { carrers } from "../../components/interns/interns-carrers-table/interns-carrers-table.component";
 
 const InternRegisterPage = () => {
   const [selectedType, setSelectedType] = useState("Interno");
@@ -31,31 +32,30 @@ const InternRegisterPage = () => {
   const [InternTotalTime, setInternTotalTime] = useState("");
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedType(e.target.value); // `e.target.value` es de tipo `string`
-    setInternType(e.target.value);   // Si `setInternType` espera un `string`, esto funcionará bien
+    setSelectedType(e.target.value);
+    setInternType(e.target.value); 
   };
-  
 
-  const RegisterNewIntern = () => {
-    // TestEnvio({
-    //   name: InternName,
-    //   email: InternEmail,
-    //   type: InternType,
-    //   university: InternUniversity,
-    //   program: InternProgram,
-    //   universityId: InternID,
-    //   universityphone: InternInstitutePhone,
-    //   oldDepartment: InternOldDepartment,
-    //   phone: InternPhone,
-    //   supervisor: InternSupervisor,
-    //   department: InternDepartment,
-    //   beginDate: InterBeginDate,
-    //   endDate: InternEndDate,
-    //   checkin: InternCheckIn,
-    //   checkout: InternCheckOut,
-    //   totalTime: InternTotalTime,
-    // })
-  };
+  // const RegisterNewIntern = () => {
+  //   TestEnvio({
+  //     name: InternName,
+  //     email: InternEmail,
+  //     type: InternType,
+  //     university: InternUniversity,
+  //     program: InternProgram,
+  //     universityId: InternID,
+  //     universityphone: InternInstitutePhone,
+  //     oldDepartment: InternOldDepartment,
+  //     phone: InternPhone,
+  //     supervisor: InternSupervisor,
+  //     department: InternDepartment,
+  //     beginDate: InterBeginDate,
+  //     endDate: InternEndDate,
+  //     checkin: InternCheckIn,
+  //     checkout: InternCheckOut,
+  //     totalTime: InternTotalTime,
+  //   })
+  // };
 
   const Universidades = [
     "Universidad Politecnica de Quintana Roo",
@@ -99,7 +99,7 @@ const InternRegisterPage = () => {
                 <section className="register-section-left">
                   <RegisterRow
                     label="Nombre del practicante:"
-                    onChange={(value) => setInternName(value || "")} 
+                    onChange={(value) => setInternName(value || "")}
                     id="nombre"
                     type="text"
                     show={true}
@@ -134,12 +134,18 @@ const InternRegisterPage = () => {
                   />
                   <RegisterRow
                     label="Carrera:"
-                    onChange={(value) => setInternProgram(value || "")}
+                    onChange={(value) => {
+                      const selectedCarrer = carrers.find(
+                        (carrer) => carrer.name === value
+                      );
+                      setInternProgram(selectedCarrer ? selectedCarrer.id.toString() : "");
+                    }}
                     id="career"
                     type="autocomplete"
-                    coincidences={["Ingeniería en Software", "Ingeniería Civil", "Ingeniería Industrial"]}
+                    coincidences={carrers.map((carrer) => carrer.name)}
                     show={selectedType === "Externo"}
                   />
+
                   <RegisterRow
                     label="Matrícula escolar:"
                     onChange={(value) => setInternID(value || "")}
@@ -183,7 +189,6 @@ const InternRegisterPage = () => {
                     type="text"
                     show={true}
                   />
-
                 </section>
 
                 <section className="register-section-right">
@@ -230,14 +235,10 @@ const InternRegisterPage = () => {
               <ButtonComponent
                 text="Guardar"
                 onClick={() => {
-                  RegisterNewIntern();
+                  console.log("carrera " + InternProgram)
                 }}
               />
-              <ButtonComponent
-                text="Cancelar"
-                onClick={() => {
-                }}
-              />
+              <ButtonComponent text="Cancelar" onClick={() => {}} />
             </div>
           </div>
         </section>

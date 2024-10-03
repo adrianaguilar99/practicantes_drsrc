@@ -19,6 +19,12 @@
     min-width: 14vw;
 }
 
+.interns-right-container{
+    padding: 1% 0%;
+    min-width: 80vw;
+    min-height: 90vh;
+}
+
 @media screen and (max-width: 767px) {
 
     .interns-left-container{
@@ -27,6 +33,11 @@
     .nav-space{
         min-width: 7vw;
     }
+    .interns-right-container{
+        padding: 1% 0%;
+        min-width: 100vw;
+        min-height: 90vh;
+    }
     
 }
 
@@ -34,11 +45,7 @@
 
 
 
-.interns-right-container{
-    padding: 1% 0%;
-    min-width: 80vw;
-    min-height: 90vh;
-}
+
 
 
 
