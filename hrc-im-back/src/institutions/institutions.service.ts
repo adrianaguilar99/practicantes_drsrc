@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,8 +9,6 @@ import { IRequestUser } from 'src/common/interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Institution } from './entities/institution.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
-import { SubmissionStatus, UserRole } from 'src/common/enums';
 import { handleInternalServerError } from 'src/common/utils';
 import { RESOURCE_NAME_ALREADY_EXISTS } from 'src/common/constants/constants';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
@@ -20,8 +17,7 @@ import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 export class InstitutionsService {
   constructor(
     @InjectRepository(Institution)
-    private readonly institutionRepository: Repository<Institution>,
-    private readonly userService: UsersService,
+    private readonly institutionsRepository: Repository<Institution>,
     private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
@@ -29,24 +25,11 @@ export class InstitutionsService {
     createInstitutionDto: CreateInstitutionDto,
     { userId, role, fullName }: IRequestUser,
   ) {
-    const user = await this.userService.findOne(userId);
-    if (role === UserRole.SUPERVISOR_RH) {
-      if (
-        createInstitutionDto.status &&
-        createInstitutionDto.status !== SubmissionStatus.PENDING
-      ) {
-        throw new ForbiddenException(
-          `RH supervisors can only create institutions with the status ${SubmissionStatus.PENDING}`,
-        );
-      }
-    }
     try {
-      const newInstitution = this.institutionRepository.create({
-        ...createInstitutionDto,
-        submittedBy: user,
-      });
+      const newInstitution =
+        this.institutionsRepository.create(createInstitutionDto);
       const createdInstitution =
-        await this.institutionRepository.save(newInstitution);
+        await this.institutionsRepository.save(newInstitution);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -76,44 +59,20 @@ export class InstitutionsService {
     }
   }
 
-  async findAll(reqUser: IRequestUser) {
-    let institutions: Institution[] = [];
+  async findAll() {
     try {
-      if (reqUser.role === UserRole.ADMINISTRATOR) {
-        institutions = await this.institutionRepository.find();
-      } else {
-        institutions = await this.institutionRepository.find({
-          where: { status: SubmissionStatus.ACCEPTED },
-        });
-      }
-
-      const secureInstitutions = institutions.map(
-        ({ submittedBy, ...rest }) => {
-          const { password, ...secureUser } = submittedBy;
-          return { ...rest, submittedBy: secureUser };
-        },
-      );
-      return secureInstitutions;
+      const institutions = await this.institutionsRepository.find();
+      return institutions;
     } catch (error) {
       handleInternalServerError(error.message);
     }
   }
 
-  async findOne(id: string, reqUser: IRequestUser) {
-    let institution: Institution;
-    if (reqUser.role === UserRole.ADMINISTRATOR) {
-      institution = await this.institutionRepository.findOne({
-        where: { id },
-      });
-    } else {
-      institution = await this.institutionRepository.findOne({
-        where: { id, status: SubmissionStatus.ACCEPTED },
-      });
-    }
+  async findOne(id: string) {
+    const institution = await this.institutionsRepository.findOne({
+      where: { id },
+    });
     if (!institution) throw new NotFoundException('Institution not found.');
-
-    const { password, ...secureSubmittedBy } = institution.submittedBy;
-    institution.submittedBy = secureSubmittedBy;
     return institution;
   }
 
@@ -122,18 +81,14 @@ export class InstitutionsService {
     updateInstitutionDto: UpdateInstitutionDto,
     reqUser: IRequestUser,
   ) {
-    const institution = await this.findOne(id, reqUser);
-    if (updateInstitutionDto.status === SubmissionStatus.REJECTED)
-      return await this.remove(id, reqUser);
+    await this.findOne(id);
     try {
-      const institutionToUpdate = await this.institutionRepository.preload({
+      const institutionToUpdate = await this.institutionsRepository.preload({
         id,
         ...updateInstitutionDto,
       });
-
       const updatedInstitution =
-        await this.institutionRepository.save(institutionToUpdate);
-
+        await this.institutionsRepository.save(institutionToUpdate);
       await this.systemAuditsService.createSystemAudit(
         {
           id: reqUser.userId,
@@ -144,7 +99,7 @@ export class InstitutionsService {
         { id: updatedInstitution.id, name: updatedInstitution.name },
         'SUCCESS',
       );
-      return { ...updatedInstitution, submmitedBy: institution.submittedBy };
+      return updatedInstitution;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
@@ -164,7 +119,7 @@ export class InstitutionsService {
   }
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     try {
-      const deletedInstitution = await this.institutionRepository.delete(id);
+      const deletedInstitution = await this.institutionsRepository.delete(id);
       if (!deletedInstitution.affected)
         throw new NotFoundException(`Institution with id: ${id} not found.`);
 
@@ -197,7 +152,7 @@ export class InstitutionsService {
 
   async removeAll() {
     try {
-      await this.institutionRepository.delete({});
+      await this.institutionsRepository.delete({});
     } catch (error) {
       handleInternalServerError(error.message);
     }

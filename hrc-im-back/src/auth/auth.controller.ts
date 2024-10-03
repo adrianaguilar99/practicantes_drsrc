@@ -50,7 +50,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginAuthDto: LoginAuthDto, @Request() req) {
     const { id } = req.user;
-    return this.authService.login(id);
+    return await this.authService.login(id);
   }
 
   @Public()
@@ -64,9 +64,9 @@ export class AuthController {
   })
   @HttpCode(201)
   @Post('refresh-token')
-  refreshToken(@Req() req) {
+  async refreshToken(@Req() req) {
     const { id } = req.user;
-    return this.authService.refreshToken(id);
+    return await this.authService.refreshToken(id);
   }
 
   @ApiBearerAuth()
@@ -78,8 +78,8 @@ export class AuthController {
   })
   @HttpCode(201)
   @Post('logout')
-  logOut(@Req() req) {
-    return this.authService.logout(req.user.userId);
+  async logOut(@Req() req) {
+    return await this.authService.logout(req.user.userId);
   }
 
   @Public()

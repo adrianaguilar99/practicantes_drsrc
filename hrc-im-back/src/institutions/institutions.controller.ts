@@ -89,9 +89,8 @@ export class InstitutionsController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
-  async findAll(@Req() req): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const allInstitutions = await this.institutionsService.findAll(user);
+  async findAll(): Promise<IApiResponse<any>> {
+    const allInstitutions = await this.institutionsService.findAll();
     return {
       message: SUCCESSFUL_FETCH,
       data: allInstitutions,
@@ -113,10 +112,8 @@ export class InstitutionsController {
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const institution = await this.institutionsService.findOne(id, user);
+    const institution = await this.institutionsService.findOne(id);
     return { message: SUCCESSFUL_FETCH, data: institution };
   }
 

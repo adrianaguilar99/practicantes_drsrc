@@ -81,9 +81,8 @@ export class CareersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
-  async findAll(@Req() req): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const allCareers = await this.careersService.findAll(user);
+  async findAll(): Promise<IApiResponse<any>> {
+    const allCareers = await this.careersService.findAll();
     return {
       message: SUCCESSFUL_FETCH,
       data: allCareers,
@@ -105,10 +104,8 @@ export class CareersController {
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const career = await this.careersService.findOne(id, user);
+    const career = await this.careersService.findOne(id);
     return { message: SUCCESSFUL_FETCH, data: career };
   }
 

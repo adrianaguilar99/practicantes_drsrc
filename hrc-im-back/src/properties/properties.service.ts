@@ -17,7 +17,7 @@ import { IRequestUser } from 'src/common/interfaces';
 export class PropertiesService {
   constructor(
     @InjectRepository(Property)
-    private readonly propertyRepository: Repository<Property>,
+    private readonly propertiesRepository: Repository<Property>,
     private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
@@ -25,9 +25,9 @@ export class PropertiesService {
     createPropertyDto: CreatePropertyDto,
     { fullName, role, userId }: IRequestUser,
   ) {
+    const newProperty = this.propertiesRepository.create(createPropertyDto);
     try {
-      const newProperty = this.propertyRepository.create(createPropertyDto);
-      const createdProperty = await this.propertyRepository.save(newProperty);
+      const createdProperty = await this.propertiesRepository.save(newProperty);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -59,7 +59,7 @@ export class PropertiesService {
 
   async findAll() {
     try {
-      const properties = await this.propertyRepository.find();
+      const properties = await this.propertiesRepository.find();
       return properties;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -67,7 +67,7 @@ export class PropertiesService {
   }
 
   async findOne(id: string) {
-    const property = await this.propertyRepository.findOne({
+    const property = await this.propertiesRepository.findOne({
       where: { id },
     });
     if (!property)
@@ -82,12 +82,12 @@ export class PropertiesService {
   ) {
     await this.findOne(id);
     try {
-      const propertyToUpdate = await this.propertyRepository.preload({
+      const propertyToUpdate = await this.propertiesRepository.preload({
         id,
         ...updatePropertyDto,
       });
       const updatedProperty =
-        await this.propertyRepository.save(propertyToUpdate);
+        await this.propertiesRepository.save(propertyToUpdate);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -120,7 +120,7 @@ export class PropertiesService {
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
-      const deletedProperty = await this.propertyRepository.delete(id);
+      const deletedProperty = await this.propertiesRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -150,7 +150,7 @@ export class PropertiesService {
 
   async removeAll() {
     try {
-      await this.propertyRepository.delete({});
+      await this.propertiesRepository.delete({});
     } catch (error) {
       handleInternalServerError(error.message);
     }

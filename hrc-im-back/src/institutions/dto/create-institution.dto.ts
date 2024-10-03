@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsPhoneNumber,
-  IsString,
-} from 'class-validator';
-import { SubmissionStatus } from 'src/common/enums';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class CreateInstitutionDto {
   @ApiProperty({
@@ -25,16 +18,6 @@ export class CreateInstitutionDto {
     nullable: false,
   })
   @IsNotEmpty()
-  @IsPhoneNumber('MX')
+  @Matches(/^[0-9]+$/, { message: 'The phone number must contain only digits' })
   phone: string;
-
-  @ApiProperty({
-    example: SubmissionStatus.PENDING,
-    description:
-      'The status of the career submission. Only ADMINISTRATOR and RH SUPERVISORS can set this field.',
-    nullable: true,
-  })
-  @IsEnum(SubmissionStatus)
-  @IsOptional()
-  status?: SubmissionStatus;
 }

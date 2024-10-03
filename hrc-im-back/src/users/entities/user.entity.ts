@@ -2,16 +2,14 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
 import { ApiProperty } from '@nestjs/swagger';
-import { Career } from 'src/careers/entities/career.entity';
 import { UserRole } from 'src/common/enums';
-import { dateToFormattedTimestamp } from 'src/common/utils/';
-import { Institution } from 'src/institutions/entities/institution.entity';
+import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 
 @Entity('users')
 export class User {
@@ -89,17 +87,13 @@ export class User {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @OneToMany(() => Career, (careers) => careers.submittedBy)
-  careers: Career[];
-
-  @OneToMany(() => Institution, (institutions) => institutions.submittedBy)
-  institutions: Institution[];
+  @OneToOne(() => Supervisor, (supervisor) => supervisor.user)
+  supervisor: Supervisor;
 
   @BeforeInsert()
   async setCreation?() {
     this.email = this.email.toLowerCase();
     await this.hashPassword();
-    // const dateString = new Date().toLocaleString();
     this.createdAt = new Date();
   }
 

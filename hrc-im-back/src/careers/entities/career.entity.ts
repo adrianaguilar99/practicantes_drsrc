@@ -1,15 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SubmissionStatus } from 'src/common/enums';
 import { normalizeString } from 'src/common/utils';
-// import { dateToFormattedTimestamp } from 'src/common/utils/';
-import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -33,50 +28,13 @@ export class Career {
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
   name: string;
 
-  @ApiProperty({
-    example: '2024-01-01 00:00:00.000',
-    description: 'The time the career was submitted.',
-  })
-  @Column({ type: 'timestamp' })
-  submissionDate: Date;
-
-  @ApiProperty({
-    example: SubmissionStatus.PENDING,
-    description: 'The current status of the career submission.',
-    default: SubmissionStatus.PENDING,
-    nullable: true,
-  })
-  @Column({
-    type: 'enum',
-    enum: SubmissionStatus,
-    default: SubmissionStatus.PENDING,
-    nullable: true,
-  })
-  status: SubmissionStatus;
-
-  @ApiProperty({
-    type: () => User,
-    example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
-    description: 'User ID to make the relationship.',
-    nullable: false,
-  })
-  @ManyToOne(() => User, (user) => user.careers, {
-    eager: true,
-    nullable: false,
-  })
-  @JoinColumn({ name: 'userId' })
-  submittedBy: User;
-
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.name = normalizeString(this.name);
-    // const dateString = new Date().toLocaleString();
-    // this.submissionDate = dateToFormattedTimestamp(dateString);
-    this.submissionDate = new Date();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.name = normalizeString(this.name);
+    this.checkFieldsBeforeInsert();
   }
 }

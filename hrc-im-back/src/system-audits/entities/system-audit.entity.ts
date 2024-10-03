@@ -8,13 +8,13 @@ export class SystemAudit {
   @Column({ type: 'json', nullable: false })
   user: { id: string; fullName: string; role: string };
 
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   action: string;
 
   @Column({ type: 'json', nullable: false })
   entityAffected: { id: string; name: string };
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   status: string;
 
   @Column({ type: 'text', nullable: true })

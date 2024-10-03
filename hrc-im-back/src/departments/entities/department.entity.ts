@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { normalizeString } from 'src/common/utils';
+import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -27,6 +29,9 @@ export class Department {
   })
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   name: string;
+
+  @OneToMany(() => Supervisor, (supervisor) => supervisor.department)
+  supervisors: Supervisor[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
