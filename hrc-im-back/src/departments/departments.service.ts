@@ -17,7 +17,7 @@ import { IRequestUser } from 'src/common/interfaces';
 export class DepartmentsService {
   constructor(
     @InjectRepository(Department)
-    private readonly departmentRepository: Repository<Department>,
+    private readonly departmentsRepository: Repository<Department>,
     private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
@@ -27,10 +27,10 @@ export class DepartmentsService {
   ) {
     try {
       const newDepartment =
-        this.departmentRepository.create(createDepartmentDto);
+        this.departmentsRepository.create(createDepartmentDto);
 
       const createdDepartment =
-        await this.departmentRepository.save(newDepartment);
+        await this.departmentsRepository.save(newDepartment);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -62,7 +62,7 @@ export class DepartmentsService {
 
   async findAll() {
     try {
-      const departments = await this.departmentRepository.find();
+      const departments = await this.departmentsRepository.find();
       return departments;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -70,7 +70,7 @@ export class DepartmentsService {
   }
 
   async findOne(id: string) {
-    const department = await this.departmentRepository.findOne({
+    const department = await this.departmentsRepository.findOne({
       where: { id },
     });
     if (!department)
@@ -85,12 +85,12 @@ export class DepartmentsService {
   ) {
     await this.findOne(id);
     try {
-      const departmentToUpdate = await this.departmentRepository.preload({
+      const departmentToUpdate = await this.departmentsRepository.preload({
         id,
         ...updateDepartmentDto,
       });
       const updatedDepartment =
-        await this.departmentRepository.save(departmentToUpdate);
+        await this.departmentsRepository.save(departmentToUpdate);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -123,7 +123,7 @@ export class DepartmentsService {
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
-      const deletedDepartment = await this.departmentRepository.delete(id);
+      const deletedDepartment = await this.departmentsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -153,7 +153,7 @@ export class DepartmentsService {
 
   async removeAll() {
     try {
-      await this.departmentRepository.delete({});
+      await this.departmentsRepository.delete({});
     } catch (error) {
       handleInternalServerError(error.message);
     }

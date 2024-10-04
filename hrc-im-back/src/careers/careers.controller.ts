@@ -52,7 +52,9 @@ export class CareersController {
   constructor(private readonly careersService: CareersService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: CREATE_RECORD })
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({ status: 201, description: SUCCESSFUL_CREATION, type: Career })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
@@ -72,14 +74,15 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({ status: 200, description: SUCCESSFUL_FETCH, type: [Career] })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
-  async findAll(@Req() req): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const allCareers = await this.careersService.findAll(user);
+  async findAll(): Promise<IApiResponse<any>> {
+    const allCareers = await this.careersService.findAll();
     return {
       message: SUCCESSFUL_FETCH,
       data: allCareers,
@@ -88,7 +91,9 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: READ_RECORD })
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -99,15 +104,13 @@ export class CareersController {
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const career = await this.careersService.findOne(id, user);
+    const career = await this.careersService.findOne(id);
     return { message: SUCCESSFUL_FETCH, data: career };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: UPDATE_RECORD })
+  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
@@ -134,7 +137,7 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiOperation({ summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
@@ -153,7 +156,9 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,

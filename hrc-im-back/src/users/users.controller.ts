@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  Query,
   Req,
   HttpCode,
 } from '@nestjs/common';
@@ -52,7 +51,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  @ApiOperation({ summary: CREATE_RECORD })
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
@@ -77,7 +78,9 @@ export class UsersController {
     UserRole.SUPERVISOR,
     UserRole.SUPERVISOR_RH,
   )
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -116,7 +119,10 @@ export class UsersController {
   //   };
   // }
 
-  @ApiOperation({ summary: READ_RECORD })
+  @ApiOperation({
+    summary:
+      'Action to obtain your profile data using the authentication token.',
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -141,7 +147,9 @@ export class UsersController {
     UserRole.SUPERVISOR,
     UserRole.SUPERVISOR_RH,
   )
-  @ApiOperation({ summary: READ_RECORD })
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${[UserRole.ADMINISTRATOR]}, ${UserRole.SUPERVISOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -161,7 +169,9 @@ export class UsersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_MARKED_DELETED,
@@ -181,7 +191,9 @@ export class UsersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_ALL_MARKED_DELETED,

@@ -9,7 +9,7 @@ import { SUCCESSFUL_SEED } from 'src/common/constants/constants';
 export class SeedingController {
   constructor(private readonly seedingService: SeedingService) {}
   @Public()
-  @ApiOperation({ summary: SUCCESSFUL_SEED })
+  @ApiOperation({ summary: `${SUCCESSFUL_SEED} Public... for now...` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_SEED,

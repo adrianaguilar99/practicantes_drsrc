@@ -40,7 +40,6 @@ import {
 import { IApiResponse } from 'src/common/interfaces';
 import { Department } from './entities/department.entity';
 
-@UserRoles(UserRole.ADMINISTRATOR)
 @ApiTags('Departments')
 @ApiBearerAuth()
 @ApiResponse({
@@ -51,7 +50,10 @@ import { Department } from './entities/department.entity';
 export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
-  @ApiOperation({ summary: CREATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
@@ -73,7 +75,10 @@ export class DepartmentsController {
     return { message: SUCCESSFUL_CREATION, data: createdDepartment };
   }
 
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -91,7 +96,10 @@ export class DepartmentsController {
     };
   }
 
-  @ApiOperation({ summary: READ_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -107,7 +115,8 @@ export class DepartmentsController {
     return { message: SUCCESSFUL_FETCH, data: department };
   }
 
-  @ApiOperation({ summary: UPDATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
@@ -132,7 +141,8 @@ export class DepartmentsController {
     return { message: SUCCESSFUL_UPDATE, data: updatedDepartment };
   }
 
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
@@ -150,7 +160,10 @@ export class DepartmentsController {
     return { message: SUCCESSFUL_DELETION, data: deletedDepartment };
   }
 
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
