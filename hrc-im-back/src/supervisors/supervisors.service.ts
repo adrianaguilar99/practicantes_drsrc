@@ -103,12 +103,33 @@ export class SupervisorsService {
     { fullName, role, userId }: IRequestUser,
   ) {
     const existingSupervisor = await this.findOne(id);
+    const isUnauthorizedUpdate =
+      (updateSupervisorDto.departmentId &&
+        updateSupervisorDto.departmentId !==
+          existingSupervisor.department.id) ||
+      (updateSupervisorDto.userId &&
+        updateSupervisorDto.userId !== existingSupervisor.user.id);
+
+    if (isUnauthorizedUpdate) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'TRY TO UPDATE SUPERVISOR',
+        {
+          id: existingSupervisor.id,
+          name: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
+        },
+        'FAILED TO UPDATE SUPERVISOR',
+        'Attempted to update fields that are not allowed: departmentId or userId',
+      );
+      throw new ConflictException(
+        'You are not allowed to update the department or user of the supervisor.',
+      );
+    }
     try {
-      const supervisorToUpdate = await this.supervisorsRepository.preload({
-        id,
-        ...updateSupervisorDto,
-      });
-      await this.supervisorsRepository.save(supervisorToUpdate);
+      existingSupervisor.phone =
+        updateSupervisorDto.phone ?? existingSupervisor.phone;
+      const updatedSupervisor =
+        await this.supervisorsRepository.save(existingSupervisor);
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -117,12 +138,29 @@ export class SupervisorsService {
         },
         'UPDATE SUPERVISOR',
         {
-          id: existingSupervisor.id,
-          name: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
+          id: updatedSupervisor.id,
+          name: `${updatedSupervisor.user.firstName} ${updatedSupervisor.user.lastName}`,
         },
         'SUCCESS',
       );
-      return existingSupervisor;
+      const response = {
+        id: updatedSupervisor.id,
+        phone: updatedSupervisor.phone,
+        department: {
+          id: updatedSupervisor.department.id,
+          name: updatedSupervisor.department.name,
+        },
+        user: {
+          id: updatedSupervisor.user.id,
+          firstName: updatedSupervisor.user.firstName,
+          lastName: updatedSupervisor.user.lastName,
+          email: updatedSupervisor.user.email,
+          userRole: updatedSupervisor.user.userRole,
+          createdAt: updatedSupervisor.user.createdAt,
+          isActive: updatedSupervisor.user.isActive,
+        },
+      };
+      return response;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
@@ -138,7 +176,6 @@ export class SupervisorsService {
       handleInternalServerError(error.message);
     }
   }
-  // TODO problema con la actualizacion del supervisor o encargado
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
