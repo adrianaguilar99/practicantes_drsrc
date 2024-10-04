@@ -14,6 +14,7 @@ import { SeedingModule } from './seeding/seeding.module';
 import { SupervisorsModule } from './supervisors/supervisors.module';
 import { SystemAuditsModule } from './system-audits/system-audits.module';
 import { UsersModule } from './users/users.module';
+import { InternsModule } from './interns/interns.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -38,6 +39,7 @@ import dbConfigProduction from './configs/db.config.production';
     SupervisorsModule,
     SystemAuditsModule,
     UsersModule,
+    InternsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

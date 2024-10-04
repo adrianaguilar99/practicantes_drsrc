@@ -10,6 +10,7 @@ import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from 'src/common/enums';
 import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
+import { Intern } from 'src/interns/entities/intern.entity';
 
 @Entity('users')
 export class User {
@@ -26,14 +27,14 @@ export class User {
     example: 'Martin',
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({ name: 'first_name', type: 'varchar', length: 50, nullable: false })
   firstName: string;
 
   @ApiProperty({
     example: 'Martinez Arias',
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({ name: 'last_name', type: 'varchar', length: 50, nullable: false })
   lastName: string;
 
   @ApiProperty({
@@ -42,7 +43,13 @@ export class User {
     uniqueItems: true,
     nullable: false,
   })
-  @Column({ type: 'varchar', unique: true, length: 100, nullable: false })
+  @Column({
+    name: 'email',
+    type: 'varchar',
+    unique: true,
+    length: 100,
+    nullable: false,
+  })
   email: string;
 
   @ApiProperty({
@@ -51,7 +58,7 @@ export class User {
       "The user's password. It is required and can be generic if the user logs in through Google.",
     nullable: false,
   })
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ name: 'password', type: 'varchar', nullable: false })
   password?: string;
 
   @ApiProperty({
@@ -60,7 +67,7 @@ export class User {
       'The use of this token is solely to obtain new access tokens. It is destroyed when the user logs out or is not logged in; it is volatile.',
     nullable: true,
   })
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'hashed_refresh_token', type: 'text', nullable: true })
   hashedRefreshToken: string;
 
   @ApiProperty({
@@ -70,6 +77,7 @@ export class User {
     nullable: true,
   })
   @Column({
+    name: 'user_role',
     type: 'enum',
     enum: UserRole,
     default: UserRole.INTERN,
@@ -81,7 +89,10 @@ export class User {
     example: '2024-01-01 00:00:00.000',
     description: 'The time the user was created.',
   })
-  @Column({ type: 'timestamp' })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+  })
   createdAt: Date;
 
   @Column({ type: 'boolean', default: true })
@@ -89,6 +100,9 @@ export class User {
 
   @OneToOne(() => Supervisor, (supervisor) => supervisor.user)
   supervisor: Supervisor;
+
+  @OneToOne(() => Intern, (intern) => intern.user)
+  intern: Intern;
 
   @BeforeInsert()
   async setCreation?() {

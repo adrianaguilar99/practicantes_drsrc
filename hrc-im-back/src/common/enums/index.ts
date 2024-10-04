@@ -1,2 +1,2 @@
-export { SubmissionStatus } from './submission-status.enum';
+export { InternStatus } from './intern-status.enum';
 export { UserRole } from './user-role.enum';

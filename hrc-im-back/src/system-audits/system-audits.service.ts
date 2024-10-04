@@ -12,14 +12,14 @@ export class SystemAuditsService {
   ) {}
 
   async createSystemAudit(
-    user: { id: string; fullName: string; role: string },
+    responsible: { id: string; fullName: string; role: string },
     action: string,
     entity: { id: string; name: string },
     status: string,
     errorMessage?: string,
   ) {
     const audit = this.systemAuditsRepository.create({
-      user,
+      responsible,
       action,
       entityAffected: entity,
       status,
@@ -28,7 +28,7 @@ export class SystemAuditsService {
     try {
       const savedAudit = await this.systemAuditsRepository.save(audit);
       return {
-        user: savedAudit.user,
+        user: savedAudit.responsible,
         entity: savedAudit.entityAffected,
         action: savedAudit.action,
         status: savedAudit.status,

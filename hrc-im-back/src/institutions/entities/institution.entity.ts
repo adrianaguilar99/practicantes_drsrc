@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { normalizeString } from 'src/common/utils';
+import { Intern } from 'src/interns/entities/intern.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -25,7 +27,13 @@ export class Institution {
     uniqueItems: true,
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    length: 100,
+    unique: true,
+    nullable: false,
+  })
   name: string;
 
   @ApiProperty({
@@ -33,8 +41,16 @@ export class Institution {
     description: 'Institution cell phone.',
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({
+    name: 'phone',
+    type: 'varchar',
+    length: 20,
+    nullable: false,
+  })
   phone: string;
+
+  @OneToMany(() => Intern, (interns) => interns.institution)
+  interns: Intern[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

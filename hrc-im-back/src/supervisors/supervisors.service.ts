@@ -13,6 +13,7 @@ import { IRequestUser } from 'src/common/interfaces';
 import { DepartmentsService } from 'src/departments/departments.service';
 import { UsersService } from 'src/users/users.service';
 import { handleInternalServerError } from 'src/common/utils';
+import { UserRole } from 'src/common/enums';
 
 @Injectable()
 export class SupervisorsService {
@@ -32,6 +33,14 @@ export class SupervisorsService {
       createSupervisorDto.departmentId,
     );
     const user = await this.usersService.findOne(createSupervisorDto.userId);
+    if (
+      user.userRole !== UserRole.SUPERVISOR &&
+      user.userRole !== UserRole.SUPERVISOR_RH
+    ) {
+      throw new ConflictException(
+        `User with ID ${createSupervisorDto.userId} does not have the required role to be a supervisor.`,
+      );
+    }
 
     const existingSupervisor = await this.supervisorsRepository.findOne({
       where: { user },

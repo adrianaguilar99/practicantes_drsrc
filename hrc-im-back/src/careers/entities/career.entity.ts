@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { normalizeString } from 'src/common/utils';
+import { Intern } from 'src/interns/entities/intern.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -25,8 +27,17 @@ export class Career {
     uniqueItems: true,
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    length: 100,
+    unique: true,
+    nullable: false,
+  })
   name: string;
+
+  @OneToMany(() => Intern, (interns) => interns.career)
+  interns: Intern[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

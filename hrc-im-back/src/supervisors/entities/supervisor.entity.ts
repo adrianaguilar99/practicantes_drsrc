@@ -26,7 +26,12 @@ export class Supervisor {
     description: "Supervisor's cell phone.",
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 10, nullable: false })
+  @Column({
+    name: 'phone',
+    type: 'varchar',
+    length: 10,
+    nullable: false,
+  })
   phone: string;
 
   @ApiProperty({
@@ -39,13 +44,19 @@ export class Supervisor {
     eager: true,
     nullable: false,
   })
-  @JoinColumn({ name: 'departmentId' })
+  @JoinColumn({ name: 'department_id' })
   department: Department;
 
+  @ApiProperty({
+    type: () => User,
+    example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
+    description: 'User ID to make the relationship.',
+    nullable: false,
+  })
   @OneToOne(() => User, (user) => user.supervisor, {
     eager: true,
     nullable: false,
   })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 }
