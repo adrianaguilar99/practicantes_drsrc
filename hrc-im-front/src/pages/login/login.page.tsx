@@ -7,11 +7,11 @@ import { Footer } from "../../components/navbars/footer.component";
 import { useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
-import { useGetAccessToken } from "../../functions/auth.function"; // Ajusta la ruta según sea necesario
+import { useGetAccessToken } from "../../functions/auth.function";
 
 const LoginPage = () => {
     const navigate = useNavigate();
-    const getAccessToken = useGetAccessToken(); // Usa el hook
+    const getAccessToken = useGetAccessToken();
 
     const LoginClick = () => {
         window.location.href = 'http://localhost:3000/api/auth/google/login';

@@ -1,10 +1,10 @@
-import { CarrersTable } from "../../components/interns/interns-carrers-table/interns-carrers-table.component";
+import { CareersTable } from "../../components/interns/interns-careers-table/interns-careers-table.component";
 import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import "./interns.page.css";
-const InternsCarrersPage = () => {
+const InternsCareersPage = () => {
   function setData(data: any): void {
     throw new Error("Function not implemented.");
   }
@@ -18,7 +18,7 @@ const InternsCarrersPage = () => {
         <Breadcrumb />
         <SearchComponent setData={setData} />
         <div className="interns-data-container">
-          <CarrersTable />
+          <CareersTable />
         </div>
       </section>
       </div>
@@ -27,4 +27,4 @@ const InternsCarrersPage = () => {
   );
 };
 
-export default InternsCarrersPage;
+export default InternsCareersPage;

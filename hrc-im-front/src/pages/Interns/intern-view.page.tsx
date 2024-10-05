@@ -1,12 +1,9 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./interns.page.css";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import LinesLogo from "../../assets/images/lines_logo.png";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
-import PieChartRoundedIcon from "@mui/icons-material/PieChartRounded";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import { motion } from "framer-motion";
 
 export const InternViewPage = () => {

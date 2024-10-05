@@ -689,7 +689,7 @@ Navbar-Elements
     border-left: 10px solid #3b547c;
   }
 
-.intern-carrers-type-card{
+.intern-careers-type-card{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -704,11 +704,11 @@ Navbar-Elements
     font-size: 0.9rem;
 }
 
-.intern-carrers-type-card.pendiente{
+.intern-careers-type-card.pendiente{
      background-color: #ffe488b9;
 }
 
-.intern-carrers-type-card.aceptado{
+.intern-careers-type-card.aceptado{
     background-color: #a3e28363;
 }
 
@@ -801,6 +801,18 @@ Navbar-Elements
 .edit-mode:focus {
     border-color: #007bff; 
 }
+
+.error-input {
+    border: 1px solid red;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
+  
+  .error-label {
+    color: red;
+    font-size: 0.75rem;
+    margin-top: 5px;
+  }
+  
 
 
 .view-mode {

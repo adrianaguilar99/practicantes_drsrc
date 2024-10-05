@@ -4,14 +4,14 @@ interface SidebarState {
   index: number;
   openMenu: boolean;
   isSidebarOpen: boolean;
-  isInternsDropdownOpen: boolean; // Nuevo estado para el dropdown
+  isInternsDropdownOpen: boolean; 
 }
 
 const initialState: SidebarState = {
   index: 0,
   openMenu: true,
   isSidebarOpen: false,
-  isInternsDropdownOpen: JSON.parse(localStorage.getItem('isInternsDropdownOpen') || 'false'), // Inicializar desde localStorage
+  isInternsDropdownOpen: JSON.parse(localStorage.getItem('isInternsDropdownOpen') || 'false'), 
 };
 
 const sidebarSlice = createSlice({
@@ -32,7 +32,7 @@ const sidebarSlice = createSlice({
     },
     setInternsDropdownOpen(state, action: PayloadAction<boolean>) {
       state.isInternsDropdownOpen = action.payload;
-      localStorage.setItem('isInternsDropdownOpen', JSON.stringify(action.payload)); // Guardar en localStorage
+      localStorage.setItem('isInternsDropdownOpen', JSON.stringify(action.payload));
     },
   },
 });

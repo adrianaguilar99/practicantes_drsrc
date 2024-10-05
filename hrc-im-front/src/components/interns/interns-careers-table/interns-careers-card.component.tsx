@@ -1,13 +1,13 @@
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { LightstringToColor } from '../../../functions/utils.functions';
-interface CarrersCardProps {
+interface CareersCardProps {
   name: string;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-export const CarrersCard: React.FC<CarrersCardProps> = ({ name, onEdit, onDelete}) => {
+export const CareersCard: React.FC<CareersCardProps> = ({ name, onEdit, onDelete}) => {
     const backgroundColor = LightstringToColor(name, 0.2);
   return (
     <div className="generic-card">

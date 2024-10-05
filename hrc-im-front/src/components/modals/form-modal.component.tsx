@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
-import { DepartmentFormModal, SupervisorFormModal } from './modal-forms.component';
+import { CareerFormModal, DepartmentFormModal, InstitutionFormModal, SupervisorFormModal } from './modal-forms.component';
 
 interface FormModalProps {
     open: boolean;
@@ -63,6 +63,8 @@ interface FormModalProps {
           >
             {entity === "departments" ? <DepartmentFormModal data={type} type={type} onCancel={onCancel} /> : null}
             {entity === "supervisors" ? <SupervisorFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
+            {entity === "interns-institutions" ? <InstitutionFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
+            {entity === "interns-careers" ? <CareerFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
           </Box>
         </Box>
       </Modal>

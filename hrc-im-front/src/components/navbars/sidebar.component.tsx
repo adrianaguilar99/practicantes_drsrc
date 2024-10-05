@@ -45,7 +45,7 @@ export const Sidebar = () => {
       dropdownItems: [
         { label: "Opciones Escolares", isTitle: true },  // Título en el dropdown
         { label: "Instituciones", path: "/interns/interns-institutions" },
-        { label: "Carreras", path: "/interns/interns-carrers" },
+        { label: "Carreras", path: "/interns/interns-careers" },
       ],
     },
     { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
@@ -62,7 +62,7 @@ export const Sidebar = () => {
       dropdownItems: [
         { label: "Opciones Escolares", isTitle: true },  // Título en el dropdown
         { label: "Instituciones", path: "/interns/interns-institutions" },
-        { label: "Carreras", path: "/interns/interns-carrers" },
+        { label: "Carreras", path: "/interns/interns-careers" },
       ],
     },
     { icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout" },

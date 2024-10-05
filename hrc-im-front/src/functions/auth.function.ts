@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { login, logout } from '../redux/auth-redux/authSlice'; // Asegúrate de que la ruta sea correcta
 import { encryptData } from './encrypt-data.function';
 import { clearUserName } from '../redux/auth-redux/profileSlice';
+import { setIndex, setInternsDropdownOpen } from '../redux/sidebar-redux/sidebarSlice';
 
 
 export function useGetAccessToken() {
@@ -65,6 +66,8 @@ export function useLogout() {
         sessionStorage.clear();
         dispatch(login(''));
         dispatch(logout());
+        dispatch(setIndex(0));
+        dispatch(setInternsDropdownOpen(false))
         dispatch(clearUserName());
     };
     return logoutfunction ;

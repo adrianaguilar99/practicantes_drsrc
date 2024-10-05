@@ -10,7 +10,7 @@ import ProfilePage from '../pages/profile/profile.page';
 import InternRegisterPage from '../pages/Interns/intern-register.page';
 import SupervisorsPage from '../pages/supervisors/supervisors.page';
 import CheckInCheckOutPage from '../pages/check-in-check-out/check-in-check-out.page';
-import InternsCarrersPage from '../pages/Interns/interns-carrers.page';
+import InternsCareersPage from '../pages/Interns/interns-careers.page';
 import InternsInstitutionsPage from '../pages/Interns/interns-institutions.page';
 import LoadingPage from '../pages/login/loading.page';
 import { InternsPage } from '../pages/Interns/Interns.page';
@@ -108,10 +108,10 @@ function RoutesConfig() {
            }
          />
          <Route
-           path="/interns/interns-carrers"
+           path="/interns/interns-careers"
            element={
              <ProtectedRoute allowedRoles={['ADMINISTRATOR','SUPERVISOR_RH']}>
-               <InternsCarrersPage />
+               <InternsCareersPage />
              </ProtectedRoute>
            }
          />
@@ -177,8 +177,8 @@ function RoutesConfig() {
             
           />
           <Route
-            path="/interns/interns-carrers"
-            element={<InternsCarrersPage />}
+            path="/interns/interns-careers"
+            element={<InternsCareersPage />}
           />
           <Route
             path="/interns/interns-institutions"

@@ -1,7 +1,7 @@
 import { Pagination } from '@mui/material';
 import '../../components.css';
-import { CarrersCard } from './interns-carrers-card.component';
-export const carrers = [
+import { CareersCard } from './interns-careers-card.component';
+export const careers = [
     {
       id: 1,
       name: "INGENIERÍA EN SOFTWARE",
@@ -25,13 +25,9 @@ export const carrers = [
       id: 6,
       name: "LICENCIATURA EN ENFERMERÍA",
     },
-    {
-      id: 7,
-      name: "MARTIN MARTINEZ ARIAS",
-    }
   ];
   
-export const CarrersTable = () => {
+export const CareersTable = () => {
 
 
 
@@ -41,11 +37,11 @@ export const CarrersTable = () => {
         <span>Nombre de carrera</span>
         <span>Acciones</span>
       </div>
-      <div className='interns-carrers-table'>
-         { carrers.map((carrer, index) =>
-              <CarrersCard
+      <div className='interns-careers-table'>
+         { careers.map((career, index) =>
+              <CareersCard
                 key={index}
-                name={carrer.name}
+                name={career.name}
                 onEdit={() => {}}
                 onDelete={() => {}}
               />
