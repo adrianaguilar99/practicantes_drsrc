@@ -1,6 +1,7 @@
 import { Pagination } from '@mui/material';
 import '../../components.css';
 import { CareersCard } from './interns-careers-card.component';
+import { useEffect, useState } from 'react';
 export const careers = [
     {
       id: 1,
@@ -28,7 +29,36 @@ export const careers = [
   ];
   
 export const CareersTable = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(6); 
+  useEffect(() => {
+    const ResizePage = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 1375) {
+        setRowsPerPage(5);
+      } else if (screenWidth < 1024) {
+        setRowsPerPage(4);
+      } else {
+        setRowsPerPage(6);
+      }
+    };
 
+    ResizePage();
+    window.addEventListener('resize', ResizePage);
+    return () => window.removeEventListener('resize', ResizePage);
+  }, []);
+
+  const totalPages = Math.ceil(careers.length / rowsPerPage);
+
+  const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    setCurrentPage(page);
+  };
+
+
+  const displayedCareers = careers.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
 
 
   return (
@@ -38,7 +68,7 @@ export const CareersTable = () => {
         <span>Acciones</span>
       </div>
       <div className='interns-careers-table'>
-         { careers.map((career, index) =>
+         { displayedCareers.map((career, index) =>
               <CareersCard
                 key={index}
                 name={career.name}
@@ -47,7 +77,16 @@ export const CareersTable = () => {
               />
          )}
       </div>
-      <Pagination count={10} variant="outlined" shape="rounded" />
+      <div className="table-pagination">
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={PageChange}
+        variant="outlined"
+        shape="rounded"
+        size='small'
+      />
+      </div>
     </div>
   );
 };

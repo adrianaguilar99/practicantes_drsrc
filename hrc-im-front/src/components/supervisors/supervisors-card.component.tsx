@@ -17,18 +17,18 @@ export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name, departmen
       setOpen(!open);
     };
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const ModalOpen = () => setOpen(true);
+    const ModalClose = () => setOpen(false);
 
     useEffect(() => {
-        const handleUrlChange = () => {
+        const UrlChange = () => {
           const enurl = GetUrl();
           setUrl(enurl);
         };
-        handleUrlChange();
-        window.addEventListener("popstate", handleUrlChange);
+        UrlChange();
+        window.addEventListener("popstate", UrlChange);
         return () => {
-          window.removeEventListener("popstate", handleUrlChange);
+          window.removeEventListener("popstate", UrlChange);
         };
       }, []);
     
@@ -49,13 +49,13 @@ export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name, departmen
             </div>
             <div className="generic-card-actions">
                 <button>
-                    <EditOutlinedIcon  onClick={handleOpen}/>
+                    <EditOutlinedIcon  onClick={ModalOpen}/>
                 </button>
                 <button>
                     <DeleteOutlineOutlinedIcon />
                 </button>
             </div>
-            <FormModal open={open} onConfirm={handleClose} type="Edit" onCancel={handleClose} title="Editar Supervisor" entity={url} message={''} />
+            <FormModal open={open} onConfirm={ModalClose} type="Edit" onCancel={ModalClose} data={{name, department}} title="Editar Supervisor" entity={url} />
         </div>
     );
 }

@@ -1,4 +1,6 @@
+import { Pagination } from "@mui/material";
 import { AuditsCard } from "./audits-card.component";
+import { useEffect, useState } from "react";
 
 export const AuditsTable = () => {
   const audits = [
@@ -64,16 +66,47 @@ export const AuditsTable = () => {
       date: "2022-01-01",
     },
   ];
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(6); 
+  useEffect(() => {
+    const ResizePage = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 1375) {
+        setRowsPerPage(5);
+      } else if (screenWidth < 1024) {
+        setRowsPerPage(4);
+      } else {
+        setRowsPerPage(6);
+      }
+    };
+
+    ResizePage();
+    window.addEventListener('resize', ResizePage);
+    return () => window.removeEventListener('resize', ResizePage);
+  }, []);
+
+  const totalPages = Math.ceil(audits.length / rowsPerPage);
+
+  const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    setCurrentPage(page);
+  };
+
+
+  const displayedAudits = audits.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
   return (
-    <div className="audits-table">
+    <div >
       <div className="table-headers">
         <span>Acción</span>
         <span>Responsable</span>
         <span>Entidad</span>
         <span>Fecha</span>
       </div>
-      <div>
-        {audits.map((audit, index) => (
+      <div className="audits-table">
+        {displayedAudits.map((audit, index) => (
           <AuditsCard
             key={index}
             action={audit.action}
@@ -82,6 +115,16 @@ export const AuditsTable = () => {
             date={audit.date}
           />
         ))}
+      </div>
+      <div className="table-pagination">
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={PageChange}
+        variant="outlined"
+        shape="rounded"
+        size='small'
+      />
       </div>
     </div>
   );

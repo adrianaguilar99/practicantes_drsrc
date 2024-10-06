@@ -64,6 +64,7 @@ export const AddButton = () => {
         type="Add" 
         entity={url} 
         message={''} 
+        
       />
     </>
   );

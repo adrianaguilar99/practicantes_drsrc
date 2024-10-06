@@ -25,45 +25,41 @@ const InternCardComponent: React.FC<InternCardProps> = ({
   onDelete
 }) => {
 
-  const navigator = useNavigate();
+  const navigate = useNavigate();
+
 
   const Click = () => {
-    navigator(`/interns/intern-information/${id}`);
-  }
-
+    navigate(`/interns/intern-information/${id}`);
+  };
+  const EditClick = () => {
+    navigate(`/interns/intern-information/${id}?edit=true`);
+  };
 
   return (
-    <div className='intern-card' onClick={ Click}>
-    <div className={`intern-type  ${tipo === 'INTERNO' ? 'interno' : 'externo'}`}>
-         <span >{`PRACTICANTE ${tipo}`}</span>
-    </div>
-    <div className='intern-card-container'>
-      <div className='info-section'>
-    
-        <h3>{nombre}</h3>
-        <p>Departamento: {departamento}</p>
+    <div className='intern-card' >
+      <div className={`intern-type  ${tipo === 'INTERNO' ? 'interno' : 'externo'}`} onClick={Click}>
+        <span>{`PRACTICANTE ${tipo}`}</span>
       </div>
-      <div className="progress-section">
-        <span>{progreso === 100 ? '¡Completado!' : `${progreso}%`}</span>
-        <div className="progress-bar">
-          <div
-            className="progress"
-            style={{ width: `${progreso}%` }}
-          ></div>
+      <div className='intern-card-container' onClick={Click}>
+        <div className='info-section'>
+          <h3>{nombre}</h3>
+          <p>Departamento: {departamento}</p>
         </div>
-       
+        <div className="progress-section">
+          <span>{progreso === 100 ? '¡Completado!' : `${progreso}%`}</span>
+          <div className="progress-bar">
+            <div className="progress" style={{ width: `${progreso}%` }}></div>
+          </div>
+        </div>
       </div>
       <div className="actions">
-        <button onClick={onEdit}>
-          <EditOutlinedIcon />
-        </button>
+        <EditOutlinedIcon onClick={EditClick} />
+
         <button onClick={onDelete}>
           <DeleteOutlineOutlinedIcon />
         </button>
       </div>
     </div>
-    </div>
-
   );
 };
 

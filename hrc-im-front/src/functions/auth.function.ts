@@ -63,12 +63,14 @@ export function convertToken(accessToken: string) {
 export function useLogout() {
     const dispatch = useDispatch();
     const logoutfunction = () => {
+        window.location.href = '/loading-page';
         sessionStorage.clear();
         dispatch(login(''));
         dispatch(logout());
         dispatch(setIndex(0));
         dispatch(setInternsDropdownOpen(false))
         dispatch(clearUserName());
+      
     };
     return logoutfunction ;
 }

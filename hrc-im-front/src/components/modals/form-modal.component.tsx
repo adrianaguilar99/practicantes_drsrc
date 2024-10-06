@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
 import { CareerFormModal, DepartmentFormModal, InstitutionFormModal, SupervisorFormModal } from './modal-forms.component';
+import { da } from 'date-fns/locale';
 
 interface FormModalProps {
     open: boolean;
@@ -9,10 +10,11 @@ interface FormModalProps {
     title: string;      
     type: string;  
     entity: string;
-    message: string;       
+    data?: any;
+    message?: string;       
   }
 
-  export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, title, type, entity }) => {
+  export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, title, type, entity,data }) => {
     const [Supervisordata, setSupervisordata] = React.useState<any>({});
 
 
@@ -61,10 +63,10 @@ interface FormModalProps {
               p: 3,
             }}
           >
-            {entity === "departments" ? <DepartmentFormModal data={type} type={type} onCancel={onCancel} /> : null}
-            {entity === "supervisors" ? <SupervisorFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
-            {entity === "interns-institutions" ? <InstitutionFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
-            {entity === "interns-careers" ? <CareerFormModal data={Supervisordata} type={type} onCancel={onCancel} /> : null}
+            {entity === "departments" ? <DepartmentFormModal data={data} type={type} onCancel={onCancel} /> : null}
+            {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} /> : null}
+            {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} /> : null}
+            {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} /> : null}
           </Box>
         </Box>
       </Modal>

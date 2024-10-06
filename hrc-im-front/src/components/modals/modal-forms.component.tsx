@@ -43,6 +43,7 @@ export const DepartmentFormModal: React.FC<FormModalProps> = ({ type, data , onC
                   bgcolor: '#A0522D',
                   '&:hover': { bgcolor: '#8b4513' },
                 }}
+                onClick={onCancel}
               >
                 Cancelar
               </Button>

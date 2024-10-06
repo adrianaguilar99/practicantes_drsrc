@@ -379,6 +379,25 @@ Navbar-Elements
     max-height: 6.5vh;
 }
 
+.filters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
+    gap: 16px;
+  }
+  
+  .filters-column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+  
+  .filters-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
 
 /*
    Search
@@ -460,7 +479,7 @@ Navbar-Elements
     border-radius: 10px; 
     border: 1px solid rgba(0, 0, 0, 0.1); 
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1% 1%;
+    padding: .5% .5%;
     gap: 8px; 
     position: absolute;
   }
@@ -468,8 +487,13 @@ Navbar-Elements
 
   .filters-option label{
     cursor: pointer;
+    color: #8a8a8a;
+    margin-bottom: 4%;
+    font-size: .75rem;
     
   }
+
+  
 
   .filters-option input{
     cursor: pointer;
@@ -479,11 +503,30 @@ Navbar-Elements
   .filter-divider{
     border-style: solid;
     width: 100%;
-    padding: 10% 0;
+    padding: 1% 0;
     border-width: 0 0 1px 0;
-    color: #2b2b2b;
-    border-color: #aaaaaa;
+    color: #808080;
+    border-color: #cacaca;
     
+  }
+
+  .clear-filters-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #b8b8b8;
+    border-radius: 10px; 
+    border: 1px solid rgba(128, 128, 128, 0.1); 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    color: #464646;
+    gap: 8px;
+  }
+
+  .clear-filters-button:hover{
+    background-color: #9c9c9c;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
   }
 
 
@@ -578,9 +621,64 @@ Navbar-Elements
 
 .interns-table{
     margin: 1% 1%;
-    overflow: scroll;
-    overflow-x: hidden;
-    max-height: 60dvh;
+    max-height: 63dvh;
+    min-height: 63dvh;
+  }
+
+  .interns-institutions-table{
+    margin: 1% 1%;
+    max-height: 63dvh;
+    min-height: 63dvh;
+  }
+
+  .interns-careers-table{
+    margin: 1% 1%;
+    max-height: 63dvh;
+    min-height: 63dvh;
+  }
+
+  .supervisors-table{
+    margin: 1% 1%;
+    max-height: 63dvh;
+    min-height: 63dvh;
+  }
+
+  @media screen and (max-width: 767px) {
+    .interns-table{
+        margin: 1% 1%;
+        max-height: 63dvh;
+        min-height: 63dvh;
+      }
+      .interns-institutions-table{
+        margin: 1% 1%;
+        max-height: 63dvh;
+        min-height: 63dvh;
+      }
+  }
+
+  @media screen and (max-width: 1375px) {
+    .interns-table{
+        margin: 1% 1%;
+        max-height: 55dvh;
+        min-height: 55dvh;
+      }
+      .interns-institutions-table{
+        margin: 1% 1%;
+        max-height: 55dvh;
+        min-height: 55dvh;
+      }
+
+      .interns-careers-table{
+        margin: 1% 1%;
+        max-height: 55dvh;
+        min-height: 55dvh;
+      }
+
+      .supervisors-table{
+        margin: 1% 1%;
+        max-height: 55dvh;
+        min-height: 55dvh;
+      }
   }
 
   .table-headers {
@@ -594,6 +692,14 @@ Navbar-Elements
     color: #4e4e4e;
     margin-bottom: 10px; 
     padding: 0 5%;
+  }
+
+
+  .table-pagination{
+    display: flex;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
   }
   
   .table-headers span {
@@ -619,9 +725,10 @@ Navbar-Elements
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 1%;
     height: 10vh; 
+   
     overflow: hidden;
-    min-height: 10vh;
     transition: 0.5s;
+    max-height: 85px;
 }
 
 
@@ -631,6 +738,24 @@ Navbar-Elements
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.26);
 }
 
+@media screen and (max-width: 1375px) {
+    .intern-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch; 
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1%;
+        height: 10vh; 
+       
+        overflow: hidden;
+        transition: 0.5s;
+        max-height: 65px;
+    }
+}
+
+  
 /* Intern Type */
 
 .intern-card-variation {
@@ -646,6 +771,8 @@ Navbar-Elements
     min-height: 10vh;
     transition: 0.5s;
 }
+
+
 
 
 .intern-type {
@@ -678,7 +805,7 @@ Navbar-Elements
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    width: 100%;
+    width: 90%;
   }
   
   .intern-card.interno {
@@ -728,7 +855,7 @@ Navbar-Elements
   
   .info-section  h3 {
     margin: 0;
-    font-size: 1.0em;
+    font-size: .8em;
     color: #2B2B2B;
   }
   
@@ -768,8 +895,10 @@ Navbar-Elements
   .actions {
     flex: 1;
     display: flex;
+    align-items: center;
     justify-content: space-around;
     color: #4E4E4E;
+    min-width: 10%;
   }
   .actions button{
     color: #4E4E4E;
@@ -1136,6 +1265,8 @@ Navbar-Elements
 
 .audits-table{
     margin: 1% 1%; 
+    max-height: 65vh;
+    min-height: 65vh;
 }
 
 .entity-card{
@@ -1148,7 +1279,11 @@ Navbar-Elements
 
 
 @media screen and (max-width: 1375px) {
-    
+    .audits-table{
+        margin: 1% 1%; 
+        max-height: 55vh;
+        min-height: 55vh;
+    }
 }
 
 
@@ -1240,12 +1375,12 @@ Navbar-Elements
   }
   
   .breadcrumb-link:hover {
-    color: #0056b3; /* Azul claro al pasar el ratón */
+    color: #0056b3; 
   }
   
   .breadcrumb .active-segment {
     font-weight: bold;
-    color: #343a40; /* Color más oscuro para el segmento activo */
+    color: #343a40; 
     margin-left: 5px;
 
   }
@@ -1258,46 +1393,63 @@ Navbar-Elements
   
   .breadcrumb-icon {
     margin: 0;
-    font-size: 16px; /* Tamaño del icono de Home */
+    font-size: 16px; 
     margin-right: 5px;
   }
   
 
-/* Estilos para el menú desplegable */
+
 .dropdown-menu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease-in-out; /* Transición suave */
+    transition: max-height 0.5s ease-in-out; 
     padding-left: 15%;
     border-radius: 0.25rem;
   }
   
   .dropdown-menu.open {
-    max-height: 500px; /* Altura máxima que alcanzará cuando esté abierto */
+    max-height: 500px; 
   }
   
   .dropdown-item {
-    padding-left: 20px; /* Sangría para las opciones del dropdown */
+    padding-left: 20px; 
     cursor: pointer;
     font-size: .9rem;
     padding: 5px 0;
-    color: #6c757d; /* Color gris para las opciones del dropdown */
+    color: #6c757d; 
+  }
+
+  @media screen and (max-width: 1375px) {
+    .dropdown-item {
+      padding-left: 10px; 
+      cursor: pointer;
+      font-size: .8rem;
+      padding: 5px 0;
+      color: #6c757d; 
+    }
+    .dropdown-item.dropdown-title{
+        padding-left: 10px; 
+      cursor: pointer;
+      font-size: .8rem;
+      padding: 5px 0;
+      color: #6c757d; 
+    }
   }
   
   .dropdown-item:hover {
-    color: #0056b3; /* Cambia a azul cuando el cursor pasa sobre la opción */
+    color: #0056b3; 
   }
   
   .dropdown-title {
     color: #6c757d;
     font-weight: bold;
     font-size: .9rem;
-    margin-bottom: 8px; /* Separación entre el título y las opciones */
+    margin-bottom: 8px;
   }
   
   .dropdown-title:hover {
     cursor:auto;
-    color: #6c757d;/* Cambia a azul cuando el cursor pasa sobre la opción */
+    color: #6c757d;
   }
 
   

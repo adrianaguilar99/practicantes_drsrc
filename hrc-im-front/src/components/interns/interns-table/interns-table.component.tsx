@@ -1,5 +1,7 @@
 import InternCardComponent from './interns-card.component';
 import '../../components.css';
+import { Pagination } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 
 const InternsTable = () => {
@@ -17,19 +19,51 @@ const InternsTable = () => {
     { id : "95debf2f-f87d-4363-b310-4833376a8d61", nombre: 'CRYSTIAN ADAMIR CARRERA RIVAS', departamento: 'COCINA', progreso: 87, tipo: 'EXTERNO' },
   ];
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(6); 
+  useEffect(() => {
+    const ResizePage = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 1375) {
+        setRowsPerPage(5);
+      } else if (screenWidth < 1024) {
+        setRowsPerPage(4);
+      } else {
+        setRowsPerPage(6);
+      }
+    };
+
+    ResizePage();
+    window.addEventListener('resize', ResizePage);
+    return () => window.removeEventListener('resize', ResizePage);
+  }, []);
+
+  const totalPages = Math.ceil(practicantes.length / rowsPerPage);
+
+  const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    setCurrentPage(page);
+  };
+
+
+  const displayedInterns = practicantes.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
 
 return (
-  <div className="interns-table">
-  {/* Encabezados */}
-  <div className="table-headers">
+  <>
+   <div className="table-headers">
     <span>Tipo practicante</span>
     <span>Practicante</span>
     <span>Progreso</span>
     <span>Acciones</span>
   </div>
+   <div className="interns-table">
+  {/* Encabezados */}
+ 
   
   {/* Filas de datos */}
-  {practicantes.map((practicante) => (
+  {displayedInterns.map((practicante) => (
     <InternCardComponent
       key={practicante.id}
       id={practicante.id}
@@ -42,6 +76,18 @@ return (
     />
   ))}
 </div>
+<div className="table-pagination">
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={PageChange}
+        variant="outlined"
+        shape="rounded"
+        size='small'
+      />
+      </div>
+  </>
+ 
 );
 
 

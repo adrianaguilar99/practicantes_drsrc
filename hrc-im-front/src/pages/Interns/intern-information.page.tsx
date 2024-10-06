@@ -1,7 +1,7 @@
 import { InfoRow } from "../../components/inputs/info-row.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyAvatar from "../../assets/images/avatar-test.jpg";
 import { ButtonComponent, EditButton } from "../../components/buttons/buttons.component";
 import { CommentsTable } from "../../components/interns/interns-components/comments-table.component";
@@ -41,6 +41,13 @@ const InternInformationPage = () => {
       setSaveEdit(false);
     }
   };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    if (queryParams.get('edit') === 'true') {
+      setEditable(true);
+    }
+  }, [location]);
 
   const handleConfirmSave = () => {
     setEditable(false);  
