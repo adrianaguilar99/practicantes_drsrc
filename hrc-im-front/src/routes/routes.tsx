@@ -18,7 +18,7 @@ import ProtectedRoute from '../components/utils/protect-routes.component';
 import { useState } from 'react';
 
 function RoutesConfig() {
-  const [mode, setMode] = useState('');
+  const [mode, setMode] = useState('dev');
   return (
     <BrowserRouter>
       <Routes>

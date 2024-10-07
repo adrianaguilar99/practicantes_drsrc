@@ -49,14 +49,14 @@ const InternInformationPage = () => {
     }
   }, [location]);
 
-  const handleConfirmSave = () => {
+  const ConfirmSave = () => {
     setEditable(false);  
     setSaveEdit(false);
     setShowModal(false);
   };
 
 
-  const handleCancelSave = () => {
+  const CancelSave = () => {
     setSaveEdit(false); 
     setShowModal(false); 
   };
@@ -166,8 +166,8 @@ const InternInformationPage = () => {
                   
                     <ConfirmationModal
                       open={saveEdit}
-                      onConfirm={handleConfirmSave}  
-                      onCancel={handleCancelSave}  
+                      onConfirm={ConfirmSave}  
+                      onCancel={CancelSave}  
                       title="Confirmación de guardado"
                       message="¿Estás seguro que deseas guardar los cambios?"
                     />
@@ -252,13 +252,13 @@ const InternInformationPage = () => {
               </div>
               <div className="intern-progress-space-buttons">
               <ButtonComponent
-                      text="Generar reporte semanal"
+                      text="Reportes semanales"
                       onClick={function (): void {
                         throw new Error("Function not implemented.");
                       }}
                     />
                     <ButtonComponent
-                      text="Generar reporte mensual"
+                      text="Reportes mensuales"
                       onClick={function (): void {
                         throw new Error("Function not implemented.");
                       }}

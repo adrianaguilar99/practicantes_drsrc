@@ -25,7 +25,6 @@ const loadState = () => {
   }
 };
 
-// Cargar el estado persistido del sessionStorage
 const persistedState = loadState();
 
 export const store = configureStore({
@@ -34,7 +33,7 @@ export const store = configureStore({
     auth: authReducer,
     profile: profileReducer,
   },
-  // Asegúrate de que `persistedState` esté correctamente asignado a cada reducer.
+
   preloadedState: persistedState ? {
     sidebar: persistedState.sidebar,
     auth: persistedState.auth,
@@ -43,7 +42,6 @@ export const store = configureStore({
 });
 
 store.subscribe(() => {
-  // Solo guarda los estados de `sidebar` y `auth` para evitar guardar otros estados innecesarios.
   saveState({
     sidebar: store.getState().sidebar,
     auth: store.getState().auth,
