@@ -29,7 +29,7 @@ const InternsTable = () => {
       } else if (screenWidth < 1024) {
         setRowsPerPage(4);
       } else {
-        setRowsPerPage(6);
+        setRowsPerPage(7);
       }
     };
 
