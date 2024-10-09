@@ -63,12 +63,12 @@ const InternRegisterPage = () => {
 
   const [open, setOpen] = useState(false);
   const [entity, setEntity] = useState<string>("");
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const ModalOpen = () => setOpen(true);
+  const ModalClose = () => setOpen(false);
 
 
 
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
     setInternType(e.target.value);
   };
@@ -245,7 +245,7 @@ const InternRegisterPage = () => {
                       id="type"
                       className="edit-mode"
                       value={selectedType}
-                      onChange={handleTypeChange}
+                      onChange={TypeChange}
                     >
                       <option value="Interno">Interno</option>
                       <option value="Externo">Externo</option>
@@ -286,7 +286,7 @@ const InternRegisterPage = () => {
                     </div>
                   )}
                      {selectedType === "Externo" && (
-                  <p className="register-intern-suggestion" onClick={() => {setEntity("interns-institutions"); handleOpen()}}>¿No encuetra una institución? Registrar una institución</p>
+                  <p className="register-intern-suggestion" onClick={() => {setEntity("interns-institutions"); ModalOpen()}}>¿No encuetra una institución? Registrar una institución</p>
                 )}
                   <RegisterRow
                     label="Institución de procedencia:"
@@ -300,7 +300,7 @@ const InternRegisterPage = () => {
         
                   />
                   {selectedType === "Externo" && (
-                     <p className="register-intern-suggestion" onClick={() => {setEntity("interns-careers"); handleOpen()}}>¿No encuetra una carrera? Registrar una carrera</p>
+                     <p className="register-intern-suggestion" onClick={() => {setEntity("interns-careers"); ModalOpen()}}>¿No encuetra una carrera? Registrar una carrera</p>
                   )}
                  
                   <RegisterRow
@@ -419,15 +419,15 @@ const InternRegisterPage = () => {
                   ValidateInputs();
                 }}
               />
-              <ButtonComponent text="Cancelar" onClick={() => {}} />
+              <ButtonComponent text="Cancelar" onClick={() => history.back()} />
             </div>
           </div>
         </section>
       </div>
       <FormModal 
         open={open} 
-        onConfirm={handleClose} 
-        onCancel={handleClose} 
+        onConfirm={ModalClose} 
+        onCancel={ModalClose} 
         title="Agregar" 
         type="Add" 
         entity={entity} 
