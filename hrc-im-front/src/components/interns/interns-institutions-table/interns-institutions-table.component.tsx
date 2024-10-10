@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { InstitutionsCard } from "./interns-institutions-card.component"
 import { Pagination } from "@mui/material";
+import { TableProps } from "../../audits/audits-table.component";
 
 export const universities = [
     {
@@ -21,7 +22,7 @@ export const universities = [
     }
 ]
 
-export const InstitutionsTable = () => {
+export const InstitutionsTable : React.FC<TableProps> = ({ data = [] }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(6); 
     useEffect(() => {
@@ -41,14 +42,14 @@ export const InstitutionsTable = () => {
       return () => window.removeEventListener('resize', ResizePage);
     }, []);
   
-    const totalPages = Math.ceil(universities.length / rowsPerPage);
+    const totalPages = Math.ceil(data.length / rowsPerPage);
   
     const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
       setCurrentPage(page);
     };
   
   
-    const displayedUniversities = universities.slice(
+    const displayedUniversities = data.slice(
       (currentPage - 1) * rowsPerPage,
       currentPage * rowsPerPage
     );

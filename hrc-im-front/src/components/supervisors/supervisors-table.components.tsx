@@ -1,27 +1,11 @@
 import { useEffect, useState } from "react";
 import { SupervisorsCard } from "./supervisors-card.component";
 import { Pagination } from "@mui/material";
+import { TableProps } from "../audits/audits-table.component";
 
-export const SupervisorsTable = () => {
+export const SupervisorsTable : React.FC<TableProps> = ({ data = [] }) => {
   
-    const supervisors = [
-        {
-            name: "JUAN JOSE",
-            department: "RECURSOS HUMANOS",
-        },
-        { 
-            name: "BRIAN WILFRIDO ROMERO CUPUL",
-            department: "TECNOLOGIAS DE INFORMACIÓN",
-        },
-        {
-            name: "MIGUEL ANGEL GARCIA RODRIGUEZ",
-            department: "CONTABILIDAD",
-        },
-        {
-            name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
-            department: "ENTRENAMIENTO",
-        }
-    ]
+   
 
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(6); 
@@ -42,14 +26,14 @@ export const SupervisorsTable = () => {
       return () => window.removeEventListener('resize', ResizePage);
     }, []);
   
-    const totalPages = Math.ceil(supervisors.length / rowsPerPage);
+    const totalPages = Math.ceil(data.length / rowsPerPage);
   
     const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
       setCurrentPage(page);
     };
   
   
-    const displayedSupervisors = supervisors.slice(
+    const displayedSupervisors = data.slice(
       (currentPage - 1) * rowsPerPage,
       currentPage * rowsPerPage
     );

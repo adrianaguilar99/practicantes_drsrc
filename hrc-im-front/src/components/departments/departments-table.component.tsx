@@ -2,40 +2,41 @@ import { useState, useEffect } from 'react';
 import { Pagination } from '@mui/material';
 import '../components.css';
 import { DepartmentsCard } from './departments-card.component';
+import { TableProps } from '../audits/audits-table.component';
+export   const departments = [
+  { id: 1, name: "RECURSOS HUMANOS" },
+  { id: 2, name: "TECNOLOGÍAS DE INFORMACIÓN" },
+  { id: 3, name: "CONTABILIDAD" },
+  { id: 4, name: "ENTRENAMIENTO" },
+  { id: 5, name: "Departamento 3" },
+  { id: 6, name: "Departamento 4" },
+  { id: 7, name: "Departamento 5" },
+  { id: 8, name: "Departamento 6" },
+  { id: 9, name: "Departamento 7" },
+  { id: 10, name: "Departamento 8" },
+  { id: 11, name: "Departamento 9" },
+  { id: 12, name: "Departamento 10" },
+  { id: 13, name: "Departamento 11" },
+  { id: 14, name: "Departamento 12" },
+  { id: 15, name: "Departamento 13" },
+  { id: 16, name: "Departamento 14" },
+  { id: 17, name: "Departamento 15" },
+  { id: 18, name: "Departamento 16" },
+  { id: 19, name: "Departamento 17" },
+  { id: 20, name: "Departamento 18" },
+  { id: 21, name: "Departamento 19" },
+  { id: 22, name: "Departamento 20" },
+  { id: 23, name: "Departamento 21" },
+  { id: 24, name: "Departamento 22" },
+  { id: 25, name: "Departamento 23" },
+  { id: 26, name: "Departamento 24" },
+  { id: 27, name: "Departamento 25" },
+  { id: 28, name: "Departamento 26" },
+  { id: 29, name: "Departamento 27" },
+  { id: 30, name: "Departamento 28" },
+];
+export const DepartmentsTable : React.FC<TableProps> = ({ data = [] }) => {
 
-export const DepartmentsTable = () => {
-  const departments = [
-    { id: 1, name: "RECURSOS HUMANOS" },
-    { id: 2, name: "TECNOLOGÍAS DE INFORMACIÓN" },
-    { id: 3, name: "CONTABILIDAD" },
-    { id: 4, name: "ENTRENAMIENTO" },
-    { id: 5, name: "Departamento 3" },
-    { id: 6, name: "Departamento 4" },
-    { id: 7, name: "Departamento 5" },
-    { id: 8, name: "Departamento 6" },
-    { id: 9, name: "Departamento 7" },
-    { id: 10, name: "Departamento 8" },
-    { id: 11, name: "Departamento 9" },
-    { id: 12, name: "Departamento 10" },
-    { id: 13, name: "Departamento 11" },
-    { id: 14, name: "Departamento 12" },
-    { id: 15, name: "Departamento 13" },
-    { id: 16, name: "Departamento 14" },
-    { id: 17, name: "Departamento 15" },
-    { id: 18, name: "Departamento 16" },
-    { id: 19, name: "Departamento 17" },
-    { id: 20, name: "Departamento 18" },
-    { id: 21, name: "Departamento 19" },
-    { id: 22, name: "Departamento 20" },
-    { id: 23, name: "Departamento 21" },
-    { id: 24, name: "Departamento 22" },
-    { id: 25, name: "Departamento 23" },
-    { id: 26, name: "Departamento 24" },
-    { id: 27, name: "Departamento 25" },
-    { id: 28, name: "Departamento 26" },
-    { id: 29, name: "Departamento 27" },
-    { id: 30, name: "Departamento 28" },
-  ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); 
@@ -56,14 +57,14 @@ export const DepartmentsTable = () => {
     return () => window.removeEventListener('resize', ResizePage);
   }, []);
 
-  const totalPages = Math.ceil(departments.length / rowsPerPage);
+  const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
 
-  const displayedDepartments = departments.slice(
+  const displayedDepartments = data.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );

@@ -2,6 +2,7 @@ import { Pagination } from '@mui/material';
 import '../../components.css';
 import { CareersCard } from './interns-careers-card.component';
 import { useEffect, useState } from 'react';
+import { TableProps } from '../../audits/audits-table.component';
 export const careers = [
     {
       id: 1,
@@ -28,7 +29,7 @@ export const careers = [
     },
   ];
   
-export const CareersTable = () => {
+export const CareersTable : React.FC<TableProps> = ({ data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); 
   useEffect(() => {
@@ -48,14 +49,14 @@ export const CareersTable = () => {
     return () => window.removeEventListener('resize', ResizePage);
   }, []);
 
-  const totalPages = Math.ceil(careers.length / rowsPerPage);
+  const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
 
-  const displayedCareers = careers.slice(
+  const displayedCareers = data.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );

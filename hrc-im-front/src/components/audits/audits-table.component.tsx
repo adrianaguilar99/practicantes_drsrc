@@ -2,70 +2,13 @@ import { Pagination } from "@mui/material";
 import { AuditsCard } from "./audits-card.component";
 import { useEffect, useState } from "react";
 
-export const AuditsTable = () => {
-  const audits = [
-    {
-      action: "ACTUALIZACIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "INTERN",
-          name: "LUIS FERNANDO",
-          email: "qKpZb@example.com",
-          phone: "123456789",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "INSERCCIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "DEPARTMENT",
-          name: "FINANZAS",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "ACTUALIZACIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "INTERN",
-          name: "MIGUEL ANGEL",
-          email: "qKpZb@example.com",
-          phone: "123456789",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "INSERCCIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "INTERN",
-          name: "YOSHUA RAYMUNDO MORENO ARREDONDO",
-          email: "qKpZb@example.com",
-          phone: "123456789",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "ELIMINACIÓN",
-      responsable: "ALEXANDER FERNANDO",
-      entity: [
-        {
-          type: "DEPARTMENT",
-          name: "FINANZAS",
-        },
-      ],
-      date: "2022-01-01",
-    },
-  ];
+
+
+export interface TableProps {
+  data?: any[];  // Asegúrate de que sea un arreglo de objetos
+}
+export const AuditsTable: React.FC<TableProps> = ({ data = [] }) => {
+  
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); 
@@ -86,14 +29,14 @@ export const AuditsTable = () => {
     return () => window.removeEventListener('resize', ResizePage);
   }, []);
 
-  const totalPages = Math.ceil(audits.length / rowsPerPage);
+  const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
 
-  const displayedAudits = audits.slice(
+  const displayedAudits = data.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );

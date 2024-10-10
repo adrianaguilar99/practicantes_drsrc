@@ -1,6 +1,6 @@
 import { Navbar } from "../../components/navbars/navbar.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
-import {useState } from "react";
+import { useState } from "react";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import "./interns.page.css";
 import { RegisterRow } from "../../components/inputs/register-row.component";
@@ -11,9 +11,12 @@ import { careers } from "../../components/interns/interns-careers-table/interns-
 import { FormModal } from "../../components/modals/form-modal.component";
 import { EmergencyContactsRegister } from "../../components/interns/interns-components/emergency-contacts-register.component";
 import { InputValidators } from "../../functions/input-validators.functions";
+import { useDropzone } from "react-dropzone";
+import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import { set } from "date-fns";
 
 const InternRegisterPage = () => {
+  const [files, setFiles] = useState<File[]>([]);
   const [selectedType, setSelectedType] = useState("Interno");
 
   const [InternName, setInternName] = useState("");
@@ -41,13 +44,12 @@ const InternRegisterPage = () => {
 
   const [InternEmergencyPhone, setInternEmergencyPhone] = useState("");
 
-
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
     internName: undefined,
     internEmail: undefined,
     internPhone: undefined,
     internAddress: undefined,
-    internDepartment : undefined,
+    internDepartment: undefined,
     internSupervisor: undefined,
     internOldDepartment: undefined,
     internUniversity: undefined,
@@ -66,13 +68,10 @@ const InternRegisterPage = () => {
   const ModalOpen = () => setOpen(true);
   const ModalClose = () => setOpen(false);
 
-
-
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
     setInternType(e.target.value);
   };
-
 
   const ValidateInputs = () => {
     const validators = InputValidators();
@@ -108,14 +107,14 @@ const InternRegisterPage = () => {
       newErrors.internSupervisor = resutSupervisor;
     }
 
-    if(InternType === "Interno"){
+    if (InternType === "Interno") {
       const resultOldDepartment = validators.string(InternOldDepartment);
       if (resultOldDepartment) {
         newErrors.internOldDepartment = resultOldDepartment;
       }
     }
 
-    if(InternType === "Externo"){
+    if (InternType === "Externo") {
       const resultUniversity = validators.string(InternUniversity);
       if (resultUniversity) {
         newErrors.internUniversity = resultUniversity;
@@ -161,14 +160,8 @@ const InternRegisterPage = () => {
     if (resultTotalTime) {
       newErrors.internTotalTime = resultTotalTime;
     }
-    setErrors(newErrors); 
+    setErrors(newErrors);
   };
-
-
-
-
-
-
 
   const Universidades = [
     "Universidad Politecnica de Quintana Roo",
@@ -228,7 +221,6 @@ const InternRegisterPage = () => {
                     show={true}
                     validate={errors.internEmail ? "Error" : "Normal"}
                     typeError={errors.internEmail}
-                    
                   />
                   <RegisterRow
                     label="Tel Personal:"
@@ -285,9 +277,17 @@ const InternRegisterPage = () => {
                       <h3>Información de la institución</h3>
                     </div>
                   )}
-                     {selectedType === "Externo" && (
-                  <p className="register-intern-suggestion" onClick={() => {setEntity("interns-institutions"); ModalOpen()}}>¿No encuetra una institución? Registrar una institución</p>
-                )}
+                  {selectedType === "Externo" && (
+                    <p
+                      className="register-intern-suggestion"
+                      onClick={() => {
+                        setEntity("interns-institutions");
+                        ModalOpen();
+                      }}
+                    >
+                      ¿No encuetra una institución? Registrar una institución
+                    </p>
+                  )}
                   <RegisterRow
                     label="Institución de procedencia:"
                     onChange={(value) => setInternUniversity(value || "")}
@@ -297,12 +297,19 @@ const InternRegisterPage = () => {
                     show={selectedType === "Externo"}
                     validate={errors.internUniversity ? "Error" : "Normal"}
                     typeError={errors.internUniversity}
-        
                   />
                   {selectedType === "Externo" && (
-                     <p className="register-intern-suggestion" onClick={() => {setEntity("interns-careers"); ModalOpen()}}>¿No encuetra una carrera? Registrar una carrera</p>
+                    <p
+                      className="register-intern-suggestion"
+                      onClick={() => {
+                        setEntity("interns-careers");
+                        ModalOpen();
+                      }}
+                    >
+                      ¿No encuetra una carrera? Registrar una carrera
+                    </p>
                   )}
-                 
+
                   <RegisterRow
                     label="Carrera:"
                     onChange={(value) => {
@@ -351,7 +358,7 @@ const InternRegisterPage = () => {
                   />
                 </section>
 
-                <section className="register-section-right">
+                <section className="register-section-middle">
                   <RegisterRow
                     label="Fecha de inicio:"
                     onChange={(value) => setInternBeginDate(value || "")}
@@ -402,12 +409,47 @@ const InternRegisterPage = () => {
                   </div>
 
                   <EmergencyContactsRegister />
-
-
-                
-
-
-
+                </section>
+                <section className="register-section-right">
+                  <div className="register-intern-divider">
+                    <UploadFileOutlinedIcon /> <h3>Archivos del practicante</h3>
+                  </div>
+                  <RegisterRow
+                    label="Foto:"
+                    onChange={(value) => setInternTotalTime(value || "")}
+                    id="tiempoTotal"
+                    type="file"
+                    show={true}
+                    validate={errors.internTotalTime ? "Error" : "Normal"}
+                    typeError={errors.internTotalTime}
+                  />
+                  <RegisterRow
+                    label="CURP:"
+                    onChange={(value) => setInternTotalTime(value || "")}
+                    id="tiempoTotal"
+                    type="file"
+                    show={true}
+                    validate={errors.internTotalTime ? "Error" : "Normal"}
+                    typeError={errors.internTotalTime}
+                  />
+                  <RegisterRow
+                    label="Comprobante de domicilio:"
+                    onChange={(value) => setInternTotalTime(value || "")}
+                    id="tiempoTotal"
+                    type="file"
+                    show={true}
+                    validate={errors.internTotalTime ? "Error" : "Normal"}
+                    typeError={errors.internTotalTime}
+                  />
+                   <RegisterRow
+                    label="Acta de nacimiento:"
+                    onChange={(value) => setInternTotalTime(value || "")}
+                    id="tiempoTotal"
+                    type="file"
+                    show={true}
+                    validate={errors.internTotalTime ? "Error" : "Normal"}
+                    typeError={errors.internTotalTime}
+                  />
                 </section>
               </div>
             </div>
@@ -424,14 +466,14 @@ const InternRegisterPage = () => {
           </div>
         </section>
       </div>
-      <FormModal 
-        open={open} 
-        onConfirm={ModalClose} 
-        onCancel={ModalClose} 
-        title="Agregar" 
-        type="Add" 
-        entity={entity} 
-        message={''} 
+      <FormModal
+        open={open}
+        onConfirm={ModalClose}
+        onCancel={ModalClose}
+        title="Agregar"
+        type="Add"
+        entity={entity}
+        message={""}
       />
       <Footer />
     </div>

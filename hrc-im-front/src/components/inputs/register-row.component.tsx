@@ -6,7 +6,7 @@ import { useSpring, animated } from "@react-spring/web";
 interface RegisterRowProps {
   label: string;
   onChange: (value?: string) => void;
-  type?: "text" | "number" | "date" | "time" | "select" | "autocomplete";
+  type?: "text" | "number" | "date" | "time" | "select" | "autocomplete" | "file";
   value?: string;
   id: string;
   validate?: "Error" | "Normal";
@@ -68,6 +68,16 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
           {type === "number" && (
             <input
               type="number"
+              min={1}
+              id={id}
+              defaultValue={value}
+              onChange={(e) => handleChange(e.target.value)}
+              className={`edit-mode ${errorClass}`}
+            />
+          )}
+           {type === "file" && (
+            <input
+              type="file"
               min={1}
               id={id}
               defaultValue={value}

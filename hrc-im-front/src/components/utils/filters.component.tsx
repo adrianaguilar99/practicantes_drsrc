@@ -2,28 +2,50 @@ import React, { useState, useRef, useEffect } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { SearchBar } from "../search/search-bar.component";
 import { useLocation } from "react-router-dom";
+import { departments } from "./testdepartments";
 
-export const FiltersButton = () => {
+export interface FilterOptions {
+  order?: string;
+  type?: string;
+  progress?: string;
+  department?: string[];
+}
+
+interface FiltersProps {
+  onSearch?: (query: string) => void;
+  onFilters?: (filters: FilterOptions) => void;
+}
+
+export const FiltersButton: React.FC<FiltersProps> = ({
+  onSearch,
+  onFilters,
+}) => {
   const location = useLocation();
   const [orderfilters, setOrderFilters] = useState<string[]>([]);
   const [typefilters, setTypeFilters] = useState<string[]>([]);
   const [progressfilters, setProgressFilters] = useState<string[]>([]);
   const [departmentfilters, setDepartmentFilters] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
 
-  // Define las opciones según la URL
   const getFilterOptions = () => {
     switch (location.pathname) {
       case "/supervisors":
         return [
           { title: "Orden", divider: true },
           { title: "A - Z" },
-          { title: "Z - A" }
+          { title: "Z - A" },
         ];
       case "/departments":
         return [
           { title: "Orden", divider: true },
           { title: "A - Z" },
-          { title: "Z - A" }
+          { title: "Z - A" },
+        ];
+      case "/supervisors":
+        return [
+          { title: "Orden", divider: true },
+          { title: "A - Z" },
+          { title: "Z - A" },
         ];
       case "/interns":
         return [
@@ -31,39 +53,33 @@ export const FiltersButton = () => {
           { title: "A - Z" },
           { title: "Z - A" },
           { title: "Tipo", divider: true },
-          { title: "Externos" },
-          { title: "Internos" },
+          { title: "EXTERNO" },
+          { title: "INTERNO" },
           { title: "Progreso", divider: true },
-          { title: "Completado" }
+          { title: "Completado" },
+        ];
+      case "/audits":
+        return [
+          { title: "Tipo", divider: true },
+          { title: "ACTUALIZACIÓN" },
+          { title: "INSERCIÓN" },
+          { title: "ELIMINACION" },
+          { title: "Entidad", divider: true },
+          { title: "INTERNO" },
+          { title: "DEPARTAMENTO" },
+          { title: "CARRERA" },
+          { title: "INSTITUCIÓN" },
         ];
       default:
         return [
           { title: "Orden", divider: true },
           { title: "A - Z" },
-          { title: "Z - A" }
+          { title: "Z - A" },
         ];
     }
   };
 
-  const departments = [
-    { id: 1, name: "RECURSOS HUMANOS" },
-    { id: 2, name: "TECNOLOGÍAS DE INFORMACIÓN" },
-    { id: 3, name: "CONTABILIDAD" },
-    { id: 4, name: "ENTRENAMIENTO" },
-    { id: 5, name: "FINANZAS" },
-    { id: 6, name: "SISTEMAS" },
-    { id: 7, name: "INVESTIGACIÓN" },
-    { id: 8, name: "ADMINISTRACIÓN" },
-    { id: 9, name: "MARKETING" },
-    { id: 10, name: "DISEÑO" },
-    { id: 11, name: "COMUNICACIÓN" },
-    { id: 12, name: "SALUD" },
-    { id: 13, name: "OTROS" }
-  ];
-
   const filterOptions = getFilterOptions();
-
-  // Estado de checkboxes
   const [checked, setChecked] = useState<boolean[]>(
     new Array(filterOptions.length + departments.length).fill(false)
   );
@@ -71,53 +87,77 @@ export const FiltersButton = () => {
 
   const rectangleRef = useRef<HTMLDivElement | null>(null);
 
-  // Manejo de clics fuera del componente
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (rectangleRef.current && !rectangleRef.current.contains(event.target as Node)) {
+    const ClickOutside = (event: MouseEvent) => {
+      if (
+        rectangleRef.current &&
+        !rectangleRef.current.contains(event.target as Node)
+      ) {
         setShowRectangle(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", ClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", ClickOutside);
     };
   }, []);
 
-  // Maneja el cambio de los checkboxes
-  const handleCheckboxChange = (index: number, title: string) => {
+  const applyFilters = () => {
+    const filters: FilterOptions = {
+      order: orderfilters.length > 0 ? orderfilters[0] : undefined,
+      type: typefilters.length > 0 ? typefilters[0] : undefined,
+      progress: progressfilters.length > 0 ? progressfilters[0] : undefined,
+      department: departmentfilters.length > 0 ? departmentfilters : undefined,
+    };
+
+    if (onFilters) {
+      onFilters(filters);
+    }
+  };
+
+  const CheckboxChange = (index: number, title: string) => {
     setChecked((prevChecked) => {
       const newChecked = [...prevChecked];
-      newChecked[index] = !newChecked[index];
 
-      if (newChecked[index]) {
-        if (index < filterOptions.length) {
-          const option = filterOptions[index].title;
-          if (option.includes("A - Z") || option.includes("Z - A")) {
-            setOrderFilters([...orderfilters, option]);
-          } else if (option === "Externos" || option === "Internos") {
-            setTypeFilters([...typefilters, option]);
-          } else if (option === "Completado") {
-            setProgressFilters([...progressfilters, option]);
-          }
-        } else {
-          const department = departments[index - filterOptions.length].name;
-          setDepartmentFilters([...departmentfilters, department]);
+      if (title === "A - Z" || title === "Z - A") {
+        const azIndex = filterOptions.findIndex(
+          (option) => option.title === "A - Z"
+        );
+        const zaIndex = filterOptions.findIndex(
+          (option) => option.title === "Z - A"
+        );
+
+        if (title === "A - Z") {
+          newChecked[zaIndex] = false;
+        } else if (title === "Z - A") {
+          newChecked[azIndex] = false;
         }
+        newChecked[index] = !newChecked[index];
+        setOrderFilters([title]);
       } else {
-        if (index < filterOptions.length) {
-          const option = filterOptions[index].title;
-          if (option.includes("A - Z") || option.includes("Z - A")) {
-            setOrderFilters(orderfilters.filter((f) => f !== option));
-          } else if (option === "Externos" || option === "Internos") {
-            setTypeFilters(typefilters.filter((f) => f !== option));
-          } else if (option === "Completado") {
-            setProgressFilters(progressfilters.filter((f) => f !== option));
+        newChecked[index] = !newChecked[index];
+
+        if (newChecked[index]) {
+          if (title === "EXTERNO" || title === "INTERNO") {
+            setTypeFilters([...typefilters, title]);
+          } else if (title === "Completado") {
+            setProgressFilters([...progressfilters, title]);
+          } else if (index >= filterOptions.length) {
+            const department = departments[index - filterOptions.length].name;
+            setDepartmentFilters([...departmentfilters, department]);
           }
         } else {
-          const department = departments[index - filterOptions.length].name;
-          setDepartmentFilters(departmentfilters.filter((f) => f !== department));
+          if (title === "EXTERNO" || title === "INTERNO") {
+            setTypeFilters(typefilters.filter((f) => f !== title));
+          } else if (title === "Completado") {
+            setProgressFilters(progressfilters.filter((f) => f !== title));
+          } else if (index >= filterOptions.length) {
+            const department = departments[index - filterOptions.length].name;
+            setDepartmentFilters(
+              departmentfilters.filter((f) => f !== department)
+            );
+          }
         }
       }
 
@@ -125,33 +165,54 @@ export const FiltersButton = () => {
     });
   };
 
-  // Maneja el botón de limpiar filtros
-  const handleClearFilters = () => {
-    setChecked(new Array(filterOptions.length + departments.length).fill(false));
+  const ClearFilters = () => {
+    setChecked(
+      new Array(filterOptions.length + departments.length).fill(false)
+    );
     setOrderFilters([]);
     setTypeFilters([]);
     setProgressFilters([]);
     setDepartmentFilters([]);
+    applyFilters();
+  };
+
+  const Search = (value: string) => {
+    setQuery(value);
+    if (onSearch) {
+      onSearch(value);
+    }
   };
 
   return (
     <div>
-      <button className="filter-button" onClick={() => setShowRectangle(!showRectangle)}>
+      <button
+        className="filter-button"
+        onClick={() => setShowRectangle(!showRectangle)}
+      >
         Filtros
         <FilterListRoundedIcon />
       </button>
 
       {showRectangle && (
         <div ref={rectangleRef} className="filter-rectangle">
-          <SearchBar query="" responsive={true} onChange={() => {}} onClick={() => {}} />
-          {(orderfilters.length > 0 ||
-            typefilters.length > 0 ||
-            progressfilters.length > 0 ||
-            departmentfilters.length > 0) && (
-            <button className="clear-filters-button" onClick={handleClearFilters}>
-              Limpiar Filtros
+          <SearchBar onSearch={Search} responsive={true} />
+          <section className="filter-rectangle-header">
+            <button className="apply-filters-button" onClick={applyFilters}>
+              {" "}
+              Aplicar Filtros
             </button>
-          )}
+            {(orderfilters.length > 0 ||
+              typefilters.length > 0 ||
+              progressfilters.length > 0 ||
+              departmentfilters.length > 0) && (
+              <button
+                className="clear-filters-button"
+                onClick={() => ClearFilters()}
+              >
+                Limpiar Filtros
+              </button>
+            )}
+          </section>
 
           <div className="filters-grid">
             <div className="filters-column">
@@ -161,12 +222,14 @@ export const FiltersButton = () => {
                   title={option.title}
                   divider={option.divider}
                   checked={checked[index]}
-                  onChange={() => handleCheckboxChange(index, option.title)}
+                  onChange={() => CheckboxChange(index, option.title)}
                 />
               ))}
             </div>
 
-            {location.pathname === "/interns" && (
+            {(location.pathname === "/interns" ||
+              location.pathname === "/supervisors"
+            || location.pathname === "/checkin-checkout") && (
               <div className="filters-column">
                 <div className="filter-divider">
                   <label>Departamento</label>
@@ -176,7 +239,12 @@ export const FiltersButton = () => {
                     key={department.id}
                     title={department.name}
                     checked={checked[filterOptions.length + index]}
-                    onChange={() => handleCheckboxChange(filterOptions.length + index, department.name)}
+                    onChange={() =>
+                      CheckboxChange(
+                        filterOptions.length + index,
+                        department.name
+                      )
+                    }
                   />
                 ))}
               </div>
@@ -188,7 +256,6 @@ export const FiltersButton = () => {
   );
 };
 
-// Componente para los filtros y departamentos
 export interface FiltersOptionsProps {
   title: string;
   divider?: boolean;
@@ -212,7 +279,12 @@ export const FiltersOptions: React.FC<FiltersOptionsProps> = ({
         </div>
       ) : (
         <div className="filters-option">
-          <input type="checkbox" id={inputId} checked={checked} onChange={onChange} />
+          <input
+            type="checkbox"
+            id={inputId}
+            checked={checked}
+            onChange={onChange}
+          />
           <label htmlFor={inputId}>{title}</label>
         </div>
       )}
