@@ -16,8 +16,7 @@ export class SeedingController {
   })
   @HttpCode(200)
   @Get()
-  executeSeed(@Req() req) {
-    const user = req.user;
-    return this.seedingService.runSeed(user);
+  executeSeed() {
+    return this.seedingService.runSeed();
   }
 }

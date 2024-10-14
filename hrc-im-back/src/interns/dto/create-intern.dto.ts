@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsDate,
+  IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -7,7 +10,7 @@ import {
   Matches,
 } from 'class-validator';
 import { Career } from 'src/careers/entities/career.entity';
-import { InternStatus } from 'src/common/enums';
+import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
@@ -15,12 +18,13 @@ import { User } from 'src/users/entities/user.entity';
 
 export class CreateInternDto {
   @ApiProperty({
-    example: 'ABC-abc-1234',
-    description: 'Unique 10-digit code generated for the intern.',
-    uniqueItems: true,
+    example: 'O+',
+    description: "Intern's blood type.",
     nullable: false,
   })
-  internCode: string;
+  @IsEnum(BloodType)
+  @IsNotEmpty()
+  bloodType: BloodType;
 
   @ApiProperty({
     example: '9988774455',
@@ -46,6 +50,7 @@ export class CreateInternDto {
   @ApiProperty({
     example: '202100142',
     description: 'School enrollment number for external interns.',
+    uniqueItems: true,
     nullable: true,
   })
   @IsString()
@@ -57,7 +62,7 @@ export class CreateInternDto {
     description: 'Start date of the internship period (YYYY-MM-DD).',
     nullable: false,
   })
-  @IsString()
+  @IsDateString()
   @IsNotEmpty()
   internshipStart: Date;
 
@@ -66,7 +71,7 @@ export class CreateInternDto {
     description: 'End date of the internship period (YYYY-MM-DD).',
     nullable: false,
   })
-  @IsString()
+  @IsDateString()
   @IsNotEmpty()
   internshipEnd: Date;
 
@@ -77,8 +82,8 @@ export class CreateInternDto {
     default: InternStatus.ACTIVE,
   })
   @IsString()
-  @IsNotEmpty()
-  status: InternStatus;
+  @IsOptional()
+  status?: InternStatus;
 
   @ApiProperty({
     type: () => Career,

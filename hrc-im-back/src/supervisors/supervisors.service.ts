@@ -29,9 +29,6 @@ export class SupervisorsService {
     createSupervisorDto: CreateSupervisorDto,
     { fullName, role, userId }: IRequestUser,
   ) {
-    const department = await this.departmentsService.findOne(
-      createSupervisorDto.departmentId,
-    );
     const user = await this.usersService.findOne(createSupervisorDto.userId);
     if (
       user.userRole !== UserRole.SUPERVISOR &&
@@ -41,6 +38,10 @@ export class SupervisorsService {
         `User with ID ${createSupervisorDto.userId} does not have the required role to be a supervisor.`,
       );
     }
+
+    const department = await this.departmentsService.findOne(
+      createSupervisorDto.departmentId,
+    );
 
     const existingSupervisor = await this.supervisorsRepository.findOne({
       where: { user },
@@ -85,13 +86,21 @@ export class SupervisorsService {
         'FAILED TO CREATE SUPERVISOR',
         error.message,
       );
+      handleInternalServerError(error.message);
     }
   }
 
   async findAll() {
     try {
       const allSupervisors = await this.supervisorsRepository.find();
-      return allSupervisors;
+      const safeSupervisors = allSupervisors.map((supervisor) => {
+        const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
+        return {
+          ...supervisor,
+          user: safeUser,
+        };
+      });
+      return safeSupervisors;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -103,7 +112,27 @@ export class SupervisorsService {
     });
     if (!supervisor)
       throw new NotFoundException(`Supervisor with id: ${id} not found.`);
-    return supervisor;
+
+    const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
+    return {
+      ...supervisor,
+      user: safeUser,
+    };
+  }
+
+  async findByUser(id: string) {
+    const supervisor = await this.supervisorsRepository.findOne({
+      where: { user: { id } },
+      select: ['department'],
+    });
+    if (!supervisor)
+      throw new NotFoundException(`Supervisor not found using user.`);
+
+    const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
+    return {
+      ...supervisor,
+      user: safeUser,
+    };
   }
 
   async update(

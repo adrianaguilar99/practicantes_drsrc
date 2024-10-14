@@ -93,23 +93,6 @@ export class UsersService {
     }
   }
 
-  // async findAllPaginated({
-  //   limit = LIMIT_RECORDS,
-  //   offset = OFFSET_RECORDS,
-  // }: PaginationDto) {
-  //   try {
-  //     const users = await this.usersRepository.find({
-  //       where: { isActive: true },
-  //       take: limit,
-  //       skip: offset,
-  //     });
-  //     const withoutPassword = users.map(({ password, ...rest }) => rest);
-  //     return withoutPassword;
-  //   } catch (error) {
-  //     handleInternalServerError(error.message);
-  //   }
-  // }
-
   async findOne(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id, isActive: true },
@@ -152,7 +135,38 @@ export class UsersService {
         { id, name: 'User' },
         'SUCCESS',
       );
-      return removedUser;
+      return removedUser.affected;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE USER',
+        { id, name: 'User' },
+        'FAILED TO DELETE User',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
+  }
+
+  async physicallyRemove(id: string, { fullName, role, userId }: IRequestUser) {
+    await this.findOne(id);
+    try {
+      const removedUser = await this.usersRepository.delete(id);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE USER',
+        { id, name: 'User' },
+        'SUCCESS',
+      );
+      return removedUser.affected;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {

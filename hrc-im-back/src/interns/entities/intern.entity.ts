@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Career } from 'src/careers/entities/career.entity';
-import { InternStatus } from 'src/common/enums';
+import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
@@ -28,19 +28,32 @@ export class Intern {
   id: string;
 
   @ApiProperty({
-    example: 'ABC-abc-1234',
-    description: 'Unique 10-digit code generated for the intern.',
+    example: '123456',
+    description: 'Unique 6-digit code generated for the intern.',
     uniqueItems: true,
     nullable: false,
   })
   @Column({
     name: 'intern_code',
     type: 'varchar',
-    length: 10,
+    length: 6,
     unique: true,
     nullable: false,
   })
   internCode: string;
+
+  @ApiProperty({
+    example: 'O+',
+    description: "Intern's blood type.",
+    nullable: false,
+  })
+  @Column({
+    name: 'blood_type',
+    type: 'enum',
+    enum: BloodType,
+    nullable: false,
+  })
+  bloodType: BloodType;
 
   @ApiProperty({
     example: '9988774455',
@@ -62,9 +75,15 @@ export class Intern {
   @ApiProperty({
     example: '202100142',
     description: 'School enrollment number for external interns.',
+    uniqueItems: true,
     nullable: true,
   })
-  @Column({ name: 'school_enrollment', type: 'varchar', nullable: true })
+  @Column({
+    name: 'school_enrollment',
+    type: 'varchar',
+    unique: true,
+    nullable: true,
+  })
   schoolEnrollment: string;
 
   @ApiProperty({
@@ -170,12 +189,13 @@ export class Intern {
     nullable: false,
   })
   @OneToOne(() => User, (user) => user.intern, {
-    // eager: true,
+    eager: true,
     nullable: false,
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  // Funcion que calcula los dias de progreso del practicante
   calculateRemainingDays(): number {
     const now = new Date();
     const endDate = new Date(this.internshipEnd);
@@ -184,6 +204,7 @@ export class Intern {
     return diffInDays;
   }
 
+  // Funcion que calcula las horas de progreso del practicante
   calculateRemainingHours(): number {
     const now = new Date();
     const endDate = new Date(this.internshipEnd);
@@ -201,28 +222,6 @@ export class Intern {
       this.schoolEnrollment = this.schoolEnrollment.trim();
     }
     this.validateDates();
-    if (!this.internCode) {
-      this.internCode = this.generateInternCode();
-    }
-  }
-
-  private generateInternCode(): string {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const digits = '0123456789';
-    let code = '';
-
-    for (let i = 0; i < 3; i++) {
-      code += letters.charAt(Math.floor(Math.random() * 26));
-    }
-    code += '-';
-    for (let i = 0; i < 3; i++) {
-      code += letters.charAt(Math.floor(Math.random() * 26) + 26);
-    }
-    code += '-';
-    for (let i = 0; i < 4; i++) {
-      code += digits.charAt(Math.floor(Math.random() * 10));
-    }
-    return code;
   }
 
   private validateDates() {
@@ -230,19 +229,16 @@ export class Intern {
     const startDate = new Date(this.internshipStart);
     const endDate = new Date(this.internshipEnd);
 
-    if (startDate > endDate) {
+    // Aqui permitimos fechas de inicio iguales a la fecha actual pero no menores
+    if (startDate.getTime() < now.setHours(0, 0, 0, 0))
+      throw new Error('The internship start date cannot be in the past.');
+
+    if (startDate > endDate)
       throw new Error(
         'The internship start date cannot be greater than the end date.',
       );
-    }
-    if (endDate < startDate) {
-      throw new Error('The internship end cannot be less than the start date.');
-    }
-    if (startDate < now) {
-      throw new Error('The internship start date cannot be in the past.');
-    }
-    if (endDate < now) {
-      throw new Error('The internship start date cannot be in the past.');
-    }
+
+    if (endDate < now)
+      throw new Error('The internship end date cannot be in the past.');
   }
 }
