@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  NOT_FOUND,
+  INVALID_CREDENTIALS,
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
@@ -93,23 +93,6 @@ export class UsersService {
     }
   }
 
-  // async findAllPaginated({
-  //   limit = LIMIT_RECORDS,
-  //   offset = OFFSET_RECORDS,
-  // }: PaginationDto) {
-  //   try {
-  //     const users = await this.usersRepository.find({
-  //       where: { isActive: true },
-  //       take: limit,
-  //       skip: offset,
-  //     });
-  //     const withoutPassword = users.map(({ password, ...rest }) => rest);
-  //     return withoutPassword;
-  //   } catch (error) {
-  //     handleInternalServerError(error.message);
-  //   }
-  // }
-
   async findOne(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id, isActive: true },
@@ -131,11 +114,11 @@ export class UsersService {
     const user = await this.usersRepository.findOne({
       where: { email, isActive: true },
     });
-    if (!user) throw new NotFoundException(`${NOT_FOUND}`);
+    if (!user) throw new NotFoundException(`${INVALID_CREDENTIALS}`);
     return user;
   }
 
-  async remove(id: string, { fullName, role, userId }: IRequestUser) {
+  async deactivate(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
       const removedUser = await this.usersRepository.update(
@@ -152,7 +135,7 @@ export class UsersService {
         { id, name: 'User' },
         'SUCCESS',
       );
-      return removedUser;
+      return removedUser.affected;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
@@ -162,7 +145,38 @@ export class UsersService {
         },
         'TRY TO DELETE USER',
         { id, name: 'User' },
-        'FAILED TO DELETE User',
+        'FAILED TO DELETE USER',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
+  }
+
+  async remove(id: string, { fullName, role, userId }: IRequestUser) {
+    await this.findOne(id);
+    try {
+      const removedUser = await this.usersRepository.delete(id);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE USER',
+        { id, name: 'User' },
+        'SUCCESS',
+      );
+      return removedUser.affected;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE USER',
+        { id, name: 'User' },
+        'FAILED TO DELETE USER',
         error.message,
       );
       handleInternalServerError(error.message);

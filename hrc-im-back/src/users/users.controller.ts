@@ -98,27 +98,6 @@ export class UsersController {
     };
   }
 
-  // @ApiOperation({ summary: READ_ALL_RECORDS_PAGINATED })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: SUCCESSFUL_FETCH,
-  //   type: [User],
-  // })
-  // @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  // @HttpCode(200)
-  // @Get('paginated')
-  // async findAllPaginated(
-  //   @Query() paginationDto: PaginationDto,
-  // ): Promise<IApiResponse<any>> {
-  //   const paginatedUsers =
-  //     await this.usersService.findAllPaginated(paginationDto);
-  //   return {
-  //     message: SUCCESSFUL_FETCH,
-  //     data: paginatedUsers,
-  //     records: paginatedUsers.length,
-  //   };
-  // }
-
   @ApiOperation({
     summary:
       'Action to obtain your profile data using the authentication token.',
@@ -181,13 +160,41 @@ export class UsersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete(':id')
-  async remove(
+  async deactivate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
+  ): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const userRemoved = await this.usersService.deactivate(id, user);
+    return {
+      message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
+      data: userRemoved,
+    };
+  }
+
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_MARKED_DELETED,
+    type: User,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Delete(':id/physical')
+  async physicallyRemove(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
     const userRemoved = await this.usersService.remove(id, user);
-    return { message: SUCCESSFUL_MARKED_DELETED, data: userRemoved };
+    return {
+      message: `User has been physically removed.`,
+      data: userRemoved,
+    };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
