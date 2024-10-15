@@ -6,9 +6,7 @@ import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
-  AfterUpdate,
   BeforeInsert,
-  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
