@@ -14,7 +14,7 @@ interface FormModalProps {
     message?: string;       
   }
 
-  export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, title, type, entity,data }) => {
+  export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, onConfirm, title, type, entity,data }) => {
     const [Supervisordata, setSupervisordata] = React.useState<any>({});
 
 
@@ -63,10 +63,10 @@ interface FormModalProps {
               p: 3,
             }}
           >
-            {entity === "departments" ? <DepartmentFormModal data={data} type={type} onCancel={onCancel} /> : null}
-            {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} /> : null}
-            {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} /> : null}
-            {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} /> : null}
+            {entity === "departments" ? <DepartmentFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
           </Box>
         </Box>
       </Modal>

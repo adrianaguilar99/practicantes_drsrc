@@ -3,35 +3,12 @@ import '../../components.css';
 import { CareersCard } from './interns-careers-card.component';
 import { useEffect, useState } from 'react';
 import { TableProps } from '../../audits/audits-table.component';
-export const careers = [
-    {
-      id: 1,
-      name: "INGENIERÍA EN SOFTWARE",
-    },
-    {
-      id: 2,
-      name: "INGENIERÍA EN BIOMEDICINA",
-    },
-    {
-      id: 3,
-      name: "INGENIERÍA EN ADMINISTRACIÓN",
-    },
-    {
-      id: 4,
-      name: "LICENCIATURA EN TECNOLOGÍ...",
-    },
-    {
-      id: 5,
-      name: "LICENCIATURA EN FISIO TERAPIA",
-    },{
-      id: 6,
-      name: "LICENCIATURA EN ENFERMERÍA",
-    },
-  ];
-  
-export const CareersTable : React.FC<TableProps> = ({ data = [] }) => {
+import { on } from 'events';
+
+export const CareersTable : React.FC<TableProps> = ({ onUpdate, data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); 
+  const [rowsPerPage, setRowsPerPage] = useState(7); 
+  const userToken = sessionStorage.getItem("_Token") || "";
   useEffect(() => {
     const ResizePage = () => {
       const screenWidth = window.innerWidth;
@@ -40,7 +17,7 @@ export const CareersTable : React.FC<TableProps> = ({ data = [] }) => {
       } else if (screenWidth < 1024) {
         setRowsPerPage(4);
       } else {
-        setRowsPerPage(6);
+        setRowsPerPage(7);
       }
     };
 
@@ -69,12 +46,15 @@ export const CareersTable : React.FC<TableProps> = ({ data = [] }) => {
         <span>Acciones</span>
       </div>
       <div className='interns-careers-table'>
-         { displayedCareers.map((career, index) =>
+         { displayedCareers.map((career) =>
               <CareersCard
-                key={index}
+                key={career.id}
+                id={career.id}
                 name={career.name}
+                userToken={userToken}
                 onEdit={() => {}}
                 onDelete={() => {}}
+                onConfirm={onUpdate}
               />
          )}
       </div>

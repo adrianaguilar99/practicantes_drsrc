@@ -1,19 +1,20 @@
 import { Navbar } from "../../components/navbars/navbar.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import "./interns.page.css";
 import { RegisterRow } from "../../components/inputs/register-row.component";
 import ContactPhoneRoundedIcon from "@mui/icons-material/ContactPhoneRounded";
 import { ButtonComponent } from "../../components/buttons/buttons.component";
 import { Footer } from "../../components/navbars/footer.component";
-import { careers } from "../../components/interns/interns-careers-table/interns-careers-table.component";
 import { FormModal } from "../../components/modals/form-modal.component";
 import { EmergencyContactsRegister } from "../../components/interns/interns-components/emergency-contacts-register.component";
 import { InputValidators } from "../../functions/input-validators.functions";
-import { useDropzone } from "react-dropzone";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import { set } from "date-fns";
+import { CareersInterface, DataCareer } from "../../interfaces/careers/careers.intarface";
+import { getCareersData } from "../../api/api-request";
+import { ca } from "date-fns/locale";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -42,7 +43,19 @@ const InternRegisterPage = () => {
 
   const [InternAddress, setInternAddress] = useState("");
 
-  const [InternEmergencyPhone, setInternEmergencyPhone] = useState("");
+  const [InternPicture, setInternPicture] = useState("");
+  const [InternCurp, setInternCurp] = useState("");
+  const [InternProofofaddress, setInternProofofaddress] = useState("");
+  const [InternBirthCertificate, setInternBirthCertificate] = useState("");
+  const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
+
+interface EmergencyContacts {
+  name: string;
+  relationship: string;
+  phone: string;
+}
+
+  const [InternEmergencyContacts, setInternEmergencyContacts] =  useState<EmergencyContacts[]>([]);
 
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
     internName: undefined,
@@ -61,17 +74,45 @@ const InternRegisterPage = () => {
     internCheckIn: undefined,
     internCheckOut: undefined,
     internTotalTime: undefined,
+
+    internPicture: undefined,
+    internCurp: undefined,
+    internProofofaddress: undefined,
+    internBirthCertificate: undefined,
+    internMedicalInsurance: undefined,
+
   });
+
+
 
   const [open, setOpen] = useState(false);
   const [entity, setEntity] = useState<string>("");
   const ModalOpen = () => setOpen(true);
   const ModalClose = () => setOpen(false);
+  const userToken = sessionStorage.getItem("_Token") || "";
+  const [Careers, setCareers] = useState<DataCareer[]>([]);
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
     setInternType(e.target.value);
   };
+
+  const fetchCareers = async () => {
+    try {
+      const fetchedData: CareersInterface | null = await getCareersData(userToken);   
+      if(fetchedData){
+        setCareers(fetchedData.data);
+      }
+
+     
+  }catch (error) {
+    console.log(error);
+  }
+}
+useEffect(() => {
+  fetchCareers();
+}, [userToken]);
+
 
   const ValidateInputs = () => {
     const validators = InputValidators();
@@ -159,6 +200,31 @@ const InternRegisterPage = () => {
     const resultTotalTime = validators.string(InternTotalTime);
     if (resultTotalTime) {
       newErrors.internTotalTime = resultTotalTime;
+    }
+
+    const resultPicture = validators.fileImage(InternPicture);
+    if (resultPicture) {
+      newErrors.internPicture = resultPicture;
+    }
+
+    const resultCurp = validators.filePDF(InternCurp);
+    if (resultCurp) {
+      newErrors.internCurp = resultCurp;
+    }
+
+    const resultBirthCertificate = validators.filePDF(InternBirthCertificate);
+    if (resultBirthCertificate) {
+      newErrors.internBirthCertificate = resultBirthCertificate;
+    }
+
+    const resultProofofaddress = validators.filePDF(InternProofofaddress);
+    if (resultProofofaddress) {
+      newErrors.internProofofaddress = resultProofofaddress;
+    }
+
+    const resultMedicalInsurance = validators.filePDF(InternMedicalInsurance);
+    if (resultMedicalInsurance) {
+      newErrors.internMedicalInsurance = resultMedicalInsurance;
     }
     setErrors(newErrors);
   };
@@ -252,6 +318,15 @@ const InternRegisterPage = () => {
                     validate={errors.internAddress ? "Error" : "Normal"}
                     typeError={errors.internAddress}
                   />
+                   <RegisterRow
+                    label="Tipo de sangre:"
+                    onChange={(value) => setInternAddress(value || "")}
+                    id="bloodtype"
+                    type="select"
+                    show={true}
+                    validate={errors.internAddress ? "Error" : "Normal"}
+                    typeError={errors.internAddress}
+                  />
                   <RegisterRow
                     label="Departamento de practicas:"
                     onChange={(value) => setInternOldDepartment(value || "")}
@@ -313,7 +388,7 @@ const InternRegisterPage = () => {
                   <RegisterRow
                     label="Carrera:"
                     onChange={(value) => {
-                      const selectedCareer = careers.find(
+                      const selectedCareer = Careers.find(
                         (career) => career.name === value
                       );
                       setInternProgram(
@@ -322,7 +397,7 @@ const InternRegisterPage = () => {
                     }}
                     id="career"
                     type="autocomplete"
-                    coincidences={careers.map((career) => career.name)}
+                    coincidences={Careers.map((career: { name: any; }) => career.name)}
                     show={selectedType === "Externo"}
                     validate={errors.internProgram ? "Error" : "Normal"}
                     typeError={errors.internProgram}
@@ -409,6 +484,12 @@ const InternRegisterPage = () => {
                   </div>
 
                   <EmergencyContactsRegister />
+                  {InternEmergencyContacts.length < 2 && (
+                    <p className="register-intern-suggestion">
+                      Ingrese minimo 2 contactos de emergencia
+                    </p>
+                  )}
+                  
                 </section>
                 <section className="register-section-right">
                   <div className="register-intern-divider">
@@ -416,39 +497,48 @@ const InternRegisterPage = () => {
                   </div>
                   <RegisterRow
                     label="Foto:"
-                    onChange={(value) => setInternTotalTime(value || "")}
+                    onChange={(value) => setInternPicture(value || "")}
                     id="tiempoTotal"
                     type="file"
                     show={true}
-                    validate={errors.internTotalTime ? "Error" : "Normal"}
-                    typeError={errors.internTotalTime}
+                    validate={errors.internPicture ? "Error" : "Normal"}
+                    typeError={errors.internPicture}
                   />
                   <RegisterRow
                     label="CURP:"
-                    onChange={(value) => setInternTotalTime(value || "")}
+                    onChange={(value) => setInternCurp(value || "")}
                     id="tiempoTotal"
                     type="file"
                     show={true}
-                    validate={errors.internTotalTime ? "Error" : "Normal"}
-                    typeError={errors.internTotalTime}
+                    validate={errors.internCurp ? "Error" : "Normal"}
+                    typeError={errors.internCurp}
                   />
                   <RegisterRow
                     label="Comprobante de domicilio:"
-                    onChange={(value) => setInternTotalTime(value || "")}
+                    onChange={(value) => setInternProofofaddress(value || "")}
                     id="tiempoTotal"
                     type="file"
                     show={true}
-                    validate={errors.internTotalTime ? "Error" : "Normal"}
-                    typeError={errors.internTotalTime}
+                    validate={errors.internProofofaddress ? "Error" : "Normal"}
+                    typeError={errors.internProofofaddress}
                   />
                    <RegisterRow
                     label="Acta de nacimiento:"
-                    onChange={(value) => setInternTotalTime(value || "")}
+                    onChange={(value) => setInternBirthCertificate(value || "")}
                     id="tiempoTotal"
                     type="file"
                     show={true}
-                    validate={errors.internTotalTime ? "Error" : "Normal"}
-                    typeError={errors.internTotalTime}
+                    validate={errors.internBirthCertificate ? "Error" : "Normal"}
+                    typeError={errors.internBirthCertificate}
+                  />
+                   <RegisterRow
+                    label="Comprobante de seguro medico:"
+                    onChange={(value) => setInternMedicalInsurance(value || "")}
+                    id="tiempoTotal"
+                    type="file"
+                    show={true}
+                    validate={errors.internMedicalInsurance ? "Error" : "Normal"}
+                    typeError={errors.internMedicalInsurance}
                   />
                 </section>
               </div>
@@ -459,6 +549,7 @@ const InternRegisterPage = () => {
                 text="Guardar"
                 onClick={() => {
                   ValidateInputs();
+                  ;console.log(InternProgram);
                 }}
               />
               <ButtonComponent text="Cancelar" onClick={() => history.back()} />
@@ -468,7 +559,7 @@ const InternRegisterPage = () => {
       </div>
       <FormModal
         open={open}
-        onConfirm={ModalClose}
+        onConfirm={fetchCareers}
         onCancel={ModalClose}
         title="Agregar"
         type="Add"

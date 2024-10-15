@@ -544,14 +544,24 @@ padding-right: 5%;
 
 .register-intern-contact-form{
     display: flex;
+    padding: 1%;
+    border-radius: 10px;
     width: 100%;
+    background-color: #ffffff;
     justify-content: space-between;
     margin-bottom: 3%;
+    
+}
+
+.register-intern-contact-form-input-row{
+    display: flex;
 }
 
 
 .register-intern-contact-form-input{
     display: flex;
+    flex-direction: column;
+    margin-right: 3%;
    font-size: .8rem;
 }
 

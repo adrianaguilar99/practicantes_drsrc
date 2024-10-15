@@ -1,3 +1,4 @@
+import { el } from "date-fns/locale";
 
 
 export function InputValidators () {
@@ -6,16 +7,30 @@ export function InputValidators () {
             if (value.length < 3) {
                 return 'El campo no cumple con los requisitos';
             }   
+            else if (value.length > 150) {
+                return 'El campo no cumple con los requisitos';
+            }
         },
         email: (value: string) => {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regex.test(value)) {
                 return 'Ingresa un correo electrónico válido';
             }
+            else if (value.length > 100) {
+                return 'Ingresa un correo electrónico válido';
+            }
         },
         phone: (value: string) => {
             const regex = /^\d{10}$/;
             if (!regex.test(value)) {
+                return 'Ingresa un número de teléfono válido';
+            }
+            else if (value.length > 10) {
+                if (isNaN(parseInt(value))) {
+                    return 'Ingresa un número de teléfono válido';
+                }
+            }
+            else if (isNaN(parseInt(value))) {
                 return 'Ingresa un número de teléfono válido';
             }
         },
@@ -38,6 +53,20 @@ export function InputValidators () {
             const regex = /^\d+$/;
             if (!regex.test(value)) {
                 return 'Campo no válido';
+            }
+        },
+
+        fileImage: (value: string) => {
+            const regex = /(\.jpg|\.jpeg|\.png)$/i;
+            if (!regex.test(value)) {
+                return 'Ingresa una imagen válida';
+            }
+        },
+
+        filePDF: (value: string) => {
+            const regex = /(\.pdf)$/i;
+            if (!regex.test(value)) {
+                return 'Ingresa un archivo PDF válido';
             }
         },
 

@@ -8,13 +8,14 @@ import { useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { useGetAccessToken } from "../../functions/auth.function";
+import { apiUrl } from "../../api/api-request";
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const getAccessToken = useGetAccessToken();
 
     const LoginClick = () => {
-        window.location.href = 'http://localhost:3000/api/auth/google/login';
+        window.location.href = apiUrl + '/auth/google/login';
     };
 
     useEffect(() => {

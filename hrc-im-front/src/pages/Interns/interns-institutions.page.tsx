@@ -63,7 +63,7 @@ const InternsInstitutionsPage = () => {
       <section className="interns-left-container"></section>
       <section className="interns-right-container">
         <Breadcrumb />
-        <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} />
+        <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
         <div className="interns-data-container">
           <InstitutionsTable data={filteredData}/>
         </div>

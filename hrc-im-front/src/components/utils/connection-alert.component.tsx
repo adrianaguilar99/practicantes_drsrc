@@ -3,6 +3,7 @@ import '../components.css';
 import { Slide } from "@mui/material";
 import WifiOffRoundedIcon from '@mui/icons-material/WifiOffRounded';
 import WifiRoundedIcon from '@mui/icons-material/WifiRounded';
+import { apiUrl } from "../../api/api-request";
 
 export const ConnectionAlert = () => {
   const [connection, setConnection] = useState(true);   // Estado de conexión actual
@@ -11,7 +12,7 @@ export const ConnectionAlert = () => {
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/tests/ok");
+        const response = await fetch(apiUrl + "/tests/ok");
         if (response.ok) {
           if (!connection) { 
             setShowSuccess(true); 

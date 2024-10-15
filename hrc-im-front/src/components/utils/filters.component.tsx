@@ -3,6 +3,9 @@ import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { SearchBar } from "../search/search-bar.component";
 import { useLocation } from "react-router-dom";
 import { departments } from "./testdepartments";
+import { decryptData } from "../../functions/encrypt-data.function";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export interface FilterOptions {
   order?: string;
@@ -20,6 +23,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
   onSearch,
   onFilters,
 }) => {
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const location = useLocation();
   const [orderfilters, setOrderFilters] = useState<string[]>([]);
   const [typefilters, setTypeFilters] = useState<string[]>([]);
@@ -227,7 +231,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
               ))}
             </div>
 
-            {(location.pathname === "/interns" ||
+            {userRol != "SUPERVISOR" &&(location.pathname === "/interns" ||
               location.pathname === "/supervisors"
             || location.pathname === "/checkin-checkout") && (
               <div className="filters-column">

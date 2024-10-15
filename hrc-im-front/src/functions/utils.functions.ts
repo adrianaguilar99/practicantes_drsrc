@@ -39,7 +39,6 @@ export function stringToColor(string: string) {
       color[i] = value;
     }
   
-    // Devuelve el color en formato rgba, donde `alpha` es la transparencia
     return `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
   }
   

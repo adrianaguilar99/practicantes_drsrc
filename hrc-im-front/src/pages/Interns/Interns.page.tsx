@@ -81,7 +81,7 @@ export const InternsPage = () => {
         <section className="interns-left-container"></section>
         <section className="interns-right-container">
           <Breadcrumb />
-          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters}/>
+          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
 
           <div className="interns-data-container">
             {isLoading ? (

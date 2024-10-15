@@ -64,7 +64,7 @@ const DepartmentsPage = () => {
         <section className="departments-left-container"></section>
         <section className="departments-right-container">
           <Breadcrumb/>
-          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters}/>
+          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
            <div className="departments-data-container">
               <DepartmentsTable data={filteredData}/>
            </div>

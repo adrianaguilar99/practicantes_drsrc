@@ -6,10 +6,11 @@ import { FilterOptions } from "../utils/filters.component"; // Asegúrate de imp
 
 interface SearchProps {
   onSearch: (query: string) => void;
-  onFilters?: (filters: FilterOptions) => void; // Asegúrate de que esto reciba los filtros
+  onFilters?: (filters: FilterOptions) => void; 
+  onAdd: () => void;
 }
 
-export const SearchComponent: React.FC<SearchProps> = ({ onSearch, onFilters }) => {
+export const SearchComponent: React.FC<SearchProps> = ({ onSearch, onFilters, onAdd }) => {
   const [query, setQuery] = useState('');
 
   const handleSearch = (value: string) => {
@@ -30,7 +31,7 @@ export const SearchComponent: React.FC<SearchProps> = ({ onSearch, onFilters }) 
       {/* Pasar la función handleFilters al componente FiltersButton */}
       <FiltersButton onFilters={handleFilters} />
 
-      <AddButton />
+      <AddButton onConfirm={onAdd}/>
     </div>
   );
 };

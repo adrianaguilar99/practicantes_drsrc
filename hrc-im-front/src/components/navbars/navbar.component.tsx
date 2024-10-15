@@ -28,15 +28,12 @@ export const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [userName, getProfile] = useGetProfile(sessionStorage.getItem("_Token") || "");
-  // const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   
   const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isSidebarOpen);
-  
-  // Ref para el botón de sidebar
   const sidebarToggleRef = useRef<HTMLButtonElement>(null);
 
   const toggleNotificationMenu = () => {

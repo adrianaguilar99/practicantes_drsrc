@@ -11,10 +11,9 @@ interface ConfirmationModalProps {
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, title, message }) => {
 
-  // Evita que el modal se cierre al hacer clic fuera de la caja modal o con la tecla "Escape"
   const handleClose = (event: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
-      onCancel();  // Solo permitir que se cierre con las opciones
+      onCancel();  
     }
   };
 
@@ -22,7 +21,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCo
     <Modal
       open={open}
       onClose={handleClose}
-      disableEscapeKeyDown // Evita que el modal se cierre con la tecla Escape
+      disableEscapeKeyDown 
     >
       <Box
         sx={{

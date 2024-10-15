@@ -6,8 +6,16 @@ import { GetUrl } from '../../functions/utils.functions';
 import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import { FormModal } from '../modals/form-modal.component';
+import { decryptData } from '../../functions/encrypt-data.function';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
-export const AddButton = () => {
+interface AddButtonProps {
+  onConfirm: () => void;
+}
+
+export const AddButton: React.FC<AddButtonProps> = ({ onConfirm }) => {
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate(); 
@@ -49,7 +57,7 @@ export const AddButton = () => {
 
   return (
     <>
-      {url !== "audits" && url !== "checkin-checkout" ? (
+      {url !== "audits" && url !== "checkin-checkout" && userRol != "SUPERVISOR" ? (
         <button className="add-button" onClick={handleClick}>
           Agregar
           {getIcon()}
@@ -58,7 +66,7 @@ export const AddButton = () => {
 
       <FormModal 
         open={open} 
-        onConfirm={handleClose} 
+        onConfirm={onConfirm} 
         onCancel={handleClose} 
         title="Agregar" 
         type="Add" 

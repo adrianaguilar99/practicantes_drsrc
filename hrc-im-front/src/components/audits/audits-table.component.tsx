@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 
 
 export interface TableProps {
-  data?: any[];  // Asegúrate de que sea un arreglo de objetos
+  data?: any[];  
+  onUpdate: () => void;
 }
 export const AuditsTable: React.FC<TableProps> = ({ data = [] }) => {
   
