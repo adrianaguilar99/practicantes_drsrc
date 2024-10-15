@@ -160,12 +160,12 @@ export class UsersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete(':id')
-  async remove(
+  async deactivate(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const userRemoved = await this.usersService.remove(id, user);
+    const userRemoved = await this.usersService.deactivate(id, user);
     return {
       message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
       data: userRemoved,
@@ -190,7 +190,7 @@ export class UsersController {
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const userRemoved = await this.usersService.physicallyRemove(id, user);
+    const userRemoved = await this.usersService.remove(id, user);
     return {
       message: `User has been physically removed.`,
       data: userRemoved,

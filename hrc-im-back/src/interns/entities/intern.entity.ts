@@ -6,6 +6,7 @@ import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
+  AfterUpdate,
   BeforeInsert,
   BeforeUpdate,
   Column,
@@ -214,8 +215,7 @@ export class Intern {
   }
 
   @BeforeInsert()
-  @BeforeUpdate()
-  normalizeFields() {
+  checkFieldsBeforeInsert() {
     this.phone = this.phone.trim();
     this.address = this.address.trim();
     if (this.schoolEnrollment) {
@@ -226,11 +226,22 @@ export class Intern {
 
   private validateDates() {
     const now = new Date();
-    const startDate = new Date(this.internshipStart);
-    const endDate = new Date(this.internshipEnd);
+    now.setHours(0, 0, 0, 0);
 
-    // Aqui permitimos fechas de inicio iguales a la fecha actual pero no menores
-    if (startDate.getTime() < now.setHours(0, 0, 0, 0))
+    const startDate = new Date(this.internshipStart);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(this.internshipEnd);
+    endDate.setHours(0, 0, 0, 0);
+
+    // console.log({
+    //   startD: startDate.toDateString(),
+    //   now: now.toDateString(),
+    //   endD: endDate.toDateString(),
+    // });
+
+    // Convertimos a cadena para comparar solo la fecha
+    if (startDate.toDateString() < now.toDateString())
       throw new Error('The internship start date cannot be in the past.');
 
     if (startDate > endDate)
@@ -238,7 +249,7 @@ export class Intern {
         'The internship start date cannot be greater than the end date.',
       );
 
-    if (endDate < now)
+    if (endDate.toDateString() < now.toDateString())
       throw new Error('The internship end date cannot be in the past.');
   }
 }

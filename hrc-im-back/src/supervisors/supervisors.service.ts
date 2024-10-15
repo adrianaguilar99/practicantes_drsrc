@@ -142,11 +142,7 @@ export class SupervisorsService {
   ) {
     const existingSupervisor = await this.findOne(id);
     const isUnauthorizedUpdate =
-      (updateSupervisorDto.departmentId &&
-        updateSupervisorDto.departmentId !==
-          existingSupervisor.department.id) ||
-      (updateSupervisorDto.userId &&
-        updateSupervisorDto.userId !== existingSupervisor.user.id);
+      updateSupervisorDto.departmentId || updateSupervisorDto.userId;
 
     if (isUnauthorizedUpdate) {
       await this.systemAuditsService.createSystemAudit(
@@ -157,7 +153,7 @@ export class SupervisorsService {
           name: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
         },
         'FAILED TO UPDATE SUPERVISOR',
-        'Attempted to update fields that are not allowed: departmentId or userId',
+        'Attempted to update fields that are not allowed: department or user',
       );
       throw new ConflictException(
         'You are not allowed to update the department or user of the supervisor.',

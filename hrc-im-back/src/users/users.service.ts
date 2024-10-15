@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  NOT_FOUND,
+  INVALID_CREDENTIALS,
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
 } from 'src/common/constants/constants';
@@ -114,11 +114,11 @@ export class UsersService {
     const user = await this.usersRepository.findOne({
       where: { email, isActive: true },
     });
-    if (!user) throw new NotFoundException(`${NOT_FOUND}`);
+    if (!user) throw new NotFoundException(`${INVALID_CREDENTIALS}`);
     return user;
   }
 
-  async remove(id: string, { fullName, role, userId }: IRequestUser) {
+  async deactivate(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
       const removedUser = await this.usersRepository.update(
@@ -145,14 +145,14 @@ export class UsersService {
         },
         'TRY TO DELETE USER',
         { id, name: 'User' },
-        'FAILED TO DELETE User',
+        'FAILED TO DELETE USER',
         error.message,
       );
       handleInternalServerError(error.message);
     }
   }
 
-  async physicallyRemove(id: string, { fullName, role, userId }: IRequestUser) {
+  async remove(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
       const removedUser = await this.usersRepository.delete(id);
@@ -176,7 +176,7 @@ export class UsersService {
         },
         'TRY TO DELETE USER',
         { id, name: 'User' },
-        'FAILED TO DELETE User',
+        'FAILED TO DELETE USER',
         error.message,
       );
       handleInternalServerError(error.message);

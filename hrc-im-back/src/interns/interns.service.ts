@@ -156,12 +156,135 @@ export class InternsService {
     };
   }
 
-  async update(id: string, updateInternDto: UpdateInternDto) {
-    return `This action updates a #${id} intern`;
+  async update(
+    id: string,
+    updateInternDto: UpdateInternDto,
+    { fullName, role, userId }: IRequestUser,
+  ) {
+    const existingIntern = await this.findOne(id);
+
+    // console.log(existingIntern);
+
+    // Bloqueamos que se actualicen campos no permitidos
+    const isUnauthorizedUpdate =
+      updateInternDto.internshipStart ||
+      updateInternDto.internshipEnd ||
+      updateInternDto.departmentId ||
+      updateInternDto.userId;
+
+    if (isUnauthorizedUpdate) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'TRY TO UPDATE INTERN',
+        {
+          id: existingIntern.id,
+          name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        },
+        'FAILED TO UPDATE INTERN',
+        'Attempted to update fields that are not allowed: internshipStart, internshipEnd, department or user',
+      );
+      throw new ConflictException(
+        'You are not allowed to update: internshipStart, internshipEnd, department or user.',
+      );
+    }
+
+    // Sacamos los campos permitidos
+    const {
+      bloodType,
+      phone,
+      address,
+      status,
+      schoolEnrollment,
+      careerId,
+      internshipDepartmentId,
+      institutionId,
+      propertyId,
+    } = updateInternDto;
+
+    if (bloodType) existingIntern.bloodType = bloodType;
+    if (schoolEnrollment) existingIntern.schoolEnrollment = schoolEnrollment;
+    if (address) existingIntern.address = address.trim();
+    if (phone) existingIntern.phone = phone;
+    if (status) existingIntern.status = status;
+
+    if (careerId) {
+      const career = await this.careersService.findOne(careerId);
+      existingIntern.career = career;
+    }
+
+    if (internshipDepartmentId) {
+      const internshipDepartment = await this.departmentsService.findOne(
+        internshipDepartmentId,
+      );
+      existingIntern.internshipDepartment = internshipDepartment;
+    }
+
+    if (institutionId) {
+      const institution = await this.institutionsService.findOne(institutionId);
+      existingIntern.institution = institution;
+    }
+
+    if (propertyId) {
+      const property = await this.propertiesService.findOne(propertyId);
+      existingIntern.property = property;
+    }
+
+    try {
+      const updatedIntern = await this.internsRepository.save(existingIntern);
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'UPDATE INTERN',
+        {
+          id: updatedIntern.id,
+          name: `${updatedIntern.user.firstName} ${updatedIntern.user.lastName}`,
+        },
+        'SUCCESS',
+      );
+      return updatedIntern;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'FAILED TO UPDATE INTERN',
+        {
+          id: null,
+          name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        },
+        'FAILED',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
   }
 
-  async remove(id: string) {
-    return `This action removes a #${id} intern`;
+  async remove(id: string, { fullName, role, userId }: IRequestUser) {
+    await this.findOne(id);
+    try {
+      const removedIntern = await this.internsRepository.delete(id);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE INTERN',
+        { id, name: 'Intern' },
+        'SUCCESS',
+      );
+      return removedIntern.affected;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE INTERN',
+        { id, name: 'User' },
+        'FAILED TO DELETE INTERN',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
   }
 
   private async generateUniqueInternCode(): Promise<string> {

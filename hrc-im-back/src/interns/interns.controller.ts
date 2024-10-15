@@ -139,11 +139,13 @@ export class InternsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateInternDto: UpdateInternDto,
+    @Req() req,
   ) {
+    const user = req.user;
     const updatedIntern = await this.internsService.update(
       id,
       updateInternDto,
-      // user,
+      user,
     );
     return { message: SUCCESSFUL_UPDATE, data: updatedIntern };
   }
@@ -160,8 +162,9 @@ export class InternsController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    const deletedIntern = await this.internsService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+    const user = req.user;
+    const deletedIntern = await this.internsService.remove(id, user);
     return { message: SUCCESSFUL_DELETION, data: deletedIntern };
   }
 }
