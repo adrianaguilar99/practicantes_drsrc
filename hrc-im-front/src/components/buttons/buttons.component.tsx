@@ -11,7 +11,7 @@ export const ButtonComponent = ({ text, onClick }: ButtonComponentProps) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const handleLoading = () => {
+  const Loading = () => {
     if (!disabled) {
         onClick();  
       setLoading(true);
@@ -28,8 +28,8 @@ export const ButtonComponent = ({ text, onClick }: ButtonComponentProps) => {
   return (
     <Button
       variant="contained"
-      onClick={handleLoading}
-      disabled={disabled} // Deshabilitar el botón cuando sea necesario
+      onClick={Loading}
+      disabled={disabled} 
       className="ButtonComponent"
       style={{
         fontFamily: '"Lato", sans-serif',
@@ -65,7 +65,7 @@ export const EditButton : React.FC<EditButtonProps> = ({ onClick , editing }) =>
   const [disabled, setDisabled] = useState(false);
 
 
-  const handleLoading = () => {
+  const Loading = () => {
     if (!disabled) {
       if (state) {  
         setState(!state);
@@ -88,7 +88,7 @@ export const EditButton : React.FC<EditButtonProps> = ({ onClick , editing }) =>
       <Button
         variant="contained"
         className="EditButton"
-        onClick={handleLoading}
+        onClick={Loading}
         disabled={disabled} 
         style={{
           fontFamily: '"Lato", sans-serif',

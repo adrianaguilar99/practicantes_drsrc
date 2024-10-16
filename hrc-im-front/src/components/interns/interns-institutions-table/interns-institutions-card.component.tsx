@@ -4,20 +4,28 @@ import { GetUrl, LightstringToColor } from '../../../functions/utils.functions';
 import { useEffect, useState } from 'react';
 import { FormModal } from '../../modals/form-modal.component';
 interface InstitutionsCardProps {
+  id: string;
   name: string;
   phone: string;
   onEdit: () => void;
   onDelete: () => void;
+  onConfirm: () => void;
 }
 
-export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ name, phone, onEdit, onDelete}) => {
+export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ id, name, phone, onEdit, onDelete, onConfirm }) => {
     const backgroundColor = LightstringToColor(name, 0.2);
+    const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [url, setUrl] = useState("");
   
     const ModalState = () => {
       setOpen(!open);
     };
+
+    const ConfirmationModalState = () => {
+      setConfirmationOpen(!confirmationOpen);
+    };
+  
 
     useEffect(() => {
       const UrlChange = () => {
@@ -33,6 +41,9 @@ export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ name, phone,
     
     const ModalOpen = () => setOpen(true);
     const ModalClose = () => setOpen(false);
+  
+    const ConfirmationModalOpen = () => setConfirmationOpen(true);
+    const ConfirmationModalClose = () => setConfirmationOpen(false);
 
   return (
     <div className="generic-card">
@@ -41,14 +52,14 @@ export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ name, phone,
         <p style={{marginRight: '30%'}}>{phone}</p>
       </div>
       <div className="generic-card-actions">
-        <button onClick={onEdit}>
-           <EditOutlinedIcon onClick={ModalOpen}/>
+      <button onClick={ModalOpen}>
+           <EditOutlinedIcon />
         </button>
-        <button onClick={onDelete}>
+        <button onClick={ConfirmationModalOpen}>
           <DeleteOutlineOutlinedIcon />
         </button>
       </div>
-      <FormModal open={open} onConfirm={ModalClose} type="Edit" onCancel={ModalClose} data={{name, phone}} title="Editar Supervisor" entity={url} />
+      <FormModal open={open} onConfirm={onConfirm} type="Edit" onCancel={ModalClose} data={{id , name, phone}} title="Editar Institución" entity={url} />
     </div>
   );
 };

@@ -7,10 +7,10 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import "./interns.page.css";
 import { search } from "../../functions/filters-functions";
 import { FilterOptions } from "../../components/utils/filters.component";
-import { getCareersData } from "../../api/api-request";
 import { CareersInterface, DataCareer } from "../../interfaces/careers/careers.intarface";
 import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 import { enqueueSnackbar } from "notistack";
+import { getCareersData } from "../../api/interns/careers/careers.api";
 
 const InternsCareersPage = () => {
   const [data, setData] = useState<DataCareer[]>([]);

@@ -2,8 +2,10 @@ import { Box, Button } from "@mui/material";
 import { RegisterRow } from "../inputs/register-row.component";
 import React, { useState } from "react";
 import { set } from "date-fns";
-import { patchCareer, postCareer } from "../../api/api-request";
 import { enqueueSnackbar } from "notistack";
+import { patchCareer, postCareer } from "../../api/interns/careers/careers.api";
+import { ButtonComponent } from "../buttons/buttons.component";
+import { patchInstitution, postInstitution } from "../../api/interns/institutions/institutions.api";
 
 interface FormModalProps {
   type: string;
@@ -237,11 +239,13 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
 export const InstitutionFormModal: React.FC<FormModalProps> = ({
   type,
   data,
+  onSuccess, 
   onCancel,
 }) => {
-  const [InstitutionName, setInstitutionName] = React.useState<string>("");
-  const [InstitutionPhone, setInstitutionPhone] = React.useState<string>("");
-
+  const InstitutionId = data?.id;
+  const [InstitutionName, setInstitutionName] = React.useState<string>(data?.name || "");
+  const [InstitutionPhone, setInstitutionPhone] = React.useState<string>(data?.phone || "");
+  const userToken = sessionStorage.getItem("_Token") || "";
   return (
     <>
       {type === "Edit" ? (
@@ -268,16 +272,28 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
               justifyContent: "space-between",
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                bgcolor: "#007BFF",
-                "&:hover": { bgcolor: "#0056b3" },
-              }}
-            >
-              Aceptar
-            </Button>
+            <ButtonComponent text="Aceptar" onClick={() => {
+                if (InstitutionName && InstitutionPhone) {
+                  patchInstitution(userToken, InstitutionId, {
+                    name: InstitutionName,
+                    phone: InstitutionPhone,
+                    status: "ACCEPTED",
+                  })
+                    .then((data) => {
+                     
+                      if (data) {
+                        enqueueSnackbar('Institución actualizada correctamente', { variant: 'success' });
+                        onSuccess(); 
+                        onCancel(); 
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(data?.id);
+                      console.error("Error al actualizar la información de la institución:", error);
+                      enqueueSnackbar("Error al actualizar la información de la institución: " + error, { variant: 'error' }); 
+                    });
+                }
+              }}/>
 
             <Button
               variant="contained"
@@ -314,16 +330,26 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
               justifyContent: "space-between",
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                bgcolor: "#007BFF",
-                "&:hover": { bgcolor: "#0056b3" },
-              }}
-            >
-              Agregar
-            </Button>
+             <ButtonComponent text="Aceptar" onClick={() => {
+                if (InstitutionName && InstitutionPhone) {
+                  postInstitution(userToken, {
+                    name: InstitutionName,
+                    phone: InstitutionPhone,
+                    status: "ACCEPTED",
+                  })
+                    .then((data) => {
+                      if (data) {
+                        enqueueSnackbar('Institucion agregada correctamente', { variant: 'success' });
+                        onSuccess(); 
+                        onCancel(); 
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Error al agregar la institucion:", error);
+                      enqueueSnackbar("Error al agregar la institucion: " + error, { variant: 'error' }); 
+                    });
+                }
+              }}/>
 
             <Button
               variant="contained"

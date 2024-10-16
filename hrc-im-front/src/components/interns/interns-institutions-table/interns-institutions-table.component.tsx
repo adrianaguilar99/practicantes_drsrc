@@ -22,7 +22,7 @@ export const universities = [
     }
 ]
 
-export const InstitutionsTable : React.FC<TableProps> = ({ data = [] }) => {
+export const InstitutionsTable : React.FC<TableProps> = ({onUpdate, data = [] }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(6); 
     useEffect(() => {
@@ -65,10 +65,12 @@ export const InstitutionsTable : React.FC<TableProps> = ({ data = [] }) => {
                     displayedUniversities.map((university, index) => (
                         <InstitutionsCard
                             key={index}
+                            id={university.id}
                             name={university.name}
                             phone={university.phone}
                             onEdit={() => {}}
                             onDelete={() => {}}
+                            onConfirm={onUpdate}
                         />
                     ))
                 }

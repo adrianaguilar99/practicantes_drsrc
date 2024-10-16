@@ -20,26 +20,26 @@ export const AddButton: React.FC<AddButtonProps> = ({ onConfirm }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate(); 
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const Open = () => setOpen(true);
+  const Close = () => setOpen(false);
 
   useEffect(() => {
-    const handleUrlChange = () => {
+    const UrlChange = () => {
       const enurl = GetUrl();
       setUrl(enurl);
     };
-    handleUrlChange();
-    window.addEventListener("popstate", handleUrlChange);
+    UrlChange();
+    window.addEventListener("popstate", UrlChange);
     return () => {
-      window.removeEventListener("popstate", handleUrlChange);
+      window.removeEventListener("popstate", UrlChange);
     };
   }, []);
 
-  const handleClick = () => {
+  const Click = () => {
     if (url === 'interns') {
       navigate('/interns/intern-register');
     } else {
-      handleOpen(); 
+      Open(); 
     }
   };
 
@@ -58,7 +58,7 @@ export const AddButton: React.FC<AddButtonProps> = ({ onConfirm }) => {
   return (
     <>
       {url !== "audits" && url !== "checkin-checkout" && userRol != "SUPERVISOR" ? (
-        <button className="add-button" onClick={handleClick}>
+        <button className="add-button" onClick={Click}>
           Agregar
           {getIcon()}
         </button>
@@ -67,12 +67,10 @@ export const AddButton: React.FC<AddButtonProps> = ({ onConfirm }) => {
       <FormModal 
         open={open} 
         onConfirm={onConfirm} 
-        onCancel={handleClose} 
+        onCancel={Close} 
         title="Agregar" 
         type="Add" 
         entity={url} 
-        message={''} 
-        
       />
     </>
   );

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { FormModal } from '../../modals/form-modal.component';
 import { ConfirmationModal } from '../../modals/confirmation-modal.component';
 import { enqueueSnackbar } from 'notistack';
-import { deleteCareer } from '../../../api/api-request';
+import { deleteCareer } from '../../../api/interns/careers/careers.api';
 interface CareersCardProps {
   id: string;
   name: string;

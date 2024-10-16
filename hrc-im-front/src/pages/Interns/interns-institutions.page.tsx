@@ -7,6 +7,9 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { search } from "../../functions/filters-functions";
 import "./interns.page.css";
 import { FilterOptions } from "../../components/utils/filters.component";
+import { InstitutionsInterface } from "../../interfaces/institutions/institutions.interface";
+import { getInstitutionsData } from "../../api/interns/institutions/institutions.api";
+import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 const InternsInstitutionsPage = () => {
 
   type Universitie = {
@@ -17,30 +20,39 @@ const InternsInstitutionsPage = () => {
   const [filteredData, setFilteredData] = useState<Universitie[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [hasError, setHasError] = useState(false);   
+  const userToken = sessionStorage.getItem("_Token") || "";
+
 
     const SearchAction = (query: string) => {
       const results = search(data, query, { keys: ['name', 'phone'] });
       setFilteredData(results);
     };
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedData: InstitutionsInterface | null = await getInstitutionsData(userToken);
+        if (fetchedData && fetchedData.data.length > 0) {
+          setData(fetchedData.data);
+          setFilteredData(fetchedData.data);
+          setHasError(false); 
+        } else if (fetchedData && fetchedData.data.length === 0) {
+          setData([]);
+          setFilteredData([]);
+          setHasError(false);
+        } else {
+          setHasError(true);
+        }
+      } catch (error) {
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
 
     useEffect(() => {
-
-      setTimeout(() => {
-        try {
-          const fetchedData = universities;  
-          if (fetchedData.length > 0) {
-            setData(fetchedData);
-            setFilteredData(fetchedData);
-          } else {
-            setHasError(true); 
-          }
-        } catch (error) {
-          setHasError(true);  
-        } finally {
-          setIsLoading(false);  
-        }
-      }, 1000); 
-    }, []);
+      fetchData();
+    }, [userToken]);
 
     const ApplyFilters = (filters: FilterOptions) => {
       console.log("Aplicando filtros:", filters); 
@@ -56,6 +68,10 @@ const InternsInstitutionsPage = () => {
       setFilteredData(results); 
     };
 
+    const PostSuccess = () => {
+      fetchData();
+    };
+
   return (
     <div className="body-page">
       <Navbar />
@@ -63,9 +79,18 @@ const InternsInstitutionsPage = () => {
       <section className="interns-left-container"></section>
       <section className="interns-right-container">
         <Breadcrumb />
-        <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
+        <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => PostSuccess()}/>
         <div className="interns-data-container">
-          <InstitutionsTable data={filteredData}/>
+        {isLoading ? (
+              <CircularProgress type="secondary" />
+            ) : hasError ? (
+              <button onClick={fetchData}>Reintentar</button>
+            ) : data.length === 0 ? (
+              <NothingToSee />
+            ) : (
+              <InstitutionsTable data={filteredData} onUpdate={() => PostSuccess()}/>
+            )}
+          
         </div>
       </section>
       </div>
