@@ -4,12 +4,17 @@ import { Logger } from '@nestjs/common';
 import { createValidationPipe } from './pipes/validation.pipe';
 import { ENV, setupSwagger } from './configs';
 import { corsConfig } from './configs/cors.config';
+import { handleInternalServerError } from './common/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger();
 
-  app.enableCors(corsConfig);
+  try {
+    app.enableCors(corsConfig);
+  } catch (error) {
+    handleInternalServerError(error.message);
+  }
 
   app.useGlobalPipes(createValidationPipe());
 

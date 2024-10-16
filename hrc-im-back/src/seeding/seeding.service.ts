@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import { initialData } from './data/seed.data';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SeedingService {
-  constructor(private readonly usersRepositoy: UsersService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {}
 
   async runSeed() {
     await this.insertNewUsers();
@@ -12,16 +17,16 @@ export class SeedingService {
   }
 
   private async insertNewUsers() {
-    await this.usersRepositoy.removeAll();
+    await this.usersRepository.delete({});
 
     const users = initialData.users;
 
-    const insertPromises = [];
+    // Mapeamos los datos y creamos las instancias
+    const insertPromises = users.map((user) =>
+      this.usersRepository.save(this.usersRepository.create(user)),
+    );
 
-    users.forEach((user) => {
-      insertPromises.push(this.usersRepositoy.create(user));
-    });
-
+    // Esperamos a que se resuelvan las promesas de la insercion
     await Promise.all(insertPromises);
 
     return true;

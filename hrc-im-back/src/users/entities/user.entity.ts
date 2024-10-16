@@ -2,16 +2,15 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { BCRYPT_SALT_ROUNDS } from 'src/common/constants/constants';
 import { ApiProperty } from '@nestjs/swagger';
-import { Career } from 'src/careers/entities/career.entity';
 import { UserRole } from 'src/common/enums';
-import { dateToFormattedTimestamp } from 'src/common/utils/';
-import { Institution } from 'src/institutions/entities/institution.entity';
+import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
+import { Intern } from 'src/interns/entities/intern.entity';
 
 @Entity('users')
 export class User {
@@ -28,14 +27,14 @@ export class User {
     example: 'Martin',
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({ name: 'first_name', type: 'varchar', length: 50, nullable: false })
   firstName: string;
 
   @ApiProperty({
     example: 'Martinez Arias',
     nullable: false,
   })
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({ name: 'last_name', type: 'varchar', length: 50, nullable: false })
   lastName: string;
 
   @ApiProperty({
@@ -44,7 +43,13 @@ export class User {
     uniqueItems: true,
     nullable: false,
   })
-  @Column({ type: 'varchar', unique: true, length: 100, nullable: false })
+  @Column({
+    name: 'email',
+    type: 'varchar',
+    unique: true,
+    length: 100,
+    nullable: false,
+  })
   email: string;
 
   @ApiProperty({
@@ -53,7 +58,7 @@ export class User {
       "The user's password. It is required and can be generic if the user logs in through Google.",
     nullable: false,
   })
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ name: 'password', type: 'varchar', nullable: false })
   password?: string;
 
   @ApiProperty({
@@ -62,7 +67,7 @@ export class User {
       'The use of this token is solely to obtain new access tokens. It is destroyed when the user logs out or is not logged in; it is volatile.',
     nullable: true,
   })
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'hashed_refresh_token', type: 'text', nullable: true })
   hashedRefreshToken: string;
 
   @ApiProperty({
@@ -72,6 +77,7 @@ export class User {
     nullable: true,
   })
   @Column({
+    name: 'user_role',
     type: 'enum',
     enum: UserRole,
     default: UserRole.INTERN,
@@ -83,23 +89,25 @@ export class User {
     example: '2024-01-01 00:00:00.000',
     description: 'The time the user was created.',
   })
-  @Column({ type: 'timestamp' })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+  })
   createdAt: Date;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @OneToMany(() => Career, (careers) => careers.submittedBy)
-  careers: Career[];
+  @OneToOne(() => Supervisor, (supervisor) => supervisor.user)
+  supervisor: Supervisor;
 
-  @OneToMany(() => Institution, (institutions) => institutions.submittedBy)
-  institutions: Institution[];
+  @OneToOne(() => Intern, (intern) => intern.user)
+  intern: Intern;
 
   @BeforeInsert()
   async setCreation?() {
     this.email = this.email.toLowerCase();
     await this.hashPassword();
-    // const dateString = new Date().toLocaleString();
     this.createdAt = new Date();
   }
 

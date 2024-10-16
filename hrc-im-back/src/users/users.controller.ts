@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  Query,
   Req,
   HttpCode,
 } from '@nestjs/common';
@@ -51,8 +50,10 @@ import { IRequestUser } from 'src/common/interfaces';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: CREATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
@@ -65,12 +66,21 @@ export class UsersController {
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const createdUser = await this.usersService.create(createUserDto);
+    const user = req.user;
+    const createdUser = await this.usersService.create(createUserDto, user);
     return { message: USER_REGISTERED, data: createdUser };
   }
 
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -88,28 +98,10 @@ export class UsersController {
     };
   }
 
-  // @ApiOperation({ summary: READ_ALL_RECORDS_PAGINATED })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: SUCCESSFUL_FETCH,
-  //   type: [User],
-  // })
-  // @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  // @HttpCode(200)
-  // @Get('paginated')
-  // async findAllPaginated(
-  //   @Query() paginationDto: PaginationDto,
-  // ): Promise<IApiResponse<any>> {
-  //   const paginatedUsers =
-  //     await this.usersService.findAllPaginated(paginationDto);
-  //   return {
-  //     message: SUCCESSFUL_FETCH,
-  //     data: paginatedUsers,
-  //     records: paginatedUsers.length,
-  //   };
-  // }
-
-  @ApiOperation({ summary: READ_RECORD })
+  @ApiOperation({
+    summary:
+      'Action to obtain your profile data using the authentication token.',
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -120,7 +112,7 @@ export class UsersController {
   @Get('profile')
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
     const { userId }: IRequestUser = req.user;
-    // console.log({ user: req.user });
+    console.log({ user: req.user });
 
     const user = await this.usersService.findOne(userId);
     return {
@@ -129,7 +121,14 @@ export class UsersController {
     };
   }
 
-  @ApiOperation({ summary: READ_RECORD })
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${[UserRole.ADMINISTRATOR]}, ${UserRole.SUPERVISOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -149,7 +148,9 @@ export class UsersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_MARKED_DELETED,
@@ -159,14 +160,47 @@ export class UsersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete(':id')
-  async remove(
+  async deactivate(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const userRemoved = await this.usersService.remove(id);
-    return { message: SUCCESSFUL_MARKED_DELETED, data: userRemoved };
+    const user = req.user;
+    const userRemoved = await this.usersService.deactivate(id, user);
+    return {
+      message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
+      data: userRemoved,
+    };
   }
 
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_MARKED_DELETED,
+    type: User,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Delete(':id/physical')
+  async physicallyRemove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
+  ): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const userRemoved = await this.usersService.remove(id, user);
+    return {
+      message: `User has been physically removed.`,
+      data: userRemoved,
+    };
+  }
+
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_ALL_MARKED_DELETED,

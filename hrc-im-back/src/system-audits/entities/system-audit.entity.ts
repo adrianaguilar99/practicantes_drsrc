@@ -5,22 +5,45 @@ export class SystemAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'json', nullable: false })
-  user: { id: string; fullName: string; role: string };
+  @Column({
+    name: 'responsible',
+    type: 'json',
+    nullable: false,
+  })
+  responsible: { id: string; fullName: string; role: string };
 
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({
+    name: 'action',
+    type: 'varchar',
+    nullable: false,
+  })
   action: string;
 
-  @Column({ type: 'json', nullable: false })
+  @Column({
+    name: 'entity_affected',
+    type: 'json',
+    nullable: false,
+  })
   entityAffected: { id: string; name: string };
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
-  status: string; // Nuevo campo para indicar el estado ('SUCCESS', 'ERROR')
+  @Column({
+    name: 'status',
+    type: 'varchar',
+    nullable: false,
+  })
+  status: string;
 
-  @Column({ type: 'text', nullable: true })
-  errorMessage: string; // Nuevo campo para registrar mensajes de error si los hay
+  @Column({
+    name: 'error_message',
+    type: 'text',
+    nullable: true,
+  })
+  errorMessage: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({
+    name: 'audit_date',
+    type: 'timestamp',
+  })
   auditDate: Date;
 
   @BeforeInsert()

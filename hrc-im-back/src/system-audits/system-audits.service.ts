@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SystemAudit } from './entities/system-audit.entity';
 import { Repository } from 'typeorm';
@@ -12,14 +12,14 @@ export class SystemAuditsService {
   ) {}
 
   async createSystemAudit(
-    user: { id: string; fullName: string; role: string },
+    responsible: { id: string; fullName: string; role: string },
     action: string,
     entity: { id: string; name: string },
     status: string,
     errorMessage?: string,
   ) {
     const audit = this.systemAuditsRepository.create({
-      user,
+      responsible,
       action,
       entityAffected: entity,
       status,
@@ -28,7 +28,7 @@ export class SystemAuditsService {
     try {
       const savedAudit = await this.systemAuditsRepository.save(audit);
       return {
-        user: savedAudit.user,
+        user: savedAudit.responsible,
         entity: savedAudit.entityAffected,
         action: savedAudit.action,
         status: savedAudit.status,
@@ -47,7 +47,13 @@ export class SystemAuditsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} audit`;
+  async findOne(id: string) {
+    const systemAudit = await this.systemAuditsRepository.findOne({
+      where: { id },
+    });
+    if (!systemAudit)
+      throw new NotFoundException(`Audit with id: ${id} not found.`);
+
+    return systemAudit;
   }
 }

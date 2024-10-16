@@ -7,12 +7,12 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  HttpCode,
   Req,
+  HttpCode,
 } from '@nestjs/common';
-import { PropertiesService } from './properties.service';
-import { CreatePropertyDto } from './dto/create-property.dto';
-import { UpdatePropertyDto } from './dto/update-property.dto';
+import { SupervisorsService } from './supervisors.service';
+import { CreateSupervisorDto } from './dto/create-supervisor.dto';
+import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 import {
@@ -28,7 +28,6 @@ import {
   NOT_FOUND,
   READ_ALL_RECORDS,
   READ_RECORD,
-  REMOVE_ALL_RECORDS,
   REMOVE_RECORD,
   SUCCESSFUL_CREATION,
   SUCCESSFUL_DELETION,
@@ -38,17 +37,17 @@ import {
   UPDATE_RECORD,
 } from 'src/common/constants/constants';
 import { IApiResponse } from 'src/common/interfaces';
-import { Property } from './entities/property.entity';
+import { Supervisor } from './entities/supervisor.entity';
 
-@ApiTags('Properties')
+@ApiTags('Supervisors')
 @ApiBearerAuth()
 @ApiResponse({
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
 })
-@Controller('properties')
-export class PropertiesController {
-  constructor(private readonly propertiesService: PropertiesService) {}
+@Controller('supervisors')
+export class SupervisorsController {
+  constructor(private readonly supervisorsService: SupervisorsService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({
@@ -57,53 +56,61 @@ export class PropertiesController {
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
-    type: Property,
+    type: Supervisor,
   })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(201)
   @Post()
   async create(
-    @Body() createPropertyDto: CreatePropertyDto,
+    @Body() createSupervisorDto: CreateSupervisorDto,
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const createdProperty = await this.propertiesService.create(
-      createPropertyDto,
+    const createdSupervisor = await this.supervisorsService.create(
+      createSupervisorDto,
       user,
     );
-    return { message: SUCCESSFUL_CREATION, data: createdProperty };
+    return { message: SUCCESSFUL_CREATION, data: createdSupervisor };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
   @ApiOperation({
-    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
   })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
-    type: [Property],
+    type: [Supervisor],
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
   async findAll(): Promise<IApiResponse<any>> {
-    const allProperties = await this.propertiesService.findAll();
+    const allSupervisors = await this.supervisorsService.findAll();
     return {
       message: SUCCESSFUL_FETCH,
-      data: allProperties,
-      records: allProperties.length,
+      data: allSupervisors,
+      records: allSupervisors.length,
     };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
   @ApiOperation({
-    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
   })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
-    type: Property,
+    type: Supervisor,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @HttpCode(200)
@@ -111,34 +118,39 @@ export class PropertiesController {
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
-    const property = await this.propertiesService.findOne(id);
-    return { message: SUCCESSFUL_FETCH, data: property };
+    const supervisor = await this.supervisorsService.findOne(id);
+    return { message: SUCCESSFUL_FETCH, data: supervisor };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
+  @ApiOperation({
+    summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
-    type: Property,
+    type: Supervisor,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
-  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updatePropertyDto: UpdatePropertyDto,
+    @Body() updateSupervisorDto: UpdateSupervisorDto,
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const updatedProperty = await this.propertiesService.update(
+    const updatedSupervisor = await this.supervisorsService.update(
       id,
-      updatePropertyDto,
+      updateSupervisorDto,
       user,
     );
-    return { message: SUCCESSFUL_UPDATE, data: updatedProperty };
+    return { message: SUCCESSFUL_UPDATE, data: updatedSupervisor };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
@@ -156,23 +168,7 @@ export class PropertiesController {
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const deletedProperty = await this.propertiesService.remove(id, user);
-    return { message: SUCCESSFUL_DELETION, data: deletedProperty };
-  }
-
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({
-    summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
-  })
-  @ApiResponse({
-    status: 200,
-    description: SUCCESSFUL_DELETION,
-  })
-  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Delete()
-  async removeAll(): Promise<IApiResponse<any>> {
-    await this.propertiesService.removeAll();
-    return { message: SUCCESSFUL_DELETION };
+    const deletedSupervisor = await this.supervisorsService.remove(id, user);
+    return { message: SUCCESSFUL_DELETION, data: deletedSupervisor };
   }
 }

@@ -3,16 +3,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { SeedingModule } from './seeding/seeding.module';
-import { CommonModule } from './common/common.module';
 import { ENV, JoiValidationSchema } from './configs';
 import { AuthModule } from './auth/auth.module';
 import { CareersModule } from './careers/careers.module';
+import { CommonModule } from './common/common.module';
+import { DepartmentsModule } from './departments/departments.module';
 import { InstitutionsModule } from './institutions/institutions.module';
 import { PropertiesModule } from './properties/properties.module';
-import { DepartmentsModule } from './departments/departments.module';
+import { SeedingModule } from './seeding/seeding.module';
+import { SupervisorsModule } from './supervisors/supervisors.module';
 import { SystemAuditsModule } from './system-audits/system-audits.module';
+import { UsersModule } from './users/users.module';
+import { InternsModule } from './interns/interns.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -27,15 +29,17 @@ import dbConfigProduction from './configs/db.config.production';
     TypeOrmModule.forRootAsync({
       useFactory: ENV.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
     }),
-    UsersModule,
-    SeedingModule,
-    CommonModule,
     AuthModule,
     CareersModule,
+    CommonModule,
+    DepartmentsModule,
     InstitutionsModule,
     PropertiesModule,
-    DepartmentsModule,
+    SeedingModule,
+    SupervisorsModule,
     SystemAuditsModule,
+    UsersModule,
+    InternsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

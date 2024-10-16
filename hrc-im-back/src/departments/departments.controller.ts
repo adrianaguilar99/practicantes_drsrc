@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   HttpCode,
+  Req,
 } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
@@ -39,7 +40,6 @@ import {
 import { IApiResponse } from 'src/common/interfaces';
 import { Department } from './entities/department.entity';
 
-@UserRoles(UserRole.ADMINISTRATOR)
 @ApiTags('Departments')
 @ApiBearerAuth()
 @ApiResponse({
@@ -50,7 +50,10 @@ import { Department } from './entities/department.entity';
 export class DepartmentsController {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
-  @ApiOperation({ summary: CREATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 201,
     description: SUCCESSFUL_CREATION,
@@ -62,13 +65,20 @@ export class DepartmentsController {
   @Post()
   async create(
     @Body() createDepartmentDto: CreateDepartmentDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const createdDepartment =
-      await this.departmentsService.create(createDepartmentDto);
+    const user = req.user;
+    const createdDepartment = await this.departmentsService.create(
+      createDepartmentDto,
+      user,
+    );
     return { message: SUCCESSFUL_CREATION, data: createdDepartment };
   }
 
-  @ApiOperation({ summary: READ_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -86,7 +96,10 @@ export class DepartmentsController {
     };
   }
 
-  @ApiOperation({ summary: READ_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -102,7 +115,8 @@ export class DepartmentsController {
     return { message: SUCCESSFUL_FETCH, data: department };
   }
 
-  @ApiOperation({ summary: UPDATE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
@@ -116,15 +130,19 @@ export class DepartmentsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDepartmentDto: UpdateDepartmentDto,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     const updatedDepartment = await this.departmentsService.update(
       id,
       updateDepartmentDto,
+      user,
     );
     return { message: SUCCESSFUL_UPDATE, data: updatedDepartment };
   }
 
-  @ApiOperation({ summary: REMOVE_RECORD })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({ summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
@@ -135,12 +153,17 @@ export class DepartmentsController {
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
-    const deletedDepartment = await this.departmentsService.remove(id);
+    const user = req.user;
+    const deletedDepartment = await this.departmentsService.remove(id, user);
     return { message: SUCCESSFUL_DELETION, data: deletedDepartment };
   }
 
-  @ApiOperation({ summary: REMOVE_ALL_RECORDS })
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
