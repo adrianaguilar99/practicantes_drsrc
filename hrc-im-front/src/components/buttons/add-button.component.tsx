@@ -6,16 +6,13 @@ import { GetUrl } from '../../functions/utils.functions';
 import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import { FormModal } from '../modals/form-modal.component';
-import { decryptData } from '../../functions/encrypt-data.function';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
 
 interface AddButtonProps {
   onConfirm: () => void;
+  userRol?: string;
 }
 
-export const AddButton: React.FC<AddButtonProps> = ({ onConfirm }) => {
-  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
+export const AddButton: React.FC<AddButtonProps> = ({ userRol, onConfirm }) => {
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate(); 

@@ -7,36 +7,46 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import './departments.page.css';
 import { FilterOptions } from "../../components/utils/filters.component";
 import { search } from "../../functions/filters-functions";
-import { departments } from "../../components/utils/testdepartments";
+import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
+import { getDepartmentsData } from "../../api/departments/departments.api";
+import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 
 const DepartmentsPage = () => {
   type Department = {
     name: string;
   };
 
-  const [data, setData] = useState<Department[]>([]);
+  const [data, setData] = useState<DataDepartment[]>([]);
   const [filteredData, setFilteredData] = useState<Department[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [hasError, setHasError] = useState(false);   
+  const userToken = sessionStorage.getItem("_Token") || "";
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedData: DepartmentsInterface | null = await getDepartmentsData(userToken);
+      if (fetchedData && fetchedData.data.length > 0) {
+        setData(fetchedData.data);
+        setFilteredData(fetchedData.data);
+        setHasError(false); 
+      } else if (fetchedData && fetchedData.data.length === 0) {
+        setData([]);
+        setFilteredData([]);
+        setHasError(false);
+      } else {
+        setHasError(true);
+      }
+    } catch (error) {
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-
-    setTimeout(() => {
-      try {
-        const fetchedData = departments;  
-        if (fetchedData.length > 0) {
-          setData(fetchedData);
-          setFilteredData(fetchedData);
-        } else {
-          setHasError(true); 
-        }
-      } catch (error) {
-        setHasError(true);  
-      } finally {
-        setIsLoading(false);  
-      }
-    }, 1000); 
-  }, []);
+    fetchData();
+  }, [userToken]);
   
   const ApplyFilters = (filters: FilterOptions) => {
     let results = [...data];
@@ -49,13 +59,24 @@ const DepartmentsPage = () => {
     }
     setFilteredData(results); 
   };
+
   
-
-
   const SearchAction = (query: string) => {
-    const results = search(data, query, { keys: ['name'] });
-    setFilteredData(results);
+    const searchData = data.map(career => ({
+      name: career.name,
+    }));
+    const results = search(searchData, query, { keys: ['name'] });
+    const filteredResults = data.filter(career =>
+      results.some(result => result.name === career.name)
+    );
+    setFilteredData(filteredResults);
   };
+
+  const PostSuccess = () => {
+    fetchData();
+
+  };
+
 
   return (
     <div className="body-page">
@@ -64,9 +85,17 @@ const DepartmentsPage = () => {
         <section className="departments-left-container"></section>
         <section className="departments-right-container">
           <Breadcrumb/>
-          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
+          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => PostSuccess()}/>
            <div className="departments-data-container">
-              <DepartmentsTable data={filteredData}/>
+           {isLoading ? (
+              <CircularProgress type="secondary" />
+            ) : hasError ? (
+              <button onClick={fetchData}>Reintentar</button>
+            ) : data.length === 0 ? (
+              <NothingToSee />
+            ) : (
+              <DepartmentsTable data={filteredData} onUpdate={() => PostSuccess()}/>
+            )}
            </div>
          
         </section>

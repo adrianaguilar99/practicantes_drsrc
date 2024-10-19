@@ -13,8 +13,10 @@ import { InputValidators } from "../../functions/input-validators.functions";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import { set } from "date-fns";
 import { CareersInterface, DataCareer } from "../../interfaces/careers/careers.intarface";
-import { getCareersData } from "../../api/api-request";
 import { ca } from "date-fns/locale";
+import { getCareersData } from "../../api/interns/careers/careers.api";
+import { getInstitutionsData } from "../../api/interns/institutions/institutions.api";
+import { DataInstitution, InstitutionsInterface } from "../../interfaces/institutions/institutions.interface";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -91,6 +93,7 @@ interface EmergencyContacts {
   const ModalClose = () => setOpen(false);
   const userToken = sessionStorage.getItem("_Token") || "";
   const [Careers, setCareers] = useState<DataCareer[]>([]);
+  const [Institutions, setInstitutions] = useState<DataInstitution[]>([]);
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
@@ -109,8 +112,22 @@ interface EmergencyContacts {
     console.log(error);
   }
 }
+
+const fetchInstitutions = async () => {
+  try {
+    const fetchedData: InstitutionsInterface | null = await getInstitutionsData(userToken);   
+    if(fetchedData){
+      setInstitutions(fetchedData.data);
+    }
+} catch (error) {
+  console.log(error);
+}
+}
+
+
 useEffect(() => {
   fetchCareers();
+  fetchInstitutions();
 }, [userToken]);
 
 
@@ -229,28 +246,6 @@ useEffect(() => {
     setErrors(newErrors);
   };
 
-  const Universidades = [
-    "Universidad Politecnica de Quintana Roo",
-    "Universidad del Caribe",
-    "Universidad Nacional",
-    "Universidad Tecnologica de la Mixteca",
-    "Instituto de Investigaciones Fundamental",
-    "Instituto Politecnico Nacional",
-    "Universidad de Guadalajara",
-    "Universidad de San Martin de Porres",
-    "Universidad Politecnica de Guadalajara",
-    "Universidad de Guanajuato",
-    "Universidad Tecnologica de la Costa",
-    "Universidad de San Juan de los Llanos",
-    "Universidad Autonoma de Zacatecas",
-    "Universidad Politecnica de Hidalgo",
-    "Universidad de Guzman",
-    "Universidad Politecnica de Pachuca",
-    "Universidad de Tijuana",
-    "Universidad Politecnica de Chihuahua",
-    "Universidad Politecnica de Guanajuato",
-    "Universidad Politecnica de San Luis Potosi",
-  ];
 
   return (
     <div className="body-page">
@@ -365,10 +360,17 @@ useEffect(() => {
                   )}
                   <RegisterRow
                     label="Institución de procedencia:"
-                    onChange={(value) => setInternUniversity(value || "")}
+                    onChange={(value) => {
+                      const selectedInstitution = Institutions.find(
+                        (institution) => institution.name === value
+                      );
+                      setInternUniversity(
+                        selectedInstitution ? selectedInstitution.id.toString() : ""
+                      );
+                    }}
                     id="institution"
                     type="autocomplete"
-                    coincidences={Universidades}
+                    coincidences={Institutions.map((institution: { name: any; }) => institution.name)}
                     show={selectedType === "Externo"}
                     validate={errors.internUniversity ? "Error" : "Normal"}
                     typeError={errors.internUniversity}
@@ -559,12 +561,11 @@ useEffect(() => {
       </div>
       <FormModal
         open={open}
-        onConfirm={fetchCareers}
+        onConfirm={() => {fetchCareers(); fetchInstitutions();}}
         onCancel={ModalClose}
         title="Agregar"
         type="Add"
         entity={entity}
-        message={""}
       />
       <Footer />
     </div>

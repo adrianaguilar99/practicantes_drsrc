@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { InstitutionsTable, universities } from "../../components/interns/interns-institutions-table/interns-institutions-table.component";
+import { InstitutionsTable} from "../../components/interns/interns-institutions-table/interns-institutions-table.component";
 import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
 import { SearchComponent } from "../../components/search/search.component";

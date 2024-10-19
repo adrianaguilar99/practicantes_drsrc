@@ -3,16 +3,18 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { GetUrl, LightstringToColor } from '../../../functions/utils.functions';
 import { useEffect, useState } from 'react';
 import { FormModal } from '../../modals/form-modal.component';
+import { ConfirmationModal } from '../../modals/confirmation-modal.component';
+import { enqueueSnackbar } from 'notistack';
+import { deleteInstitution } from '../../../api/interns/institutions/institutions.api';
 interface InstitutionsCardProps {
+  userToken: string;
   id: string;
   name: string;
   phone: string;
-  onEdit: () => void;
-  onDelete: () => void;
   onConfirm: () => void;
 }
 
-export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ id, name, phone, onEdit, onDelete, onConfirm }) => {
+export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({userToken, id, name, phone, onConfirm }) => {
     const backgroundColor = LightstringToColor(name, 0.2);
     const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [open, setOpen] = useState(false);
@@ -45,6 +47,22 @@ export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ id, name, ph
     const ConfirmationModalOpen = () => setConfirmationOpen(true);
     const ConfirmationModalClose = () => setConfirmationOpen(false);
 
+    const DeleteInstitution = () => {
+      deleteInstitution(userToken, id)
+        .then((data) => {
+          if (data) {
+            enqueueSnackbar('Carrera eliminada correctamente', { variant: 'success' });
+            ConfirmationModalClose();
+            onConfirm();
+          }
+        })
+        .catch((error) => {
+          enqueueSnackbar('Error al eliminar la carrera', { variant: 'error' });
+          ConfirmationModalClose();
+        });
+  
+    };
+
   return (
     <div className="generic-card">
       <div className="generic-card-info">
@@ -60,6 +78,7 @@ export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({ id, name, ph
         </button>
       </div>
       <FormModal open={open} onConfirm={onConfirm} type="Edit" onCancel={ModalClose} data={{id , name, phone}} title="Editar Institución" entity={url} />
+      <ConfirmationModal open={confirmationOpen} onConfirm={DeleteInstitution} onCancel={ConfirmationModalClose} title="Eliminar Carrera" message="¿Estas seguro de eliminar esta carrera?" />
     </div>
   );
 };

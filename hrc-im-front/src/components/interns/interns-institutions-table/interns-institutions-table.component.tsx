@@ -3,28 +3,12 @@ import { InstitutionsCard } from "./interns-institutions-card.component"
 import { Pagination } from "@mui/material";
 import { TableProps } from "../../audits/audits-table.component";
 
-export const universities = [
-    {
-        name: 'UNIVERSIDAD POLITECNICA DE QUINTANA ROO',
-        phone: '1234567890'
-    },
-    {
-        name: 'UNIVERSIDAD DEL CARIBE',
-        phone: '1234567890'
-    },
-    {
-        name: 'UNIVERSIDAD AUTONOMA DE BAJA CALIFORNIA',
-        phone: '1234567890'
-    },
-    {
-        name: 'UNIVERSIDAD TECNOLOGICA DEL NORTE',
-        phone: '1234567890'
-    }
-]
 
 export const InstitutionsTable : React.FC<TableProps> = ({onUpdate, data = [] }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(6); 
+    const userToken = sessionStorage.getItem("_Token") || "";
+    
     useEffect(() => {
       const ResizePage = () => {
         const screenWidth = window.innerWidth;
@@ -68,8 +52,7 @@ export const InstitutionsTable : React.FC<TableProps> = ({onUpdate, data = [] })
                             id={university.id}
                             name={university.name}
                             phone={university.phone}
-                            onEdit={() => {}}
-                            onDelete={() => {}}
+                            userToken={userToken}
                             onConfirm={onUpdate}
                         />
                     ))

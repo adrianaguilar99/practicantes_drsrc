@@ -3,18 +3,29 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { GetUrl, LightstringToColor } from '../../functions/utils.functions';
 import { FormModal } from '../modals/form-modal.component';
 import { useEffect, useState } from 'react';
+import { deleteDepartment } from '../../api/departments/departments.api';
+import { enqueueSnackbar } from 'notistack';
+import { ConfirmationModal } from '../modals/confirmation-modal.component';
 
 interface DepartmentCardProps {
+  id: string;
   name: string;
+  userToken: string;
+  onConfirm: () => void;
 }
 
-export const DepartmentsCard: React.FC<DepartmentCardProps> = ({ name }) => {
+export const DepartmentsCard: React.FC<DepartmentCardProps> = ({id, name, userToken, onConfirm }) => {
   const [open, setOpen] = useState(false);
   const backgroundColor = LightstringToColor(name, 0.2);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [url, setUrl] = useState("");
 
   const ModalState = () => {
     setOpen(!open);
+  };
+
+  const ConfirmationModalState = () => {
+    setConfirmationOpen(!confirmationOpen);
   };
 
   useEffect(() => {
@@ -32,6 +43,25 @@ export const DepartmentsCard: React.FC<DepartmentCardProps> = ({ name }) => {
   const ModalOpen = () => setOpen(true);
   const ModalClose = () => setOpen(false);
 
+  const ConfirmationModalOpen = () => setConfirmationOpen(true);
+  const ConfirmationModalClose = () => setConfirmationOpen(false);
+
+  const DeleteInstitution = () => {
+    deleteDepartment(userToken, id)
+      .then((data) => {
+        if (data) {
+          enqueueSnackbar('Departamento eliminado correctamente', { variant: 'success' });
+          ConfirmationModalClose();
+          onConfirm();
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar('Error al eliminar el Departamento', { variant: 'error' });
+        ConfirmationModalClose();
+      });
+
+  };
+
   return (
     <div className="generic-card">
       <div className="generic-card-info">
@@ -41,11 +71,12 @@ export const DepartmentsCard: React.FC<DepartmentCardProps> = ({ name }) => {
         <button >
           <EditOutlinedIcon onClick={ModalOpen}/>
         </button>
-        <button >
+        <button onClick={ConfirmationModalOpen}>
           <DeleteOutlineOutlinedIcon />
         </button>
       </div>
-      <FormModal open={open} onConfirm={ModalClose} type="Edit" onCancel={ModalClose} title="Editar Departamento" data={{name}} entity={url} />
+      <FormModal open={open} onConfirm={onConfirm} type="Edit" onCancel={ModalClose} title="Editar Departamento" data={{id,name}} entity={url} />
+      <ConfirmationModal open={confirmationOpen} onConfirm={DeleteInstitution} onCancel={ConfirmationModalClose} title="Eliminar Carrera" message="¿Estas seguro de eliminar esta carrera?" />
     </div>
   );
 };

@@ -10,12 +10,10 @@ interface CareersCardProps {
   id: string;
   name: string;
   userToken: string;
-  onEdit: () => void;
-  onDelete: () => void;
   onConfirm: () => void;
 }
 
-export const CareersCard: React.FC<CareersCardProps> = ({id, name, userToken, onEdit, onDelete, onConfirm }) => {
+export const CareersCard: React.FC<CareersCardProps> = ({id, name, userToken, onConfirm }) => {
   const backgroundColor = LightstringToColor(name, 0.2);
   const [open, setOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);

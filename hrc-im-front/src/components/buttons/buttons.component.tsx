@@ -4,10 +4,11 @@ import "../components.css";
 
 interface ButtonComponentProps {
   text: string;
+  type?: "cancel";
   onClick: () => void;  // Añadir onClick como prop
 }
 
-export const ButtonComponent = ({ text, onClick }: ButtonComponentProps) => {
+export const ButtonComponent = ({ text,type, onClick }: ButtonComponentProps) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
@@ -26,9 +27,11 @@ export const ButtonComponent = ({ text, onClick }: ButtonComponentProps) => {
   };
 
   return (
+
     <Button
       variant="contained"
       onClick={Loading}
+      color={type === "cancel" ? "error" : "primary"}
       disabled={disabled} 
       className="ButtonComponent"
       style={{

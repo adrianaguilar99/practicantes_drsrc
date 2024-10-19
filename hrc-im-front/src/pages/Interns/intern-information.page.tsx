@@ -7,13 +7,15 @@ import { ButtonComponent, EditButton } from "../../components/buttons/buttons.co
 import { CommentsTable } from "../../components/interns/interns-components/comments-table.component";
 import { ConfirmationModal } from "../../components/modals/confirmation-modal.component";
 import { Footer } from "../../components/navbars/footer.component";
+import { useNavigate } from "react-router-dom";
+import { FormModal } from "../../components/modals/form-modal.component";
 
 const InternInformationPage = () => {
   const [editable, setEditable] = useState(false);
   const [saveEdit, setSaveEdit] = useState(false); 
   const [progreso, setProgreso] = useState(45);
   const [showModal, setShowModal] = useState(false);  
-  const [InternType, setInternType] = useState("Externo");
+  const [InternType, setInternType] = useState("Interno");
 
 
   const [InternName, setInternName] = useState("");
@@ -31,7 +33,12 @@ const InternInformationPage = () => {
   const [InternCheckIn, setInternCheckIn] = useState("");
   const [InternCheckOut, setInternCheckOut] = useState("");
   const [InternTotalTime, setInternTotalTime] = useState("");
+ 
+  const navigate = useNavigate(); 
 
+  const [open, setOpen] = useState(false);
+  const Open = () => setOpen(true);
+  const Close = () => setOpen(false);
 
   const EditPage = () => {
     if (editable) {
@@ -61,6 +68,14 @@ const InternInformationPage = () => {
     setShowModal(false); 
   };
 
+  const onConfirm = () => {
+    setShowModal(true);
+  };
+
+  const Click = () => {
+      Open(); 
+  };
+
   return (
     <div className="body-page">
       <Navbar />
@@ -72,7 +87,7 @@ const InternInformationPage = () => {
       </div>
       <div className="interns-information">
         <section className="interns-information-header">
-          <div className="interns-information-title-type">
+          <div className={`interns-information-title-type  ${InternType === 'Interno' ? 'intern' : 'extern'}`}>
             <h2>PRACTICANTE {InternType.toUpperCase()}</h2>
           </div>
           <div className="interns-information-title-name">
@@ -173,9 +188,7 @@ const InternInformationPage = () => {
                     />
                     <ButtonComponent
                       text="Generar Tarjeta del practicante"
-                      onClick={function (): void {
-                        throw new Error("Function not implemented.");
-                      }}
+                      onClick={() => navigate("/interns/intern-information/interns-credentials")}
                     />
                     
                   </div>
@@ -252,17 +265,10 @@ const InternInformationPage = () => {
               </div>
               <div className="intern-progress-space-buttons">
               <ButtonComponent
-                      text="Reportes semanales"
-                      onClick={function (): void {
-                        throw new Error("Function not implemented.");
-                      }}
+                      text="Generar un reporte" 
+                      onClick={Click}
                     />
-                    <ButtonComponent
-                      text="Reportes mensuales"
-                      onClick={function (): void {
-                        throw new Error("Function not implemented.");
-                      }}
-                    />
+                  
               </div>
             
               </div>
@@ -275,6 +281,14 @@ const InternInformationPage = () => {
         </section>
       </div>
       <Footer />
+      <FormModal 
+        open={open} 
+        onConfirm={onConfirm} 
+        onCancel={Close} 
+        title="Generar reporte del practicante" 
+        type="Generete" 
+        entity="report"
+      />
     </div>
   );
 };

@@ -25,7 +25,7 @@ export function stringToColor(string: string) {
     return color;
   }
 
-  export function LightstringToColor(string: string, alpha: number = 0.5) {
+  export function LightstringToColor(string: string, alpha: number = 0.9) {
     let hash = 0;
     let i;
     for (i = 0; i < string.length; i += 1) {

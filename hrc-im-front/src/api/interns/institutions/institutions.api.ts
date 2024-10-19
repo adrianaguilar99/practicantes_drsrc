@@ -71,3 +71,26 @@ export async function getInstitutionsData(Token: string): Promise<InstitutionsIn
       throw error;
     }
   }
+
+  export async function deleteInstitution(Token: string, id: string) {
+    try {
+      const response = await fetch(apiUrl + "/institutions/" + id + "", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Error al eliminar la Institución");
+      }
+  
+      const responseJson: DataInstitution = await response.json();
+      return responseJson;
+    } catch (error: any) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }

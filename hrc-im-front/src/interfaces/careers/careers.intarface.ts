@@ -8,7 +8,6 @@ export interface DataCareer {
     id:             string;
     name:           string;
     submissionDate: Date;
-    status:         string;
     submittedBy:    CareerSubmittedBy;
 }
 
@@ -25,10 +24,8 @@ export interface CareerSubmittedBy {
 
 export interface PostCareer {
     name:           string;
-    status:         string;
 }
 
 export interface PatchCareer {
     name?:           string;
-    status?:         string;
 }

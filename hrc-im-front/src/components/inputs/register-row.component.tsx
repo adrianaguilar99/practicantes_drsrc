@@ -36,12 +36,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
     config: { tension: 280, friction: 10 },
   });
 
-  const handleChange = (newValue: string) => {
+  const ValueChange = (newValue: string) => {
     setInputValue(newValue);
     onChange(newValue);
   };
 
-  // Variable para controlar la clase CSS del input
   const errorClass = validate === "Error" ? "error-input" : "";
 
   return (
@@ -60,7 +59,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="text"
               id={id}
               defaultValue={value}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`} 
             />
           )}
@@ -71,7 +70,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               min={1}
               id={id}
               defaultValue={value}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             />
           )}
@@ -81,7 +80,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               min={1}
               id={id}
               defaultValue={value}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             />
           )}
@@ -91,7 +90,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="date"
               id={id}
               defaultValue={value}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             />
           )}
@@ -101,7 +100,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               type="time"
               id={id}
               defaultValue={value}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             />
           )}
@@ -110,7 +109,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <select
               id={id}
               value={inputValue}
-              onChange={(e) => handleChange(e.target.value)}
+              onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             >
               {options.map((option) => (
@@ -125,8 +124,9 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <Autocomplete
               options={coincidences}
               value={inputValue}
+              
               onInputChange={(event, newInputValue) => {
-                handleChange(newInputValue);
+                ValueChange(newInputValue);
               }}
               renderInput={(params) => (
                 <TextField
@@ -137,15 +137,13 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
                     ...params.InputProps,
                     className: `edit-mode ${errorClass}`,
                   }}
+                  
                   fullWidth
                 />
               )}
               fullWidth
             />
-          )}
-
-          {/* Mostrar mensaje de error si validate es "Error" */}
-        
+          )}     
         </div>
         
       </animated.div>

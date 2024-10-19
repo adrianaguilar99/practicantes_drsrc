@@ -52,8 +52,6 @@ export const CareersTable : React.FC<TableProps> = ({ onUpdate, data = [] }) => 
                 id={career.id}
                 name={career.name}
                 userToken={userToken}
-                onEdit={() => {}}
-                onDelete={() => {}}
                 onConfirm={onUpdate}
               />
          )}

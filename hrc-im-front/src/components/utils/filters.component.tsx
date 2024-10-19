@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { SearchBar } from "../search/search-bar.component";
 import { useLocation } from "react-router-dom";
-import { departments } from "./testdepartments";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
+import { getDepartmentsData } from "../../api/departments/departments.api";
 
 export interface FilterOptions {
   order?: string;
@@ -28,8 +29,11 @@ export const FiltersButton: React.FC<FiltersProps> = ({
   const [orderfilters, setOrderFilters] = useState<string[]>([]);
   const [typefilters, setTypeFilters] = useState<string[]>([]);
   const [progressfilters, setProgressFilters] = useState<string[]>([]);
+
+  const [departments, setDepartments] = useState<DataDepartment[]>([]);
   const [departmentfilters, setDepartmentFilters] = useState<string[]>([]);
   const [query, setQuery] = useState("");
+  const userToken = sessionStorage.getItem("_Token") || "";
 
   const getFilterOptions = () => {
     switch (location.pathname) {
@@ -83,6 +87,24 @@ export const FiltersButton: React.FC<FiltersProps> = ({
     }
   };
 
+  useEffect(() => {
+    fetchDepartments();
+  }, [userToken]);
+  const fetchDepartments = async () => {
+   
+    try {
+      const fetchedData: DepartmentsInterface | null = await getDepartmentsData(userToken);
+      if (fetchedData && fetchedData.data.length > 0) {
+        setDepartments(fetchedData.data);
+      } else if (fetchedData && fetchedData.data.length === 0) {
+        setDepartments([]);
+      }
+    } catch (error) {
+      console.log(error);
+  
+    }
+  };
+
   const filterOptions = getFilterOptions();
   const [checked, setChecked] = useState<boolean[]>(
     new Array(filterOptions.length + departments.length).fill(false)
@@ -92,6 +114,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
   const rectangleRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    
     const ClickOutside = (event: MouseEvent) => {
       if (
         rectangleRef.current &&
@@ -105,6 +128,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
     return () => {
       document.removeEventListener("mousedown", ClickOutside);
     };
+    
   }, []);
 
   const applyFilters = () => {

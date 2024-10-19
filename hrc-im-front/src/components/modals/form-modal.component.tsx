@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
 import { CareerFormModal, DepartmentFormModal, InstitutionFormModal, SupervisorFormModal } from './modal-forms.component';
 import { da } from 'date-fns/locale';
+import { ReportGenerationModal } from './report-generation-modal.component';
 
 interface FormModalProps {
     open: boolean;
@@ -15,16 +16,6 @@ interface FormModalProps {
   }
 
   export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, onConfirm, title, type, entity,data }) => {
-    const [Supervisordata, setSupervisordata] = React.useState<any>({});
-
-
-    const SupervisorData = { name: "Luis Alberto", email: "q7YpK@example.com", department: "Sistemas" }
-
-    useEffect (() => {
-      setSupervisordata(SupervisorData);
-    }, []);
-
-
     return (
       <Modal open={open} onClose={onCancel}>
         <Box
@@ -67,6 +58,7 @@ interface FormModalProps {
             {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "report" ? <ReportGenerationModal  onCancel={onCancel} onSuccess={onConfirm} /> : null}
           </Box>
         </Box>
       </Modal>

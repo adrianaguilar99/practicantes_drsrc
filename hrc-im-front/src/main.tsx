@@ -10,7 +10,7 @@ import { ConnectionAlert } from "./components/utils/connection-alert.component";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <SnackbarProvider maxSnack={3} autoHideDuration={2000}>
+      <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
         <RoutesConfig />
         <ManageTokenModal />
         <ConnectionAlert />

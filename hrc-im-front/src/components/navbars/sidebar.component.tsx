@@ -18,32 +18,30 @@ interface MenuItem {
   icon: JSX.Element;
   label: string;
   path: string;
-  isDropdown?: boolean; // Propiedad opcional para indicar si hay dropdown
-  dropdownItems?: any[];  // Opciones adicionales del dropdown
+  isDropdown?: boolean; 
+  dropdownItems?: any[];  
 }
 
 export const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  // const [userRol, setUserRol] = useState<string>("ADMINISTRATOR");
   const navigate = useNavigate();
   const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const index = useSelector((state: RootState) => state.sidebar.index);
   const openMenu = useSelector((state: RootState) => state.sidebar.openMenu);
   const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isSidebarOpen);
-  const isInternsDropdownOpen = useSelector((state: RootState) => state.sidebar.isInternsDropdownOpen); // Obtener el estado del dropdown
+  const isInternsDropdownOpen = useSelector((state: RootState) => state.sidebar.isInternsDropdownOpen); 
 
-  // Menú para administrador con el dropdown en "Practicantes"
   const menuItemsAdmin: MenuItem[] = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
-    { icon: <PersonOutlineOutlinedIcon />, label: "Encargados", path: "/supervisors" },
+    { icon: <PersonOutlineOutlinedIcon />, label: "Usuarios", path: "/supervisors" },
     { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
     {
       icon: <SchoolOutlinedIcon />,
       label: "Practicantes",
       path: "/interns",
-      isDropdown: true,  // Indica que esta opción tiene un desplegable
+      isDropdown: true,  
       dropdownItems: [
-        { label: "Opciones Escolares", isTitle: true },  // Título en el dropdown
+        { label: "Opciones Escolares", isTitle: true }, 
         { label: "Instituciones", path: "/interns/interns-institutions" },
         { label: "Carreras", path: "/interns/interns-careers" },
       ],
@@ -51,16 +49,16 @@ export const Sidebar = () => {
     { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
   ];
 
-  // Menú para supervisores
   const menuItemsSupervisor: MenuItem[] = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
+    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
     {
       icon: <SchoolOutlinedIcon />,
       label: "Practicantes",
       path: "/interns",
-      isDropdown: true,  // Indica que esta opción tiene un desplegable
+      isDropdown: true,  
       dropdownItems: [
-        { label: "Opciones Escolares", isTitle: true },  // Título en el dropdown
+        { label: "Opciones Escolares", isTitle: true }, 
         { label: "Instituciones", path: "/interns/interns-institutions" },
         { label: "Carreras", path: "/interns/interns-careers" },
       ],
@@ -68,7 +66,6 @@ export const Sidebar = () => {
     { icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout" },
   ];
 
-  // Selecciona el menú dependiendo del rol del usuario
   const getMenuItems = () => {
     if (userRol === "ADMINISTRATOR") {
       return menuItemsAdmin;
@@ -93,43 +90,56 @@ export const Sidebar = () => {
 
   return (
     <div className={`sidebar ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`} style={userRol === "INTERN" ? { display: "none" } : {}}>
-      {getMenuItems().map((item, idx) => (
-        <div key={idx}>
-          <div
-            className={`menu-item ${index === idx ? "active" : ""}`}
-            onClick={() => {
-              dispatch(setIndex(idx));
-              navigate(item.path);
-              if (item.isDropdown) {
-                dispatch(setInternsDropdownOpen(!isInternsDropdownOpen)); 
-              }
+  {getMenuItems().map((item, idx) => (
+    <div key={idx}>
+      <div
+        className={`menu-item ${index === idx ? "active" : ""}`}
+        onClick={() => {
+          dispatch(setIndex(idx));
+          navigate(item.path);
+        }}
+      >
+        <span className="icon">{item.icon}</span>
+        {openMenu && <span className="label">{item.label}</span>}
+        
+        {item.isDropdown && openMenu && (
+          <span 
+            className="dropdown-toggle" 
+            onClick={(e) => {
+              e.stopPropagation(); // Detiene la propagación del evento para evitar que afecte al menú general
+              dispatch(setInternsDropdownOpen(!isInternsDropdownOpen)); // Maneja el despliegue de este menú
             }}
           >
-            <span className="icon">{item.icon}</span>
-            {openMenu && <span className="label">{item.label}</span>}
-            {item.isDropdown && openMenu && (
-              isInternsDropdownOpen ? <ExpandLessIcon className="dropdown-icon" /> : <ExpandMoreIcon className="dropdown-icon" />
+            {isInternsDropdownOpen ? (
+              <ExpandLessIcon className="dropdown-icon" />
+            ) : (
+              <ExpandMoreIcon className="dropdown-icon" />
             )}
-          </div>
+          </span>
+        )}
+      </div>
 
-          {/* Mostrar u ocultar las opciones adicionales bajo "Practicantes" */}
-          {item.isDropdown && isInternsDropdownOpen && (
-            <div className={`dropdown-menu open`} style={!isSidebarOpen  ? { display: "none" } : {}}>
-              {item.dropdownItems?.map((dropdownItem, subIdx) => (
-                <div
-                  key={subIdx}
-                  className={`dropdown-item ${dropdownItem.isTitle ? "dropdown-title" : ""}`}
-                  onClick={() => {!dropdownItem.isTitle && navigate(dropdownItem.path);
-                     dispatch(setIndex(3));
-                  }}
-                >
-                  {dropdownItem.label}
-                </div>
-              ))}
+      {item.isDropdown && isInternsDropdownOpen && (
+        <div className={`dropdown-menu open`} style={!isSidebarOpen ? { display: "none" } : {}}>
+          {item.dropdownItems?.map((dropdownItem, subIdx) => (
+            <div
+              key={subIdx}
+              className={`dropdown-item ${dropdownItem.isTitle ? "dropdown-title" : ""}`}
+              onClick={() => {
+                if (!dropdownItem.isTitle) {
+                  navigate(dropdownItem.path);
+                  dispatch(setIndex(3));
+                }
+              }}
+            >
+              {dropdownItem.label}
             </div>
-          )}
+          ))}
         </div>
-      ))}
+      )}
     </div>
+  ))}
+</div>
+
   );
 };

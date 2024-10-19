@@ -75,13 +75,19 @@
 }
 
 .interns-information-title-type {
-    background-color: #2F4858; 
     color: #fff;
     padding: 0 4vw 0 15vw;
-   
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
     max-width: 8%;
+}
+
+.interns-information-title-type.extern{
+    background-color: #2F4858; 
+}
+
+.interns-information-title-type.intern{ 
+    background-color: #b88a54;
 }
 
 
@@ -254,9 +260,9 @@
 
 .intern-progress-space-container{
 display: flex;
+flex-direction: row;
 width: 100%;
 justify-content: center;
-flex-direction: column;
 padding-right: 5%;
 }
 
@@ -276,7 +282,6 @@ padding-right: 5%;
 .intern-progress-space-buttons{
     display: flex;
     gap: 5%;
-    margin-left: 60%;
 }
 
 .comments-container{
@@ -547,7 +552,6 @@ padding-right: 5%;
     padding: 1%;
     border-radius: 10px;
     width: 100%;
-    background-color: #ffffff;
     justify-content: space-between;
     margin-bottom: 3%;
     

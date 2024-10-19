@@ -6,11 +6,13 @@ import { useEffect, useState } from 'react';
 import { FormModal } from '../modals/form-modal.component';
 
 interface SupervisorCardProps {
+   
     name: string;
+    rol: string;
     department: string;
   }
 
-export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name, department }) => {
+export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name,rol, department }) => {
     const [open, setOpen] = useState(false);
     const [url, setUrl] = useState("");
     const ModalState = () => {
@@ -36,16 +38,16 @@ export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name, departmen
     
     return (
         <div className="generic-card">
-            <div className="generic-card-info">
+            <div className="generic-card-info-users">
                 <div className='generic-card-info-extra'>
                 <Avatar {...stringAvatar(name)} /><p>{name}</p>
                 </div>
-                <div className='generic-card-info-column'>
-                <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '15vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{department}</p>
+                <div className="generic-card-info-column-extra">
+                <p className='generic-card-info-column-phone'>9983847681</p>  
+                <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '5vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{rol}</p>
                 </div>
-               
-               
-           
+                
+                <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', marginLeft: '13%', maxWidth: '25vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{department}</p>
             </div>
             <div className="generic-card-actions">
                 <button>

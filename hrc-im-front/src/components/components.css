@@ -15,6 +15,15 @@
 
 }
 
+.ButtonComponent-cancel{
+  display: flex;
+  align-items: center;
+  width: 150px;
+  height: 30%;
+  font-size: 0.8rem;
+  width: 100%;
+}
+
 
 .EditButton{
     display: flex;
@@ -633,6 +642,7 @@ Navbar-Elements
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     gap: 8px; 
+    font-family: 'Lato', sans-serif;
     font-weight: bold; 
     color: #ffffff; 
     transition: background-color 0.3s ease, box-shadow 0.3s ease; 
@@ -642,6 +652,56 @@ Navbar-Elements
     background-color: #4f7a34;
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
 }
+
+/*
+    Delete all records button
+*/
+
+.delete-all-records-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #c53f2d;
+  border-radius: 30px;
+  font-family: 'Lato', sans-serif;
+  padding: 10px; /* Aumentamos el padding para un mejor efecto visual */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  gap: 8px;
+  font-weight: bold;
+  color: #ffffff;
+  transition: width 0.5s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Ajustamos la transición */
+  overflow: hidden;
+  width: 5%; /* Ancho inicial reducido */
+}
+
+.delete-all-records-button:hover {
+  background-color: #722e25;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+  width: 20%; /* Ancho expandido al hacer hover */
+}
+
+.delete-icon {
+  /* El ícono siempre visible */
+}
+
+.delete-all-records-text {
+  opacity: 0; /* Inicialmente oculto */
+  transition: opacity 0.3s ease;
+  white-space: nowrap; /* Evita que el texto haga salto de línea */
+  margin-left: -5px; /* Espacio entre el ícono y el texto */
+  max-width: 0; /* Texto inicialmente escondido */
+  overflow: hidden;
+}
+
+.delete-all-records-button:hover .delete-all-records-text {
+  opacity: 1; /* Hacemos el texto visible */
+  max-width: 200px; /* Aumentamos el espacio disponible para el texto */
+}
+
+
+
 
 
 /* 
@@ -1231,10 +1291,32 @@ transition: 0.5s;
     margin: 1% 2%;
     justify-items: center;
     align-items: center;
-    padding: 0% 5%;
+    padding: 0% 2%;
     width: 100%;
     
 }
+
+.generic-card-info-users {
+  display: flex;
+  align-items: stretch; 
+  color: #2B2B2B;
+  margin: 1% 2%;
+  justify-items: center;
+  align-items: center;
+  padding: 0% 2%;
+  width: 100%;
+  
+}
+
+.generic-card-info-users p{
+  font-size: 0.8rem;
+}
+
+.generic-card-info-details {
+  display: flex;
+  gap: 70px; 
+}
+
 
 @media screen and (max-width: 1375px) {
     .generic-card-info {
@@ -1259,10 +1341,23 @@ transition: 0.5s;
 .generic-card-info-extra{
     display: flex;
     gap: 20px;
+    min-width: 20vw;
+    max-width: 20vw;
+}
+.generic-card-info-column-extra{
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  min-width: 20vw;
+  width: 7%;
+}
+.generic-card-info-column-phone{
+  text-align: center;
+  margin-right: 45%;
+  font-family: 'Lato', sans-serif;
 }
 
 .generic-card-info-column{
-    width: 50%;
     text-align: center;
     font-family: 'Lato', sans-serif;
 }
@@ -1832,3 +1927,159 @@ transition: 0.5s;
     width: 20%;
     opacity: 0.8;
   }
+
+/*
+  Intern credential component
+*/
+
+
+.intern-credential-container {
+  background-color: #3c3c3c; /* Fondo oscuro */
+  border-radius: 10px;
+  width: 90%;
+  margin: auto;
+  height: 80dvh;
+  max-height: 80dvh;
+  text-align: center;
+  overflow: auto;
+}
+
+.intern-credential-header {
+  background-color: #bfbfbf; /* Color gris claro para el header */
+  padding: 10px;
+  height: 5%;
+  border-radius: 10px 10px 0 0;
+}
+
+.intern-credential-header h1 {
+  font-size: .85em;
+  color: #474747;
+}
+
+.intern-credential-body {
+  display: flex;
+  justify-content: center;
+  padding: 20px 100px;
+  gap: 20px;
+  height: 78%;
+  background-color: #2f2f2f;
+  border-radius: 10px;
+}
+
+
+.intern-credential-left, .intern-credential-right {
+  max-width: 30%;
+  min-width: 30%;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.intern-credential-left h3, .intern-credential-right h3 {
+  font-size: 1em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.intern-credential-footer {
+  display: flex;
+  margin-top: 20px;
+  text-align: center;
+  bottom: 0;
+  height: 2%;
+  justify-content: space-around;
+  width: 100%;
+  gap: 2%;
+}
+
+.intern-credential-footer button {
+  width: 30%;
+}
+
+
+
+/*
+  Intern credential component print
+*/
+
+@media print {
+  .intern-credential-body {
+    width: 100%; 
+    height: 50vh; 
+    background-color: #fff;
+    margin: 0 auto; 
+    justify-content: center;
+    padding: 20px 100px;
+
+  }
+
+  .intern-credential-left, .intern-credential-right {
+    max-width: 30%;
+    min-width: 30%;
+    background-color: #fff;
+    text-align: center;
+    border-radius: 10px;
+    padding: 20px;
+    border-style: solid;
+    border-color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .intern-credential-left h3, .intern-credential-right h3 {
+    font-size: 1em;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.report-modal-body p{
+  padding: 5px 10px;
+  border-color: #a0a0a0;
+  border-style: solid;
+  color: #868686;
+  border-width: 0 0 .5px 0;
+  margin-bottom: 4%;
+  font-size: .9rem;
+  font-family: 'Lato', sans-serif;
+}
+
+.report-modal-buttons{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6%;
+}
+
+.report-modal-buttons button{
+  padding: 5px 10px;
+  border-color: #a0a0a0;
+  background-color: #6ccc7fe0;
+  border-radius: 20px;
+  color: #125025;
+  font-weight: bold;
+  font-size: .8rem;
+  font-family: 'Lato', sans-serif;
+  transition: .5s;
+  min-height: 30px;
+}
+
+.report-modal-buttons button:hover{
+  background-color: #58aa68;
+  transition: .5s;
+}
