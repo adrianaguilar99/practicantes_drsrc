@@ -172,7 +172,7 @@ export class DepartmentsController {
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    await this.departmentsService.removeAll();
-    return { message: SUCCESSFUL_DELETION };
+    const removedDepartments = await this.departmentsService.removeAll();
+    return { message: SUCCESSFUL_DELETION, data: removedDepartments };
   }
 }

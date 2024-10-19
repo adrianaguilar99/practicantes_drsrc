@@ -167,7 +167,7 @@ export class CareersController {
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    await this.careersService.removeAll();
-    return { message: SUCCESSFUL_DELETION };
+    const removedCareers = await this.careersService.removeAll();
+    return { message: SUCCESSFUL_DELETION, data: removedCareers };
   }
 }
