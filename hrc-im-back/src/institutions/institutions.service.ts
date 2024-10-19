@@ -152,7 +152,27 @@ export class InstitutionsService {
 
   async removeAll() {
     try {
-      await this.institutionsRepository.delete({});
+      // Obtener todos las instituciones
+      const allInstitutions = await this.institutionsRepository
+        .createQueryBuilder('institution')
+        .leftJoinAndSelect('institution.interns', 'intern')
+        .getMany();
+
+      // Filtrar instituciones sin relaciones activas (sin practicantes)
+      const institutionsWithoutRelations = allInstitutions.filter(
+        (i) => !i.interns.length,
+      );
+
+      if (institutionsWithoutRelations.length === 0)
+        return 'No institutions without relations to delete.';
+
+      // Eliminar solo los departamentos sin relaciones
+      const institutions = institutionsWithoutRelations.map((i) => i.id);
+      await this.institutionsRepository.delete(institutions);
+
+      return `Deleted institutions without relations: ${institutionsWithoutRelations
+        .map((i) => i.name)
+        .join(', ')}`;
     } catch (error) {
       handleInternalServerError(error.message);
     }

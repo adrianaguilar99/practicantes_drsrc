@@ -154,7 +154,27 @@ export class CareersService {
 
   async removeAll() {
     try {
-      await this.careersRepository.delete({});
+      // Obtener todos las carreras
+      const allCareers = await this.careersRepository
+        .createQueryBuilder('career')
+        .leftJoinAndSelect('career.interns', 'intern')
+        .getMany();
+
+      // Filtrar instituciones sin relaciones activas (sin practicantes)
+      const careersWithoutRelations = allCareers.filter(
+        (c) => !c.interns.length,
+      );
+
+      if (careersWithoutRelations.length === 0)
+        return 'No careers without relations to delete.';
+
+      // Eliminar solo los departamentos sin relaciones
+      const careers = careersWithoutRelations.map((c) => c.id);
+      await this.careersRepository.delete(careers);
+
+      return `Deleted careers without relations: ${careersWithoutRelations
+        .map((c) => c.name)
+        .join(', ')}`;
     } catch (error) {
       handleInternalServerError(error.message);
     }

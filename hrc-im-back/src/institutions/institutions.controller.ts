@@ -175,7 +175,7 @@ export class InstitutionsController {
   @HttpCode(200)
   @Delete()
   async removeAll(): Promise<IApiResponse<any>> {
-    await this.institutionsService.removeAll();
-    return { message: SUCCESSFUL_DELETION };
+    const removedInstitutions = await this.institutionsService.removeAll();
+    return { message: SUCCESSFUL_DELETION, data: removedInstitutions };
   }
 }
