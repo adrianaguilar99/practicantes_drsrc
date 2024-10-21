@@ -30,6 +30,21 @@ export const supervisors = [
       name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
       department: "ENTRENAMIENTO",
       rol: "ADMINISTRADOR",
+  },
+  {
+      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
+      department: "ENTRENAMIENTO",
+      rol: "ADMINISTRADOR",
+  },
+  {
+      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
+      department: "ENTRENAMIENTO",
+      rol: "ADMINISTRADOR",
+  },
+  {
+      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
+      department: "ENTRENAMIENTO",
+      rol: "ADMINISTRADOR",
   }
 ]
 const SupervisorsPage = () => {

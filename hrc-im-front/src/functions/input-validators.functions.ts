@@ -4,6 +4,9 @@ import { el } from "date-fns/locale";
 export function InputValidators () {
     return {
         string: (value: string) => {
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (value.length < 3) {
                 return 'El campo no cumple con los requisitos';
             }   
@@ -13,6 +16,9 @@ export function InputValidators () {
         },
         email: (value: string) => {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Ingresa un correo electrónico válido';
             }
@@ -22,6 +28,9 @@ export function InputValidators () {
         },
         phone: (value: string) => {
             const regex = /^\d{10}$/;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Ingresa un número de teléfono válido';
             }
@@ -37,6 +46,9 @@ export function InputValidators () {
 
         date: (value: string) => {
             const regex = /^\d{4}-\d{2}-\d{2}$/;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Ingresa una fecha válida';
             }
@@ -44,6 +56,9 @@ export function InputValidators () {
 
         time: (value: string) => {
             const regex = /^\d{2}:\d{2}$/;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Ingresa una hora válida';
             }
@@ -51,6 +66,9 @@ export function InputValidators () {
 
         number: (value: string) => {
             const regex = /^\d+$/;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Campo no válido';
             }
@@ -58,6 +76,9 @@ export function InputValidators () {
 
         fileImage: (value: string) => {
             const regex = /(\.jpg|\.jpeg|\.png)$/i;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Ingresa una imagen válida';
             }
@@ -65,8 +86,18 @@ export function InputValidators () {
 
         filePDF: (value: string) => {
             const regex = /(\.pdf)$/i;
+            if(value === ""){
+                return 'Rellena este campo';
+            }
             if (!regex.test(value)) {
                 return 'Ingresa un archivo PDF válido';
+            }
+        },
+
+        password : (value: string) => {
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!regex.test(value)) {
+                return 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial';
             }
         },
 

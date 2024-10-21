@@ -63,6 +63,42 @@ export async function getProfileData(Token: string): Promise<ProfileInterface | 
 }
 
 
+export async function authLogin(email: string, password: string) {
+  try {
+    const response = await fetch(apiUrl + "/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (response.status === 404) {
+      console.error("Error 404: ", data.message); 
+      return {
+        status: 404,
+        message: data.message,
+      };
+    }
+
+    if (!response.ok) {
+      console.error("Error al iniciar sesión: ", data.message);
+      throw new Error(`Error ${response.status}: ${data.message}`);
+    }
+    return data;
+  } catch (error) {
+    console.error("Error en authLogin:", error);
+    return null;
+  }
+}
+
+
+
 
 
 

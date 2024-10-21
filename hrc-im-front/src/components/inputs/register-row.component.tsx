@@ -16,7 +16,8 @@ interface RegisterRowProps {
     | "autocomplete"
     | "file"
     | "textarea"
-    | "phone";
+    | "phone"
+    | "password";
   value?: string;
   id: string;
   validate?: "Error" | "Normal";
@@ -42,11 +43,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState(value);
 
- const animationStyles = useSpring({
+  const animationStyles = useSpring({
     opacity: show ? 1 : 0,
     transform: show ? "translateY(0px)" : "translateY(20px)",
     config: { tension: 280, friction: 10 },
-    width: "100%" ,
+    width: "100%",
   });
 
   const ValueChange = (newValue: string) => {
@@ -78,6 +79,17 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             />
           )}
 
+          {type === "password" && (
+            <input
+              type="password"
+              id={id}
+              defaultValue={value}
+              onChange={(e) => ValueChange(e.target.value)}
+              className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
+            />
+          )}
+
           {type === "number" && (
             <input
               type="number"
@@ -94,10 +106,10 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <input
               type="tel"
               id={id}
-              value={formatPhoneNumber(value || "")} 
-              onChange={(e) => ValueChange(e.target.value)} 
-              className={`edit-mode ${errorClass}`} 
-              readOnly={!editable} 
+              value={formatPhoneNumber(value || "")}
+              onChange={(e) => ValueChange(e.target.value)}
+              className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
             />
           )}
           {type === "file" && (
@@ -137,7 +149,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
           {type === "select" && (
             <select
               id={id}
-              value={inputValue}   
+              value={inputValue}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             >

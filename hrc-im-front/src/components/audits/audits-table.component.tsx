@@ -1,23 +1,28 @@
-import { Pagination } from "@mui/material";
-import { AuditsCard } from "./audits-card.component";
+import { Avatar, Pagination, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AuditsInterface } from "../../interfaces/audits/audits.interface";
-
-
+import {
+  AuditsInterface,
+  EntityAffected,
+} from "../../interfaces/audits/audits.interface";
+import { stringAvatar } from "../../functions/utils.functions";
+import { EntityInfoModal } from "./audits-infomodal.component";
 
 export interface TableProps {
-  data?: any[];  
+  data?: any[];
   onUpdate: () => void;
 }
 
 interface AuditsTableProps {
-  data?: AuditsInterface[];  // data es opcional
+  data?: AuditsInterface[]; // data es opcional
   onUpdate: () => void;
 }
 
-export const AuditsTable: React.FC<AuditsTableProps> = ({ data = [], onUpdate }) => {
+export const AuditsTable: React.FC<AuditsTableProps> = ({
+  data = [],
+  onUpdate,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
 
   useEffect(() => {
     const ResizePage = () => {
@@ -27,13 +32,13 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({ data = [], onUpdate })
       } else if (screenWidth < 1024) {
         setRowsPerPage(4);
       } else {
-        setRowsPerPage(6);
+        setRowsPerPage(7);
       }
     };
 
     ResizePage();
-    window.addEventListener('resize', ResizePage);
-    return () => window.removeEventListener('resize', ResizePage);
+    window.addEventListener("resize", ResizePage);
+    return () => window.removeEventListener("resize", ResizePage);
   }, []);
 
   // Manejo de la paginación
@@ -49,24 +54,103 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({ data = [], onUpdate })
     currentPage * rowsPerPage
   );
 
+  // Estado para almacenar la entidad sobre la cual se hace hover
+  const [hoveredEntityId, setHoveredEntityId] = useState<null | string>(null);
+
+  // Generar un ID único para cada fila (combina el id de la entidad y el índice de la fila)
+  const generateUniqueEntityId = (entityId: string, index: number) => {
+    return `${entityId}-${index}`;
+  };
+
   return (
-    <div>
-      <div className="table-headers">
-        <span>Acción</span>
-        <span>Responsable</span>
-        <span>Entidad</span>
-        <span>Fecha</span>
-      </div>
-      <div className="audits-table">
-        {displayedAudits.map((audit, index) => (
-          <AuditsCard
-            key={index}
-            action={audit.action}
-            responsible={audit.responsible}
-            entity={audit.entityAffected}
-            date={audit.auditDate}
-          />
-        ))}
+    <div className="generic-table-container">
+      <div className="generic-table-container-body">
+        <table className="generic-table">
+          <thead className="generic-table-headers">
+            <tr>
+              <th>Acción</th>
+              <th>Responsable</th>
+              <th>Entidad</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayedAudits.map((audit, index) => {
+              const uniqueEntityId = generateUniqueEntityId(
+                audit.entityAffected.id ?? "",
+                index
+              );
+              return (
+                <tr key={index} className="generic-table-row">
+                  <td>
+                    <Tooltip
+                      title={`Se ha realizado la ${audit.action} en ${audit.entityAffected.name} en la base de datos`}
+                      arrow
+                      style={{ marginLeft: "15px" }}
+                    >
+                      <p
+                        className={`intern-type-card ${
+                          audit.action.split(" ")[0] === "CREATE"
+                            ? "insertion"
+                            : audit.action.split(" ")[0] === "UPDATE"
+                            ? "update"
+                            : "delete"
+                        }`}
+                      >
+                        {audit.action.split(" ")[0] === "CREATE"
+                          ? "INSERCION"
+                          : audit.action.split(" ")[0] === "UPDATE"
+                          ? "ACTUALIZACION"
+                          : audit.action.split(" ")[0] === "DELETE"
+                          ? "ELIMINACION"
+                          : audit.action.split(" ")[0] === "TRY" &&
+                            audit.action.split(" ")[1] === "TO" &&
+                            audit.action.split(" ")[2] === "CREATE"
+                          ? "INTENTO DE INSERCCION"
+                          : "ERROR"}
+                      </p>
+                    </Tooltip>
+                  </td>
+                  <td style={{ display: "flex", alignItems: "center"}}>
+                    <Avatar {...stringAvatar(audit.responsible.fullName)} />
+                    <p className="supervisor-name">
+                      {audit.responsible.fullName}
+                    </p>
+                  </td>
+                  <td>
+                    <p className="entity-card">
+                      <span
+                        onMouseEnter={() => setHoveredEntityId(uniqueEntityId)}
+                        onMouseLeave={() => setHoveredEntityId(null)}
+                        style={{ position: "relative" }}
+                      >
+                        {audit.action.split(" ")[
+                          audit.action.split(" ").length - 1
+                        ]}
+                        {hoveredEntityId === uniqueEntityId && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "100%",
+                              left: "0",
+                            }}
+                          >
+                            <EntityInfoModal entity={audit.entityAffected} />
+                          </div>
+                        )}
+                      </span>
+                    </p>
+                  </td>
+                  <td>
+                    <p className="date-card">
+                      {new Date(audit.auditDate).toLocaleDateString()}
+                    </p>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
       <div className="table-pagination">
         <Pagination

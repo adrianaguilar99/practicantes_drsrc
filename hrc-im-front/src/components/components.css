@@ -755,11 +755,11 @@ Navbar-Elements
     min-height: 63dvh;
   }
 
-  .supervisors-table{
+  /* .supervisors-table{
     margin: 1% 1%;
     max-height: 63dvh;
     min-height: 63dvh;
-  }
+  } */
 
   @media screen and (max-width: 767px) {
     .interns-table{
@@ -792,11 +792,11 @@ Navbar-Elements
         min-height: 55dvh;
       }
 
-      .supervisors-table{
+      /* .supervisors-table{
         margin: 1% 1%;
         max-height: 55dvh;
         min-height: 55dvh;
-      }
+      } */
   }
 
   .table-headers {
@@ -853,7 +853,6 @@ Navbar-Elements
     justify-content: space-between;
     align-items: stretch; 
     background-color: #fff;
-    border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 1%;
     height: 10vh; 
@@ -876,7 +875,6 @@ Navbar-Elements
         justify-content: space-between;
         align-items: stretch; 
         background-color: #fff;
-        border-radius: 10px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 1%;
         height: 10vh; 
@@ -1519,7 +1517,7 @@ transition: 0.5s;
     justify-content: space-between;
     align-items: stretch; 
     font-family: 'Lato', sans-serif;
-    width: 20%;
+    width: fit-content;
     cursor: pointer;
     text-align: start;
     font-size: .80rem;
@@ -2120,4 +2118,88 @@ transition: 0.5s;
 .report-modal-buttons button:hover{
   background-color: #58aa68;
   transition: .5s;
+}
+
+
+
+
+
+
+
+
+
+
+
+.generic-table-container {
+  margin: 20px;
+  align-content: center;
+}
+
+.generic-table-container-body{
+  min-height: 60vh;
+  max-height: 60vh;
+}
+
+.generic-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  
+}
+
+.generic-table-headers th {
+  text-align: left;
+  padding-bottom: 10px;
+  font-weight: bold;
+  font-size: .75rem;
+  color: #555;
+}
+
+.generic-table-row {
+  background-color: #fff;
+  border-radius: 20px;
+  font-size: .75rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Lato', sans-serif;
+}
+
+.table-avatar {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.supervisor-info {
+  display: flex;
+  align-items: center;
+}
+
+.supervisor-info p {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: space-around;
+  max-width: 200px;
+}
+
+.table-actions .MuiIconButton-root {
+  color: #555;
+}
+
+.table-pagination {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
 }
