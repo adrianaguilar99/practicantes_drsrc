@@ -3,7 +3,7 @@ import { ENV } from './env.config';
 import { CORS_POLICY } from 'src/common/constants/constants';
 import { ForbiddenException } from '@nestjs/common';
 
-const allowedOrigins = [ENV.FRONT_URL_REDIRECT, ENV.SERVER_URL];
+const allowedOrigins = [ENV.SERVER_URL, ENV.FRONT_URL_REDIRECT];
 
 export const corsConfig: CorsOptions = {
   origin: (origin, callback) => {

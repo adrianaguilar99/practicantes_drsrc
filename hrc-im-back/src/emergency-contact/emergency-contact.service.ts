@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmergencyContactDto } from './dto/create-emergency-contact.dto';
 import { UpdateEmergencyContactDto } from './dto/update-emergency-contact.dto';
+import { IRequestUser } from 'src/common/interfaces';
 
 @Injectable()
 export class EmergencyContactService {
-  create(createEmergencyContactDto: CreateEmergencyContactDto) {
+  async create(
+    createEmergencyContactDto: CreateEmergencyContactDto,
+    { fullName, role, userId }: IRequestUser,
+  ) {
     return 'This action adds a new emergencyContact';
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all emergencyContact`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} emergencyContact`;
   }
 
-  update(id: number, updateEmergencyContactDto: UpdateEmergencyContactDto) {
+  async update(
+    id: number,
+    updateEmergencyContactDto: UpdateEmergencyContactDto,
+  ) {
     return `This action updates a #${id} emergencyContact`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} emergencyContact`;
   }
 }

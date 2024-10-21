@@ -24,13 +24,14 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(ENV.PORT);
+  // await app.listen(ENV.PORT);
+  await app.listen(ENV.PORT, '0.0.0.0');
 
   const baseUrl = (await app.getUrl()).replace('[::1]', 'localhost');
 
   logger.log('Server information');
   logger.log(`Server running on: ${baseUrl}`);
-  logger.log(`Welcome on: ${baseUrl}/test`);
+  logger.log(`Welcome on: ${baseUrl}/api/tests/ok`);
   logger.log(`Swagger documentation available at: ${baseUrl}/api/v1/docs 🚀📒`);
 }
 bootstrap();
