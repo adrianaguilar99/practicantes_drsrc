@@ -11,6 +11,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from 'src/common/enums';
 import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 import { Intern } from 'src/interns/entities/intern.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -52,6 +53,7 @@ export class User {
   })
   email: string;
 
+  @Exclude()
   @ApiProperty({
     example: 'martin-password',
     description:
@@ -61,6 +63,7 @@ export class User {
   @Column({ name: 'password', type: 'varchar', nullable: false })
   password?: string;
 
+  @Exclude()
   @ApiProperty({
     example: '[jwt-token]',
     description:

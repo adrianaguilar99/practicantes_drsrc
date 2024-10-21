@@ -37,7 +37,9 @@ export class Department {
   })
   name: string;
 
-  @OneToMany(() => Supervisor, (supervisors) => supervisors.department)
+  @OneToMany(() => Supervisor, (supervisors) => supervisors.department, {
+    eager: true,
+  })
   supervisors: Supervisor[];
 
   @OneToMany(() => Intern, (interns) => interns.department)
