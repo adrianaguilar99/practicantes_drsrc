@@ -227,27 +227,33 @@ export class Intern {
     now.setHours(0, 0, 0, 0);
 
     const startDate = new Date(this.internshipStart);
-    startDate.setHours(0, 0, 0, 0);
+    startDate.setHours(
+      startDate.getHours() + startDate.getTimezoneOffset() / 60,
+    );
 
     const endDate = new Date(this.internshipEnd);
-    endDate.setHours(0, 0, 0, 0);
+    endDate.setHours(endDate.getHours() + endDate.getTimezoneOffset() / 60);
 
+    // Verificacion de fechas
     // console.log({
-    //   startD: startDate.toDateString(),
-    //   now: now.toDateString(),
-    //   endD: endDate.toDateString(),
+    //   startDateString: startDate.toDateString(),
+    //   nowDateString: now.toDateString(),
+    //   endDateString: endDate.toDateString(),
+    //   startDateGetTime: startDate.getTime(),
+    //   nowDateGetTime: now.getTime(),
+    //   endDateGetTime: endDate.getTime(),
     // });
 
-    // Convertimos a cadena para comparar solo la fecha
-    if (startDate.toDateString() < now.toDateString())
+    // Permitir que la fecha de inicio sea igual o mayor a la fecha actual
+    if (startDate.getTime() < now.getTime())
       throw new Error('The internship start date cannot be in the past.');
 
-    if (startDate > endDate)
+    if (startDate.getTime() > endDate.getTime())
       throw new Error(
         'The internship start date cannot be greater than the end date.',
       );
 
-    if (endDate.toDateString() < now.toDateString())
+    if (endDate.getTime() < now.getTime())
       throw new Error('The internship end date cannot be in the past.');
   }
 }

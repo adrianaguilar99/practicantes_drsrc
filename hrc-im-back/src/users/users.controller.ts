@@ -98,6 +98,31 @@ export class UsersController {
     };
   }
 
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR,
+    UserRole.SUPERVISOR_RH,
+  )
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Use to find all administrators. Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [User],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Get('admins')
+  async findAdmins(): Promise<IApiResponse<any>> {
+    const allUsers = await this.usersService.findAdmins();
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allUsers,
+      records: allUsers.length,
+    };
+  }
+
   @ApiOperation({
     summary:
       'Action to obtain your profile data using the authentication token.',
@@ -112,7 +137,7 @@ export class UsersController {
   @Get('profile')
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
     const { userId }: IRequestUser = req.user;
-    console.log({ user: req.user });
+    // console.log({ user: req.user });
 
     const user = await this.usersService.findOne(userId);
     return {

@@ -62,8 +62,18 @@ export class DepartmentsService {
 
   async findAll() {
     try {
-      const departments = await this.departmentsRepository.find();
-      return departments;
+      // Obtenemos todos los departamentos haciendo una relacion con los usuarios supervisores o encargados
+      const allDepartments = await this.departmentsRepository.find();
+
+      // Iteramos sobre los departamentos obtenidos y despues (dentro) cada supervisor
+      // const safeDepartments = allDepartments.map((department) => {
+      //   const safeSupervisors = department.supervisors.map((supervisor) => {
+      //     const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
+      //     return { ...supervisor, user: safeUser };
+      //   });
+      //   return { ...department, supervisors: safeSupervisors };
+      // });
+      return allDepartments;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -76,6 +86,9 @@ export class DepartmentsService {
     if (!department)
       throw new NotFoundException(`Department with id: ${id} not found.`);
     return department;
+  }
+  catch(error) {
+    handleInternalServerError(error.message);
   }
 
   async update(
@@ -153,7 +166,28 @@ export class DepartmentsService {
 
   async removeAll() {
     try {
-      await this.departmentsRepository.delete({});
+      // Obtener todos los departamentos
+      const allDepartments = await this.departmentsRepository
+        .createQueryBuilder('department')
+        .leftJoinAndSelect('department.supervisors', 'supervisor')
+        .leftJoinAndSelect('department.interns', 'intern')
+        .getMany();
+
+      // Filtrar departamentos sin relaciones activas (sin supervisores ni practicantes)
+      const departmentsWithoutRelations = allDepartments.filter(
+        (d) => !d.supervisors.length && !d.interns.length,
+      );
+
+      if (departmentsWithoutRelations.length === 0)
+        return 'No departments without relations to delete.';
+
+      // Eliminar solo los departamentos sin relaciones
+      const departments = departmentsWithoutRelations.map((d) => d.id);
+      await this.departmentsRepository.delete(departments);
+
+      return `Deleted departments without relations: ${departmentsWithoutRelations
+        .map((d) => d.name)
+        .join(', ')}`;
     } catch (error) {
       handleInternalServerError(error.message);
     }

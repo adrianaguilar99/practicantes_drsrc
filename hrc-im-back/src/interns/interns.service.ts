@@ -38,6 +38,18 @@ export class InternsService {
     createInternDto: CreateInternDto,
     { fullName, role, userId }: IRequestUser,
   ) {
+    if (createInternDto.departmentId) {
+      if (
+        createInternDto.schoolEnrollment ||
+        createInternDto.institutionId ||
+        createInternDto.careerId
+      ) {
+        throw new ConflictException(
+          'If department is provided, schoolEnrollment, institution, and career cannot be provided.',
+        );
+      }
+    }
+
     const user = await this.usersService.findOne(createInternDto.userId);
     if (user.userRole !== UserRole.INTERN) {
       throw new ConflictException(
@@ -132,14 +144,14 @@ export class InternsService {
     } else {
       allInterns = await this.internsRepository.find();
     }
-    const safeInterns = allInterns.map((intern) => {
-      const { password, hashedRefreshToken, ...safeUser } = intern.user;
-      return {
-        ...intern,
-        user: safeUser,
-      };
-    });
-    return safeInterns;
+    // const safeInterns = allInterns.map((intern) => {
+    //   const { password, hashedRefreshToken, ...safeUser } = intern.user;
+    //   return {
+    //     ...intern,
+    //     user: safeUser,
+    //   };
+    // });
+    return allInterns;
   }
 
   async findOne(id: string) {
@@ -149,67 +161,98 @@ export class InternsService {
     if (!intern)
       throw new NotFoundException(`Intern with id: ${id} not found.`);
 
-    const { password, hashedRefreshToken, ...safeUser } = intern.user;
-    return {
-      ...intern,
-      user: safeUser,
-    };
+    // const { password, hashedRefreshToken, ...safeUser } = intern.user;
+    // return {
+    //   ...intern,
+    //   user: safeUser,
+    // };
+
+    return intern;
   }
 
   async update(
     id: string,
-    updateInternDto: UpdateInternDto,
-    { fullName, role, userId }: IRequestUser,
+    {
+      address,
+      bloodType,
+      careerId,
+      departmentId,
+      institutionId,
+      internshipDepartmentId,
+      internshipEnd,
+      internshipStart,
+      phone,
+      propertyId,
+      schoolEnrollment,
+      status,
+      userId,
+    }: UpdateInternDto,
+    { fullName, role, userId: userReq }: IRequestUser,
   ) {
     const existingIntern = await this.findOne(id);
 
     // console.log(existingIntern);
 
     // Bloqueamos que se actualicen campos no permitidos
-    const isUnauthorizedUpdate =
-      updateInternDto.internshipStart ||
-      updateInternDto.internshipEnd ||
-      updateInternDto.departmentId ||
-      updateInternDto.userId;
-
-    if (isUnauthorizedUpdate) {
+    if (userId) {
       await this.systemAuditsService.createSystemAudit(
-        { id: userId, fullName, role },
+        { id: userReq, fullName, role },
         'TRY TO UPDATE INTERN',
         {
           id: existingIntern.id,
           name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
         },
         'FAILED TO UPDATE INTERN',
-        'Attempted to update fields that are not allowed: internshipStart, internshipEnd, department or user',
+        'Attempted to update fields that are not allowed: User',
       );
-      throw new ConflictException(
-        'You are not allowed to update: internshipStart, internshipEnd, department or user.',
-      );
+      throw new ConflictException('You are not allowed to update: User.');
     }
 
-    // Sacamos los campos permitidos
-    const {
-      bloodType,
-      phone,
-      address,
-      status,
-      schoolEnrollment,
-      careerId,
-      internshipDepartmentId,
-      institutionId,
-      propertyId,
-    } = updateInternDto;
+    // Validación de exclusión mutua entre departmentId y otros campos
+    if (departmentId) {
+      // Verificar si ya existen valores para schoolEnrollment, institutionId o careerId en el registro existente
+      if (
+        existingIntern.schoolEnrollment ||
+        existingIntern.institution ||
+        existingIntern.career
+      )
+        throw new ConflictException(
+          'Cannot assign departmentId because schoolEnrollment, institutionId, or careerId already exist for this intern.',
+        );
+
+      // También verificar que no se envíen en la misma solicitud
+      if (schoolEnrollment || institutionId || careerId)
+        throw new ConflictException(
+          'If departmentId is provided, schoolEnrollment, institutionId, and careerId cannot be provided.',
+        );
+    }
+
+    // Nueva validación: Si ya existe un departmentId, no permitir actualizar schoolEnrollment, institutionId, y careerId
+    if (
+      existingIntern.department &&
+      (schoolEnrollment || institutionId || careerId)
+    )
+      throw new ConflictException(
+        'Cannot update schoolEnrollment, institutionId, or careerId because departmentId is already assigned to this intern.',
+      );
 
     if (bloodType) existingIntern.bloodType = bloodType;
-    if (schoolEnrollment) existingIntern.schoolEnrollment = schoolEnrollment;
+    if (schoolEnrollment)
+      existingIntern.schoolEnrollment = schoolEnrollment.trim();
     if (address) existingIntern.address = address.trim();
     if (phone) existingIntern.phone = phone;
     if (status) existingIntern.status = status;
+    if (internshipStart) existingIntern.internshipStart = internshipStart;
+    if (internshipEnd) existingIntern.internshipEnd = internshipEnd;
 
     if (careerId) {
       const career = await this.careersService.findOne(careerId);
       existingIntern.career = career;
+    }
+
+    if (departmentId) {
+      const department = await this.departmentsService.findOne(departmentId);
+      existingIntern.department = department;
     }
 
     if (internshipDepartmentId) {
@@ -232,7 +275,7 @@ export class InternsService {
     try {
       const updatedIntern = await this.internsRepository.save(existingIntern);
       await this.systemAuditsService.createSystemAudit(
-        { id: userId, fullName, role },
+        { id: userReq, fullName, role },
         'UPDATE INTERN',
         {
           id: updatedIntern.id,
@@ -243,7 +286,7 @@ export class InternsService {
       return updatedIntern;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
-        { id: userId, fullName, role },
+        { id: userReq, fullName, role },
         'FAILED TO UPDATE INTERN',
         {
           id: null,
