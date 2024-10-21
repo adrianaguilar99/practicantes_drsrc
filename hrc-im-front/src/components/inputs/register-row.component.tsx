@@ -23,6 +23,7 @@ interface RegisterRowProps {
   validate?: "Error" | "Normal";
   typeError?: String;
   show: boolean;
+  style?: React.CSSProperties;
   options?: string[];
   editable?: boolean;
   coincidences?: string[];
@@ -32,6 +33,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   label,
   value,
   id,
+  style,
   onChange,
   type,
   show,
@@ -65,7 +67,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             {typeError}
           </label>
         )}
-        <div className="info-row">
+        <div className="info-row" style={style}>
           <label htmlFor={id}>{label}</label>
 
           {type === "text" && (

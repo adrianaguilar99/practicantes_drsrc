@@ -124,6 +124,7 @@ const LoginPage = () => {
               show={true}
               validate={errors.userEmail ? "Error" : "Normal"}
               typeError={errors.userEmail}
+              style={{ display: "flex",flexDirection: "column", marginBottom: "10px" }}
             />
             <RegisterRow
               label="Contraseña:"
@@ -133,6 +134,7 @@ const LoginPage = () => {
               show={true}
               validate={errors.userPassword ? "Error" : "Normal"}
               typeError={errors.userPassword}
+              style={{ display: "flex",flexDirection: "column"}}
             />
 
                <ButtonComponent text="Iniciar sesión" onClick={LoginClick} />

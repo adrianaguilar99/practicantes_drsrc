@@ -85,7 +85,6 @@ const InternRegisterPage = () => {
     internCheckIn: undefined,
     internCheckOut: undefined,
     internTotalTime: undefined,
-
     internPicture: undefined,
     internCurp: undefined,
     internProofofaddress: undefined,
