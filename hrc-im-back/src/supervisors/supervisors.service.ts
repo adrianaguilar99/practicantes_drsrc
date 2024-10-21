@@ -93,13 +93,6 @@ export class SupervisorsService {
   async findAll() {
     try {
       const allSupervisors = await this.supervisorsRepository.find();
-      // const safeSupervisors = allSupervisors.map((supervisor) => {
-      //   const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
-      //   return {
-      //     ...supervisor,
-      //     user: safeUser,
-      //   };
-      // });
       return allSupervisors;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -113,12 +106,6 @@ export class SupervisorsService {
     if (!supervisor)
       throw new NotFoundException(`Supervisor with id: ${id} not found.`);
 
-    // const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
-    // return {
-    //   ...supervisor,
-    //   user: safeUser,
-    // };
-
     return supervisor;
   }
 
@@ -129,12 +116,6 @@ export class SupervisorsService {
     });
     if (!supervisor)
       throw new NotFoundException(`Supervisor not found using user.`);
-
-    // const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
-    // return {
-    //   ...supervisor,
-    //   user: safeUser,
-    // };
 
     return supervisor;
   }

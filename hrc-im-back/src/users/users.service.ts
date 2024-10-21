@@ -59,7 +59,6 @@ export class UsersService {
         },
         'SUCCESS',
       );
-      // const { password, ...createdUser } = savedUser;
       return savedUser;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
@@ -87,7 +86,6 @@ export class UsersService {
       const users = await this.usersRepository.find({
         where: { isActive: true },
       });
-      // const withoutPassword = users.map(({ password, ...rest }) => rest);
       return users;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -99,7 +97,6 @@ export class UsersService {
       const admins = await this.usersRepository.find({
         where: { isActive: true, userRole: UserRole.ADMINISTRATOR },
       });
-      // const withoutPassword = users.map(({ password, ...rest }) => rest);
       return admins;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -109,15 +106,6 @@ export class UsersService {
   async findOne(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id, isActive: true },
-      // select: [
-      //   'id',
-      //   'firstName',
-      //   'lastName',
-      //   'email',
-      //   'userRole',
-      //   'createdAt',
-      //   'hashedRefreshToken',
-      // ],
     });
     if (!user) throw new NotFoundException(`${USER_NOT_FOUND}`);
     return user;

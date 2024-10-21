@@ -56,7 +56,9 @@ export class InternsService {
         `User with ID ${createInternDto.userId} does not have the required role to be a intern.`,
       );
     }
-    // Buscamos las relaciones, en caso de que existan se agregan al nuevo registro
+    /** Buscamos las relaciones, en caso de que se exista o se este se agregando
+     * en el cuerpo de la solicitud, se agrega al nuevo registro
+     * Esto se aplica a: Carrera, Departamento e Institucion  */
     const career = createInternDto.careerId
       ? await this.careersService.findOne(createInternDto.careerId)
       : null;
@@ -144,13 +146,6 @@ export class InternsService {
     } else {
       allInterns = await this.internsRepository.find();
     }
-    // const safeInterns = allInterns.map((intern) => {
-    //   const { password, hashedRefreshToken, ...safeUser } = intern.user;
-    //   return {
-    //     ...intern,
-    //     user: safeUser,
-    //   };
-    // });
     return allInterns;
   }
 
@@ -160,12 +155,6 @@ export class InternsService {
     });
     if (!intern)
       throw new NotFoundException(`Intern with id: ${id} not found.`);
-
-    // const { password, hashedRefreshToken, ...safeUser } = intern.user;
-    // return {
-    //   ...intern,
-    //   user: safeUser,
-    // };
 
     return intern;
   }
@@ -227,7 +216,7 @@ export class InternsService {
         );
     }
 
-    // Nueva validación: Si ya existe un departmentId, no permitir actualizar schoolEnrollment, institutionId, y careerId
+    // Si ya existe un departmentId, no permitir actualizar schoolEnrollment, institutionId, y careerId
     if (
       existingIntern.department &&
       (schoolEnrollment || institutionId || careerId)
@@ -236,6 +225,9 @@ export class InternsService {
         'Cannot update schoolEnrollment, institutionId, or careerId because departmentId is already assigned to this intern.',
       );
 
+    /** Al igual que en la creacion, se verifica si alguno de las propiedades
+     * si estan mandando en el cuerpo de la peticion, en dado caso de que se manden
+     * y existan se actualiza el registro */
     if (bloodType) existingIntern.bloodType = bloodType;
     if (schoolEnrollment)
       existingIntern.schoolEnrollment = schoolEnrollment.trim();
