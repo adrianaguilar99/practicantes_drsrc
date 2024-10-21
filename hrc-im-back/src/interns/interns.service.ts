@@ -144,14 +144,14 @@ export class InternsService {
     } else {
       allInterns = await this.internsRepository.find();
     }
-    const safeInterns = allInterns.map((intern) => {
-      const { password, hashedRefreshToken, ...safeUser } = intern.user;
-      return {
-        ...intern,
-        user: safeUser,
-      };
-    });
-    return safeInterns;
+    // const safeInterns = allInterns.map((intern) => {
+    //   const { password, hashedRefreshToken, ...safeUser } = intern.user;
+    //   return {
+    //     ...intern,
+    //     user: safeUser,
+    //   };
+    // });
+    return allInterns;
   }
 
   async findOne(id: string) {
@@ -161,11 +161,13 @@ export class InternsService {
     if (!intern)
       throw new NotFoundException(`Intern with id: ${id} not found.`);
 
-    const { password, hashedRefreshToken, ...safeUser } = intern.user;
-    return {
-      ...intern,
-      user: safeUser,
-    };
+    // const { password, hashedRefreshToken, ...safeUser } = intern.user;
+    // return {
+    //   ...intern,
+    //   user: safeUser,
+    // };
+
+    return intern;
   }
 
   async update(

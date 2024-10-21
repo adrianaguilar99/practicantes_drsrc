@@ -41,7 +41,6 @@ export class Supervisor {
     nullable: false,
   })
   @ManyToOne(() => Department, (department) => department.supervisors, {
-    eager: true,
     nullable: false,
   })
   @JoinColumn({ name: 'department_id' })

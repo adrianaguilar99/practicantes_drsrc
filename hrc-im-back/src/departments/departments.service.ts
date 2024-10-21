@@ -62,8 +62,18 @@ export class DepartmentsService {
 
   async findAll() {
     try {
-      const departments = await this.departmentsRepository.find();
-      return departments;
+      // Obtenemos todos los departamentos haciendo una relacion con los usuarios supervisores o encargados
+      const allDepartments = await this.departmentsRepository.find();
+
+      // Iteramos sobre los departamentos obtenidos y despues (dentro) cada supervisor
+      // const safeDepartments = allDepartments.map((department) => {
+      //   const safeSupervisors = department.supervisors.map((supervisor) => {
+      //     const { password, hashedRefreshToken, ...safeUser } = supervisor.user;
+      //     return { ...supervisor, user: safeUser };
+      //   });
+      //   return { ...department, supervisors: safeSupervisors };
+      // });
+      return allDepartments;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -76,6 +86,9 @@ export class DepartmentsService {
     if (!department)
       throw new NotFoundException(`Department with id: ${id} not found.`);
     return department;
+  }
+  catch(error) {
+    handleInternalServerError(error.message);
   }
 
   async update(

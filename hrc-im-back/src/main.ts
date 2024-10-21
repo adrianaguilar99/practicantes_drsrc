@@ -1,6 +1,6 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
 import { createValidationPipe } from './pipes/validation.pipe';
 import { ENV, setupSwagger } from './configs';
 import { corsConfig } from './configs/cors.config';
@@ -17,6 +17,8 @@ async function bootstrap() {
   }
 
   app.useGlobalPipes(createValidationPipe());
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.setGlobalPrefix('api');
 
