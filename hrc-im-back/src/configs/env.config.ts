@@ -14,6 +14,7 @@ const loadedEnv = loadEnv(envFileName);
 export const ENV = {
   NODE_ENV: loadedEnv.NODE_ENV,
   PORT: +process.env.PORT,
+  SERVER_URL: process.env.SERVER_URL,
   DB: {
     HOST: process.env.DB_HOST,
     PORT: +process.env.DB_PORT,
