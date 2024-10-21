@@ -24,7 +24,7 @@ interface FormModalProps {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '35vw',
+            width: entity === "supervisors" ? '45vw' : '25vw',
             bgcolor: '#EDEDED',
             borderRadius: '8px',
             boxShadow: 24,

@@ -7,12 +7,15 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
 import { getDepartmentsData } from "../../api/departments/departments.api";
+import { set } from "date-fns";
 
 export interface FilterOptions {
   order?: string;
   type?: string;
   progress?: string;
   department?: string[];
+  typeAction?: string[];
+  entity?: string[];
 }
 
 interface FiltersProps {
@@ -32,6 +35,10 @@ export const FiltersButton: React.FC<FiltersProps> = ({
 
   const [departments, setDepartments] = useState<DataDepartment[]>([]);
   const [departmentfilters, setDepartmentFilters] = useState<string[]>([]);
+  const [typeActions, setTypeActions] = useState<string[]>([]);
+  const [typeActionfilters, setTypeActionFilters] = useState<string[]>([]);
+  const [entity, setEntity] = useState<string[]>([]);
+  const [entityfilters, setEntityFilters] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const userToken = sessionStorage.getItem("_Token") || "";
 
@@ -69,8 +76,8 @@ export const FiltersButton: React.FC<FiltersProps> = ({
       case "/audits":
         return [
           { title: "Tipo", divider: true },
-          { title: "ACTUALIZACIÓN" },
-          { title: "INSERCIÓN" },
+          { title: "ACTUALIZACION" },
+          { title: "INSERCION" },
           { title: "ELIMINACION" },
           { title: "Entidad", divider: true },
           { title: "INTERNO" },
@@ -137,6 +144,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
       type: typefilters.length > 0 ? typefilters[0] : undefined,
       progress: progressfilters.length > 0 ? progressfilters[0] : undefined,
       department: departmentfilters.length > 0 ? departmentfilters : undefined,
+      typeAction: typeActionfilters.length > 0 ? typeActionfilters : undefined,
     };
 
     if (onFilters) {
@@ -147,15 +155,11 @@ export const FiltersButton: React.FC<FiltersProps> = ({
   const CheckboxChange = (index: number, title: string) => {
     setChecked((prevChecked) => {
       const newChecked = [...prevChecked];
-
+  
       if (title === "A - Z" || title === "Z - A") {
-        const azIndex = filterOptions.findIndex(
-          (option) => option.title === "A - Z"
-        );
-        const zaIndex = filterOptions.findIndex(
-          (option) => option.title === "Z - A"
-        );
-
+        const azIndex = filterOptions.findIndex((option) => option.title === "A - Z");
+        const zaIndex = filterOptions.findIndex((option) => option.title === "Z - A");
+  
         if (title === "A - Z") {
           newChecked[zaIndex] = false;
         } else if (title === "Z - A") {
@@ -163,9 +167,10 @@ export const FiltersButton: React.FC<FiltersProps> = ({
         }
         newChecked[index] = !newChecked[index];
         setOrderFilters([title]);
+  
       } else {
         newChecked[index] = !newChecked[index];
-
+  
         if (newChecked[index]) {
           if (title === "EXTERNO" || title === "INTERNO") {
             setTypeFilters([...typefilters, title]);
@@ -174,6 +179,10 @@ export const FiltersButton: React.FC<FiltersProps> = ({
           } else if (index >= filterOptions.length) {
             const department = departments[index - filterOptions.length].name;
             setDepartmentFilters([...departmentfilters, department]);
+          } else if (title === "ACTUALIZACION" || title === "INSERCION" || title === "ELIMINACION") {
+            setTypeActionFilters([...typeActionfilters, title]);
+          } else if (title === "CARRERA" || title === "INSTITUCIÓN" || title === "DEPARTAMENTO" || title === "INTERNO") {
+            setEntityFilters([...entity, title]); // nuevo manejo de entidades
           }
         } else {
           if (title === "EXTERNO" || title === "INTERNO") {
@@ -182,16 +191,19 @@ export const FiltersButton: React.FC<FiltersProps> = ({
             setProgressFilters(progressfilters.filter((f) => f !== title));
           } else if (index >= filterOptions.length) {
             const department = departments[index - filterOptions.length].name;
-            setDepartmentFilters(
-              departmentfilters.filter((f) => f !== department)
-            );
+            setDepartmentFilters(departmentfilters.filter((f) => f !== department));
+          } else if (title === "ACTUALIZACIÓN" || title === "INSERCIÓN" || title === "ELIMINACIÓN") {
+            setTypeActionFilters(typeActionfilters.filter((f) => f !== title));
+          } else if (title === "CARRERA" || title === "INSTITUCIÓN" || title === "DEPARTAMENTO" || title === "INTERNO") {
+            setEntityFilters(entity.filter((f) => f !== title)); // remover entidades
           }
         }
       }
-
+  
       return newChecked;
     });
   };
+  
 
   const ClearFilters = () => {
     setChecked(
@@ -201,6 +213,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
     setTypeFilters([]);
     setProgressFilters([]);
     setDepartmentFilters([]);
+    setTypeActionFilters([]);
     applyFilters();
   };
 
@@ -232,7 +245,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
             {(orderfilters.length > 0 ||
               typefilters.length > 0 ||
               progressfilters.length > 0 ||
-              departmentfilters.length > 0) && (
+              departmentfilters.length > 0 || typeActionfilters.length > 0 || entity.length > 0) && (
               <button
                 className="clear-filters-button"
                 onClick={() => ClearFilters()}

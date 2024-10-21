@@ -10,6 +10,7 @@ import { FilterOptions } from "../../components/utils/filters.component";
 import { InstitutionsInterface } from "../../interfaces/institutions/institutions.interface";
 import { getInstitutionsData } from "../../api/interns/institutions/institutions.api";
 import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
+import { RetryElement } from "../../components/utils/retry-element.component";
 const InternsInstitutionsPage = () => {
 
   type Universitie = {
@@ -84,7 +85,7 @@ const InternsInstitutionsPage = () => {
         {isLoading ? (
               <CircularProgress type="secondary" />
             ) : hasError ? (
-              <button onClick={fetchData}>Reintentar</button>
+              <RetryElement onClick={() => fetchData()}/>
             ) : data.length === 0 ? (
               <NothingToSee />
             ) : (

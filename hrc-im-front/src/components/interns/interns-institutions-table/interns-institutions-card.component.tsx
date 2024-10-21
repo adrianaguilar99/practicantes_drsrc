@@ -1,6 +1,6 @@
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { GetUrl, LightstringToColor } from '../../../functions/utils.functions';
+import { formatPhoneNumber, GetUrl, LightstringToColor } from '../../../functions/utils.functions';
 import { useEffect, useState } from 'react';
 import { FormModal } from '../../modals/form-modal.component';
 import { ConfirmationModal } from '../../modals/confirmation-modal.component';
@@ -67,7 +67,7 @@ export const InstitutionsCard: React.FC<InstitutionsCardProps> = ({userToken, id
     <div className="generic-card">
       <div className="generic-card-info">
         <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '25vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{name}</p>
-        <p style={{marginRight: '30%'}}>{phone}</p>
+        <p style={{marginRight: '30%'}}>{formatPhoneNumber(phone)}</p>
       </div>
       <div className="generic-card-actions">
       <button onClick={ModalOpen}>

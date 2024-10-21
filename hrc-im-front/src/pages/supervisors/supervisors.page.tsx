@@ -11,18 +11,25 @@ export const supervisors = [
   {
       name: "JUAN JOSE",
       department: "RECURSOS HUMANOS",
+      phone: "123456789",
+      rol: "SUPERVISOR RH",
   },
   { 
       name: "BRIAN WILFRIDO ROMERO CUPUL",
       department: "TECNOLOGIAS DE INFORMACIÓN",
+      phone: "99746272",
+      rol: "SUPERVISOR",
   },
   {
       name: "MIGUEL ANGEL GARCIA RODRIGUEZ",
       department: "CONTABILIDAD",
+      rol: "SUPERVISOR",
+      phone: "9983847681",
   },
   {
       name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
       department: "ENTRENAMIENTO",
+      rol: "ADMINISTRADOR",
   }
 ]
 const SupervisorsPage = () => {
@@ -79,6 +86,10 @@ const SupervisorsPage = () => {
     setFilteredData(results);
   };
 
+  const PostSuccess = () => {
+    // fetchData();
+
+  };
   
 
   return (
@@ -88,9 +99,9 @@ const SupervisorsPage = () => {
         <section className="supervisors-left-container"></section>
         <section className="supervisors-right-container">
         <Breadcrumb/>
-          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters}/>
+          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => PostSuccess()}/>
           <div className="supervisors-data-container">
-            <SupervisorsTable data={filteredData}/>
+            <SupervisorsTable data={filteredData} onUpdate={() => PostSuccess()}/>
           </div>
         </section>
       </div>

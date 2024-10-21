@@ -4,15 +4,19 @@ import { Avatar } from '@mui/material';
 import { GetUrl, LightstringToColor, stringAvatar} from '../../functions/utils.functions';
 import { useEffect, useState } from 'react';
 import { FormModal } from '../modals/form-modal.component';
+import PhoneEnabledOutlinedIcon from '@mui/icons-material/PhoneEnabledOutlined';
+import { Email } from '@mui/icons-material';
 
 interface SupervisorCardProps {
-   
+    id?: string;
     name: string;
     rol: string;
     department: string;
+    phone?: string;
+    userToken?: string;
   }
 
-export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name,rol, department }) => {
+export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name,rol, phone, department }) => {
     const [open, setOpen] = useState(false);
     const [url, setUrl] = useState("");
     const ModalState = () => {
@@ -43,13 +47,18 @@ export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name,rol, depar
                 <Avatar {...stringAvatar(name)} /><p>{name}</p>
                 </div>
                 <div className="generic-card-info-column-extra">
-                <p className='generic-card-info-column-phone'>9983847681</p>  
-                <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '5vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{rol}</p>
+                <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', maxWidth: '15vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{rol}</p>
                 </div>
                 
                 <p style={{ backgroundColor,padding: '10px', borderRadius: '20px', marginLeft: '13%', maxWidth: '25vw', fontWeight: 'bold', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>{department}</p>
             </div>
             <div className="generic-card-actions">
+              {phone &&(
+ <button>
+ <PhoneEnabledOutlinedIcon />
+</button>
+              )}
+               
                 <button>
                     <EditOutlinedIcon  onClick={ModalOpen}/>
                 </button>
@@ -57,7 +66,7 @@ export const SupervisorsCard: React.FC<SupervisorCardProps> = ({ name,rol, depar
                     <DeleteOutlineOutlinedIcon />
                 </button>
             </div>
-            <FormModal open={open} onConfirm={ModalClose} type="Edit" onCancel={ModalClose} data={{name, department}} title="Editar Supervisor" entity={url} />
+            <FormModal open={open} onConfirm={ModalClose} type="Edit" onCancel={ModalClose} data={{name, rol, Email, phone, department}} title="Editar Supervisor" entity={url} />
         </div>
     );
 }

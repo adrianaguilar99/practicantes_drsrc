@@ -1,6 +1,7 @@
 import { Pagination } from "@mui/material";
 import { AuditsCard } from "./audits-card.component";
 import { useEffect, useState } from "react";
+import { AuditsInterface } from "../../interfaces/audits/audits.interface";
 
 
 
@@ -8,11 +9,16 @@ export interface TableProps {
   data?: any[];  
   onUpdate: () => void;
 }
-export const AuditsTable: React.FC<TableProps> = ({ data = [] }) => {
-  
 
+interface AuditsTableProps {
+  data?: AuditsInterface[];  // data es opcional
+  onUpdate: () => void;
+}
+
+export const AuditsTable: React.FC<AuditsTableProps> = ({ data = [], onUpdate }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); 
+  const [rowsPerPage, setRowsPerPage] = useState(6);
+
   useEffect(() => {
     const ResizePage = () => {
       const screenWidth = window.innerWidth;
@@ -30,21 +36,23 @@ export const AuditsTable: React.FC<TableProps> = ({ data = [] }) => {
     return () => window.removeEventListener('resize', ResizePage);
   }, []);
 
+  // Manejo de la paginación
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
-
+  // Filtro de las auditorías que se deben mostrar en la página actual
   const displayedAudits = data.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
   return (
-    <div >
+    <div>
       <div className="table-headers">
-        <span>Acción</span>
+        <span>Acción</span>
         <span>Responsable</span>
         <span>Entidad</span>
         <span>Fecha</span>
@@ -54,21 +62,21 @@ export const AuditsTable: React.FC<TableProps> = ({ data = [] }) => {
           <AuditsCard
             key={index}
             action={audit.action}
-            responsable={audit.responsable}
-            entity={audit.entity}
-            date={audit.date}
+            responsible={audit.responsible}
+            entity={audit.entityAffected}
+            date={audit.auditDate}
           />
         ))}
       </div>
       <div className="table-pagination">
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={PageChange}
-        variant="outlined"
-        shape="rounded"
-        size='small'
-      />
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={PageChange}
+          variant="outlined"
+          shape="rounded"
+          size="small"
+        />
       </div>
     </div>
   );

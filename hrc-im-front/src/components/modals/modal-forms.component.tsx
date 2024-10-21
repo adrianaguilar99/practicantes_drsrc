@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { RegisterRow } from "../inputs/register-row.component";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { set, sub } from "date-fns";
 import { enqueueSnackbar } from "notistack";
 import { patchCareer, postCareer } from "../../api/interns/careers/careers.api";
@@ -10,7 +10,16 @@ import {
   postInstitution,
 } from "../../api/interns/institutions/institutions.api";
 import { InputValidators } from "../../functions/input-validators.functions";
-import { patchDepartment, postDepartment } from "../../api/departments/departments.api";
+import {
+  getDepartmentsData,
+  patchDepartment,
+  postDepartment,
+} from "../../api/departments/departments.api";
+import {
+  DataDepartment,
+  DepartmentsInterface,
+} from "../../interfaces/departments/departments.interface";
+import { da } from "date-fns/locale";
 
 interface FormModalProps {
   type: string;
@@ -23,10 +32,12 @@ export const DepartmentFormModal: React.FC<FormModalProps> = ({
   type,
   data,
   onCancel,
-  onSuccess
+  onSuccess,
 }) => {
   const DepartmentId = data?.id;
-  const [DepartmentName, setDepartmentName] = React.useState<string>(data?.name || "");
+  const [DepartmentName, setDepartmentName] = React.useState<string>(
+    data?.name || ""
+  );
 
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
     departmentName: undefined,
@@ -75,7 +86,7 @@ export const DepartmentFormModal: React.FC<FormModalProps> = ({
           });
       } else {
         postDepartment(userToken, {
-          name: DepartmentName
+          name: DepartmentName,
         })
           .then((data) => {
             if (data) {
@@ -172,73 +183,130 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
   data,
   onCancel,
 }) => {
-  const [SupervisorName, setSupervisorName] = useState<string>("");
-  const [SupervisorEmail, setSupervisorEmail] = useState<string>("");
-  const [SupervisorPhone, setSupervisorPhone] = useState<string>("");
-  const [SupervisorRol, setSupervisorRol] = useState<string>("");
-  const [SupervisorDepartment, setSupervisorDepartment] = useState<string>("");
+  const [SupervisorFirstName, setSupervisorFirstName] = useState<string>(
+    data?.name || ""
+  );
+  const [SupervisorLastName, setSupervisorLastName] = useState<string>(
+    data?.last_name || ""
+  )
+  const [SupervisorEmail, setSupervisorEmail] = useState<string>(
+    data?.email || ""
+  );
+  const [SupervisorPhone, setSupervisorPhone] = useState<string>(
+    data?.phone || ""
+  );
+  const [SupervisorRol, setSupervisorRol] = useState<string>(
+    data?.rol || "Supervisor"
+  );
+  const [SupervisorDepartment, setSupervisorDepartment] = useState<string>(
+    data?.department?.name || ""
+  );
+  const [Departments, setDepartments] = useState<DataDepartment[]>([]);
+  const userToken = sessionStorage.getItem("_Token") || "";
+
+  const fetchDepartments = async () => {
+    try {
+      const fetchedData: DepartmentsInterface | null =
+        await getDepartmentsData(userToken);
+      if (fetchedData) {
+        setDepartments(fetchedData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+  }, [userToken]);
 
   return (
     <>
       {type === "Edit" ? (
         <div className="form-modal">
-          <RegisterRow
-            label="Nombre del usuario"
-            value={data.name}
-            type="text"
-            id={"supervisorName"}
-            show={true}
-            onChange={(value) => setSupervisorName(value || "")}
-          />
-          <RegisterRow
-            label="Correo del usuario"
-            value={data.email}
-            type="text"
-            id={"supervisorEmail"}
-            show={true}
-            onChange={(value) => setSupervisorEmail(value || "")}
-          />
-             <RegisterRow
-            label="Departamento"
-            value={data.department}
-            options={["Departamento 1", "Departamento 2"]}
-            type="select"
-            id={"supervisorDepartment"}
-            show={true}
-            onChange={(value) => setSupervisorDepartment(value || "")}
-          />
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
               marginBottom: "5%",
+              gap: "1%",
             }}
           >
             <RegisterRow
-              label="Teléfono del usuario"
-              value={data.phone || ""}
-              type="number"
-              id={"supervisorPhone"}
+              label="Nombres"
+              value={SupervisorFirstName}
+              type="text"
+              id={"supervisorName"}
               show={true}
-              onChange={(value) => setSupervisorPhone(value || "")}
+              onChange={(value) => setSupervisorFirstName(value || "")}
+            />
+             <RegisterRow
+              label="Apellidos"
+              value={SupervisorLastName}
+              type="text"
+              id={"supervisorName"}
+              show={true}
+              onChange={(value) => setSupervisorLastName(value || "")}
+            />
+            
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "5%",
+              gap: "1%",
+            }}
+          >
+            <RegisterRow
+              label="Correo del usuario"
+              value={SupervisorEmail}
+              type="text"
+              id={"supervisorEmail"}
+              show={true}
+              onChange={(value) => setSupervisorEmail(value || "")}
             />
             <RegisterRow
-              label="Permisos del usuario"
-              value={data.rol || ""}
+              label="Privilegios del usuario"
               options={["SUPERVISOR", "SUPERVISOR RH", "ADMINISTRADOR"]}
               type="select"
+              value={SupervisorRol}
               id={"supervisorRol"}
               show={true}
               onChange={(value) => setSupervisorRol(value || "")}
             />
           </Box>
-
-       
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
-             
+              marginBottom: "5%",
+              gap: "1%",
+            }}
+          >
+            <RegisterRow
+                  label="Teléfono del usuario"
+                  value={SupervisorPhone}
+                  type="phone"
+                  id={"supervisorPhone"}
+                  show={SupervisorRol != "ADMINISTRADOR"}
+                  onChange={(value) => setSupervisorPhone(value || "")}
+                />
+          <RegisterRow
+            label="Departamento"
+            value={SupervisorDepartment}
+            options={Departments.map((department) => department.name)}
+            type="select"
+            id={"supervisorDepartment"}
+            show={SupervisorRol != "ADMINISTRADOR"}
+            onChange={(value) => setSupervisorDepartment(value || "")}
+          />
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
             <Button
@@ -267,52 +335,86 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
         </div>
       ) : (
         <div className="form-modal">
-          <RegisterRow
-            label="Nombre del usuario"
-            type="text"
-            id={""}
-            show={true}
-            onChange={(value) => setSupervisorName(value || "")}
-          />
-          <RegisterRow
-            label="Correo del usuario"
-            type="text"
-            id={""}
-            show={true}
-            onChange={(value) => setSupervisorEmail(value || "")}
-          />
+            <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "5%",
+              gap: "1%",
+            }}
+          >
             <RegisterRow
-            label="Departamento"
-            type="select"
-            id={""}
-            show={true}
-            onChange={(value) => setSupervisorDepartment(value || "")}
-          />
+              label="Nombres"
+              value={SupervisorFirstName}
+              type="text"
+              id={"supervisorName"}
+              show={true}
+              onChange={(value) => setSupervisorFirstName(value || "")}
+            />
+             <RegisterRow
+              label="Apellidos"
+              value={SupervisorLastName}
+              type="text"
+              id={"supervisorName"}
+              show={true}
+              onChange={(value) => setSupervisorLastName(value || "")}
+            />
+            
+          </Box>
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
               marginBottom: "5%",
+              gap: "1%",
             }}
           >
             <RegisterRow
-              label="Teléfono del usuario"
-              type="number"
-              id={"supervisorPhone"}
+              label="Correo del usuario"
+              value={SupervisorEmail}
+              type="text"
+              id={"supervisorEmail"}
               show={true}
-              onChange={(value) => setSupervisorPhone(value || "")}
+              onChange={(value) => setSupervisorEmail(value || "")}
             />
             <RegisterRow
-              label="Permisos del usuario"
+              label="Privilegios del usuario"
               options={["SUPERVISOR", "SUPERVISOR RH", "ADMINISTRADOR"]}
               type="select"
+              value={SupervisorRol}
               id={"supervisorRol"}
               show={true}
               onChange={(value) => setSupervisorRol(value || "")}
             />
           </Box>
+          <Box
+            sx={{
+              display: SupervisorRol != "ADMINISTRADOR" ? "flex" : "none",
+              justifyContent: "space-between",
+              marginBottom: "5%",
+              gap: "1%",
+              
+            }}
+          >
+            <RegisterRow
+                  label="Teléfono del usuario"
+                  value={SupervisorPhone}
+                  type="phone"
+                  id={"supervisorPhone"}
+                  show={SupervisorRol != "ADMINISTRADOR"}
+                  onChange={(value) => setSupervisorPhone(value || "")}
+                />
+          <RegisterRow
+            label="Departamento"
+            value={SupervisorDepartment}
+            options={Departments.map((department) => department.name)}
+            type="select"
+            id={"supervisorDepartment"}
+            show={SupervisorRol != "ADMINISTRADOR"}
+            onChange={(value) => setSupervisorDepartment(value || "")}
+          />
+          </Box>
 
-        
           <Box
             sx={{
               display: "flex",
@@ -327,7 +429,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
                 "&:hover": { bgcolor: "#0056b3" },
               }}
             >
-              Agregar
+              Aceptar
             </Button>
 
             <Button
@@ -357,8 +459,12 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
   onCancel,
 }) => {
   const InstitutionId = data?.id;
-  const [InstitutionName, setInstitutionName] = React.useState<string>(data?.name || "");
-  const [InstitutionPhone, setInstitutionPhone] = React.useState<string>(data?.phone || "");
+  const [InstitutionName, setInstitutionName] = React.useState<string>(
+    data?.name || ""
+  );
+  const [InstitutionPhone, setInstitutionPhone] = React.useState<string>(
+    data?.phone || ""
+  );
   const userToken = sessionStorage.getItem("_Token") || "";
 
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
@@ -455,8 +561,8 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
           />
           <RegisterRow
             label="Telefono de la institución"
-            value={data.phone}
-            type="number"
+            value={InstitutionPhone}
+            type="phone"
             id={"institutionEmail"}
             show={true}
             onChange={(value) => setInstitutionPhone(value || "")}
@@ -499,7 +605,8 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
           />
           <RegisterRow
             label="Telefono de la institución"
-            type="number"
+            type="phone"
+            value={InstitutionPhone}
             id={""}
             show={true}
             onChange={(value) => setInstitutionPhone(value || "")}

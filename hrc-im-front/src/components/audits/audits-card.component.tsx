@@ -1,63 +1,72 @@
 import React, { useState } from "react";
-import { EntityInfoModal } from "./audits-infomodal.component";
-import { Avatar, Tooltip } from "@mui/material";
 import { stringAvatar } from "../../functions/utils.functions";
+import {
+  EntityAffected,
+  Responsible,
+} from "../../interfaces/audits/audits.interface";
+import { Avatar, Tooltip } from "@mui/material";
+import { EntityInfoModal } from "./audits-infomodal.component";
 
-interface DepartmentCardProps {
+interface AuditCardProps {
   action: string;
-  responsable: string;
-  entity: EntityProps[];
-  date: string;
+  responsible: Responsible;
+  entity: EntityAffected;
+  date: Date;
 }
 
-interface EntityProps {
-  type: string;
-  name: string;
-  email?: string;
-  phone?: string;
-}
-
-export const AuditsCard: React.FC<DepartmentCardProps> = ({
+export const AuditsCard: React.FC<AuditCardProps> = ({
   action,
-  responsable,
+  responsible,
   entity,
   date,
 }) => {
-  const [hoveredEntity, setHoveredEntity] = useState<null | EntityProps>(null);
+  const [hoveredEntity, setHoveredEntity] = useState<null | EntityAffected>(
+    null
+  );
 
   return (
     <div className="generic-card">
       <div className="generic-card-info">
-      <Tooltip title={`Se ha realizado la ${action} de ${entity[0].name} en la base de datos`} arrow>
-        <p
-          className={`intern-type-card ${action === "INSERCCIÓN" ? "insertion" : action === "ACTUALIZACIÓN" ? "update" : "delete"}`}
+        <Tooltip
+          title={`Se ha realizado la ${action} en ${entity.name} en la base de datos`}
+          arrow
         >
-          {action}
-        </p>
-      </Tooltip>
+          <p
+            className={`intern-type-card ${
+              action.split(" ")[0] === "CREATE"
+                ? "insertion"
+                : action.split(" ")[0] === "UPDATE"
+                  ? "update"
+                  : "delete"
+            }`}
+          >
+            {action.split(" ")[0] === "CREATE"
+              ? "INSERCION"
+              : action.split(" ")[0] === "UPDATE"
+                ? "ACTUALIZACION"
+                : action.split(" ")[0] === "DELETE"
+                ? "ELIMINACION"
+                : action.split(" ")[0] === "TRY" && action.split(" ")[1] === "TO" && action.split(" ")[2] === "CREATE" ? "INTENTO DE INSERCCION" : "ERROR"}
+          </p>
+        </Tooltip>
+        <Avatar {...stringAvatar(responsible.fullName)} />
+        <p className="supervisor-name">{responsible.fullName}</p>
 
-      <Avatar {...stringAvatar(responsable)} /><p className="supervisor-name">{responsable}</p>
         <p className="entity-card">
-          {entity.map((ent, index) => (
-            <span
-              key={index}
-              onMouseEnter={() => setHoveredEntity(ent)}
-              onMouseLeave={() => setHoveredEntity(null)}
-              style={{ position: "relative" }} // Asegúrate de agregar esta línea para el posicionamiento absoluto
-            >
-              {ent.type}
-              {hoveredEntity === ent && (
-                <div style={{ position: "absolute", top: "100%", left: "0" }}>
-                  {" "}
-                  {/* Ajusta la posición según tu diseño */}
-                  <EntityInfoModal entity={hoveredEntity} />
-                </div>
-              )}
-              {index < entity.length - 1 ? ", " : ""}
-            </span>
-          ))}
+          <span
+            onMouseEnter={() => setHoveredEntity(entity)}
+            onMouseLeave={() => setHoveredEntity(null)}
+            style={{ position: "relative" }}
+          >
+            {action.split(" ")[action.split(" ").length - 1]}
+            {hoveredEntity && (
+              <div style={{ position: "absolute", top: "100%", left: "0" }}>
+                <EntityInfoModal entity={hoveredEntity} />
+              </div>
+            )}
+          </span>
         </p>
-        <p className="date-card">{date}</p>
+        <p className="date-card">{new Date(date).toLocaleDateString()}</p>
       </div>
     </div>
   );

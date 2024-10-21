@@ -2,17 +2,28 @@ import { useState } from "react";
 import { Autocomplete } from "@mui/material";
 import { TextField } from "@mui/material";
 import { useSpring, animated } from "@react-spring/web";
+import { formatPhoneNumber } from "../../functions/utils.functions";
 
 interface RegisterRowProps {
   label: string;
   onChange: (value?: string) => void;
-  type?: "text" | "number" | "date" | "time" | "select" | "autocomplete" | "file";
+  type?:
+    | "text"
+    | "number"
+    | "date"
+    | "time"
+    | "select"
+    | "autocomplete"
+    | "file"
+    | "textarea"
+    | "phone";
   value?: string;
   id: string;
   validate?: "Error" | "Normal";
   typeError?: String;
   show: boolean;
   options?: string[];
+  editable?: boolean;
   coincidences?: string[];
 }
 
@@ -23,17 +34,19 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   onChange,
   type,
   show,
-  validate, 
+  validate,
   typeError,
+  editable = true,
   options = [],
   coincidences = [],
 }) => {
   const [inputValue, setInputValue] = useState(value);
 
-  const animationStyles = useSpring({
+ const animationStyles = useSpring({
     opacity: show ? 1 : 0,
     transform: show ? "translateY(0px)" : "translateY(20px)",
     config: { tension: 280, friction: 10 },
+    width: "100%" ,
   });
 
   const ValueChange = (newValue: string) => {
@@ -46,11 +59,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   return (
     show && (
       <animated.div style={animationStyles}>
-          {validate === "Error" && (
-            <label htmlFor={id} className="error-label">
-              {typeError}
-            </label>
-          )}
+        {validate === "Error" && (
+          <label htmlFor={id} className="error-label">
+            {typeError}
+          </label>
+        )}
         <div className="info-row">
           <label htmlFor={id}>{label}</label>
 
@@ -60,7 +73,8 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               id={id}
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
-              className={`edit-mode ${errorClass}`} 
+              className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
             />
           )}
 
@@ -72,9 +86,21 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
             />
           )}
-           {type === "file" && (
+
+          {type === "phone" && (
+            <input
+              type="tel"
+              id={id}
+              value={formatPhoneNumber(value || "")} 
+              onChange={(e) => ValueChange(e.target.value)} 
+              className={`edit-mode ${errorClass}`} 
+              readOnly={!editable} 
+            />
+          )}
+          {type === "file" && (
             <input
               type="file"
               min={1}
@@ -82,6 +108,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
             />
           )}
 
@@ -92,6 +119,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
             />
           )}
 
@@ -102,13 +130,14 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
             />
           )}
 
           {type === "select" && (
             <select
               id={id}
-              value={inputValue}
+              value={inputValue}   
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
             >
@@ -124,7 +153,6 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <Autocomplete
               options={coincidences}
               value={inputValue}
-              
               onInputChange={(event, newInputValue) => {
                 ValueChange(newInputValue);
               }}
@@ -137,15 +165,13 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
                     ...params.InputProps,
                     className: `edit-mode ${errorClass}`,
                   }}
-                  
                   fullWidth
                 />
               )}
               fullWidth
             />
-          )}     
+          )}
         </div>
-        
       </animated.div>
     )
   );

@@ -11,12 +11,19 @@ import { FormModal } from "../../components/modals/form-modal.component";
 import { EmergencyContactsRegister } from "../../components/interns/interns-components/emergency-contacts-register.component";
 import { InputValidators } from "../../functions/input-validators.functions";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
-import { set } from "date-fns";
-import { CareersInterface, DataCareer } from "../../interfaces/careers/careers.intarface";
-import { ca } from "date-fns/locale";
+import {
+  CareersInterface,
+  DataCareer,
+} from "../../interfaces/careers/careers.intarface";
 import { getCareersData } from "../../api/interns/careers/careers.api";
 import { getInstitutionsData } from "../../api/interns/institutions/institutions.api";
-import { DataInstitution, InstitutionsInterface } from "../../interfaces/institutions/institutions.interface";
+import {
+  DataInstitution,
+  InstitutionsInterface,
+} from "../../interfaces/institutions/institutions.interface";
+import { formatPhoneNumber } from "../../functions/utils.functions";
+import { getDepartmentsData } from "../../api/departments/departments.api";
+import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -51,13 +58,15 @@ const InternRegisterPage = () => {
   const [InternBirthCertificate, setInternBirthCertificate] = useState("");
   const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
 
-interface EmergencyContacts {
-  name: string;
-  relationship: string;
-  phone: string;
-}
+  interface EmergencyContacts {
+    name: string;
+    relationship: string;
+    phone: string;
+  }
 
-  const [InternEmergencyContacts, setInternEmergencyContacts] =  useState<EmergencyContacts[]>([]);
+  const [InternEmergencyContacts, setInternEmergencyContacts] = useState<
+    EmergencyContacts[]
+  >([]);
 
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
     internName: undefined,
@@ -82,10 +91,7 @@ interface EmergencyContacts {
     internProofofaddress: undefined,
     internBirthCertificate: undefined,
     internMedicalInsurance: undefined,
-
   });
-
-
 
   const [open, setOpen] = useState(false);
   const [entity, setEntity] = useState<string>("");
@@ -94,6 +100,7 @@ interface EmergencyContacts {
   const userToken = sessionStorage.getItem("_Token") || "";
   const [Careers, setCareers] = useState<DataCareer[]>([]);
   const [Institutions, setInstitutions] = useState<DataInstitution[]>([]);
+  const [Departments, setDepartments] = useState<DataDepartment[]>([]);
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
@@ -102,34 +109,45 @@ interface EmergencyContacts {
 
   const fetchCareers = async () => {
     try {
-      const fetchedData: CareersInterface | null = await getCareersData(userToken);   
-      if(fetchedData){
+      const fetchedData: CareersInterface | null =
+        await getCareersData(userToken);
+      if (fetchedData) {
         setCareers(fetchedData.data);
       }
-
-     
-  }catch (error) {
-    console.log(error);
-  }
-}
-
-const fetchInstitutions = async () => {
-  try {
-    const fetchedData: InstitutionsInterface | null = await getInstitutionsData(userToken);   
-    if(fetchedData){
-      setInstitutions(fetchedData.data);
+    } catch (error) {
+      console.log(error);
     }
-} catch (error) {
-  console.log(error);
-}
-}
+  };
 
+  const fetchDepartments = async () => {
+    try {
+      const fetchedData: DepartmentsInterface | null =
+        await getDepartmentsData(userToken);
+      if (fetchedData) {
+        setDepartments(fetchedData.data);
+      }
+    }catch (error) {
+      console.log(error);
+    }
+  }
 
-useEffect(() => {
-  fetchCareers();
-  fetchInstitutions();
-}, [userToken]);
+  const fetchInstitutions = async () => {
+    try {
+      const fetchedData: InstitutionsInterface | null =
+        await getInstitutionsData(userToken);
+      if (fetchedData) {
+        setInstitutions(fetchedData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  useEffect(() => {
+    fetchCareers();
+    fetchInstitutions();
+    fetchDepartments();
+  }, [userToken]);
 
   const ValidateInputs = () => {
     const validators = InputValidators();
@@ -246,7 +264,6 @@ useEffect(() => {
     setErrors(newErrors);
   };
 
-
   return (
     <div className="body-page">
       <Navbar />
@@ -286,8 +303,9 @@ useEffect(() => {
                   <RegisterRow
                     label="Tel Personal:"
                     onChange={(value) => setInternPhone(value || "")}
+                    value={formatPhoneNumber(InternPhone)}
                     id="telPersonal"
-                    type="number"
+                    type="phone"
                     show={true}
                     validate={errors.internPhone ? "Error" : "Normal"}
                     typeError={errors.internPhone}
@@ -313,32 +331,45 @@ useEffect(() => {
                     validate={errors.internAddress ? "Error" : "Normal"}
                     typeError={errors.internAddress}
                   />
-                   <RegisterRow
+                  <RegisterRow
                     label="Tipo de sangre:"
                     onChange={(value) => setInternAddress(value || "")}
                     id="bloodtype"
                     type="select"
                     show={true}
+                    options={["A+", "A-", "B+","B-","AB+","AB-","O+","O-"]}
                     validate={errors.internAddress ? "Error" : "Normal"}
                     typeError={errors.internAddress}
                   />
+                  <p
+                      className="register-intern-suggestion"
+                      onClick={() => {
+                        setEntity("departments");
+                        ModalOpen();
+                      }}
+                    >
+                      ¿No encuetra el departamento que busca? Registrar un departamento
+                    </p>
                   <RegisterRow
                     label="Departamento de practicas:"
                     onChange={(value) => setInternOldDepartment(value || "")}
                     id="department"
                     type="select"
                     show={true}
+                    options={Departments.map((department) => department.name)}
                     validate={errors.internDepartment ? "Error" : "Normal"}
                     typeError={errors.internDepartment}
                   />
-                  <RegisterRow
-                    label="Encargado:"
-                    onChange={(value) => setInternSupervisor(value || "")}
-                    id="encargado"
+
+<RegisterRow
+                    label="Departamento de procedencia:"
+                    onChange={(value) => setInternDepartment(value || "")}
+                    id="department"
                     type="select"
-                    show={true}
-                    validate={errors.internSupervisor ? "Error" : "Normal"}
-                    typeError={errors.internSupervisor}
+                    options={Departments.map((department) => department.name)}
+                    show={selectedType === "Interno"}
+                    validate={errors.internOldDepartment ? "Error" : "Normal"}
+                    typeError={errors.internOldDepartment}
                   />
 
                   {selectedType === "Externo" && (
@@ -365,12 +396,21 @@ useEffect(() => {
                         (institution) => institution.name === value
                       );
                       setInternUniversity(
-                        selectedInstitution ? selectedInstitution.id.toString() : ""
+                        selectedInstitution
+                          ? selectedInstitution.id.toString()
+                          : ""
+                      );
+                      setInternInstitutePhone(
+                        selectedInstitution
+                          ? selectedInstitution.phone.toString()
+                          : ""
                       );
                     }}
                     id="institution"
                     type="autocomplete"
-                    coincidences={Institutions.map((institution: { name: any; }) => institution.name)}
+                    coincidences={Institutions.map(
+                      (institution: { name: any }) => institution.name
+                    )}
                     show={selectedType === "Externo"}
                     validate={errors.internUniversity ? "Error" : "Normal"}
                     typeError={errors.internUniversity}
@@ -399,7 +439,9 @@ useEffect(() => {
                     }}
                     id="career"
                     type="autocomplete"
-                    coincidences={Careers.map((career: { name: any; }) => career.name)}
+                    coincidences={Careers.map(
+                      (career: { name: any }) => career.name
+                    )}
                     show={selectedType === "Externo"}
                     validate={errors.internProgram ? "Error" : "Normal"}
                     typeError={errors.internProgram}
@@ -417,22 +459,16 @@ useEffect(() => {
                   <RegisterRow
                     label="Tel Institucional:"
                     onChange={(value) => setInternInstitutePhone(value || "")}
-                    type="number"
+                    type="phone"
+                    value={InternInstitutePhone} 
                     id="telInstitutional"
                     show={selectedType === "Externo"}
                     validate={errors.internInstitutePhone ? "Error" : "Normal"}
                     typeError={errors.internInstitutePhone}
+                    editable={false} 
                   />
 
-                  <RegisterRow
-                    label="Departamento de procedencia:"
-                    onChange={(value) => setInternDepartment(value || "")}
-                    id="department"
-                    type="text"
-                    show={selectedType === "Interno"}
-                    validate={errors.internOldDepartment ? "Error" : "Normal"}
-                    typeError={errors.internOldDepartment}
-                  />
+                 
                 </section>
 
                 <section className="register-section-middle">
@@ -491,7 +527,6 @@ useEffect(() => {
                       Ingrese minimo 2 contactos de emergencia
                     </p>
                   )}
-                  
                 </section>
                 <section className="register-section-right">
                   <div className="register-intern-divider">
@@ -524,22 +559,26 @@ useEffect(() => {
                     validate={errors.internProofofaddress ? "Error" : "Normal"}
                     typeError={errors.internProofofaddress}
                   />
-                   <RegisterRow
+                  <RegisterRow
                     label="Acta de nacimiento:"
                     onChange={(value) => setInternBirthCertificate(value || "")}
                     id="tiempoTotal"
                     type="file"
                     show={true}
-                    validate={errors.internBirthCertificate ? "Error" : "Normal"}
+                    validate={
+                      errors.internBirthCertificate ? "Error" : "Normal"
+                    }
                     typeError={errors.internBirthCertificate}
                   />
-                   <RegisterRow
+                  <RegisterRow
                     label="Comprobante de seguro medico:"
                     onChange={(value) => setInternMedicalInsurance(value || "")}
                     id="tiempoTotal"
                     type="file"
                     show={true}
-                    validate={errors.internMedicalInsurance ? "Error" : "Normal"}
+                    validate={
+                      errors.internMedicalInsurance ? "Error" : "Normal"
+                    }
                     typeError={errors.internMedicalInsurance}
                   />
                 </section>
@@ -551,7 +590,7 @@ useEffect(() => {
                 text="Guardar"
                 onClick={() => {
                   ValidateInputs();
-                  ;console.log(InternProgram);
+                  console.log(InternProgram);
                 }}
               />
               <ButtonComponent text="Cancelar" onClick={() => history.back()} />
@@ -561,7 +600,11 @@ useEffect(() => {
       </div>
       <FormModal
         open={open}
-        onConfirm={() => {fetchCareers(); fetchInstitutions();}}
+        onConfirm={() => {
+          fetchCareers();
+          fetchInstitutions();
+          fetchDepartments();
+        }}
         onCancel={ModalClose}
         title="Agregar"
         type="Add"

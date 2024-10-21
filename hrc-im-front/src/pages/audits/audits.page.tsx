@@ -7,114 +7,96 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { search } from "../../functions/filters-functions";
 import './audits.page.css';
 import { FilterOptions } from "../../components/utils/filters.component";
+import { AuditsInterface } from "../../interfaces/audits/audits.interface";
+import { getAuditsData } from "../../api/audits/audits.api";
+import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
+import { RetryElement } from "../../components/utils/retry-element.component";
 
-const audits = [
-    {
-      action: "ACTUALIZACIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "INTERN",
-          name: "LUIS FERNANDO",
-          email: "qKpZb@example.com",
-          phone: "123456789",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "INSERCCIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "DEPARTMENT",
-          name: "FINANZAS",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "ACTUALIZACIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "INTERN",
-          name: "MIGUEL ANGEL",
-          email: "qKpZb@example.com",
-          phone: "123456789",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "INSERCCIÓN",
-      responsable: "JUAN JOSE",
-      entity: [
-        {
-          type: "INTERN",
-          name: "YOSHUA RAYMUNDO MORENO ARREDONDO",
-          email: "qKpZb@example.com",
-          phone: "123456789",
-        },
-      ],
-      date: "2022-01-01",
-    },
-    {
-      action: "ELIMINACIÓN",
-      responsable: "ALEXANDER FERNANDO",
-      entity: [
-        {
-          type: "DEPARTMENT",
-          name: "FINANZAS",
-        },
-      ],
-      date: "2022-01-01",
-    },
-  ];
-  
 const AuditsPage = () => {
-    type Audit = {
-      action: string;
-      responsable: string;
-      entity: {
-        type: string;
-        name: string;
-        email?: string;
-        phone?: string;
-      }[];
-      date: string;
-      };
+  const [data, setData] = useState<AuditsInterface[]>([]);
+const [filteredData, setFilteredData] = useState<AuditsInterface[]>([]);
 
-      const [data, setData] = React.useState<Audit[]>(audits);
-      const [filteredData, setFilteredData] = React.useState<Audit[]>(audits);
-      const [isLoading, setIsLoading] = useState(true); 
-      const [hasError, setHasError] = useState(false);   
-    const SearchAction = (query: string) => {
-        const results = search(data, query, { keys: ['action', 'responsable', 'entity', 'date'] });
-        setFilteredData(results);
-      };
+const [isLoading, setIsLoading] = useState(true);
+const [hasError, setHasError] = useState(false);
+const userToken = sessionStorage.getItem("_Token") || "";
 
+const fetchData = async () => {
+    setIsLoading(true);
+    try {
+        const fetchedData = await getAuditsData(userToken);
+        if (fetchedData) {
+            setData(fetchedData);
+            setFilteredData(fetchedData);
+            setHasError(false);
+        } else {
+            setData([]);
+            setFilteredData([]);
+            setHasError(true);
+        }
+    } catch (error) {
+        setHasError(true);
+    } finally {
+        setIsLoading(false);
+    }
+};
+  
 
-    
+const SearchAction = (query: string) => {
+  const searchData = data.map(audit => ({
+    ...audit,
+    translatedAction: audit.action.split(" ")[0] === "CREATE"
+      ? "INSERCCION"
+      : audit.action.split(" ")[0] === "UPDATE"
+      ? "ACTUALIZACION"
+      : "ELIMINACIÓN" 
+  }));
+  const results = search(searchData, query, { 
+    keys: [
+      'translatedAction', 
+      'responsible.fullName', 
+      'entityAffected.name', 
+      'auditDate' 
+    ] 
+  });
+
+  const filteredResults = data.filter(audit =>
+    results.some(result => result.id === audit.id)
+  );
+
+  setFilteredData(filteredResults);
+};
+   
       useEffect(() => {
+        fetchData();
+      }, [userToken]);
 
-        setTimeout(() => {
-          try {
-            const fetchedData = audits;  
-            if (fetchedData.length > 0) {
-              setData(fetchedData);
-              setFilteredData(fetchedData);
-            } else {
-              setHasError(true); 
-            }
-          } catch (error) {
-            setHasError(true);  
-          } finally {
-            setIsLoading(false);  
-          }
-        }, 1000); 
-      }, []);
 
+      const ApplyFilters = (filters: FilterOptions) => {
+    console.log("Aplicando filtros:", filters);
+    let results = [...data];
+    results = results.map(audit => ({
+        ...audit,
+        translatedAction: audit.action.split(" ")[0] === "CREATE"
+            ? "INSERCION"
+            : audit.action.split(" ")[0] === "UPDATE"
+            ? "ACTUALIZACION"
+            : "ELIMINACION" 
+    }));
+    if (filters.typeAction && filters.typeAction.length > 0) {
+        results = results.filter(audit => 
+            filters.typeAction!.some(type => audit.translatedAction === type)
+        );
+    }
+    if (filters.entity && filters.entity.length > 0) {
+        results = results.filter(audit => {
+            const entityFromAction = audit.action.split(' ').slice(1).join(' ');
+            return filters.entity!.includes(entityFromAction) || filters.entity!.includes(audit.entityAffected.name);
+        });
+    }
+
+    console.log("Resultados filtrados:", results);
+    setFilteredData(results);
+};
 
     return (
         <div className="body-page">
@@ -123,9 +105,18 @@ const AuditsPage = () => {
             <section className="audits-left-container"></section>
             <section className="audits-right-container">
             <Breadcrumb/>
-            <SearchComponent onSearch={SearchAction} onFilters={() => {}}/>
+            <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
               <div className="audits-data-container">
-              <AuditsTable data={filteredData}/>
+              {isLoading ? (
+              <CircularProgress type="secondary" />
+            ) : hasError ? (
+              <RetryElement onClick={() => fetchData()}/>
+            ) : data.length === 0 ? (
+              <NothingToSee />
+            ) : (
+              <AuditsTable  onUpdate={fetchData} data={filteredData}/>
+            )}
+              
               </div>
             </section>
               
@@ -134,5 +125,4 @@ const AuditsPage = () => {
         </div>
     );
 }
-
 export default AuditsPage;

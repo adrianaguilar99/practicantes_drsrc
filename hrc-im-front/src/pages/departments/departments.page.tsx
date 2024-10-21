@@ -10,6 +10,7 @@ import { search } from "../../functions/filters-functions";
 import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
 import { getDepartmentsData } from "../../api/departments/departments.api";
 import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
+import { RetryElement } from "../../components/utils/retry-element.component";
 
 const DepartmentsPage = () => {
   type Department = {
@@ -90,7 +91,7 @@ const DepartmentsPage = () => {
            {isLoading ? (
               <CircularProgress type="secondary" />
             ) : hasError ? (
-              <button onClick={fetchData}>Reintentar</button>
+               <RetryElement onClick={() => fetchData()}/>
             ) : data.length === 0 ? (
               <NothingToSee />
             ) : (

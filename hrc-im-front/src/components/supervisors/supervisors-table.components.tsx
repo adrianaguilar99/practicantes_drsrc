@@ -42,14 +42,13 @@ export const SupervisorsTable : React.FC<TableProps> = ({ data = [] }) => {
     <div>
       <div className="table-headers">
         <span>Nombre</span>
-        <span>Telefono</span>
         <span>Permisos</span>
         <span>Departamento</span>
         <span>Acciones</span>
       </div>
       <div className="supervisors-table">
         {displayedSupervisors.map((supervisor, index) => (
-         <SupervisorsCard key={index} name={supervisor.name} rol="Supervisor" department={supervisor.department} />
+         <SupervisorsCard key={index} name={supervisor.name} phone={supervisor.phone} rol={supervisor.rol} department={supervisor.department} />
         ))}
       </div>
       <div className="table-pagination">

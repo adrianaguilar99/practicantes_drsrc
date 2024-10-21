@@ -11,6 +11,7 @@ import { CareersInterface, DataCareer } from "../../interfaces/careers/careers.i
 import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 import { enqueueSnackbar } from "notistack";
 import { getCareersData } from "../../api/interns/careers/careers.api";
+import { RetryElement } from "../../components/utils/retry-element.component";
 
 const InternsCareersPage = () => {
   const [data, setData] = useState<DataCareer[]>([]);
@@ -85,7 +86,7 @@ const InternsCareersPage = () => {
             {isLoading ? (
               <CircularProgress type="secondary" />
             ) : hasError ? (
-              <button onClick={fetchData}>Reintentar</button>
+              <RetryElement onClick={() => fetchData()}/>
             ) : data.length === 0 ? (
               <NothingToSee />
             ) : (

@@ -7,7 +7,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Typography from "@mui/material/Typography";
-import { DrawerNav } from "./drawer.component";
 import { Badge, Divider } from "@mui/material";
 import { notifications, NotificationsMenu } from "../notifications/notifications-menu.component";
 import { Sidebar } from "./sidebar.component";
@@ -46,24 +45,20 @@ export const Navbar = () => {
   };
 
   const SidebarToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation(); // Prevenir que el clic cierre el sidebar
+    event.stopPropagation(); 
     dispatch(toggleSidebar());
   };
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const OpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const CloseUserMenu = () => {
     setAnchorEl(null);
   };
 
   const MenuValidation = (event: React.MouseEvent<HTMLElement>) => {
-    if (userRol === "INTERN") {
-      toggleDrawer(true);
-    } else {
-      handleOpenUserMenu(event);
-    }
+      OpenUserMenu(event);
   };
 
   
@@ -149,13 +144,12 @@ export const Navbar = () => {
           ) : null}
 
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            <Link to="/home" style={{ textDecoration: "none" }}>
               <img
                 src={HardRockLogo}
                 alt="Hard Rock Logo"
                 style={{ height: "40px", display: "block" }}
+                onClick={() => window.location.pathname = "/home"}
               />
-            </Link>
           </Typography>
 
           <div className="notifications-container" ref={notificationMenuRef}>
@@ -169,7 +163,7 @@ export const Navbar = () => {
 
           <div
             style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-            onClick={(event) => MenuValidation(event)} // Pasa el evento aquí
+            onClick={(event) => MenuValidation(event)} 
           >
             <Divider
               orientation="vertical"
@@ -189,12 +183,7 @@ export const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      {userRol === "INTERN" ? (
-        <DrawerNav open={isDrawerOpen} onClose={() => toggleDrawer(false)} />
-      ) : null}
-      {userRol === "ADMINISTRATOR" || userRol === "SUPERVISOR" ||  userRol === "SUPERVISOR_RH"   ? (
-        <NavMenu anchorEl={anchorEl} closeUserMenu={handleCloseUserMenu} />
-      ) : null}
+        <NavMenu anchorEl={anchorEl} closeUserMenu={CloseUserMenu} />
       <Sidebar/>
     </>
   );

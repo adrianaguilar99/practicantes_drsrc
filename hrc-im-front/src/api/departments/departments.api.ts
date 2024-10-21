@@ -16,9 +16,9 @@ export async function getDepartmentsData(Token: string): Promise<DepartmentsInte
         throw new Error("Error al traer los datos de los departamentos");
       }
   
-      const CareersData: DepartmentsInterface = await response.json(); 
-      console.log(CareersData);
-      return CareersData;
+      const DepartmentsData: DepartmentsInterface = await response.json(); 
+      console.log(DepartmentsData);
+      return DepartmentsData;
     } catch (error) {
       console.error("Error:", error);
       return null;
