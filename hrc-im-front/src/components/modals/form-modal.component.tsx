@@ -5,7 +5,7 @@ import { ReportGenerationModal } from './report-generation-modal.component';
 import { DepartmentFormModal } from '../departments/departments-modal.component';
 import { CareerFormModal } from '../interns/interns-careers-table/interns-careers-modal.component';
 import { InstitutionFormModal } from '../interns/interns-institutions-table/interns-institutions-modal.component';
-import { SupervisorFormModal } from '../supervisors/supervisors-moda.component';
+import { SupervisorFormModal } from '../supervisors/supervisors-modal.component';
 
 interface FormModalPropsMain {
     open: boolean;

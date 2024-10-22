@@ -134,7 +134,7 @@ export const Sidebar = () => {
             className={`menu-item ${index === idx || subIndex !== null && index === idx ? "active" : ""}`}
             onClick={() => {
               dispatch(setIndex(idx));
-              dispatch(setSubIndex(null)); // Resetear subIndex cuando se selecciona un menú principal
+              dispatch(setSubIndex(null)); 
               navigate(item.path);
             }}
           >

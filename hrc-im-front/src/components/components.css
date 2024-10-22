@@ -359,11 +359,33 @@ Navbar-Elements
 }
 
 .sidebar-closed .menu-item .icon {
-    transform: scale(0.9); /* Reduce ligeramente el tamaño de los íconos cuando está cerrado */
+    transform: scale(0.9); 
 }
 
 .sidebar-open .menu-item .icon {
-    transform: scale(1.1); /* Aumenta ligeramente el tamaño de los íconos cuando está abierto */
+    transform: scale(1.1); 
+}
+@media screen and (max-width: 1375px){
+  .sidebar-open {
+    width: 12vw;
+    
+}
+  .menu-item.active {
+    background-color: #EDEDED;
+    border-style: solid;
+    color: rgb(49, 115, 238);
+    border-color: #BFBFBF;
+    border-width: 0.5px 0px 0.5px 5px;
+    transition: background-color 0.3s , transform 1s;
+}
+ .sidebar-open .menu-item .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    transform: scale(0.9); 
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
 }
 
 
@@ -382,14 +404,12 @@ Navbar-Elements
         max-height: 0; /* Sidebar cerrado inicialmente */
     }
 
-    /* Sidebar abierto con animación de despliegue */
     .sidebar-open {
-        max-height: 500px; /* Ajusta según la altura máxima que ocupe tu menú */
+        max-height: 500px; 
         opacity: 1;
         transition: max-height 0.5s ease-in-out, opacity 0.3s ease;
     }
 
-    /* Sidebar cerrado (con animación para cerrar) */
     .sidebar-closed {
         max-height: 0;
         opacity: 0;
@@ -1653,14 +1673,14 @@ transition: 0.5s;
     .dropdown-item {
       padding-left: 10px; 
       cursor: pointer;
-      font-size: .8rem;
+      font-size: .75rem;
       padding: 5px 0;
       color: #6c757d; 
     }
     .dropdown-item.dropdown-title{
         padding-left: 10px; 
       cursor: pointer;
-      font-size: .8rem;
+      font-size: .75rem;
       padding: 5px 0;
       color: #6c757d; 
     }

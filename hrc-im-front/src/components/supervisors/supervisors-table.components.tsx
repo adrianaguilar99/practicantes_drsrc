@@ -99,7 +99,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
                     <span
                       className="tag"
                       style={{
-                        backgroundColor: backgroundColor,
+                        backgroundColor: backgroundColor2,
                         padding: '5px 10px',
                         borderRadius: '20px',
                         fontWeight: 'bold',
@@ -110,9 +110,6 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
                   </td>
 
                   <td className="table-actions">
-                    <IconButton aria-label="phone">
-                      <PhoneEnabledOutlinedIcon />
-                    </IconButton>
                     <IconButton aria-label="edit" onClick={() => EditClick(supervisor)}>
                       <EditOutlinedIcon />
                     </IconButton>

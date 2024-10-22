@@ -28,7 +28,7 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
     const ResizePage = () => {
       const screenWidth = window.innerWidth;
       if (screenWidth < 1375) {
-        setRowsPerPage(5);
+        setRowsPerPage(6);
       } else if (screenWidth < 1024) {
         setRowsPerPage(4);
       } else {
@@ -84,28 +84,28 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
                 <tr key={index} className="generic-table-row">
                   <td>
                     <Tooltip
-                      title={`Se ha realizado la ${audit.action} en ${audit.entityAffected.name} en la base de datos`}
+                      title={`Se ha realizado la ${audit?.action} en ${audit?.entityAffected.name} en la base de datos`}
                       arrow
                       style={{ marginLeft: "15px" }}
                     >
                       <p
                         className={`intern-type-card ${
-                          audit.action.split(" ")[0] === "CREATE"
+                          audit?.action.split(" ")[0] === "CREATE"
                             ? "insertion"
-                            : audit.action.split(" ")[0] === "UPDATE"
+                            : audit?.action.split(" ")[0] === "UPDATE"
                             ? "update"
                             : "delete"
                         }`}
                       >
-                        {audit.action.split(" ")[0] === "CREATE"
+                        {audit?.action.split(" ")[0] === "CREATE"
                           ? "INSERCION"
-                          : audit.action.split(" ")[0] === "UPDATE"
+                          : audit?.action.split(" ")[0] === "UPDATE"
                           ? "ACTUALIZACION"
-                          : audit.action.split(" ")[0] === "DELETE"
+                          : audit?.action.split(" ")[0] === "DELETE"
                           ? "ELIMINACION"
-                          : audit.action.split(" ")[0] === "TRY" &&
-                            audit.action.split(" ")[1] === "TO" &&
-                            audit.action.split(" ")[2] === "CREATE"
+                          : audit?.action.split(" ")[0] === "TRY" &&
+                            audit?.action.split(" ")[1] === "TO" &&
+                            audit?.action.split(" ")[2] === "CREATE"
                           ? "INTENTO DE INSERCCION"
                           : "ERROR"}
                       </p>
@@ -113,9 +113,9 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
                   </td>
                   <td >
                     <span style={{ display: "flex", alignItems: "center"}}>
-                    <Avatar {...stringAvatar(audit.responsible.fullName)} />
+                  <Avatar  {...stringAvatar(audit.responsible?.fullName || "") } />
                     <p className="supervisor-name">
-                      {audit.responsible.fullName}
+                      {audit.responsible?.fullName || ""}
                     </p>
                        </span>
                     
