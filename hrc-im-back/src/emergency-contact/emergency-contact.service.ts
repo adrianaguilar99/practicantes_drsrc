@@ -16,18 +16,19 @@ export class EmergencyContactService {
     return `This action returns all emergencyContact`;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return `This action returns a #${id} emergencyContact`;
   }
 
   async update(
-    id: number,
+    id: string,
     updateEmergencyContactDto: UpdateEmergencyContactDto,
+    { fullName, role, userId }: IRequestUser,
   ) {
     return `This action updates a #${id} emergencyContact`;
   }
 
-  async remove(id: number) {
+  async remove(id: string, { fullName, role, userId }: IRequestUser) {
     return `This action removes a #${id} emergencyContact`;
   }
 }
