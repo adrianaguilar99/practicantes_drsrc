@@ -15,6 +15,7 @@ import { SupervisorsModule } from './supervisors/supervisors.module';
 import { SystemAuditsModule } from './system-audits/system-audits.module';
 import { UsersModule } from './users/users.module';
 import { InternsModule } from './interns/interns.module';
+import { EmergencyContactModule } from './emergency-contact/emergency-contact.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -40,6 +41,7 @@ import dbConfigProduction from './configs/db.config.production';
     SystemAuditsModule,
     UsersModule,
     InternsModule,
+    EmergencyContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],
