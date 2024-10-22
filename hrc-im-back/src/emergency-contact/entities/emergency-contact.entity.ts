@@ -14,7 +14,8 @@ export class EmergencyContact {
 
   @ApiProperty({
     example: 'Leonardo Daniel Rebollo Calero',
-    description: 'Intern contact name.',
+    description:
+      'Full name of the emergency contact person associated with the intern.',
     uniqueItems: false,
     nullable: false,
   })
@@ -29,7 +30,7 @@ export class EmergencyContact {
 
   @ApiProperty({
     example: '9988123456',
-    description: 'Intern contact phone.',
+    description: 'Phone number of the emergency contact.',
     uniqueItems: false,
     nullable: false,
   })
@@ -43,8 +44,9 @@ export class EmergencyContact {
   phone: string;
 
   @ApiProperty({
-    example: 'Father, Mother, ...',
-    description: "Relationship of the intern's emergency contact.",
+    example: 'Father, Mother, Guardian',
+    description:
+      'The relationship between the intern and their emergency contact (e.g., Father, Mother, etc.).',
     uniqueItems: false,
     nullable: false,
   })
@@ -58,18 +60,18 @@ export class EmergencyContact {
   relationship: string;
 
   @ApiProperty({
-    example: 'Employee in ...',
-    description:
-      "The position of the intern's emergency contact in the company where he or she works.",
+    example: 'Manager at XYZ Corporation, Employee in ...',
+    description: `Job position of the emergency contact at their current place of employment.
+    This field is optional and may provide additional context about the contact's role.`,
     uniqueItems: false,
-    nullable: false,
+    nullable: true,
   })
   @Column({
     name: 'position_contact',
     type: 'varchar',
     length: 50,
     unique: false,
-    nullable: false,
+    nullable: true,
   })
   position_contact: string;
 }
