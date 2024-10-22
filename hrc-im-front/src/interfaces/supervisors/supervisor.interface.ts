@@ -1,9 +1,11 @@
 export interface SupervisorInterface {
     message: string;
-    data:    Data;
+    data:    DataSupervisor[];  
+    records: number;         
 }
 
-export interface Data {
+
+export interface DataSupervisor {
     phone:      string;
     department: Department;
     user:       User;
@@ -23,4 +25,18 @@ export interface User {
     hashedRefreshToken: null;
     userRole:           string;
     createdAt:          Date;
+}
+
+
+export interface PostSupervisor {
+    phone?: string,
+    departmentId?: string,
+    userId?: string,
+    
+}
+
+export interface PatchSupervisor {
+    phone?: string,
+    departmentId?: string,
+    userId?: string,
 }

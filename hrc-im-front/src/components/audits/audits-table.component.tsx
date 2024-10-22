@@ -111,11 +111,14 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
                       </p>
                     </Tooltip>
                   </td>
-                  <td style={{ display: "flex", alignItems: "center"}}>
+                  <td >
+                    <span style={{ display: "flex", alignItems: "center"}}>
                     <Avatar {...stringAvatar(audit.responsible.fullName)} />
                     <p className="supervisor-name">
                       {audit.responsible.fullName}
                     </p>
+                       </span>
+                    
                   </td>
                   <td>
                     <p className="entity-card">

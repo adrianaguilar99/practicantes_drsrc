@@ -2,6 +2,7 @@ import { ca } from "date-fns/locale";
 import { ProfileData, ProfileInterface } from "../interfaces/profile.interface";
 import { CareersInterface, DataCareer, PatchCareer, PostCareer } from "../interfaces/careers/careers.intarface";
 import process from "process";
+import { PostUser, UserPostResponse} from "../interfaces/users.interface";
 
 export const apiUrl = import.meta.env.VITE_API_KEY;
 
@@ -99,6 +100,31 @@ export async function authLogin(email: string, password: string) {
 
 
 
+
+
+export async function postUser(Token: string, data: PostUser){
+  try {
+    const response = await fetch(apiUrl + "/users", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || "Error al enviar los datos del supervisor");
+    }
+
+    const responseJson: UserPostResponse = await response.json();
+    return responseJson;
+  } catch (error: any) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
 
 
 

@@ -1,7 +1,6 @@
 import { useState, useEffect, SetStateAction } from 'react';
 import { IconButton, Pagination } from '@mui/material';
 import '../components.css';
-import { DepartmentsCard } from './departments-card.component';
 import { TableProps } from '../audits/audits-table.component';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';

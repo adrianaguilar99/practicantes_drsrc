@@ -13,6 +13,7 @@ import CheckInCheckOutPage from '../pages/check-in-check-out/check-in-check-out.
 import InternsCareersPage from '../pages/Interns/interns-careers.page';
 import InternsInstitutionsPage from '../pages/Interns/interns-institutions.page';
 import InternCredentialPage from '../pages/Interns/intern-credential.page';
+import AdminsPage from '../pages/supervisors/admins.page';
 import LoadingPage from '../pages/login/loading.page';
 import { InternsPage } from '../pages/Interns/Interns.page';
 import ProtectedRoute from '../components/utils/protect-routes.component';
@@ -52,8 +53,16 @@ function RoutesConfig() {
          <Route
            path="/supervisors"
            element={
-             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
                <SupervisorsPage />
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/supervisors/administrators"
+           element={
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+               <AdminsPage />
              </ProtectedRoute>
            }
          />
@@ -98,9 +107,9 @@ function RoutesConfig() {
            }
          />
          <Route
-           path="/checkin-checkout"
+           path="/interns/checkin-checkout"
            element={
-             <ProtectedRoute allowedRoles={['SUPERVISOR', 'SUPERVISOR_RH']}>
+             <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'SUPERVISOR_RH']}>
                <CheckInCheckOutPage />
              </ProtectedRoute>
            }

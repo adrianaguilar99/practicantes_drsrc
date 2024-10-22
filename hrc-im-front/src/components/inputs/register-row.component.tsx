@@ -23,6 +23,7 @@ interface RegisterRowProps {
   validate?: "Error" | "Normal";
   typeError?: String;
   show: boolean;
+  maxLength?: number;
   style?: React.CSSProperties;
   options?: string[];
   editable?: boolean;
@@ -38,6 +39,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   type,
   show,
   validate,
+  maxLength,
   typeError,
   editable = true,
   options = [],
@@ -78,6 +80,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              maxLength={maxLength}
             />
           )}
 
@@ -89,6 +92,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              maxLength={maxLength}
             />
           )}
 
@@ -101,6 +105,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              maxLength={maxLength}
             />
           )}
 
@@ -112,6 +117,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              maxLength={maxLength}
             />
           )}
           {type === "file" && (
@@ -123,6 +129,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              
             />
           )}
 

@@ -7,103 +7,70 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import "./supervisors.page.css";
 import { search } from "../../functions/filters-functions";
 import { FilterOptions } from "../../components/utils/filters.component";
-export const supervisors = [
-  {
-      name: "JUAN JOSE",
-      department: "RECURSOS HUMANOS",
-      phone: "123456789",
-      rol: "SUPERVISOR RH",
-  },
-  { 
-      name: "BRIAN WILFRIDO ROMERO CUPUL",
-      department: "TECNOLOGIAS DE INFORMACIÓN",
-      phone: "99746272",
-      rol: "SUPERVISOR",
-  },
-  {
-      name: "MIGUEL ANGEL GARCIA RODRIGUEZ",
-      department: "CONTABILIDAD",
-      rol: "SUPERVISOR",
-      phone: "9983847681",
-  },
-  {
-      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
-      department: "ENTRENAMIENTO",
-      rol: "ADMINISTRADOR",
-  },
-  {
-      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
-      department: "ENTRENAMIENTO",
-      rol: "ADMINISTRADOR",
-  },
-  {
-      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
-      department: "ENTRENAMIENTO",
-      rol: "ADMINISTRADOR",
-  },
-  {
-      name : "ALEXANDER RODRIGUEZ RODRIGUEZ",
-      department: "ENTRENAMIENTO",
-      rol: "ADMINISTRADOR",
-  }
-]
+import { Data } from "../../interfaces/interns/intern-data/intern-data.interface";
+import { DataSupervisor, SupervisorInterface } from "../../interfaces/supervisors/supervisor.interface";
+import { get } from "http";
+import { getSupervisorsData } from "../../api/supervisors/supervisors.api";
+import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
+import { RetryElement } from "../../components/utils/retry-element.component";
 const SupervisorsPage = () => {
-  type Supervisor = {
-    name: string;
-    department: string;
-  };
 
-  const [data, setData] = useState<Supervisor[]>([]);
-  const [filteredData, setFilteredData] = useState<Supervisor[]>([]);
+  const [data, setData] = useState<DataSupervisor[]>([]);
+  const [filteredData, setFilteredData] = useState<DataSupervisor[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [hasError, setHasError] = useState(false);   
+  const userToken = sessionStorage.getItem("_Token") || "";
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+        const fetchedData: SupervisorInterface | null = await getSupervisorsData(userToken);
+        if (fetchedData && fetchedData.data.length > 0) {
+            setData(fetchedData.data);
+            setFilteredData(fetchedData.data);
+            setHasError(false); 
+        } else {
+            setData([]);
+            setFilteredData([]);
+            setHasError(false);
+        }
+    } catch (error) {
+        setHasError(true);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
 
   useEffect(() => {
+    fetchData();
+  }, [userToken]);
 
-    setTimeout(() => {
-      try {
-        const fetchedData = supervisors;  
-        if (fetchedData.length > 0) {
-          setData(fetchedData);
-          setFilteredData(fetchedData);
-        } else {
-          setHasError(true); 
-        }
-      } catch (error) {
-        setHasError(true);  
-      } finally {
-        setIsLoading(false);  
-      }
-    }, 1000); 
-  }, []);
-  
   const ApplyFilters = (filters: FilterOptions) => {
-    console.log("Aplicando filtros:", filters); 
     let results = [...data];
     if (filters.order) {
       results = results.sort((a, b) =>
         filters.order === "A - Z"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name)
+          ? +a.user.firstName.localeCompare(b.user.firstName) || +a.user.lastName.localeCompare(b.user.lastName)
+          : +b.user.firstName.localeCompare(a.user.firstName) || +b.user.lastName.localeCompare(a.user.lastName)
       );
     }
-    if (Array.isArray(filters.department) && filters.department.length > 0) {
-      results = results.filter(intern => filters.department!.includes(intern.department));
-    }
-    console.log("Resultados filtrados:", results); 
     setFilteredData(results); 
   };
+
   
-
-
   const SearchAction = (query: string) => {
-    const results = search(data, query, { keys: ['name', 'department'] });
-    setFilteredData(results);
+    const searchData = data.map(supervisor => ({
+      name: supervisor.user.firstName + " " + supervisor.user.lastName,
+    }));
+    const results = search(searchData, query, { keys: ['name'] });
+    const filteredResults = data.filter(supervisor =>
+      results.some(result => result.name === supervisor.user.firstName + " " + supervisor.user.lastName)
+    );
+    setFilteredData(filteredResults);
   };
-
   const PostSuccess = () => {
-    // fetchData();
-
+    fetchData();
   };
   
 
@@ -116,7 +83,16 @@ const SupervisorsPage = () => {
         <Breadcrumb/>
           <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => PostSuccess()}/>
           <div className="supervisors-data-container">
-            <SupervisorsTable data={filteredData} onUpdate={() => PostSuccess()}/>
+          {isLoading ? (
+              <CircularProgress type="secondary" />
+            ) : hasError ? (
+               <RetryElement onClick={() => fetchData()}/>
+            ) : data.length === 0 ? (
+              <NothingToSee />
+            ) : (
+              <SupervisorsTable data={filteredData} onUpdate={() => PostSuccess()}/>
+            )}
+          
           </div>
         </section>
       </div>

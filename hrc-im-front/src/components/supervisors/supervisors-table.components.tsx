@@ -3,15 +3,16 @@ import { Pagination, Avatar, IconButton } from "@mui/material";
 import PhoneEnabledOutlinedIcon from '@mui/icons-material/PhoneEnabledOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { LightstringToColor, stringAvatar } from '../../functions/utils.functions';
+import { formatPhoneNumber, LightstringToColor, stringAvatar } from '../../functions/utils.functions';
 import { TableProps } from "../audits/audits-table.component";
 import { FormModal } from "../modals/form-modal.component";
+import { DataSupervisor } from '../../interfaces/supervisors/supervisor.interface';  // Importar la interfaz correcta
 
-export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
+export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(7);
-  const [open, setOpen] = useState(false); // Estado para abrir/cerrar modal
-  const [selectedSupervisor, setSelectedSupervisor] = useState(null); // Estado para guardar supervisor seleccionado
+  const [open, setOpen] = useState(false);
+  const [selectedSupervisor, setSelectedSupervisor] = useState<DataSupervisor | null>(null); 
 
   useEffect(() => {
     const ResizePage = () => {
@@ -37,13 +38,13 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
   };
 
   // Función para abrir el modal y pasar los datos del supervisor
-  const handleEditClick = (supervisor: SetStateAction<null>) => {
+  const EditClick = (supervisor: DataSupervisor) => {
     setSelectedSupervisor(supervisor); // Guardar supervisor seleccionado
     setOpen(true); // Abrir modal
   };
 
   // Función para cerrar el modal
-  const handleModalClose = () => {
+  const ModalClose = () => {
     setOpen(false); // Cerrar modal
     setSelectedSupervisor(null); // Limpiar datos del supervisor seleccionado
   };
@@ -60,6 +61,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
           <thead className="generic-table-headers">
             <tr>
               <th>Nombre</th>
+              <th>Telefono</th>
               <th>Permisos</th>
               <th>Departamento</th>
               <th>Acciones</th>
@@ -67,16 +69,19 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
           </thead>
           <tbody>
             {displayedSupervisors.map((supervisor, index) => {
-              const backgroundColor = LightstringToColor(supervisor.department, 0.2);
+              const backgroundColor = LightstringToColor(supervisor.user.userRole || '', 0.2);
+              const backgroundColor2 = LightstringToColor(supervisor.department?.name || '', 0.2);
+              const fullName = `${supervisor.user.firstName} ${supervisor.user.lastName}`;
 
               return (
                 <tr key={index} className="generic-table-row">
                   <td className="table-avatar">
                     <div className="supervisor-info">
-                      <Avatar {...stringAvatar(supervisor.name)} />
-                      <p>{supervisor.name}</p>
+                      <Avatar {...stringAvatar(fullName)} />
+                      <p>{fullName}</p>
                     </div>
                   </td>
+                  <td>{formatPhoneNumber(supervisor.phone)}</td>
                   <td>
                     <span
                       className="tag"
@@ -87,7 +92,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
                         fontWeight: 'bold',
                         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                       }}>
-                      {supervisor.rol}
+                      {supervisor.user.userRole}
                     </span>
                   </td>
                   <td>
@@ -100,7 +105,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
                         fontWeight: 'bold',
                         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                       }}>
-                      {supervisor.department}
+                      {supervisor.department?.name}
                     </span>
                   </td>
 
@@ -108,7 +113,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
                     <IconButton aria-label="phone">
                       <PhoneEnabledOutlinedIcon />
                     </IconButton>
-                    <IconButton aria-label="edit" onClick={() => handleEditClick(supervisor)}>
+                    <IconButton aria-label="edit" onClick={() => EditClick(supervisor)}>
                       <EditOutlinedIcon />
                     </IconButton>
                     <IconButton aria-label="delete">
@@ -132,15 +137,16 @@ export const SupervisorsTable: React.FC<TableProps> = ({ data = [] }) => {
         />
       </div>
 
-      {/* Modal para editar supervisor */}
       {selectedSupervisor && (
         <FormModal
           open={open}
-          onConfirm={handleModalClose}
+          onConfirm={ModalClose}
           type="Edit"
-          onCancel={handleModalClose}
+          onCancel={ModalClose}
           data={selectedSupervisor}
-          title="Editar Supervisor" entity={"supervisors"}/>
+          title="Editar Supervisor"
+          entity={"supervisors"}
+        />
       )}
     </div>
   );

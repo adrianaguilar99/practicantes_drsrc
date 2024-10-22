@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
-import { CareerFormModal, DepartmentFormModal, InstitutionFormModal, SupervisorFormModal } from './modal-forms.component';
 import { da } from 'date-fns/locale';
 import { ReportGenerationModal } from './report-generation-modal.component';
+import { DepartmentFormModal } from '../departments/departments-modal.component';
+import { CareerFormModal } from '../interns/interns-careers-table/interns-careers-modal.component';
+import { InstitutionFormModal } from '../interns/interns-institutions-table/interns-institutions-modal.component';
+import { SupervisorFormModal } from '../supervisors/supervisors-moda.component';
 
-interface FormModalProps {
+interface FormModalPropsMain {
     open: boolean;
     onConfirm: () => void;  
     onCancel: () => void;   
@@ -15,7 +18,14 @@ interface FormModalProps {
     message?: string;       
   }
 
-  export const FormModal: React.FC<FormModalProps> = ({ open, onCancel, onConfirm, title, type, entity,data }) => {
+  export interface FormModalProps {
+    type: string;
+    data?: any;
+    onCancel: () => void;
+    onSuccess: () => void;
+  }
+
+  export const FormModal: React.FC<FormModalPropsMain> = ({ open, onCancel, onConfirm, title, type, entity,data }) => {
     return (
       <Modal open={open} onClose={onCancel}>
         <Box
@@ -24,7 +34,7 @@ interface FormModalProps {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: entity === "supervisors" ? '45vw' : '25vw',
+            width: entity === "supervisors" ? '45vw' : entity === "institutions" ? '45vw' : '30vw',
             bgcolor: '#EDEDED',
             borderRadius: '8px',
             boxShadow: 24,

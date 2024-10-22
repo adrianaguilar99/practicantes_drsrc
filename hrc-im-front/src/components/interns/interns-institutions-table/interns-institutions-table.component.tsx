@@ -7,7 +7,7 @@ import { FormModal } from "../../modals/form-modal.component";
 import { ConfirmationModal } from "../../modals/confirmation-modal.component";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { LightstringToColor } from "../../../functions/utils.functions";
+import { formatPhoneNumber, LightstringToColor } from "../../../functions/utils.functions";
 
 export const InstitutionsTable: React.FC<TableProps> = ({
   onUpdate,
@@ -95,6 +95,7 @@ export const InstitutionsTable: React.FC<TableProps> = ({
           <thead className="generic-table-headers">
             <tr>
               <th>Nombre</th>
+              <th>Teléfono</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -104,7 +105,7 @@ export const InstitutionsTable: React.FC<TableProps> = ({
 
               return (
                 <tr key={index} className="generic-table-row">
-                  <td style={{ minWidth: "200px" }}>
+                  <td style={{ minWidth: "50px" }}>
                     <span
                       className="tag"
                       style={{
@@ -117,6 +118,11 @@ export const InstitutionsTable: React.FC<TableProps> = ({
                       }}
                     >
                       {instition.name}
+                    </span>
+                  </td>
+                  <td>
+                    <span>
+                        {formatPhoneNumber(instition.phone)}
                     </span>
                   </td>
                   <td className="table-actions">

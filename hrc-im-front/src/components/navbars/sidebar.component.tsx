@@ -6,20 +6,20 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess'; // Importar el icono para expandir menos
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import "../components.css";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from '../../redux/store';
-import { setIndex, setSidebarOpen, setInternsDropdownOpen } from '../../redux/sidebar-redux/sidebarSlice'; // Nueva acción
-import { useEffect, useState } from 'react';
+import { setIndex, setSubIndex, setSidebarOpen, setInternsDropdownOpen, setUsersDropdownOpen } from '../../redux/sidebar-redux/sidebarSlice';
+import { useEffect } from 'react';
 import { decryptData } from '../../functions/encrypt-data.function';
 
 interface MenuItem {
   icon: JSX.Element;
   label: string;
   path: string;
-  isDropdown?: boolean; 
-  dropdownItems?: any[];  
+  isDropdown?: boolean;
+  dropdownItems?: any[];
 }
 
 export const Sidebar = () => {
@@ -27,52 +27,90 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const index = useSelector((state: RootState) => state.sidebar.index);
+  const subIndex = useSelector((state: RootState) => state.sidebar.subIndex); // Obtener subIndex del estado
   const openMenu = useSelector((state: RootState) => state.sidebar.openMenu);
   const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isSidebarOpen);
-  const isInternsDropdownOpen = useSelector((state: RootState) => state.sidebar.isInternsDropdownOpen); 
+  const isInternsDropdownOpen = useSelector((state: RootState) => state.sidebar.isInternsDropdownOpen);
+  const isUsersDropdownOpen = useSelector((state: RootState) => state.sidebar.isUsersDropdownOpen);
 
   const menuItemsAdmin: MenuItem[] = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
-    { icon: <PersonOutlineOutlinedIcon />, label: "Usuarios", path: "/supervisors" },
-    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+
+    {
+      icon: <PersonOutlineOutlinedIcon />,
+      label: "Supervisores",
+      path: "/supervisors",
+      isDropdown: true,
+      dropdownItems: [
+        { label: "Otros roles", isTitle: true },
+        { label: "Administradores", path: "/supervisors/administrators" },
+      ],
+    },
     {
       icon: <SchoolOutlinedIcon />,
       label: "Practicantes",
       path: "/interns",
-      isDropdown: true,  
+      isDropdown: true,
       dropdownItems: [
-        { label: "Opciones Escolares", isTitle: true }, 
+        
+        { label: "Mas informacion", isTitle: true },
+        {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
         { label: "Instituciones", path: "/interns/interns-institutions" },
         { label: "Carreras", path: "/interns/interns-careers" },
       ],
     },
+      
+    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
     { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
+  ];
+
+  const menuItemsSupervisorRH: MenuItem[] = [
+    { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
+    {
+      icon: <PersonOutlineOutlinedIcon />,
+      label: "Supervisores",
+      path: "/supervisors",
+    },
+    {
+      icon: <SchoolOutlinedIcon />,
+      label: "Practicantes",
+      path: "/interns",
+      isDropdown: true,
+      dropdownItems: [
+        { label: "Opciones Escolares", isTitle: true },
+        { label: "Instituciones", path: "/interns/interns-institutions" },
+        { label: "Carreras", path: "/interns/interns-careers" },
+      ],
+    },
+    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout"},
+      
+    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
   ];
 
   const menuItemsSupervisor: MenuItem[] = [
     { icon: <CottageOutlinedIcon />, label: "Casa", path: "/home" },
-    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    {
+      icon: <PersonOutlineOutlinedIcon />,
+      label: "Supervisores",
+      path: "/supervisors",
+    },
     {
       icon: <SchoolOutlinedIcon />,
-      label: "Practicantes",
+      label: "Mis Practicantes",
       path: "/interns",
-      isDropdown: true,  
-      dropdownItems: [
-        { label: "Opciones Escolares", isTitle: true }, 
-        { label: "Instituciones", path: "/interns/interns-institutions" },
-        { label: "Carreras", path: "/interns/interns-careers" },
-      ],
     },
-    { icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout" },
+    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout"},
+      
   ];
 
   const getMenuItems = () => {
     if (userRol === "ADMINISTRATOR") {
       return menuItemsAdmin;
-    } else if (userRol === "SUPERVISOR" || userRol === "SUPERVISOR_RH") {
+    }else if (userRol === "SUPERVISOR") {
       return menuItemsSupervisor;
     }
-    return [];
+
+    return menuItemsSupervisorRH;
   };
 
   useEffect(() => {
@@ -90,56 +128,62 @@ export const Sidebar = () => {
 
   return (
     <div className={`sidebar ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`} style={userRol === "INTERN" ? { display: "none" } : {}}>
-  {getMenuItems().map((item, idx) => (
-    <div key={idx}>
-      <div
-        className={`menu-item ${index === idx ? "active" : ""}`}
-        onClick={() => {
-          dispatch(setIndex(idx));
-          navigate(item.path);
-        }}
-      >
-        <span className="icon">{item.icon}</span>
-        {openMenu && <span className="label">{item.label}</span>}
-        
-        {item.isDropdown && openMenu && (
-          <span 
-            className="dropdown-toggle" 
-            onClick={(e) => {
-              e.stopPropagation(); // Detiene la propagación del evento para evitar que afecte al menú general
-              dispatch(setInternsDropdownOpen(!isInternsDropdownOpen)); // Maneja el despliegue de este menú
+      {getMenuItems().map((item, idx) => (
+        <div key={idx}>
+          <div
+            className={`menu-item ${index === idx || subIndex !== null && index === idx ? "active" : ""}`}
+            onClick={() => {
+              dispatch(setIndex(idx));
+              dispatch(setSubIndex(null)); // Resetear subIndex cuando se selecciona un menú principal
+              navigate(item.path);
             }}
           >
-            {isInternsDropdownOpen ? (
-              <ExpandLessIcon className="dropdown-icon" />
-            ) : (
-              <ExpandMoreIcon className="dropdown-icon" />
+            <span className="icon">{item.icon}</span>
+            {openMenu && <span className="label">{item.label}</span>}
+
+            {item.isDropdown && openMenu && (
+              <span
+                className="dropdown-toggle"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (item.label === "Supervisores") {
+                    dispatch(setUsersDropdownOpen(!isUsersDropdownOpen));
+                  } else {
+                    dispatch(setInternsDropdownOpen(!isInternsDropdownOpen));
+                  }
+                }}
+              >
+                {(item.label === "Supervisores" && isUsersDropdownOpen) || (item.label === "Practicantes" && isInternsDropdownOpen) ? (
+                  <ExpandLessIcon className="dropdown-icon" />
+                ) : (
+                  <ExpandMoreIcon className="dropdown-icon" />
+                )}
+              </span>
             )}
-          </span>
-        )}
-      </div>
+          </div>
 
-      {item.isDropdown && isInternsDropdownOpen && (
-        <div className={`dropdown-menu open`} style={!isSidebarOpen ? { display: "none" } : {}}>
-          {item.dropdownItems?.map((dropdownItem, subIdx) => (
-            <div
-              key={subIdx}
-              className={`dropdown-item ${dropdownItem.isTitle ? "dropdown-title" : ""}`}
-              onClick={() => {
-                if (!dropdownItem.isTitle) {
-                  navigate(dropdownItem.path);
-                  dispatch(setIndex(3));
-                }
-              }}
-            >
-              {dropdownItem.label}
+          {item.isDropdown && ((item.label === "Supervisores" && isUsersDropdownOpen) || (item.label === "Practicantes" && isInternsDropdownOpen)) && (
+            <div className={`dropdown-menu open`} style={!isSidebarOpen ? { display: "none" } : {}}>
+              {item.dropdownItems?.map((dropdownItem, subIdx) => (
+                <div
+                  key={subIdx}
+                  className={`dropdown-item ${dropdownItem.isTitle ? "dropdown-title" : ""} ${subIndex === subIdx && index === idx ? "active" : ""}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!dropdownItem.isTitle) {
+                      dispatch(setIndex(idx)); 
+                      dispatch(setSubIndex(subIdx));
+                      navigate(dropdownItem.path);
+                    }
+                  }}
+                >
+                  {dropdownItem.label}
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-      )}
+      ))}
     </div>
-  ))}
-</div>
-
   );
 };
