@@ -68,12 +68,12 @@ export const REMOVE_RECORD = 'Action to remove a record.';
 export const REMOVE_ALL_RECORDS = 'Action to remove all records.';
 
 // 400 - 499
-export const MISSING_FIELDS = 'One or more required fields are missing.';
-export const TOKEN_EXPIRED = 'Your token has expired, please login again.';
+// export const MISSING_FIELDS = 'One or more required fields are missing.';
+// export const TOKEN_EXPIRED = 'Your token has expired, please login again.';
 // 500 - 599
 export const SERVICE_UNAVAILABLE =
   'Service temporarily unavailable. Please try again later.';
-export const DATABASE_CONNECTION_ERROR = 'Error connecting to the database.';
+// export const DATABASE_CONNECTION_ERROR = 'Error connecting to the database.';
 export const UNEXPECTED_ERROR =
   'An unexpected error occurred. Please contact support.';
 export const RESOURCE_CREATION_FAILED =

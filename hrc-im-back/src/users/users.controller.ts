@@ -190,10 +190,10 @@ export class UsersController {
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const userRemoved = await this.usersService.deactivate(id, user);
+    const removedUser = await this.usersService.deactivate(id, user);
     return {
       message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
-      data: userRemoved,
+      data: removedUser,
     };
   }
 
@@ -215,10 +215,10 @@ export class UsersController {
     @Req() req,
   ): Promise<IApiResponse<any>> {
     const user = req.user;
-    const userRemoved = await this.usersService.remove(id, user);
+    const removedUser = await this.usersService.remove(id, user);
     return {
       message: `User has been physically removed.`,
-      data: userRemoved,
+      data: removedUser,
     };
   }
 
