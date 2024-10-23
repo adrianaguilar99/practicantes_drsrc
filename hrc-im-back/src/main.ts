@@ -10,12 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger();
 
-  try {
-    app.enableCors(corsConfig);
-  } catch (error) {
-    handleInternalServerError(error.message);
-  }
-
+  // Configuración de la aplicación
   app.useGlobalPipes(createValidationPipe());
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -24,8 +19,14 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  // await app.listen(ENV.PORT);
-  await app.listen(ENV.PORT, '0.0.0.0');
+  try {
+    app.enableCors(corsConfig);
+  } catch (error) {
+    handleInternalServerError(error.message);
+  }
+
+  await app.listen(ENV.PORT);
+  // await app.listen(ENV.PORT, '0.0.0.0');
 
   const baseUrl = (await app.getUrl()).replace('[::1]', 'localhost');
 
