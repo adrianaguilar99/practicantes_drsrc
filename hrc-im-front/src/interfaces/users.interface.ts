@@ -1,10 +1,13 @@
-
+export interface UserInterface {
+    message: string;
+    data:    DataUser[];
+}
 export interface UserPostResponse {
     message: string;
-    data:    Data;
+    data:    DataUser;
 }
 
-export interface Data {
+export interface DataUser {
     firstName: string;
     lastName:  string;
     email:     string;
@@ -22,3 +25,17 @@ export interface PostUser {
     password: string,
     userRole: string
   }
+
+  export interface PatchUser {
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    password?: string,
+    userRole?: string
+  }
+
+
+
+
+
+

@@ -14,8 +14,8 @@ const initialState: SidebarState = {
   openMenu: true,
   subIndex: null,
   isSidebarOpen: false,
-  isInternsDropdownOpen: JSON.parse(localStorage.getItem('isInternsDropdownOpen') || 'false'), 
-  isUsersDropdownOpen: JSON.parse(localStorage.getItem('isInternsDropdownOpen') || 'false'), 
+  isInternsDropdownOpen: JSON.parse(sessionStorage.getItem('isInternsDropdownOpen') || 'false'), 
+  isUsersDropdownOpen: JSON.parse(sessionStorage.getItem('isInternsDropdownOpen') || 'false'), 
 };
 
 const sidebarSlice = createSlice({
@@ -39,11 +39,11 @@ const sidebarSlice = createSlice({
     },
     setInternsDropdownOpen(state, action: PayloadAction<boolean>) {
       state.isInternsDropdownOpen = action.payload;
-      localStorage.setItem('isInternsDropdownOpen', JSON.stringify(action.payload));
+      sessionStorage.setItem('isInternsDropdownOpen', JSON.stringify(action.payload));
     },
     setUsersDropdownOpen(state, action: PayloadAction<boolean>) {
       state.isUsersDropdownOpen = action.payload;
-      localStorage.setItem('isUsersDropdownOpen', JSON.stringify(action.payload));
+      sessionStorage.setItem('isUsersDropdownOpen', JSON.stringify(action.payload));
     },
   },
 });

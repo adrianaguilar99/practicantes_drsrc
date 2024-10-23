@@ -275,6 +275,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
                 <div className="filter-divider">
                   <label>Departamento</label>
                 </div>
+                <div style={{maxHeight: "200px", overflow: "auto"}}>
                 {departments.map((department, index) => (
                   <FiltersOptions
                     key={department.id}
@@ -288,6 +289,8 @@ export const FiltersButton: React.FC<FiltersProps> = ({
                     }
                   />
                 ))}
+                </div>
+                
               </div>
             )}
           </div>

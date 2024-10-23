@@ -7,7 +7,6 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import "./supervisors.page.css";
 import { search } from "../../functions/filters-functions";
 import { FilterOptions } from "../../components/utils/filters.component";
-import { Data } from "../../interfaces/interns/intern-data/intern-data.interface";
 import { DataSupervisor, SupervisorInterface } from "../../interfaces/supervisors/supervisor.interface";
 import { get } from "http";
 import { getSupervisorsData } from "../../api/supervisors/supervisors.api";
@@ -54,6 +53,9 @@ const SupervisorsPage = () => {
           ? +a.user.firstName.localeCompare(b.user.firstName) || +a.user.lastName.localeCompare(b.user.lastName)
           : +b.user.firstName.localeCompare(a.user.firstName) || +b.user.lastName.localeCompare(a.user.lastName)
       );
+    }
+    if (Array.isArray(filters.department) && filters.department.length > 0) {
+      results = results.filter(supervisor => filters.department!.includes(supervisor.department.name));
     }
     setFilteredData(results); 
   };

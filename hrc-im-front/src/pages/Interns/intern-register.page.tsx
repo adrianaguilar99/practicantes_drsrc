@@ -37,6 +37,7 @@ const InternRegisterPage = () => {
   const [InternProgram, setInternProgram] = useState("");
   const [InternID, setInternID] = useState("");
   const [InternInstitutePhone, setInternInstitutePhone] = useState("");
+  const [InterProperty, setInternProperty] = useState("");
 
   const [InternPhone, setInternPhone] = useState("");
   const [InternSupervisor, setInternSupervisor] = useState("");
@@ -281,9 +282,18 @@ const InternRegisterPage = () => {
               <div className="register-container">
                 <section className="register-section-left">
                   <RegisterRow
-                    label="Nombre del practicante:"
+                    label="Nombres del practicante:"
                     onChange={(value) => setInternName(value || "")}
-                    id="nombre"
+                    id="firstname"
+                    type="text"
+                    show={true}
+                    validate={errors.internName ? "Error" : "Normal"}
+                    typeError={errors.internName}
+                  />
+                  <RegisterRow
+                    label="Apellidos del practicante:"
+                    onChange={(value) => setInternName(value || "")}
+                    id="lastname"
                     type="text"
                     show={true}
                     validate={errors.internName ? "Error" : "Normal"}
@@ -303,7 +313,7 @@ const InternRegisterPage = () => {
                     label="Tel Personal:"
                     onChange={(value) => setInternPhone(value || "")}
                     value={formatPhoneNumber(InternPhone)}
-                    id="telPersonal"
+                    id="celphone"
                     type="phone"
                     show={true}
                     validate={errors.internPhone ? "Error" : "Normal"}
@@ -351,21 +361,45 @@ const InternRegisterPage = () => {
                     </p>
                   <RegisterRow
                     label="Departamento de practicas:"
-                    onChange={(value) => setInternOldDepartment(value || "")}
+                    onChange={(value) => {
+                      const selectedDepartment = Departments.find(
+                        (department) => department.name === value
+                      );
+                      setInternDepartment(
+                        selectedDepartment
+                          ? selectedDepartment.id.toString()
+                          : ""
+                      );
+                    }}
                     id="department"
                     type="select"
                     show={true}
-                    options={Departments.map((department) => department.name)}
+                    options={[
+                      { id: "", name: "Seleccione un departamento" },
+                      ...Departments.map((department) => ({ id: department.id, name: department.name }))
+                    ].map((department) => department.name)}
                     validate={errors.internDepartment ? "Error" : "Normal"}
                     typeError={errors.internDepartment}
                   />
 
 <RegisterRow
                     label="Departamento de procedencia:"
-                    onChange={(value) => setInternDepartment(value || "")}
+                    onChange={(value) => {
+                      const selectedDepartment = Departments.find(
+                        (department) => department.name === value
+                      );
+                      setInternOldDepartment(
+                        selectedDepartment
+                          ? selectedDepartment.id.toString()
+                          : ""
+                      );
+                    }}
                     id="department"
                     type="select"
-                    options={Departments.map((department) => department.name)}
+                    options={[
+                      { id: "", name: "Seleccione un departamento" },
+                      ...Departments.map((department) => ({ id: department.id, name: department.name }))
+                    ].map((department) => department.name)}
                     show={selectedType === "Interno"}
                     validate={errors.internOldDepartment ? "Error" : "Normal"}
                     typeError={errors.internOldDepartment}

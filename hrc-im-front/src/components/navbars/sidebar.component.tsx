@@ -82,7 +82,7 @@ export const Sidebar = () => {
         { label: "Carreras", path: "/interns/interns-careers" },
       ],
     },
-    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout"},
+    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
     { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
   ];

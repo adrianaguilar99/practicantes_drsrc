@@ -6,13 +6,24 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { formatPhoneNumber, LightstringToColor, stringAvatar } from '../../functions/utils.functions';
 import { TableProps } from "../audits/audits-table.component";
 import { FormModal } from "../modals/form-modal.component";
-import { DataSupervisor } from '../../interfaces/supervisors/supervisor.interface';  // Importar la interfaz correcta
+import { DataSupervisor } from '../../interfaces/supervisors/supervisor.interface';  
+import { deleteSupervisor } from "../../api/supervisors/supervisors.api";
+import { enqueueSnackbar } from "notistack";
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import { ConfirmationModal } from "../modals/confirmation-modal.component";
+import { decryptData } from "../../functions/encrypt-data.function";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
+  const userToken = sessionStorage.getItem("_Token") || "";
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(7);
   const [open, setOpen] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [selectedSupervisor, setSelectedSupervisor] = useState<DataSupervisor | null>(null); 
+  const userFullName = sessionStorage.getItem('_ProfileName');
 
   useEffect(() => {
     const ResizePage = () => {
@@ -36,23 +47,50 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
   const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
-
-  // Función para abrir el modal y pasar los datos del supervisor
   const EditClick = (supervisor: DataSupervisor) => {
-    setSelectedSupervisor(supervisor); // Guardar supervisor seleccionado
-    setOpen(true); // Abrir modal
+    setSelectedSupervisor(supervisor); 
+    setOpen(true); 
   };
 
-  // Función para cerrar el modal
   const ModalClose = () => {
-    setOpen(false); // Cerrar modal
-    setSelectedSupervisor(null); // Limpiar datos del supervisor seleccionado
+    setOpen(false); 
+    setSelectedSupervisor(null); 
   };
 
   const displayedSupervisors = data.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
+  const DeleteClick = (supervisor: DataSupervisor | null) => {
+    setSelectedSupervisor(supervisor);
+    ConfirmationModalOpen();
+};
+
+  const ConfirmationModalState = () => {
+    setConfirmationOpen(!confirmationOpen);
+  };
+
+  const ConfirmationModalOpen = () => setConfirmationOpen(true);
+  const ConfirmationModalClose = () => setConfirmationOpen(false);
+
+  const DeleteSupervisor = () => {
+    if (!selectedSupervisor) return;
+    deleteSupervisor(userToken, selectedSupervisor.id)
+      .then((data) => {
+        if (data) {
+          enqueueSnackbar("supervisor eliminado correctamente", {
+            variant: "success",
+          });
+          ConfirmationModalClose();
+          onUpdate();
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar("Error al eliminar el supervisor", { variant: "error" });
+        ConfirmationModalClose();
+      });
+  };
 
   return (
     <div className="generic-table-container">
@@ -64,6 +102,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
               <th>Telefono</th>
               <th>Permisos</th>
               <th>Departamento</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -74,7 +113,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
               const fullName = `${supervisor.user.firstName} ${supervisor.user?.lastName}`;
 
               return (
-                <tr key={index} className="generic-table-row">
+                <tr key={index} className={`generic-table-row  ${supervisor.user.isActive ? '' : 'inactive'}`} >
                   <td className="table-avatar">
                     <div className="supervisor-info">
                       <Avatar {...stringAvatar(fullName)} />
@@ -108,14 +147,32 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
                       {supervisor.department?.name}
                     </span>
                   </td>
+                  <td className={`table-status  ${supervisor.user.isActive ? 'active' : 'inactive'}`}>{supervisor.user.isActive ? "Activo" : "Inactivo"}</td>
 
-                  <td className="table-actions">
-                    <IconButton aria-label="edit" onClick={() => EditClick(supervisor)}>
+                  <td className="table-actions" >
+                  {fullName != userFullName ? (
+                    <div style={{display: 'flex'}}>
+  <IconButton aria-label="edit" onClick={() => EditClick(supervisor)}>
                       <EditOutlinedIcon />
                     </IconButton>
-                    <IconButton aria-label="delete">
+                    {userRol === "ADMINISTRATOR" ?(
+                      <div style={{display: 'flex'}}>
+                         {supervisor.user.isActive  ? (
+                      <IconButton aria-label="delete" onClick={() => DeleteClick(supervisor.user)}>
                       <DeleteOutlineOutlinedIcon />
                     </IconButton>
+                    ) : <IconButton aria-label="delete">
+                    <CheckRoundedIcon />
+                  </IconButton>}
+                      </div>
+                    ) : null}
+                   
+                  </div>
+                  ) : (
+                       null
+                  )}
+                  
+                    
                   </td>
                 </tr>
               );
@@ -137,7 +194,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
       {selectedSupervisor && (
         <FormModal
           open={open}
-          onConfirm={ModalClose}
+          onConfirm={onUpdate}
           type="Edit"
           onCancel={ModalClose}
           data={selectedSupervisor}
@@ -145,6 +202,13 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
           entity={"supervisors"}
         />
       )}
+       <ConfirmationModal
+        open={confirmationOpen}
+        onConfirm={DeleteSupervisor}
+        onCancel={ConfirmationModalClose}
+        title="Eliminar departamento"
+        message="¿Estas seguro de eliminar este supervisor?, esta accion es reversible"
+      />
     </div>
   );
 };

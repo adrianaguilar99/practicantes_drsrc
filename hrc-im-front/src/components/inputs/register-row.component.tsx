@@ -174,6 +174,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <Autocomplete
               options={coincidences}
               value={inputValue}
+              
               onInputChange={(event, newInputValue) => {
                 ValueChange(newInputValue);
               }}
@@ -187,8 +188,10 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
                     className: `edit-mode ${errorClass}`,
                   }}
                   fullWidth
+                 
                 />
               )}
+            
               fullWidth
             />
           )}

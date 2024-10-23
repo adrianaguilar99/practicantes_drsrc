@@ -102,29 +102,6 @@ export async function authLogin(email: string, password: string) {
 
 
 
-export async function postUser(Token: string, data: PostUser){
-  try {
-    const response = await fetch(apiUrl + "/users", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${Token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      throw new Error(errorResponse.message || "Error al enviar los datos del supervisor");
-    }
-
-    const responseJson: UserPostResponse = await response.json();
-    return responseJson;
-  } catch (error: any) {
-    console.error("Error:", error);
-    throw error;
-  }
-}
 
 
 

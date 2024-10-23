@@ -48,13 +48,13 @@ export const DepartmentsTable : React.FC<TableProps> = ({onUpdate,  data = [] })
     currentPage * rowsPerPage
   );
 
-  const EditClick = (career: SetStateAction<null>) => {
-    setSelectedDepartment(career);
+  const EditClick = (department: SetStateAction<null>) => {
+    setSelectedDepartment(department);
     setOpen(true);
   };
 
-  const DeleteClick = (institution: SetStateAction<null>) => {
-    setSelectedDepartment(institution);
+  const DeleteClick = (department: SetStateAction<null>) => {
+    setSelectedDepartment(department);
     ConfirmationModalOpen();
   };
 

@@ -75,7 +75,7 @@ export async function getSupervisorsData(Token: string): Promise<SupervisorInter
   
   export async function deleteSupervisor(Token: string, id: string) {
     try {
-      const response = await fetch(apiUrl + "/supervisors/" + id + "", {
+      const response = await fetch(apiUrl + "/users/" + id + "", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${Token}`,

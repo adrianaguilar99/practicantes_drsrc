@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddButton } from "../buttons/add-button.component";
 import { FiltersButton } from "../utils/filters.component";
 import { SearchBar } from "./search-bar.component";
@@ -7,6 +7,7 @@ import { DeleteAllRecordsButton } from "../buttons/delete-allrecords-button.comp
 import { useSelector } from "react-redux";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { RootState } from "../../redux/store";
+import { GetUrl } from "../../functions/utils.functions";
 
 interface SearchProps {
   onSearch: (query: string) => void;
@@ -17,6 +18,7 @@ interface SearchProps {
 export const SearchComponent: React.FC<SearchProps> = ({ onSearch, onFilters, onAdd }) => {
   const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [query, setQuery] = useState('');
+  const url = GetUrl();
 
   const Search = (value: string) => {
     setQuery(value);  
@@ -37,7 +39,7 @@ export const SearchComponent: React.FC<SearchProps> = ({ onSearch, onFilters, on
 
       <AddButton onConfirm={onAdd} userRol={userRol}/>
 
-      {userRol === 'ADMINISTRATOR' && <DeleteAllRecordsButton />}
+      {userRol === 'ADMINISTRATOR' && url != 'interns'  && url != 'supervisors' && url != 'administrators' && url != 'audits' && url != 'checkin-checkout' && <DeleteAllRecordsButton />}
     </div>
   );
 };

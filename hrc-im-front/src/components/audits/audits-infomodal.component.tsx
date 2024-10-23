@@ -13,7 +13,7 @@ export const EntityInfoModal: React.FC<EntityInfoModalProps> = ({ entity }) => {
         <h6>{entity.type || "Entidad"}</h6> 
       </section>
       <section className="entity-info-modal-body">
-        <h6 className="entity-info-modal-name">{entity.name}</h6>
+        <h6 className="entity-info-modal-name">Nombre: {entity.name}</h6>
         {entity.type === "INTERN" && (
           <>
             <h6 className="entity-info-modal-info">Email: {entity.email || "No disponible"}</h6>

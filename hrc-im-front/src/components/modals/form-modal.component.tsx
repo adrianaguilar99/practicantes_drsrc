@@ -6,6 +6,7 @@ import { DepartmentFormModal } from '../departments/departments-modal.component'
 import { CareerFormModal } from '../interns/interns-careers-table/interns-careers-modal.component';
 import { InstitutionFormModal } from '../interns/interns-institutions-table/interns-institutions-modal.component';
 import { SupervisorFormModal } from '../supervisors/supervisors-modal.component';
+import { AdminsFormModal } from '../supervisors/admins-modal.component';
 
 interface FormModalPropsMain {
     open: boolean;
@@ -68,6 +69,7 @@ interface FormModalPropsMain {
             {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "administrators" ? <AdminsFormModal data={data} type={type}  onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "report" ? <ReportGenerationModal  onCancel={onCancel} onSuccess={onConfirm} /> : null}
           </Box>
         </Box>
