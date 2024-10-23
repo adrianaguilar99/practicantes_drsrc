@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import MapsHomeWorkOutlinedIcon from '@mui/icons-material/MapsHomeWorkOutlined';
+import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -60,8 +61,9 @@ export const Sidebar = () => {
       ],
     },
       
-    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
     { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
+    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:""},
   ];
 
   const menuItemsSupervisorRH: MenuItem[] = [
@@ -84,7 +86,7 @@ export const Sidebar = () => {
     },
     {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
-    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
   ];
 
   const menuItemsSupervisor: MenuItem[] = [
