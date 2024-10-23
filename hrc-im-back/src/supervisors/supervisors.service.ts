@@ -92,8 +92,16 @@ export class SupervisorsService {
 
   async findAll() {
     try {
-      const allSupervisors = await this.supervisorsRepository.find();
-      return allSupervisors;
+      const allSupervisors = await this.supervisorsRepository.find({
+        relations: {
+          department: true,
+        },
+      });
+      const withoutExtraSupervisor = allSupervisors.map((data) => {
+        const { supervisors, interns, ...department } = data.department;
+        return { ...data, department };
+      });
+      return withoutExtraSupervisor;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -102,11 +110,15 @@ export class SupervisorsService {
   async findOne(id: string) {
     const supervisor = await this.supervisorsRepository.findOne({
       where: { id },
+      relations: {
+        department: true,
+      },
     });
     if (!supervisor)
       throw new NotFoundException(`Supervisor with id: ${id} not found.`);
 
-    return supervisor;
+    const { supervisors, interns, ...department } = supervisor.department;
+    return { ...supervisor, department };
   }
 
   async findByUser(id: string) {
