@@ -1,5 +1,6 @@
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   OneToOne,
@@ -12,6 +13,7 @@ import { UserRole } from 'src/common/enums';
 import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 import { Intern } from 'src/interns/entities/intern.entity';
 import { Exclude } from 'class-transformer';
+import { normalizeString } from 'src/common/utils';
 
 @Entity('users')
 export class User {
@@ -98,6 +100,11 @@ export class User {
   })
   createdAt: Date;
 
+  @ApiProperty({
+    example: true,
+    description: "The user's status: Active or Inactive.",
+    default: true,
+  })
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
@@ -109,6 +116,8 @@ export class User {
 
   @BeforeInsert()
   async setCreation?() {
+    this.firstName = normalizeString(this.firstName);
+    this.lastName = normalizeString(this.lastName);
     this.email = this.email.toLowerCase();
     await this.hashPassword();
     this.createdAt = new Date();
@@ -116,5 +125,11 @@ export class User {
 
   private async hashPassword?() {
     this.password = await bcrypt.hash(this.password, BCRYPT_SALT_ROUNDS);
+  }
+
+  @BeforeUpdate()
+  fieldsBeforeUpdate() {
+    this.firstName = normalizeString(this.firstName);
+    this.lastName = normalizeString(this.lastName);
   }
 }

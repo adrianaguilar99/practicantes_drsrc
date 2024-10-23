@@ -16,6 +16,7 @@ import { handleInternalServerError } from 'src/common/utils';
 import { IRequestUser } from 'src/common/interfaces';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 import { UserRole } from 'src/common/enums';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -119,6 +120,68 @@ export class UsersService {
     return user;
   }
 
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    { fullName, role, userId }: IRequestUser,
+  ) {
+    const existingUser = await this.findOne(id);
+    // Prohibimos actualizar los siguientes campos
+    const isUnauthorizedUpdate =
+      updateUserDto.email || updateUserDto.password || updateUserDto.userRole;
+    if (isUnauthorizedUpdate) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'TRY TO UPDATE USER',
+        {
+          id: existingUser.id,
+          name: `${existingUser.firstName} ${existingUser.lastName}`,
+        },
+        'FAILED TO UPDATE USER',
+        'Attempted to update fields that are not allowed: email, password, role',
+      );
+      throw new ConflictException(
+        'You are not allowed to update email, password or role of the user.',
+      );
+    }
+
+    const { firstName, lastName, isActive } = updateUserDto;
+
+    try {
+      if (firstName) existingUser.firstName = firstName;
+      if (lastName) existingUser.lastName = lastName;
+      if (isActive) existingUser.isActive = isActive;
+      const updatedUser = await this.usersRepository.save(existingUser);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'UPDATE USER',
+        {
+          id: updatedUser.id,
+          name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+        },
+        'SUCCESS',
+      );
+      return updatedUser;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO UPDATE USER',
+        { id, name: 'Update Error' },
+        'FAILED TO UPDATE USER',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
+  }
+
   async deactivate(id: string, { fullName, role, userId }: IRequestUser) {
     await this.findOne(id);
     try {
@@ -153,42 +216,42 @@ export class UsersService {
     }
   }
 
-  async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
-    try {
-      const removedUser = await this.usersRepository.delete(id);
-      await this.systemAuditsService.createSystemAudit(
-        {
-          id: userId,
-          fullName,
-          role,
-        },
-        'DELETE USER',
-        { id, name: 'User' },
-        'SUCCESS',
-      );
-      return removedUser.affected;
-    } catch (error) {
-      await this.systemAuditsService.createSystemAudit(
-        {
-          id: userId,
-          fullName,
-          role,
-        },
-        'TRY TO DELETE USER',
-        { id, name: 'User' },
-        'FAILED TO DELETE USER',
-        error.message,
-      );
-      handleInternalServerError(error.message);
-    }
-  }
+  // async remove(id: string, { fullName, role, userId }: IRequestUser) {
+  //   await this.findOne(id);
+  //   try {
+  //     const removedUser = await this.usersRepository.delete(id);
+  //     await this.systemAuditsService.createSystemAudit(
+  //       {
+  //         id: userId,
+  //         fullName,
+  //         role,
+  //       },
+  //       'DELETE USER',
+  //       { id, name: 'User' },
+  //       'SUCCESS',
+  //     );
+  //     return removedUser.affected;
+  //   } catch (error) {
+  //     await this.systemAuditsService.createSystemAudit(
+  //       {
+  //         id: userId,
+  //         fullName,
+  //         role,
+  //       },
+  //       'TRY TO DELETE USER',
+  //       { id, name: 'User' },
+  //       'FAILED TO DELETE USER',
+  //       error.message,
+  //     );
+  //     handleInternalServerError(error.message);
+  //   }
+  // }
 
-  async removeAll() {
-    try {
-      await this.usersRepository.update({}, { isActive: false });
-    } catch (error) {
-      handleInternalServerError(error.message);
-    }
-  }
+  // async removeAll() {
+  //   try {
+  //     await this.usersRepository.update({}, { isActive: false });
+  //   } catch (error) {
+  //     handleInternalServerError(error.message);
+  //   }
+  // }
 }

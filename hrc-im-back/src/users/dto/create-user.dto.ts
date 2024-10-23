@@ -26,6 +26,12 @@ export class CreateUserDto {
   lastName: string;
 
   @ApiProperty({
+    example: true,
+    description: "The user's status: Active or Inactive.",
+  })
+  isActive: boolean;
+
+  @ApiProperty({
     example: 'martin@gmail.com',
     description: "The user's email. Only unique emails.",
     uniqueItems: true,
