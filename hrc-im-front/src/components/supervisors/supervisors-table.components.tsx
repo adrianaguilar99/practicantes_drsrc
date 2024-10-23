@@ -69,9 +69,9 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
           </thead>
           <tbody>
             {displayedSupervisors.map((supervisor, index) => {
-              const backgroundColor = LightstringToColor(supervisor.user.userRole || '', 0.2);
+              const backgroundColor = LightstringToColor(supervisor.user?.userRole || '', 0.2);
               const backgroundColor2 = LightstringToColor(supervisor.department?.name || '', 0.2);
-              const fullName = `${supervisor.user.firstName} ${supervisor.user.lastName}`;
+              const fullName = `${supervisor.user.firstName} ${supervisor.user?.lastName}`;
 
               return (
                 <tr key={index} className="generic-table-row">
