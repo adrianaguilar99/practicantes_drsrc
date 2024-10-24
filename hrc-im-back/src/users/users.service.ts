@@ -139,7 +139,6 @@ export class UsersService {
     { fullName, role, userId }: IRequestUser,
   ) {
     const existingUser = await this.findOneByPrivilegedUsers(id);
-    console.log({ existingUser });
 
     // Prohibimos actualizar los siguientes campos
     const isUnauthorizedUpdate =
@@ -167,13 +166,6 @@ export class UsersService {
     if (isActive !== undefined) existingUser.isActive = isActive;
 
     try {
-      console.log({
-        isActive,
-        fn: existingUser.firstName,
-        ln: existingUser.lastName,
-        ia: existingUser.isActive,
-      });
-
       const updatedUser = await this.usersRepository.save(existingUser);
       await this.systemAuditsService.createSystemAudit(
         {
@@ -218,7 +210,7 @@ export class UsersService {
           fullName,
           role,
         },
-        'DELETE USER',
+        'DEACTIVE USER',
         { id, name: 'User' },
         'SUCCESS',
       );
@@ -230,9 +222,9 @@ export class UsersService {
           fullName,
           role,
         },
-        'TRY TO DELETE USER',
+        'TRY TO DEACTIVE USER',
         { id, name: 'User' },
-        'FAILED TO DELETE USER',
+        'FAILED TO DEACTIVE USER',
         error.message,
       );
       handleInternalServerError(error.message);
