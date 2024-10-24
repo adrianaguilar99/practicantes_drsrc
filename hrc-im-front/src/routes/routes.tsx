@@ -14,6 +14,7 @@ import InternsCareersPage from '../pages/Interns/interns-careers.page';
 import InternsInstitutionsPage from '../pages/Interns/interns-institutions.page';
 import InternCredentialPage from '../pages/Interns/intern-credential.page';
 import AdminsPage from '../pages/supervisors/admins.page';
+import PropertiesPage from '../pages/properties/properties.page';
 import LoadingPage from '../pages/login/loading.page';
 import { InternsPage } from '../pages/Interns/Interns.page';
 import ProtectedRoute from '../components/utils/protect-routes.component';
@@ -82,6 +83,14 @@ function RoutesConfig() {
              </ProtectedRoute>
            }
          />
+         <Route
+           path="/properties"
+           element={
+            <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR_RH']}>
+               <PropertiesPage />
+          </ProtectedRoute>
+           }
+          />
          <Route
            path="/profile"
            element={

@@ -15,6 +15,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { NavMenu } from "../menus/nav-menu.component";
+import RCD_LOGO from "../../assets/images/rcd_logo_white.png";
 import { Link } from "react-router-dom";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { stringAvatar } from "../../functions/utils.functions";
@@ -143,7 +144,13 @@ export const Navbar = () => {
             </IconButton>
           ) : null}
 
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1,display: "flex", alignItems: "center" ,gap: "10px"}}>
+             <img
+                src={RCD_LOGO}
+                alt="RCD HOTELS LOGO"
+                style={{ height: "40px", display: "block" }}
+                onClick={() => window.location.pathname = "/home"}
+              />
               <img
                 src={HardRockLogo}
                 alt="Hard Rock Logo"

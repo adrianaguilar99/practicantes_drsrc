@@ -1,30 +1,27 @@
 import { useEffect, useState } from "react";
-import { DepartmentsTable } from "../../components/departments/departments-table.component";
-import { Footer } from "../../components/navbars/footer.component";
 import { Navbar } from "../../components/navbars/navbar.component";
-import { SearchComponent } from "../../components/search/search.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
-import './departments.page.css';
+import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
+import { DataProperty, PropertiesInterface } from "../../interfaces/properties/properties.interface";
+import { SearchComponent } from "../../components/search/search.component";
+import { RetryElement } from "../../components/utils/retry-element.component";
+import '../properties/properties.page.css';
+import { Footer } from "../../components/navbars/footer.component";
+import { getPropertiesData } from "../../api/properties/propertie.api";
 import { FilterOptions } from "../../components/utils/filters.component";
 import { search } from "../../functions/filters-functions";
-import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
-import { getDepartmentsData } from "../../api/departments/departments.api";
-import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
-import { RetryElement } from "../../components/utils/retry-element.component";
+import { PropertiesTable } from "../../components/properties/properties-table.component";
 
-const DepartmentsPage = () => {
-
-
-  const [data, setData] = useState<DataDepartment[]>([]);
-  const [filteredData, setFilteredData] = useState<DataDepartment[]>([]);
+const PropertiesPage = () => {
+  const [data, setData] = useState<DataProperty[]>([]);
+  const [filteredData, setFilteredData] = useState<DataProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [hasError, setHasError] = useState(false);   
   const userToken = sessionStorage.getItem("_Token") || "";
-
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const fetchedData: DepartmentsInterface | null = await getDepartmentsData(userToken);
+      const fetchedData: PropertiesInterface | null = await getPropertiesData(userToken);
       if (fetchedData && fetchedData.data.length > 0) {
         setData(fetchedData.data);
         setFilteredData(fetchedData.data);
@@ -75,33 +72,31 @@ const DepartmentsPage = () => {
     fetchData();
 
   };
-
-
   return (
     <div className="body-page">
-      <Navbar />
-      <div className="container-departments">
-        <section className="departments-left-container"></section>
-        <section className="departments-right-container">
-          <Breadcrumb/>
-          <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => PostSuccess()}/>
-           <div className="departments-data-container">
-           {isLoading ? (
-              <CircularProgress type="secondary" />
-            ) : hasError ? (
-               <RetryElement onClick={() => fetchData()}/>
-            ) : data.length === 0 ? (
-              <NothingToSee />
-            ) : (
-              <DepartmentsTable data={filteredData} onUpdate={() => PostSuccess()}/>
-            )}
-           </div>
-         
-        </section>
-      </div>
-      <Footer />
+    <Navbar />
+    <div className="container-properties">
+      <section className="properties-left-container"></section>
+      <section className="properties-right-container">
+        <Breadcrumb/>
+        <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => PostSuccess()}/>
+         <div className="properties-data-container">
+         {isLoading ? (
+            <CircularProgress type="secondary" />
+          ) : hasError ? (
+             <RetryElement onClick={() => fetchData()}/>
+          ) : data.length === 0 ? (
+            <NothingToSee />
+          ) : (
+            <PropertiesTable data={filteredData} onUpdate={() => PostSuccess()}/>
+          )}
+         </div>
+       
+      </section>
     </div>
+    <Footer />
+  </div>
   );
-};
+}
 
-export default DepartmentsPage;
+export default PropertiesPage;

@@ -1,19 +1,19 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { Pagination, Avatar, IconButton } from "@mui/material";
-import PhoneEnabledOutlinedIcon from '@mui/icons-material/PhoneEnabledOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
 import { formatPhoneNumber, LightstringToColor, stringAvatar } from '../../functions/utils.functions';
 import { TableProps } from "../audits/audits-table.component";
 import { FormModal } from "../modals/form-modal.component";
 import { DataSupervisor } from '../../interfaces/supervisors/supervisor.interface';  
-import { deleteSupervisor } from "../../api/supervisors/supervisors.api";
+import { deleteSupervisor} from "../../api/supervisors/supervisors.api";
 import { enqueueSnackbar } from "notistack";
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { ConfirmationModal } from "../modals/confirmation-modal.component";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { patchUser } from "../../api/users/users.api";
 
 export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const userToken = sessionStorage.getItem("_Token") || "";
@@ -24,6 +24,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [selectedSupervisor, setSelectedSupervisor] = useState<DataSupervisor | null>(null); 
   const userFullName = sessionStorage.getItem('_ProfileName');
+  const [typeAction, setTypeAction] = useState('');
 
   useEffect(() => {
     const ResizePage = () => {
@@ -79,7 +80,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
     deleteSupervisor(userToken, selectedSupervisor.id)
       .then((data) => {
         if (data) {
-          enqueueSnackbar("supervisor eliminado correctamente", {
+          enqueueSnackbar("supervisor desactivado correctamente", {
             variant: "success",
           });
           ConfirmationModalClose();
@@ -87,7 +88,27 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
         }
       })
       .catch((error) => {
-        enqueueSnackbar("Error al eliminar el supervisor", { variant: "error" });
+        enqueueSnackbar("Error al desactivar el supervisor", { variant: "error" });
+        ConfirmationModalClose();
+      });
+  };
+
+  const ActiveSupervisor = () => {
+    if (!selectedSupervisor) return;
+    patchUser(userToken, selectedSupervisor.id,{
+      isActive: true,
+    })
+      .then((data) => {
+        if (data) {
+          enqueueSnackbar("supervisor activado correctamente", {
+            variant: "success",
+          });
+          ConfirmationModalClose();
+          onUpdate();
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar("Error al activar el supervisor", { variant: "error" });
         ConfirmationModalClose();
       });
   };
@@ -158,11 +179,13 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
                     {userRol === "ADMINISTRATOR" ?(
                       <div style={{display: 'flex'}}>
                          {supervisor.user.isActive  ? (
-                      <IconButton aria-label="delete" onClick={() => DeleteClick(supervisor.user)}>
-                      <DeleteOutlineOutlinedIcon />
+                      <IconButton aria-label="delete" onClick={() => {DeleteClick(supervisor.user);setTypeAction("delete")}}>
+                      <PersonOffOutlinedIcon />
                     </IconButton>
                     ) : <IconButton aria-label="delete">
+                      <IconButton aria-label="active" onClick={() => {DeleteClick(supervisor.user);setTypeAction("active")}}>
                     <CheckRoundedIcon />
+                    </IconButton>
                   </IconButton>}
                       </div>
                     ) : null}
@@ -204,10 +227,10 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
       )}
        <ConfirmationModal
         open={confirmationOpen}
-        onConfirm={DeleteSupervisor}
+        onConfirm={typeAction == "active" ? ActiveSupervisor : DeleteSupervisor}
         onCancel={ConfirmationModalClose}
-        title="Eliminar departamento"
-        message="¿Estas seguro de eliminar este supervisor?, esta accion es reversible"
+        title="Desactivar Supervisor"
+        message={typeAction == "active" ? "¿Estas seguro de activar la cuenta de este supervisor?" : "¿Estas seguro que quieres desactivar la cuenta de este supervisor?"}
       />
     </div>
   );

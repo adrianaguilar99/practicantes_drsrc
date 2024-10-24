@@ -1,0 +1,27 @@
+.container-properties{
+    display: flex;
+}
+
+
+.properties-left-container{
+    min-width: 14vw;
+}
+
+.properties-right-container{
+    padding: 1% 0%;
+    min-width: 80vw;
+    min-height: 90vh;
+}
+
+
+@media screen and (max-width: 767px) {
+    .properties-left-container{
+        display: none;
+    }
+    .properties-right-container{
+        padding: 2% 2%;
+        width: 100%;
+        min-width: 80vw;
+        min-height: 90vh;
+    }
+}

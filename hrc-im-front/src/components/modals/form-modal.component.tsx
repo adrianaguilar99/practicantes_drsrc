@@ -7,6 +7,7 @@ import { CareerFormModal } from '../interns/interns-careers-table/interns-career
 import { InstitutionFormModal } from '../interns/interns-institutions-table/interns-institutions-modal.component';
 import { SupervisorFormModal } from '../supervisors/supervisors-modal.component';
 import { AdminsFormModal } from '../supervisors/admins-modal.component';
+import { PropertiesFormModal } from '../properties/properties-modal.component';
 
 interface FormModalPropsMain {
     open: boolean;
@@ -26,7 +27,32 @@ interface FormModalPropsMain {
     onSuccess: () => void;
   }
 
-  export const FormModal: React.FC<FormModalPropsMain> = ({ open, onCancel, onConfirm, title, type, entity,data }) => {
+  export const FormModal: React.FC<FormModalPropsMain> = ({ open, onCancel, onConfirm, title, type, entity, data }) => {
+    const [modalWidth, setModalWidth] = React.useState('30vw');
+    const [isLargeScreen, setIsLargeScreen] = React.useState(true);
+  
+    useEffect(() => {
+      const ResizePage = () => {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 1024) {
+          setModalWidth('95vw');
+          setIsLargeScreen(false);
+        } else if (screenWidth < 1375) {
+          setModalWidth('45vw');
+          setIsLargeScreen(false);
+        } else {
+          setModalWidth('30vw');
+          setIsLargeScreen(true);
+        }
+      };
+  
+      ResizePage();
+      window.addEventListener("resize", ResizePage);
+      return () => window.removeEventListener("resize", ResizePage);
+    }, []);
+  
+    const entityModalWidth = isLargeScreen && (entity === "supervisors" || entity === "institutions") ? '45vw' : modalWidth;
+  
     return (
       <Modal open={open} onClose={onCancel}>
         <Box
@@ -35,7 +61,7 @@ interface FormModalPropsMain {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: entity === "supervisors" ? '45vw' : entity === "institutions" ? '45vw' : '30vw',
+            width: entityModalWidth,
             bgcolor: '#EDEDED',
             borderRadius: '8px',
             boxShadow: 24,
@@ -60,17 +86,14 @@ interface FormModalPropsMain {
           </Box>
   
           {/* Modal body */}
-          <Box
-            sx={{
-              p: 3,
-            }}
-          >
+          <Box sx={{ p: 3 }}>
             {entity === "departments" ? <DepartmentFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
-            {entity === "administrators" ? <AdminsFormModal data={data} type={type}  onCancel={onCancel} onSuccess={onConfirm} /> : null}
-            {entity === "report" ? <ReportGenerationModal  onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "administrators" ? <AdminsFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "properties" ? <PropertiesFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "report" ? <ReportGenerationModal onCancel={onCancel} onSuccess={onConfirm} /> : null}
           </Box>
         </Box>
       </Modal>

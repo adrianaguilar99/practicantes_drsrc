@@ -62,8 +62,9 @@ export const Sidebar = () => {
     },
       
     { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:"/properties"},
     { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
-    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:""},
+   
   ];
 
   const menuItemsSupervisorRH: MenuItem[] = [
@@ -87,6 +88,7 @@ export const Sidebar = () => {
     {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
     { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:""},
   ];
 
   const menuItemsSupervisor: MenuItem[] = [

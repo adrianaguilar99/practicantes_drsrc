@@ -24,12 +24,16 @@ import {
 import { formatPhoneNumber } from "../../functions/utils.functions";
 import { getDepartmentsData } from "../../api/departments/departments.api";
 import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
+import { getPropertiesData } from "../../api/properties/propertie.api";
+import { DataProperty, PropertiesInterface } from "../../interfaces/properties/properties.interface";
+import { postInternFunction } from "../../functions/intern-functions/post-intern.function";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [selectedType, setSelectedType] = useState("Interno");
 
-  const [InternName, setInternName] = useState("");
+  const [InternFirstName, setInternFirstName] = useState("");
+  const [InternLastName, setInternLastName] = useState("");
   const [InternEmail, setInternEmail] = useState("");
   const [InternType, setInternType] = useState("Interno");
 
@@ -37,7 +41,7 @@ const InternRegisterPage = () => {
   const [InternProgram, setInternProgram] = useState("");
   const [InternID, setInternID] = useState("");
   const [InternInstitutePhone, setInternInstitutePhone] = useState("");
-  const [InterProperty, setInternProperty] = useState("");
+  const [InternProperty, setInternProperty] = useState("");
 
   const [InternPhone, setInternPhone] = useState("");
   const [InternSupervisor, setInternSupervisor] = useState("");
@@ -58,6 +62,9 @@ const InternRegisterPage = () => {
   const [InternProofofaddress, setInternProofofaddress] = useState("");
   const [InternBirthCertificate, setInternBirthCertificate] = useState("");
   const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
+  const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
+  const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
+  const [InternBloodType, setInternBloodType] = useState("A+");
 
   interface EmergencyContacts {
     name: string;
@@ -71,6 +78,7 @@ const InternRegisterPage = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
     internName: undefined,
+    internLastName: undefined,
     internEmail: undefined,
     internPhone: undefined,
     internAddress: undefined,
@@ -91,6 +99,7 @@ const InternRegisterPage = () => {
     internProofofaddress: undefined,
     internBirthCertificate: undefined,
     internMedicalInsurance: undefined,
+    InternProperty: undefined,
   });
 
   const [open, setOpen] = useState(false);
@@ -101,6 +110,7 @@ const InternRegisterPage = () => {
   const [Careers, setCareers] = useState<DataCareer[]>([]);
   const [Institutions, setInstitutions] = useState<DataInstitution[]>([]);
   const [Departments, setDepartments] = useState<DataDepartment[]>([]);
+  const [Properties, setProperties] = useState<DataProperty[]>([]);
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
@@ -143,19 +153,37 @@ const InternRegisterPage = () => {
     }
   };
 
+  const fetchProperties = async () => {
+    try {
+      const fetchedData: PropertiesInterface | null =
+        await getPropertiesData(userToken);
+      if (fetchedData) {
+        setProperties(fetchedData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchCareers();
     fetchInstitutions();
     fetchDepartments();
+    fetchProperties();
   }, [userToken]);
 
-  const ValidateInputs = () => {
+  const formSubmit = () => {
     const validators = InputValidators();
     const newErrors: { [key: string]: string | undefined } = {};
 
-    const resultName = validators.string(InternName);
+    const resultName = validators.string(InternFirstName);
     if (resultName) {
       newErrors.internName = resultName;
+    }
+
+    const resultLastName = validators.string(InternLastName);
+    if (resultLastName) {
+      newErrors.internLastName = resultLastName;
     }
 
     const resultEmail = validators.email(InternEmail);
@@ -261,7 +289,78 @@ const InternRegisterPage = () => {
     if (resultMedicalInsurance) {
       newErrors.internMedicalInsurance = resultMedicalInsurance;
     }
+
+    const resultPropertie = validators.string(InternProperty);
+    if (resultPropertie) {
+      newErrors.internProperty = resultPropertie;
+    }
     setErrors(newErrors);
+    postInternFunction({
+            userToken: userToken,
+            internType: InternType,
+            dataUser: {
+              firstName: InternFirstName,
+              lastName: InternLastName,
+              email: InternEmail,
+              password: InternPassword,
+            },
+            dataIntern: {
+              bloodType: InternBloodType,
+              phone: InternPhone,
+              address: InternAddress,
+              schoolEnrollment: InternID,
+              internshipStart: InterBeginDate,
+              internshipEnd: InternEndDate,
+              status: "ACTIVE",    
+              careerId: InternProgram,
+              departmentId: InternOldDepartment,
+              internshipDepartmentId: InternDepartment,
+              institutionId: InternUniversity,
+              propertyId: InternProperty,
+            },
+            onSuccess: () => {
+              console.log("Usuario registrado correctamente");
+            }
+          });
+
+    // if(!newErrors.internProperty && 
+    //   !newErrors.internName && 
+    //   !newErrors.internEmail && 
+    //   !newErrors.internPhone &&
+    //   !newErrors.internAddress &&
+    //   !newErrors.internDepartment &&
+    //   !newErrors.internSupervisor &&
+    //   !newErrors.internOldDepartment &&
+    //   !newErrors.internUniversity &&
+    //   !newErrors.internProgram &&
+    //   !newErrors.internID &&
+    //   !newErrors.internInstitutePhone &&
+    //   !newErrors.internBeginDate &&
+    //   !newErrors.internEndDate &&
+    //   !newErrors.internCheckIn &&
+    //   !newErrors.internCheckOut &&
+    //   !newErrors.internTotalTime &&
+    //   !newErrors.internPicture && 
+    //   !newErrors.internCurp && 
+    //   !newErrors.internBirthCertificate && 
+    //   !newErrors.internProofofaddress && 
+    //   !newErrors.internMedicalInsurance){
+    //     postInternFunction({
+    //       userToken: userToken, // O simplemente `userToken` si es una variable existente con el mismo nombre
+    //       dataUser: {
+    //         firstName: InternFirstName,
+    //         lastName: InternLastName,
+    //         email: InternEmail,
+    //         password: InternPassword,
+    //       },
+    //       onSuccess: () => {
+    //         // Acción a realizar en caso de éxito, si la necesitas
+    //         console.log("Usuario registrado correctamente");
+    //       }
+    //     });
+    //   }
+        
+
   };
 
   return (
@@ -283,7 +382,7 @@ const InternRegisterPage = () => {
                 <section className="register-section-left">
                   <RegisterRow
                     label="Nombres del practicante:"
-                    onChange={(value) => setInternName(value || "")}
+                    onChange={(value) => setInternFirstName(value || "")}
                     id="firstname"
                     type="text"
                     show={true}
@@ -292,12 +391,12 @@ const InternRegisterPage = () => {
                   />
                   <RegisterRow
                     label="Apellidos del practicante:"
-                    onChange={(value) => setInternName(value || "")}
+                    onChange={(value) => setInternLastName(value || "")}
                     id="lastname"
                     type="text"
                     show={true}
-                    validate={errors.internName ? "Error" : "Normal"}
-                    typeError={errors.internName}
+                    validate={errors.internLastName ? "Error" : "Normal"}
+                    typeError={errors.internLastName}
                   />
 
                   <RegisterRow
@@ -342,7 +441,7 @@ const InternRegisterPage = () => {
                   />
                   <RegisterRow
                     label="Tipo de sangre:"
-                    onChange={(value) => setInternAddress(value || "")}
+                    onChange={(value) => setInternBloodType(value || "")}
                     id="bloodtype"
                     type="select"
                     show={true}
@@ -505,6 +604,38 @@ const InternRegisterPage = () => {
                 </section>
 
                 <section className="register-section-middle">
+                <RegisterRow
+                    label="Constraseña:"
+                    onChange={(value) => setInternPassword(value || "")}
+                    id="password"
+                    value={InternPassword}
+                    type="password"
+                    show={true}
+                    validate={errors.internPassword ? "Error" : "Normal"}
+                    typeError={errors.internPassword}
+                  />
+                <RegisterRow
+                    label="Propiedad:"
+                    onChange={(value) => {
+                      const selectedProperty = Properties.find(
+                        (property) => property.name === value
+                      );
+                      setInternProperty(
+                        selectedProperty
+                          ? selectedProperty.id.toString()
+                          : ""
+                      );
+                    }}
+                    id="property"
+                    type="select"
+                    show={true}
+                    options={[
+                      { id: "", name: "Seleccione una propiedad" },
+                      ...Properties.map((property) => ({ id: property.id, name: property.name }))
+                    ].map((property) => property.name)}
+                    validate={errors.internProperty ? "Error" : "Normal"}
+                    typeError={errors.internProperty}
+                  />
                   <RegisterRow
                     label="Fecha de inicio:"
                     onChange={(value) => setInternBeginDate(value || "")}
@@ -622,8 +753,7 @@ const InternRegisterPage = () => {
               <ButtonComponent
                 text="Guardar"
                 onClick={() => {
-                  ValidateInputs();
-                  console.log(InternProgram);
+                  formSubmit();
                 }}
               />
               <ButtonComponent text="Cancelar" onClick={() => history.back()} />

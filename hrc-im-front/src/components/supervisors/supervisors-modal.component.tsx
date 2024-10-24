@@ -119,14 +119,9 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
         patchUser(userToken, UserId, {
           firstName: SupervisorFirstName,
           lastName: SupervisorLastName,
-          email: SupervisorEmail,
-          userRole: SupervisorRol,
-          password: SupervisorEmail,
         }).then((data) => {
           patchSupervisor(userToken, SupervisorId, {
             phone: SupervisorPhone,
-            departmentId: SupervisorDepartment,
-            userId: UserId,
           })
             .then((data) => {
               if (data) {
@@ -238,53 +233,6 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
             marginBottom: "2%",
             gap: "1%",
             alignItems: "flex-end",
-          }}
-        >
-          <RegisterRow
-            label="Correo"
-            value={SupervisorEmail}
-            type="text"
-            id={"supervisorEmail"}
-            show={true}
-            onChange={(value) => setSupervisorEmail(value || "")}
-            style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
-            validate={errors.supervisorEmail ? "Error" : "Normal"}
-            typeError={errors.supervisorEmail}
-          />
-          <RegisterRow
-            label="Departamento"
-            value={SupervisorDepartment}
-            options={[
-              { id: "", name: "Seleccione un departamento" }, // Opción por defecto
-              ...Departments.map((department) => ({ id: department.id, name: department.name }))
-            ].map((department) => department.name)}
-            type="select"
-            id={"supervisorDepartment"}
-            show={true}
-            onChange={(value) => {
-              const selectedDepartment = Departments.find(
-                (department) => department.name === value
-              );
-              setSupervisorDepartment(
-                selectedDepartment
-                  ? selectedDepartment.id.toString()
-                  : ""
-              );
-            }}
-            style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
-            validate={errors.supervisorDepartment ? "Error" : "Normal"}
-            typeError={errors.supervisorDepartment}
-          />
-
-
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "2%",
-            gap: "1%",
-            alignItems: "flex-end",
 
           }}
         >
@@ -299,29 +247,6 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorPhone ? "Error" : "Normal"}
             typeError={errors.supervisorPhone}
-          />
-          <RegisterRow
-            label="Privilegios"
-            options={["SUPERVISOR", "SUPERVISOR_RH"]}
-            type="select"
-            value={SupervisorRol}
-            id={"supervisorRol"}
-            show={true}
-            onChange={(value) => setSupervisorRol(value || "")}
-            style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
-            validate={errors.supervisorRol ? "Error" : "Normal"}
-            typeError={errors.supervisorRol}
-          />
-          <RegisterRow
-            label="Contraseña"
-            type="password"
-            value={SupervisorPassword}
-            id={"supervisorPassword"}
-            show={true}
-            onChange={(value) => setSupervisorPassword(value || "")}
-            style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
-            validate={errors.supervisorPassword ? "Error" : "Normal"}
-            typeError={errors.supervisorPassword}
           />
         </Box>
 

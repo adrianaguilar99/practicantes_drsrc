@@ -23,7 +23,7 @@ export interface PostUser {
     lastName: string,
     email: string,
     password: string,
-    userRole: string
+    userRole?: string
   }
 
   export interface PatchUser {
@@ -32,6 +32,7 @@ export interface PostUser {
     email?: string,
     password?: string,
     userRole?: string
+    isActive?: boolean
   }
 
 

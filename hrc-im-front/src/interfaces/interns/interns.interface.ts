@@ -57,15 +57,15 @@ export interface PostIntern{
     bloodType: string,
     phone: string,
     address: string,
-    schoolEnrollment: string,
+    schoolEnrollment?: string,
     internshipStart: string,
     internshipEnd: string,
     status: "ACTIVE",
-    careerId: string,
-    departmentId: string,
+    careerId?: string,
+    departmentId?: string,
     internshipDepartmentId: string,
-    institutionId: string,
+    institutionId?: string,
     propertyId: string,
-    userId: string
+    userId?: string
   }
 
