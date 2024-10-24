@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
+import { EmergencyContact } from 'src/emergency-contact/entities/emergency-contact.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -11,6 +12,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -180,6 +182,13 @@ export class Intern {
   })
   @JoinColumn({ name: 'property_id' })
   property: Property;
+
+  @OneToMany(
+    () => EmergencyContact,
+    (emergencyContacts) => emergencyContacts.intern,
+    { eager: true },
+  )
+  emergencyContacts: EmergencyContact[];
 
   @ApiProperty({
     type: () => User,

@@ -77,9 +77,6 @@ export class DepartmentsService {
       throw new NotFoundException(`Department with id: ${id} not found.`);
     return department;
   }
-  catch(error) {
-    handleInternalServerError(error.message);
-  }
 
   async update(
     id: string,

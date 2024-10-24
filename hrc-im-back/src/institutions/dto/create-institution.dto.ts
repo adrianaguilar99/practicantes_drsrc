@@ -17,7 +17,9 @@ export class CreateInstitutionDto {
     description: 'Institution cell phone.',
     nullable: false,
   })
-  @Matches(/^[0-9]+$/, { message: 'The phone number must contain only digits' })
+  @Matches(/^[0-9]{10}$/, {
+    message: 'The phone number must contain only digits',
+  })
   @IsNotEmpty()
   phone: string;
 }
