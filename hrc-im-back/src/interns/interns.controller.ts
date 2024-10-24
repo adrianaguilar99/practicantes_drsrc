@@ -123,6 +123,8 @@ export class InternsController {
     return { message: SUCCESSFUL_FETCH, data: intern };
   }
 
+  // TODO CREAR ENDPOINT DE BUSQUEDA DE INTERN MEDIANTE EL ID DEL USUARIO
+
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,

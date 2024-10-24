@@ -94,8 +94,9 @@ export class UsersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
-  async findAll(): Promise<IApiResponse<any>> {
-    const allUsers = await this.usersService.findAll();
+  async findAll(@Req() req): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const allUsers = await this.usersService.findAll(user);
     return {
       message: SUCCESSFUL_FETCH,
       data: allUsers,
@@ -183,6 +184,28 @@ export class UsersController {
   })
   @ApiResponse({
     status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: User,
+  })
+  @ApiResponse({ status: 404, description: BAD_REQUEST })
+  @HttpCode(200)
+  @Get(':id')
+  async findOneByPrivilegedUsers(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IApiResponse<any>> {
+    const user = await this.usersService.findOneByPrivilegedUsers(id);
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: user,
+    };
+  }
+
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({
+    status: 200,
     description: SUCCESSFUL_UPDATE,
     type: User,
   })
@@ -228,46 +251,4 @@ export class UsersController {
       data: removedUser,
     };
   }
-
-  // @UserRoles(UserRole.ADMINISTRATOR)
-  // @ApiOperation({
-  //   summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: SUCCESSFUL_MARKED_DELETED,
-  //   type: User,
-  // })
-  // @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
-  // @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  // @HttpCode(200)
-  // @Delete(':id/physical')
-  // async physicallyRemove(
-  //   @Param('id', ParseUUIDPipe) id: string,
-  //   @Req() req,
-  // ): Promise<IApiResponse<any>> {
-  //   const user = req.user;
-  //   const removedUser = await this.usersService.remove(id, user);
-  //   return {
-  //     message: `User has been physically removed.`,
-  //     data: removedUser,
-  //   };
-  // }
-
-  // @UserRoles(UserRole.ADMINISTRATOR)
-  // @ApiOperation({
-  //   summary: `${REMOVE_ALL_RECORDS} Only: ${[UserRole.ADMINISTRATOR]}`,
-  // })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: SUCCESSFUL_ALL_MARKED_DELETED,
-  //   type: User,
-  // })
-  // @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  // @HttpCode(200)
-  // @Delete()
-  // async removeAll(): Promise<IApiResponse<any>> {
-  //   await this.usersService.removeAll();
-  //   return { message: SUCCESSFUL_ALL_MARKED_DELETED };
-  // }
 }
