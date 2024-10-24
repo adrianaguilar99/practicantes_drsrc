@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -44,6 +45,14 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   password?: string;
+
+  @ApiProperty({
+    example: true,
+    description: "The user's status: Active or Inactive.",
+  })
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 
   @ApiProperty({
     example: UserRole,

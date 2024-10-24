@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Req,
   HttpCode,
+  Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,6 +25,7 @@ import {
   CREATE_RECORD,
   FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
   READ_ALL_RECORDS,
   READ_RECORD,
   REMOVE_ALL_RECORDS,
@@ -32,13 +34,16 @@ import {
   SUCCESSFUL_CREATION,
   SUCCESSFUL_FETCH,
   SUCCESSFUL_MARKED_DELETED,
+  SUCCESSFUL_UPDATE,
   UNAUTHORIZED_ACCESS,
+  UPDATE_RECORD,
   USER_REGISTERED,
 } from 'src/common/constants/constants';
 import { User } from './entities/user.entity';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
 import { IRequestUser } from 'src/common/interfaces';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -89,8 +94,9 @@ export class UsersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Get()
-  async findAll(): Promise<IApiResponse<any>> {
-    const allUsers = await this.usersService.findAll();
+  async findAll(@Req() req): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const allUsers = await this.usersService.findAll(user);
     return {
       message: SUCCESSFUL_FETCH,
       data: allUsers,
@@ -172,6 +178,55 @@ export class UsersController {
     };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: User,
+  })
+  @ApiResponse({ status: 404, description: BAD_REQUEST })
+  @HttpCode(200)
+  @Get(':id')
+  async findOneByPrivilegedUsers(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IApiResponse<any>> {
+    const user = await this.usersService.findOneByPrivilegedUsers(id);
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: user,
+    };
+  }
+
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_UPDATE,
+    type: User,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Patch(':id')
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateInternDto: UpdateUserDto,
+    @Req() req,
+  ) {
+    const user = req.user;
+    const updatedIntern = await this.usersService.update(
+      id,
+      updateInternDto,
+      user,
+    );
+    return { message: SUCCESSFUL_UPDATE, data: updatedIntern };
+  }
+
   @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({
     summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
@@ -195,47 +250,5 @@ export class UsersController {
       message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
       data: removedUser,
     };
-  }
-
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({
-    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
-  })
-  @ApiResponse({
-    status: 200,
-    description: SUCCESSFUL_MARKED_DELETED,
-    type: User,
-  })
-  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
-  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Delete(':id/physical')
-  async physicallyRemove(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Req() req,
-  ): Promise<IApiResponse<any>> {
-    const user = req.user;
-    const removedUser = await this.usersService.remove(id, user);
-    return {
-      message: `User has been physically removed.`,
-      data: removedUser,
-    };
-  }
-
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({
-    summary: `${REMOVE_ALL_RECORDS} Only: ${[UserRole.ADMINISTRATOR]}`,
-  })
-  @ApiResponse({
-    status: 200,
-    description: SUCCESSFUL_ALL_MARKED_DELETED,
-    type: User,
-  })
-  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Delete()
-  async removeAll(): Promise<IApiResponse<any>> {
-    await this.usersService.removeAll();
-    return { message: SUCCESSFUL_ALL_MARKED_DELETED };
   }
 }

@@ -174,24 +174,24 @@ export class SupervisorsService {
         },
         'SUCCESS',
       );
-      const response = {
-        id: updatedSupervisor.id,
-        phone: updatedSupervisor.phone,
-        department: {
-          id: updatedSupervisor.department.id,
-          name: updatedSupervisor.department.name,
-        },
-        user: {
-          id: updatedSupervisor.user.id,
-          firstName: updatedSupervisor.user.firstName,
-          lastName: updatedSupervisor.user.lastName,
-          email: updatedSupervisor.user.email,
-          userRole: updatedSupervisor.user.userRole,
-          createdAt: updatedSupervisor.user.createdAt,
-          isActive: updatedSupervisor.user.isActive,
-        },
-      };
-      return response;
+      // const response = {
+      //   id: updatedSupervisor.id,
+      //   phone: updatedSupervisor.phone,
+      //   department: {
+      //     id: updatedSupervisor.department.id,
+      //     name: updatedSupervisor.department.name,
+      //   },
+      //   user: {
+      //     id: updatedSupervisor.user.id,
+      //     firstName: updatedSupervisor.user.firstName,
+      //     lastName: updatedSupervisor.user.lastName,
+      //     email: updatedSupervisor.user.email,
+      //     userRole: updatedSupervisor.user.userRole,
+      //     createdAt: updatedSupervisor.user.createdAt,
+      //     isActive: updatedSupervisor.user.isActive,
+      //   },
+      // };
+      return updatedSupervisor;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         {
