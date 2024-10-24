@@ -16,6 +16,7 @@ import { handleInternalServerError } from 'src/common/utils';
 import { IRequestUser } from 'src/common/interfaces';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 import { UserRole } from 'src/common/enums';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -81,12 +82,17 @@ export class UsersService {
     }
   }
 
-  async findAll() {
+  async findAll({ role }: IRequestUser) {
+    let allUsers: User[];
     try {
-      const users = await this.usersRepository.find({
-        where: { isActive: true },
-      });
-      return users;
+      if (role === UserRole.ADMINISTRATOR)
+        allUsers = await this.usersRepository.find();
+      else
+        allUsers = await this.usersRepository.find({
+          where: { isActive: true },
+        });
+
+      return allUsers;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -95,7 +101,7 @@ export class UsersService {
   async findAdmins() {
     try {
       const admins = await this.usersRepository.find({
-        where: { isActive: true, userRole: UserRole.ADMINISTRATOR },
+        where: { userRole: UserRole.ADMINISTRATOR },
       });
       return admins;
     } catch (error) {
@@ -111,12 +117,92 @@ export class UsersService {
     return user;
   }
 
+  async findOneByPrivilegedUsers(id: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (!user) throw new NotFoundException(`${USER_NOT_FOUND}`);
+    return user;
+  }
+
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
       where: { email, isActive: true },
     });
     if (!user) throw new NotFoundException(`${INVALID_CREDENTIALS}`);
     return user;
+  }
+
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    { fullName, role, userId }: IRequestUser,
+  ) {
+    const existingUser = await this.findOneByPrivilegedUsers(id);
+    console.log({ existingUser });
+
+    // Prohibimos actualizar los siguientes campos
+    const isUnauthorizedUpdate =
+      updateUserDto.email || updateUserDto.password || updateUserDto.userRole;
+    if (isUnauthorizedUpdate) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'TRY TO UPDATE USER',
+        {
+          id: existingUser.id,
+          name: `${existingUser.firstName} ${existingUser.lastName}`,
+        },
+        'FAILED TO UPDATE USER',
+        'Attempted to update fields that are not allowed: email, password, role',
+      );
+      throw new ConflictException(
+        'You are not allowed to update email, password or role of the user.',
+      );
+    }
+
+    const { firstName, lastName, isActive } = updateUserDto;
+
+    if (firstName) existingUser.firstName = firstName;
+    if (lastName) existingUser.lastName = lastName;
+    if (isActive !== undefined) existingUser.isActive = isActive;
+
+    try {
+      console.log({
+        isActive,
+        fn: existingUser.firstName,
+        ln: existingUser.lastName,
+        ia: existingUser.isActive,
+      });
+
+      const updatedUser = await this.usersRepository.save(existingUser);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'UPDATE USER',
+        {
+          id: updatedUser.id,
+          name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+        },
+        'SUCCESS',
+      );
+      return updatedUser;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO UPDATE USER',
+        { id, name: 'Update Error' },
+        'FAILED TO UPDATE USER',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
   }
 
   async deactivate(id: string, { fullName, role, userId }: IRequestUser) {
@@ -149,45 +235,6 @@ export class UsersService {
         'FAILED TO DELETE USER',
         error.message,
       );
-      handleInternalServerError(error.message);
-    }
-  }
-
-  async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
-    try {
-      const removedUser = await this.usersRepository.delete(id);
-      await this.systemAuditsService.createSystemAudit(
-        {
-          id: userId,
-          fullName,
-          role,
-        },
-        'DELETE USER',
-        { id, name: 'User' },
-        'SUCCESS',
-      );
-      return removedUser.affected;
-    } catch (error) {
-      await this.systemAuditsService.createSystemAudit(
-        {
-          id: userId,
-          fullName,
-          role,
-        },
-        'TRY TO DELETE USER',
-        { id, name: 'User' },
-        'FAILED TO DELETE USER',
-        error.message,
-      );
-      handleInternalServerError(error.message);
-    }
-  }
-
-  async removeAll() {
-    try {
-      await this.usersRepository.update({}, { isActive: false });
-    } catch (error) {
       handleInternalServerError(error.message);
     }
   }

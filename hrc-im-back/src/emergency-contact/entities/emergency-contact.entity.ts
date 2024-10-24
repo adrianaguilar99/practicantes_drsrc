@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { normalizeString } from 'src/common/utils';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('emergency_contacts')
 export class EmergencyContact {
@@ -74,4 +81,16 @@ export class EmergencyContact {
     nullable: true,
   })
   position_contact: string;
+
+  @BeforeInsert()
+  setInsertion() {
+    this.name = normalizeString(this.name);
+    this.position_contact = normalizeString(this.position_contact);
+    this.relationship = normalizeString(this.relationship);
+  }
+
+  @BeforeUpdate()
+  fieldsBeforeUpdate() {
+    this.setInsertion();
+  }
 }

@@ -123,6 +123,23 @@ export class InternsController {
     return { message: SUCCESSFUL_FETCH, data: intern };
   }
 
+  @ApiOperation({
+    summary: `${READ_RECORD} Retrieve the intern associated with the given user ID.
+    All users can access this endpoint`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: Intern,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @HttpCode(200)
+  @Get(':id/user')
+  async findOneByUserId(@Param('id', ParseUUIDPipe) id: string) {
+    const intern = await this.internsService.findOneByUserId(id);
+    return { message: SUCCESSFUL_FETCH, data: intern };
+  }
+
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,

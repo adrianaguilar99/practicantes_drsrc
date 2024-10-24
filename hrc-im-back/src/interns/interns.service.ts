@@ -159,6 +159,16 @@ export class InternsService {
     return intern;
   }
 
+  async findOneByUserId(id: string) {
+    const intern = await this.internsRepository.findOne({
+      where: { user: { id } },
+    });
+    if (!intern)
+      throw new NotFoundException(`Intern with id: ${id} not found.`);
+
+    return intern;
+  }
+
   async update(
     id: string,
     {
