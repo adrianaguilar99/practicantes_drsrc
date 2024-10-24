@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { normalizeString } from 'src/common/utils';
 import { Intern } from 'src/interns/entities/intern.entity';
 import {
@@ -85,6 +86,7 @@ export class EmergencyContact {
   })
   positionContact: string;
 
+  @Exclude()
   @ApiProperty({
     type: () => Intern,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
