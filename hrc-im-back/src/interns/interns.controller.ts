@@ -123,7 +123,22 @@ export class InternsController {
     return { message: SUCCESSFUL_FETCH, data: intern };
   }
 
-  // TODO CREAR ENDPOINT DE BUSQUEDA DE INTERN MEDIANTE EL ID DEL USUARIO
+  @ApiOperation({
+    summary: `${READ_RECORD} Retrieve the intern associated with the given user ID.
+    All users can access this endpoint`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: Intern,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @HttpCode(200)
+  @Get(':id/user')
+  async findOneByUserId(@Param('id', ParseUUIDPipe) id: string) {
+    const intern = await this.internsService.findOneByUserId(id);
+    return { message: SUCCESSFUL_FETCH, data: intern };
+  }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
