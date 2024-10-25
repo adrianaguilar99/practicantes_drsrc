@@ -1,10 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { normalizeString } from 'src/common/utils';
+import { Intern } from 'src/interns/entities/intern.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -71,21 +75,35 @@ export class EmergencyContact {
     description: `Job position of the emergency contact at their current place of employment.
     This field is optional and may provide additional context about the contact's role.`,
     uniqueItems: false,
-    nullable: true,
+    nullable: false,
   })
   @Column({
     name: 'position_contact',
     type: 'varchar',
     length: 50,
     unique: false,
-    nullable: true,
+    nullable: false,
   })
-  position_contact: string;
+  positionContact: string;
+
+  @Exclude()
+  @ApiProperty({
+    type: () => Intern,
+    example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
+    description: 'Intern ID to make the relationship.',
+    nullable: false,
+  })
+  @ManyToOne(() => Intern, (intern) => intern.emergencyContacts, {
+    // eager: true,
+    nullable: false,
+  })
+  @JoinColumn({ name: 'intern_id' })
+  intern: Intern;
 
   @BeforeInsert()
   setInsertion() {
     this.name = normalizeString(this.name);
-    this.position_contact = normalizeString(this.position_contact);
+    this.positionContact = normalizeString(this.positionContact);
     this.relationship = normalizeString(this.relationship);
   }
 

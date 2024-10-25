@@ -62,7 +62,9 @@ export class DepartmentsService {
 
   async findAll() {
     try {
-      const allDepartments = await this.departmentsRepository.find();
+      const allDepartments = await this.departmentsRepository.find({
+        order: { createdAt: 'DESC' },
+      });
       return allDepartments;
     } catch (error) {
       handleInternalServerError(error.message);
@@ -76,9 +78,6 @@ export class DepartmentsService {
     if (!department)
       throw new NotFoundException(`Department with id: ${id} not found.`);
     return department;
-  }
-  catch(error) {
-    handleInternalServerError(error.message);
   }
 
   async update(

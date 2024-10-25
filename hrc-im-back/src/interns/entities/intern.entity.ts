@@ -1,16 +1,20 @@
+import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
+import { EmergencyContact } from 'src/emergency-contact/entities/emergency-contact.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -102,6 +106,22 @@ export class Intern {
   internshipEnd: Date;
 
   @ApiProperty({
+    example: '08:00:00',
+    description: 'Time of entry for the intern.',
+    nullable: false,
+  })
+  @Column({ name: 'entry_time', type: 'time', nullable: false })
+  entryTime: string;
+
+  @ApiProperty({
+    example: '17:00:00',
+    description: 'Time of exit for the intern.',
+    nullable: false,
+  })
+  @Column({ name: 'exit_time', type: 'time', nullable: false })
+  exitTime: string;
+
+  @ApiProperty({
     example: InternStatus.ACTIVE,
     description: "Intern's status.",
     nullable: false,
@@ -181,6 +201,13 @@ export class Intern {
   @JoinColumn({ name: 'property_id' })
   property: Property;
 
+  @OneToMany(
+    () => EmergencyContact,
+    (emergencyContacts) => emergencyContacts.intern,
+    { eager: true },
+  )
+  emergencyContacts: EmergencyContact[];
+
   @ApiProperty({
     type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -194,24 +221,6 @@ export class Intern {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  // Funcion que calcula los dias de progreso del practicante
-  calculateRemainingDays(): number {
-    const now = new Date();
-    const endDate = new Date(this.internshipEnd);
-    const diffInTime = endDate.getTime() - now.getTime();
-    const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
-    return diffInDays;
-  }
-
-  // Funcion que calcula las horas de progreso del practicante
-  calculateRemainingHours(): number {
-    const now = new Date();
-    const endDate = new Date(this.internshipEnd);
-    const diffInTime = endDate.getTime() - now.getTime();
-    const diffInHours = Math.ceil(diffInTime / (1000 * 3600));
-    return diffInHours;
-  }
-
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.phone = this.phone.trim();
@@ -220,6 +229,12 @@ export class Intern {
       this.schoolEnrollment = this.schoolEnrollment.trim();
     }
     this.validateDates();
+    this.validateTimes();
+  }
+
+  @BeforeUpdate()
+  checkFieldsBeforeUpdate() {
+    this.checkFieldsBeforeInsert();
   }
 
   private validateDates() {
@@ -246,14 +261,47 @@ export class Intern {
 
     // Permitir que la fecha de inicio sea igual o mayor a la fecha actual
     if (startDate.getTime() < now.getTime())
-      throw new Error('The internship start date cannot be in the past.');
+      throw new BadRequestException(
+        'The internship start date cannot be in the past.',
+      );
 
     if (startDate.getTime() > endDate.getTime())
-      throw new Error(
+      throw new BadRequestException(
         'The internship start date cannot be greater than the end date.',
       );
 
     if (endDate.getTime() < now.getTime())
-      throw new Error('The internship end date cannot be in the past.');
+      throw new BadRequestException(
+        'The internship end date cannot be in the past.',
+      );
+  }
+
+  private validateTimes() {
+    const entryTime = this.parseTime(this.entryTime);
+    const exitTime = this.parseTime(this.exitTime);
+
+    const minEntryTime = this.parseTime('07:00:00'); // Hora mínima de entrada
+    const maxEntryTime = this.parseTime('10:00:00'); // Hora máxima de entrada
+
+    // Validacion: Hora de entrada esté dentro del rango permitido
+    if (entryTime < minEntryTime || entryTime > maxEntryTime) {
+      throw new BadRequestException(
+        'The entry time must be between 07:00 and 10:00.',
+      );
+    }
+
+    // Validacion: Hora de salida sea mayor que la hora de entrada
+    if (exitTime <= entryTime) {
+      throw new BadRequestException(
+        'The exit time must be later than the entry time.',
+      );
+    }
+  }
+
+  private parseTime(time: string): Date {
+    const [hours, minutes, seconds] = time.split(':').map(Number);
+    const now = new Date();
+    now.setHours(hours, minutes, seconds || 0);
+    return now;
   }
 }

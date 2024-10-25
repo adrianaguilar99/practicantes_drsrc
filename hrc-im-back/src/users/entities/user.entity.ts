@@ -92,7 +92,7 @@ export class User {
 
   @ApiProperty({
     example: '2024-01-01 00:00:00.000',
-    description: 'The time the user was created.',
+    description: 'The time the user was created. This ',
   })
   @Column({
     name: 'created_at',
