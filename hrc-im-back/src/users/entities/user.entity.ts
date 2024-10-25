@@ -90,10 +90,6 @@ export class User {
   })
   userRole: UserRole;
 
-  @ApiProperty({
-    example: '2024-01-01 00:00:00.000',
-    description: 'The time the user was created.',
-  })
   @Column({
     name: 'created_at',
     type: 'timestamp',

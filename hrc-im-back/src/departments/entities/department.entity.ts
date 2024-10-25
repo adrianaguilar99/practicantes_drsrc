@@ -37,6 +37,12 @@ export class Department {
   })
   name: string;
 
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+  })
+  createdAt: Date;
+
   @OneToMany(() => Supervisor, (supervisors) => supervisors.department, {
     eager: true,
   })
@@ -48,10 +54,11 @@ export class Department {
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.name = normalizeString(this.name);
+    this.createdAt = new Date();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.checkFieldsBeforeInsert();
+    this.name = normalizeString(this.name);
   }
 }

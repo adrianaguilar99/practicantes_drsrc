@@ -36,16 +36,23 @@ export class Property {
   })
   name: string;
 
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+  })
+  createdAt: Date;
+
   @OneToMany(() => Intern, (interns) => interns.property)
   interns: Intern[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.name = normalizeString(this.name);
+    this.createdAt = new Date();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.checkFieldsBeforeInsert();
+    this.name = normalizeString(this.name);
   }
 }
