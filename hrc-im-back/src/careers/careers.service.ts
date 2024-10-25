@@ -60,7 +60,9 @@ export class CareersService {
 
   async findAll() {
     try {
-      const careers = await this.careersRepository.find();
+      const careers = await this.careersRepository.find({
+        order: { createdAt: 'DESC' },
+      });
       return careers;
     } catch (error) {
       handleInternalServerError(error.message);

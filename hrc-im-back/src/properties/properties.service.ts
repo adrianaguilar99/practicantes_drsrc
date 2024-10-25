@@ -59,7 +59,9 @@ export class PropertiesService {
 
   async findAll() {
     try {
-      const properties = await this.propertiesRepository.find();
+      const properties = await this.propertiesRepository.find({
+        order: { createdAt: 'DESC' },
+      });
       return properties;
     } catch (error) {
       handleInternalServerError(error.message);
