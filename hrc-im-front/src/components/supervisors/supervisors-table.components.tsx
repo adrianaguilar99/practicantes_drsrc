@@ -8,7 +8,7 @@ import { FormModal } from "../modals/form-modal.component";
 import { DataSupervisor } from '../../interfaces/supervisors/supervisor.interface';  
 import { deleteSupervisor} from "../../api/supervisors/supervisors.api";
 import { enqueueSnackbar } from "notistack";
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { ConfirmationModal } from "../modals/confirmation-modal.component";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { useSelector } from "react-redux";
@@ -182,11 +182,11 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
                       <IconButton aria-label="delete" onClick={() => {DeleteClick(supervisor.user);setTypeAction("delete")}}>
                       <PersonOffOutlinedIcon />
                     </IconButton>
-                    ) : <IconButton aria-label="delete">
+                    ) : 
                       <IconButton aria-label="active" onClick={() => {DeleteClick(supervisor.user);setTypeAction("active")}}>
-                    <CheckRoundedIcon />
+                    <CheckBoxOutlinedIcon/>
                     </IconButton>
-                  </IconButton>}
+           }
                       </div>
                     ) : null}
                    

@@ -7,13 +7,19 @@ import { formatPhoneNumber, LightstringToColor, stringAvatar } from '../../funct
 import { TableProps } from "../audits/audits-table.component";
 import { FormModal } from "../modals/form-modal.component";
 import { DataUser } from "../../interfaces/users.interface";
-
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import { enqueueSnackbar } from "notistack";
+import { deleteUser, patchUser } from "../../api/users/users.api";
+import { ConfirmationModal } from "../modals/confirmation-modal.component";
 export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(7);
   const [open, setOpen] = useState(false);
+  const userToken = sessionStorage.getItem("_Token") || "";
   const [selectedAdministrator, setSelectedAdministrator] = useState<DataUser | null>(null); 
   const userFullName = sessionStorage.getItem('_ProfileName');
+  const [typeAction, setTypeAction] = useState('');
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
 
   useEffect(() => {
     const ResizePage = () => {
@@ -52,6 +58,56 @@ export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
+  const DeleteClick = (administrator: DataUser | null) => {
+    setSelectedAdministrator(administrator);
+    ConfirmationModalOpen();
+};
+
+const ConfirmationModalState = () => {
+  setConfirmationOpen(!confirmationOpen);
+};
+
+const ConfirmationModalOpen = () => setConfirmationOpen(true);
+const ConfirmationModalClose = () => setConfirmationOpen(false);
+
+const DeleteAdministrator = () => {
+  if (!selectedAdministrator) return;
+  deleteUser(userToken, selectedAdministrator.id)
+    .then((data) => {
+      if (data) {
+        enqueueSnackbar("administrador desactivado correctamente", {
+          variant: "success",
+        });
+        ConfirmationModalClose();
+        onUpdate();
+      }
+    })
+    .catch((error) => {
+      enqueueSnackbar("Error al desactivar el administrador", { variant: "error" });
+      ConfirmationModalClose();
+    });
+};
+
+const ActiveAdministrator = () => {
+  if (!selectedAdministrator) return;
+  patchUser(userToken, selectedAdministrator.id,{
+    isActive: true,
+  })
+    .then((data) => {
+      if (data) {
+        enqueueSnackbar("administrador activado correctamente", {
+          variant: "success",
+        });
+        ConfirmationModalClose();
+        onUpdate();
+      }
+    })
+    .catch((error) => {
+      enqueueSnackbar("Error al activar el administrador", { variant: "error" });
+      ConfirmationModalClose();
+    });
+};
 
   return (
     <div className="generic-table-container">
@@ -97,9 +153,16 @@ export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
                     <IconButton aria-label="edit" onClick={() => EditClick(administrator)}>
                       <EditOutlinedIcon />
                     </IconButton>
-                    <IconButton aria-label="delete">
+                    {administrator.isActive  ? (
+                    <IconButton aria-label="delete" onClick={() => {DeleteClick(administrator);setTypeAction("delete")}}>
                       <DeleteOutlineOutlinedIcon />
-                    </IconButton>
+                      </IconButton>
+                    ):(
+                      <IconButton aria-label="active" onClick={() => {DeleteClick(administrator);setTypeAction("active")}}>
+                       <CheckBoxOutlinedIcon/>
+                      </IconButton>
+                    )
+                     }
                   </td>
                   ): (
                     <td className="table-actions">
@@ -126,7 +189,7 @@ export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
       {selectedAdministrator && (
         <FormModal
           open={open}
-          onConfirm={ModalClose}
+          onConfirm={onUpdate}
           type="Edit"
           onCancel={ModalClose}
           data={selectedAdministrator}
@@ -134,6 +197,13 @@ export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
           entity={"administrators"}
         />
       )}
+         <ConfirmationModal
+        open={confirmationOpen}
+        onConfirm={typeAction == "active" ? ActiveAdministrator : DeleteAdministrator}
+        onCancel={ConfirmationModalClose}
+        title="Desactivar Supervisor"
+        message={typeAction == "active" ? "¿Estas seguro de activar la cuenta de este administrador?" : "¿Estas seguro que quieres desactivar la cuenta de este administrador?"}
+      />
     </div>
   );
 };

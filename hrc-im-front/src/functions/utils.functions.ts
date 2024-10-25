@@ -87,3 +87,20 @@ export function formatPhoneNumber(phoneNumber : string) {
 }
 
 
+export const parseTimeString = (timeString: string) => {
+  const timeValue = parseInt(timeString.slice(0, -1));
+  const timeUnit = timeString.slice(-1);
+
+  switch (timeUnit) {
+      case 's': 
+          return timeValue * 1000;
+      case 'm': 
+          return timeValue * 1000 * 60;
+      case 'h': 
+          return timeValue * 1000 * 60 * 60;
+      case 'd': 
+          return timeValue * 1000 * 60 * 60 * 24;
+      default:
+          throw new Error('Formato de tiempo inválido');
+  }
+};

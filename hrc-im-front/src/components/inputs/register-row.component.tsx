@@ -81,6 +81,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
 
@@ -93,6 +94,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
 
@@ -106,6 +108,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
 
@@ -118,6 +121,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
           {type === "file" && (
@@ -129,7 +133,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
-              
+              autoComplete="off"
             />
           )}
 
@@ -141,6 +145,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              autoComplete="off"
             />
           )}
 
@@ -152,6 +157,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              autoComplete="off"
             />
           )}
 

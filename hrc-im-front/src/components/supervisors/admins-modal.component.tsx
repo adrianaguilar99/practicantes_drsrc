@@ -76,7 +76,6 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
         patchUser(userToken, UserId, {
             firstName: SupervisorFirstName,
             lastName: SupervisorLastName,
-            password: SupervisorEmail,
           }).then((data) => {
               if (data) {
                   enqueueSnackbar("Administrador actualizado correctamente", {
@@ -151,41 +150,6 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             validate={errors.supervisorLastName ? "Error" : "Normal"}
             typeError={errors.supervisorLastName}
           />
-
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "2%",
-            gap: "1%",
-            alignItems: "flex-end",
-          }}
-        >
-          <RegisterRow
-            label="Correo"
-            value={SupervisorEmail}
-            type="text"
-            id={"supervisorEmail"}
-            show={true}
-            editable={false}
-            onChange={(value) => setSupervisorEmail(value || "")}
-            style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
-            validate={errors.supervisorEmail ? "Error" : "Normal"}
-            typeError={errors.supervisorEmail}
-          />
-          <RegisterRow
-            label="Contraseña"
-            type="password"
-            value={SupervisorPassword}
-            id={"supervisorPassword"}
-            show={true}
-            onChange={(value) => setSupervisorPassword(value || "")}
-            style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
-            validate={errors.supervisorPassword ? "Error" : "Normal"}
-            typeError={errors.supervisorPassword}
-          />
-
 
         </Box>
 

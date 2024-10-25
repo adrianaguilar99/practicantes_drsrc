@@ -13,6 +13,8 @@ export interface DataIntern {
     schoolEnrollment:     string;
     internshipStart:      Date;
     internshipEnd:        Date;
+    entryTime: string,
+    exitTime: string,
     status:               string;
     career:               Career;
     department:           null;
@@ -60,6 +62,8 @@ export interface PostIntern{
     schoolEnrollment?: string,
     internshipStart: string,
     internshipEnd: string,
+    entryTime: string,
+    exitTime: string,
     status: "ACTIVE",
     careerId?: string,
     departmentId?: string,
@@ -67,5 +71,6 @@ export interface PostIntern{
     institutionId?: string,
     propertyId: string,
     userId?: string
+    data?: any
   }
 

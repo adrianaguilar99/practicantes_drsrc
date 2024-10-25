@@ -1,0 +1,26 @@
+import { DataEmergencyContact, EmergencyContactInterface, PostEmergencyContact } from "../../../interfaces/interns/emergency-contacts/emergency-contacts.interface";
+import { apiUrl } from "../../api-request";
+
+export async function postEmergencyContact(Token: string, data: PostEmergencyContact): Promise< PostEmergencyContact | null> {
+    try {
+      const response = await fetch(apiUrl + "/emergency-contact", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Error al enviar los contactos de emergencia");
+      }
+  
+      const responseJson: any = await response.json();
+      return responseJson;
+    } catch (error: any) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }

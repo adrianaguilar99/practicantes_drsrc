@@ -27,6 +27,8 @@ import { DataDepartment, DepartmentsInterface } from "../../interfaces/departmen
 import { getPropertiesData } from "../../api/properties/propertie.api";
 import { DataProperty, PropertiesInterface } from "../../interfaces/properties/properties.interface";
 import { postInternFunction } from "../../functions/intern-functions/post-intern.function";
+import { DataEmergencyContact } from "../../interfaces/interns/emergency-contacts/emergency-contacts.interface";
+import { set } from "date-fns";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -65,6 +67,7 @@ const InternRegisterPage = () => {
   const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("A+");
+  const [InternContacts = [], setInternContacts] = useState<DataEmergencyContact[]>([]);
 
   interface EmergencyContacts {
     name: string;
@@ -111,6 +114,7 @@ const InternRegisterPage = () => {
   const [Institutions, setInstitutions] = useState<DataInstitution[]>([]);
   const [Departments, setDepartments] = useState<DataDepartment[]>([]);
   const [Properties, setProperties] = useState<DataProperty[]>([]);
+  const [formAction, setFormAction] = useState<boolean>(false);
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
@@ -174,6 +178,7 @@ const InternRegisterPage = () => {
 
   const formSubmit = () => {
     const validators = InputValidators();
+    setFormAction(true);
     const newErrors: { [key: string]: string | undefined } = {};
 
     const resultName = validators.string(InternFirstName);
@@ -250,14 +255,38 @@ const InternRegisterPage = () => {
       newErrors.internEndDate = resultEndDate;
     }
 
+    if(InterBeginDate > InternEndDate){
+      newErrors.internEndDate = "La fecha de inicio debe ser menor a la fecha de finalización";
+    }
+    if(InternEndDate < InterBeginDate){
+      newErrors.internBeginDate = "La fecha de finalización debe ser mayor a la fecha de inicio";
+    }
+
     const resultCheckIn = validators.time(InternCheckIn);
     if (resultCheckIn) {
       newErrors.internCheckIn = resultCheckIn;
     }
 
+
     const resultCheckOut = validators.time(InternCheckOut);
     if (resultCheckOut) {
       newErrors.internCheckOut = resultCheckOut;
+    }
+
+    if(InternCheckIn > InternCheckOut){
+      newErrors.internCheckOut = "La hora de entrada debe ser menor a la hora de salida";
+    }
+
+    if(InternCheckOut < InternCheckIn){
+      newErrors.internCheckIn = "La hora de salida debe ser mayor a la hora de entrada";
+    }
+
+    if(InternCheckIn >= "10:00:00" || InternCheckIn <= "07:00:00" ){
+      newErrors.internCheckIn = "La hora de entrada debe estar entre las 07:00 y 10:00 de la mañana";
+    }
+
+    if(InternCheckOut < "14:00:00" || InternCheckOut > "17:00:00" ){
+      newErrors.internCheckOut = "La hora de salida debe estar entre las las 14:00 y 17:00 horas del dia";
     }
 
     const resultTotalTime = validators.string(InternTotalTime);
@@ -294,6 +323,7 @@ const InternRegisterPage = () => {
     if (resultPropertie) {
       newErrors.internProperty = resultPropertie;
     }
+
     setErrors(newErrors);
     postInternFunction({
             userToken: userToken,
@@ -311,6 +341,8 @@ const InternRegisterPage = () => {
               schoolEnrollment: InternID,
               internshipStart: InterBeginDate,
               internshipEnd: InternEndDate,
+              entryTime: InternCheckIn,
+              exitTime: InternCheckOut,
               status: "ACTIVE",    
               careerId: InternProgram,
               departmentId: InternOldDepartment,
@@ -318,6 +350,7 @@ const InternRegisterPage = () => {
               institutionId: InternUniversity,
               propertyId: InternProperty,
             },
+            contacts: InternContacts,
             onSuccess: () => {
               console.log("Usuario registrado correctamente");
             }
@@ -362,6 +395,12 @@ const InternRegisterPage = () => {
         
 
   };
+
+
+
+  const ReceiveContacts = (contacts : DataEmergencyContact[]) => {
+    setInternContacts(contacts);
+  }
 
   return (
     <div className="body-page">
@@ -414,6 +453,7 @@ const InternRegisterPage = () => {
                     value={formatPhoneNumber(InternPhone)}
                     id="celphone"
                     type="phone"
+                    maxLength={10}
                     show={true}
                     validate={errors.internPhone ? "Error" : "Normal"}
                     typeError={errors.internPhone}
@@ -685,7 +725,7 @@ const InternRegisterPage = () => {
                     <ContactPhoneRoundedIcon /> <h3>Contactos de emergencia</h3>
                   </div>
 
-                  <EmergencyContactsRegister />
+                  <EmergencyContactsRegister triggerAction={formAction} onReceiveContacts={ReceiveContacts}/>
                   {InternEmergencyContacts.length < 2 && (
                     <p className="register-intern-suggestion">
                       Ingrese minimo 2 contactos de emergencia

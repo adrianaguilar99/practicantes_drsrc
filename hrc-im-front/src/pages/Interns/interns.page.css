@@ -438,7 +438,7 @@ padding-right: 5%;
 .interns-register-body {
     display: flex;
     text-align: center;
-    font-size: 18px;
+    font-size: .75rem;
     font-weight: bold;
     color: #333;
     padding-right: 5%;
@@ -460,7 +460,7 @@ padding-right: 5%;
 }
 
 .register-section-left{
-    width: 50%;
+    width: 40%;
     margin-right: 4%;
 }
 
@@ -477,7 +477,7 @@ padding-right: 5%;
 }
 
 .register-section-right{
-    width: 30%;
+    width: 40%;
 }
 .attached-file-item {
     padding: 5% 2%;
@@ -676,11 +676,17 @@ padding-right: 5%;
 }
 
 .add-contact-button{
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     padding: 1% 2%;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-right: 3%;
+    display: flex;
+    gap: 5%;
+    width: 50%;
+    margin-bottom: 2%;
+    align-items: center;
+    justify-content: center;
 }
 
 .register-intern-suggestion{
