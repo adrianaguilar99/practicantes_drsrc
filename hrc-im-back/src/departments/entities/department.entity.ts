@@ -37,6 +37,16 @@ export class Department {
   })
   name: string;
 
+  @ApiProperty({
+    example: '2024-01-01 00:00:00.000',
+    description: 'The time the department was created. This ',
+  })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+  })
+  createdAt: Date;
+
   @OneToMany(() => Supervisor, (supervisors) => supervisors.department, {
     eager: true,
   })
@@ -48,10 +58,11 @@ export class Department {
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.name = normalizeString(this.name);
+    this.createdAt = new Date();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.checkFieldsBeforeInsert();
+    this.name = normalizeString(this.name);
   }
 }

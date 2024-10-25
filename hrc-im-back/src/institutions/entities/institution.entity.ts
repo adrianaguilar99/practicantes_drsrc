@@ -49,16 +49,27 @@ export class Institution {
   })
   phone: string;
 
+  @ApiProperty({
+    example: '2024-01-01 00:00:00.000',
+    description: 'The time the institution was created. This ',
+  })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+  })
+  createdAt: Date;
+
   @OneToMany(() => Intern, (interns) => interns.institution)
   interns: Intern[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
     this.name = normalizeString(this.name);
+    this.createdAt = new Date();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
-    this.checkFieldsBeforeInsert();
+    this.name = normalizeString(this.name);
   }
 }

@@ -20,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
   INTERNAL_SERVER_ERROR,
@@ -149,6 +150,7 @@ export class InternsController {
     description: SUCCESSFUL_UPDATE,
     type: Intern,
   })
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)

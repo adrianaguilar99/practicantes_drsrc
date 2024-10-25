@@ -61,7 +61,9 @@ export class InstitutionsService {
 
   async findAll() {
     try {
-      const institutions = await this.institutionsRepository.find();
+      const institutions = await this.institutionsRepository.find({
+        order: { createdAt: 'DESC' },
+      });
       return institutions;
     } catch (error) {
       handleInternalServerError(error.message);
