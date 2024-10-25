@@ -141,7 +141,7 @@ export class InternsService {
       const { department } = await this.supervisorsService.findByUser(userId);
       // console.log(supervisor);
       allInterns = await this.internsRepository.find({
-        where: { department },
+        where: { internshipDepartment: department },
       });
     } else {
       allInterns = await this.internsRepository.find();

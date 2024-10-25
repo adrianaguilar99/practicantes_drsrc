@@ -81,11 +81,16 @@ export class EmergencyContactService {
   async findOne(id: string) {
     const emergencyContact = await this.emergencyContactsRepository.findOne({
       where: { id },
+      relations: {
+        intern: true,
+      },
     });
     if (!emergencyContact)
       throw new NotFoundException(
         `Emergency contact with id: ${id} not found.`,
       );
+    console.log({ emergencyContact });
+
     return emergencyContact;
   }
 
@@ -97,7 +102,10 @@ export class EmergencyContactService {
     const existingContact = await this.findOne(id);
 
     // Nos aseguramos de que no se cambie el internId
-    if (updateEmergencyContactDto.internId) {
+    if (
+      updateEmergencyContactDto.internId &&
+      updateEmergencyContactDto.internId !== existingContact.intern.id
+    ) {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'TRY TO UPDATE EMERGENCY CONTACT',
