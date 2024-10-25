@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -180,6 +181,8 @@ export class InternsService {
       internshipDepartmentId,
       internshipEnd,
       internshipStart,
+      entryTime,
+      exitTime,
       phone,
       propertyId,
       schoolEnrollment,
@@ -239,13 +242,14 @@ export class InternsService {
      * si estan mandando en el cuerpo de la peticion, en dado caso de que se manden
      * y existan se actualiza el registro */
     if (bloodType) existingIntern.bloodType = bloodType;
-    if (schoolEnrollment)
-      existingIntern.schoolEnrollment = schoolEnrollment.trim();
-    if (address) existingIntern.address = address.trim();
+    if (schoolEnrollment) existingIntern.schoolEnrollment = schoolEnrollment;
+    if (address) existingIntern.address = address;
     if (phone) existingIntern.phone = phone;
     if (status) existingIntern.status = status;
     if (internshipStart) existingIntern.internshipStart = internshipStart;
     if (internshipEnd) existingIntern.internshipEnd = internshipEnd;
+    if (entryTime) existingIntern.entryTime = entryTime;
+    if (exitTime) existingIntern.exitTime = exitTime;
 
     if (careerId) {
       const career = await this.careersService.findOne(careerId);
@@ -297,6 +301,7 @@ export class InternsService {
         'FAILED',
         error.message,
       );
+      if (error instanceof BadRequestException) throw error;
       handleInternalServerError(error.message);
     }
   }

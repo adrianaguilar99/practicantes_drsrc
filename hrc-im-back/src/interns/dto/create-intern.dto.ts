@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsDate,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -74,6 +73,24 @@ export class CreateInternDto {
   @IsDateString()
   @IsNotEmpty()
   internshipEnd: Date;
+
+  @ApiProperty({
+    example: '08:00:00',
+    description: 'Time of entry for the intern.',
+    nullable: false,
+  })
+  @IsString()
+  @IsNotEmpty()
+  entryTime: string;
+
+  @ApiProperty({
+    example: '17:00:00',
+    description: 'Time of exit for the intern.',
+    nullable: false,
+  })
+  @IsString()
+  @IsNotEmpty()
+  exitTime: string;
 
   @ApiProperty({
     example: InternStatus.ACTIVE,
