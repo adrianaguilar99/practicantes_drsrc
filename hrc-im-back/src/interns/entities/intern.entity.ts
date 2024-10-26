@@ -209,11 +209,6 @@ export class Intern {
   )
   emergencyContacts: EmergencyContact[];
 
-  @OneToMany(() => InternFile, (internFiles) => internFiles.intern, {
-    eager: true,
-  })
-  internFiles: InternFile[];
-
   @ApiProperty({
     type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -226,6 +221,11 @@ export class Intern {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToOne(() => InternFile, (internFiles) => internFiles.intern, {
+    eager: true,
+  })
+  internFiles: InternFile;
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

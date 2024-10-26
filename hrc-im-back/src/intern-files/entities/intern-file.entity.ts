@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { Intern } from 'src/interns/entities/intern.entity';
 import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -59,14 +60,14 @@ export class InternFile {
   @Column({ type: 'varchar', nullable: true })
   medicalInsurance: string;
 
-  // @Exclude()
+  @Exclude()
   @ApiProperty({
     type: () => Intern,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
     description: 'Intern ID to make the relationship.',
     nullable: false,
   })
-  @ManyToOne(() => Intern, (intern) => intern.internFiles, {
+  @OneToOne(() => Intern, (intern) => intern.internFiles, {
     nullable: false,
   })
   @JoinColumn({ name: 'intern_id' })
