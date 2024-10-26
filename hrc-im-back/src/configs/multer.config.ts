@@ -19,8 +19,12 @@ const multerOptions = {
       const name = normalizeString(file.originalname.split('.')[0])
         .split(' ')
         .join('-');
+      const randomName = Array(32)
+        .fill(null)
+        .map(() => Math.round(Math.random() * 16).toString(16))
+        .join('');
       const extension = extname(file.originalname);
-      cb(null, `${name}${extension}`);
+      cb(null, `${name}-${randomName}${extension}`);
     },
   }),
   fileFilter,
