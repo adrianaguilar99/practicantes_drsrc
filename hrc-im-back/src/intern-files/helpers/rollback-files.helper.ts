@@ -1,8 +1,9 @@
 import { existsSync, rmSync } from 'fs';
 import { join } from 'path';
+import { ENV } from 'src/configs';
 
 export const rollbackFiles = (internId: string) => {
-  const folderPath = join(`public/intern-files/${internId}`);
+  const folderPath = join(`${ENV.INTERN_FILES_PATH}${internId}`);
   // console.log({ folderPath });
 
   if (existsSync(folderPath)) {

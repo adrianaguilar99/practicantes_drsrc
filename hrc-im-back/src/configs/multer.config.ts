@@ -3,11 +3,12 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { normalizeString } from 'src/common/utils';
 import { fileFilter } from 'src/intern-files/helpers';
+import { ENV } from './env.config';
 
 const multerOptions = {
   storage: diskStorage({
     destination: (req, file, cb) => {
-      const uploadDir = `public/intern-files/${req.params.internId}`;
+      const uploadDir = `${ENV.INTERN_FILES_PATH}${req.params.internId}`;
       // console.log({ reqFiles: req });
 
       if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
