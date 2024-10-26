@@ -149,11 +149,11 @@ Navbar-Elements
     position: absolute;
     top: 50px; 
     right: 60px; 
-    min-width: 15vw;
-    max-width: 355px;
+    min-width: 10vw;
+    max-width: 320px;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+    border-radius: 5px;
     z-index: 1000;
     overflow: hidden; 
 }
@@ -236,17 +236,18 @@ Navbar-Elements
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 3px;
     border: 1px solid #E0E0E0;
     border-radius: 8px;
-    margin-bottom: 10px;
-    font-size: 12px;
+    margin-bottom: 1.5%;
+    font-size: 0.7em;
 }
 
 .notification-type {
     flex: 1;
     color: #4CAF50;
     font-weight: bold;
+    font-size: .75em;
 }
 
 .notification-icon {
@@ -275,8 +276,14 @@ Navbar-Elements
     text-align: center;
     color: #757575;
     font-size: 0.9em;
+    transition: 1s;
 }
-
+.see-more-button:hover{
+  background-color: #e4e4e4;
+ 
+  color: #276dd4;
+  transition: 1s;
+}
 
 
 
@@ -885,6 +892,21 @@ Navbar-Elements
     max-height: 70px;
 }
 
+.intern-card.inactive {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; 
+  background-color: #c4c4c4;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1%;
+  height: 10vh; 
+ 
+  overflow: hidden;
+  transition: 0.5s;
+  max-height: 70px;
+  filter: grayscale(100%);
+  
+}
 
 .intern-card:hover{
     cursor: pointer;
@@ -2074,6 +2096,23 @@ transition: 0.5s;
   width: 30%;
 }
 
+.intern-credential-right label{
+  font-size: .95em;
+  color: #474747;
+  text-align: center;
+  font-size: 'Lato', sans-serif;
+  border-style: solid;
+  font-weight: bold;
+  width: 100%;
+  border-width: 0 0 1px 0;
+
+}
+
+.intern-credential-right p{
+  font: 1em sans-serif;
+  color: #646464;
+
+}
 
 
 /*
@@ -2083,7 +2122,7 @@ transition: 0.5s;
 @media print {
   .intern-credential-body {
     width: 100%; 
-    height: 50vh; 
+    height: 40vh; 
     background-color: #fff;
     margin: 0 auto; 
     justify-content: center;

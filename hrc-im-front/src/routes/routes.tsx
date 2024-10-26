@@ -132,7 +132,7 @@ function RoutesConfig() {
            }
          />
           <Route
-           path="/interns/intern-information/interns-credentials"
+           path="/interns/intern-information/interns-credentials/:userId"
            element={
              <ProtectedRoute allowedRoles={['ADMINISTRATOR','SUPERVISOR_RH']}>
                <InternCredentialPage />

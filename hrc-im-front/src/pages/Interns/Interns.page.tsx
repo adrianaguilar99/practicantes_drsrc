@@ -2,45 +2,47 @@ import { Navbar } from "../../components/navbars/navbar.component";
 import "./interns.page.css";
 import { SearchComponent } from "../../components/search/search.component";
 import { useEffect, useState } from "react";
-import InternsTable, { practicantes } from "../../components/interns/interns-table/interns-table.component";
+import InternsTable from "../../components/interns/interns-table/interns-table.component";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { Footer } from "../../components/navbars/footer.component";
 import { search } from "../../functions/filters-functions";
-import { CircularProgress } from "../../components/utils/circular-progress.component";
+import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 import { FilterOptions } from "../../components/utils/filters.component";
+import { DataIntern, InternsInterface } from "../../interfaces/interns/interns.interface";
+import { getInternsData } from "../../api/interns/interns.api";
+import { RetryElement } from "../../components/utils/retry-element.component";
 
 export const InternsPage = () => {
-  type Intern = {
-    id: string;
-    nombre: string;
-    departamento: string;
-    progreso: number;
-    tipo: string;
-  };
 
-  const [data, setData] = useState<Intern[]>([]);
-  const [filteredData, setFilteredData] = useState<Intern[]>([]);
+
+  const [data, setData] = useState<DataIntern[]>([]);
+  const [filteredData, setFilteredData] = useState<DataIntern[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
-  const [hasError, setHasError] = useState(false);   
+  const [hasError, setHasError] = useState(false);
+  const userToken = sessionStorage.getItem("_Token") || "";   
 
-  useEffect(() => {
-
-    setTimeout(() => {
-      try {
-        const fetchedData = practicantes;  
-        if (fetchedData.length > 0) {
-          setData(fetchedData);
-          setFilteredData(fetchedData);
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+        const fetchedData: InternsInterface | null = await getInternsData(userToken);
+        if (fetchedData && fetchedData.data.length > 0) {
+            setData(fetchedData.data);
+            setFilteredData(fetchedData.data);
+            setHasError(false); 
         } else {
-          setHasError(true); 
+            setData([]);
+            setFilteredData([]);
+            setHasError(false);
         }
-      } catch (error) {
-        setHasError(true);  
-      } finally {
-        setIsLoading(false);  
-      }
-    }, 1000); 
-  }, []);
+    } catch (error) {
+        setHasError(true);
+    } finally {
+        setIsLoading(false);
+    }
+};
+useEffect(() => {
+  fetchData();
+}, [userToken]);
 
   const ApplyFilters = (filters: FilterOptions) => {
     console.log("Aplicando filtros:", filters); 
@@ -48,20 +50,20 @@ export const InternsPage = () => {
     if (filters.order) {
       results = results.sort((a, b) =>
         filters.order === "A - Z"
-          ? a.nombre.localeCompare(b.nombre)
-          : b.nombre.localeCompare(a.nombre)
+      ? +a.user.firstName.localeCompare(b.user.firstName) || +a.user.lastName.localeCompare(b.user.lastName)
+      : +b.user.firstName.localeCompare(a.user.firstName) || +b.user.lastName.localeCompare(a.user.lastName)
       );
     }
     if (filters.type) {
-      results = results.filter(intern => intern.tipo === filters.type);
+      results = results.filter(intern => intern.department === filters.type);
     }
-    if (filters.progress) {
-      if (filters.progress === "Completado") {
-        results = results.filter(intern => intern.progreso === 100);
-      }
-    }
+    // if (filters.progress) {
+    //   if (filters.progress === "Completado") {
+    //     results = results.filter(intern => intern.progreso === 100);
+    //   }
+    // }
     if (Array.isArray(filters.department) && filters.department.length > 0) {
-      results = results.filter(intern => filters.department!.includes(intern.departamento));
+      results = results.filter(intern => filters.department!.includes(intern.internshipDepartment.name));
     }
     console.log("Resultados filtrados:", results); 
     setFilteredData(results); 
@@ -70,8 +72,17 @@ export const InternsPage = () => {
 
 
   const SearchAction = (query: string) => {
-    const results = search(data, query, { keys: ['tipo', 'nombre', 'departamento', 'progreso'] });
-    setFilteredData(results);
+    const searchData = data.map(intern => ({
+      name: intern.user.firstName + " " + intern.user.lastName,
+    }));
+    const results = search(searchData, query, { keys: ['name'] });
+    const filteredResults = data.filter(intern =>
+      results.some(result => result.name === intern.user.firstName + " " + intern.user.lastName)
+    );
+    setFilteredData(filteredResults);
+  };
+  const PostSuccess = () => {
+    fetchData();
   };
 
   return (
@@ -84,14 +95,14 @@ export const InternsPage = () => {
           <SearchComponent onSearch={SearchAction} onFilters={ApplyFilters} onAdd={() => {}}/>
 
           <div className="interns-data-container">
-            {isLoading ? (
-              <CircularProgress type="secondary" /> 
+          {isLoading ? (
+              <CircularProgress type="secondary" />
             ) : hasError ? (
-              <div className="no-data-message">
-                <p>Ups, parece que no hay nada aquí.</p>  
-              </div>
+               <RetryElement onClick={() => fetchData()}/>
+            ) : data.length === 0 ? (
+              <NothingToSee />
             ) : (
-              <InternsTable data={filteredData} /> 
+              <InternsTable data={filteredData} onUpdate={PostSuccess} /> 
             )}
           </div>
         </section>

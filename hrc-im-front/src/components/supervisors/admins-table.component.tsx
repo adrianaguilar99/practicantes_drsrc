@@ -1,5 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
-import { Pagination, Avatar, IconButton } from "@mui/material";
+import { Pagination, Avatar, IconButton, Tooltip } from "@mui/material";
 import PhoneEnabledOutlinedIcon from '@mui/icons-material/PhoneEnabledOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -129,10 +129,12 @@ const ActiveAdministrator = () => {
               return (
                 <tr key={index} className={`generic-table-row  ${administrator.isActive ? '' : 'inactive'}`}>
                   <td className="table-avatar">
+                  <Tooltip title={administrator.email} placement="right"> 
                     <div className="supervisor-info">
                       <Avatar {...stringAvatar(fullName)} />
                       <p>{fullName}</p>
                     </div>
+                    </Tooltip>
                   </td>
                   <td>
                     <span

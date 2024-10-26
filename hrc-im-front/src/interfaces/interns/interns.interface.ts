@@ -1,3 +1,5 @@
+import { Department } from "../supervisors/supervisor.interface";
+
 export interface InternsInterface {
     message: string;
     data:    DataIntern[];
@@ -74,3 +76,58 @@ export interface PostIntern{
     data?: any
   }
 
+
+
+
+
+  export interface GetByIDInternInterface {
+    message: string;
+    data:    GetByIDDataInter;
+}
+
+export interface GetByIDDataInter {
+    id:                   string;
+    internCode:           string;
+    bloodType:            string;
+    phone:                string;
+    address:              string;
+    schoolEnrollment:     string;
+    internshipStart:      Date;
+    internshipEnd:        Date;
+    entryTime:            string;
+    exitTime:             string;
+    status:               string;
+    career:               Career;
+    department:           Department;
+    internshipDepartment: Career;
+    institution:          Career;
+    property:             Career;
+    emergencyContacts:    EmergencyContact[];
+    user:                 User;
+}
+
+export interface Career {
+    id:           string;
+    name:         string;
+    createdAt:    Date;
+    phone?:       string;
+    supervisors?: any[];
+}
+
+export interface EmergencyContact {
+    id:              string;
+    name:            string;
+    phone:           string;
+    relationship:    string;
+    positionContact: string;
+}
+
+export interface User {
+    id:        string;
+    firstName: string;
+    lastName:  string;
+    email:     string;
+    userRole:  string;
+    createdAt: Date;
+    isActive:  boolean;
+}

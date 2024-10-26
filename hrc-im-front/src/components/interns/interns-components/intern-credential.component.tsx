@@ -4,15 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from "react";
 import '../../components.css';
+import { DataIntern, GetByIDDataInter } from "../../../interfaces/interns/interns.interface";
+import { Divider } from "@mui/material";
 interface InternCredentialProps {
-  data?: any;
+  data?: GetByIDDataInter;
 }
 export const InternCredentialComponent: React.FC<InternCredentialProps> = ({
   data,
 }) => {
     const navigate = useNavigate ();
     const contentRef = useRef<HTMLDivElement>(null);
-   const reactToPrintFn = useReactToPrint({ contentRef });
+    const reactToPrintFn = useReactToPrint({ contentRef });
 
   return (
     <div className="intern-credential-container">
@@ -22,15 +24,27 @@ export const InternCredentialComponent: React.FC<InternCredentialProps> = ({
 
       <div className="intern-credential-body" ref={contentRef}>
         <section className="intern-credential-left">
-          <h3>{data.name}</h3>
-          <Barcode value={data.internCode} />
+          <h3>{data?.user.firstName + " " + data?.user.lastName || ""}</h3>
+          <Barcode value={data?.internCode || ""} />
         </section>
         <section className="intern-credential-right">
-          <h3>{data.name}</h3>
+          <h3>{data?.user.firstName + " " + data?.user.lastName || ""}</h3>
           <label>Datos generales</label>
-          <p>{data.address}</p>
-          <p>{data.institution.name}</p>
+          <Divider variant="middle" sx={{marginTop: "1rem"}}/>
+          <p>{data?.phone}</p>
+          <p>{data?.address}</p>
+          {data?.institution && 
+          <div>  
+          <p>{data?.institution.name}</p>
+          <p>{data?.institution.phone}</p>
+          </div>
+        
+          
+          }
           <label>Datos del hotel</label>
+          <Divider variant="middle" sx={{marginTop: "1rem"}}/>
+          <p>{data?.property.name}</p>
+          <p>{data?.internshipDepartment.name}</p>
         </section>
       </div>
 

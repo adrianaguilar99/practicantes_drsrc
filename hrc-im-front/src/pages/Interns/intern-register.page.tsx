@@ -29,6 +29,7 @@ import { DataProperty, PropertiesInterface } from "../../interfaces/properties/p
 import { postInternFunction } from "../../functions/intern-functions/post-intern.function";
 import { DataEmergencyContact } from "../../interfaces/interns/emergency-contacts/emergency-contacts.interface";
 import { set } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -46,7 +47,6 @@ const InternRegisterPage = () => {
   const [InternProperty, setInternProperty] = useState("");
 
   const [InternPhone, setInternPhone] = useState("");
-  const [InternSupervisor, setInternSupervisor] = useState("");
   const [InternDepartment, setInternDepartment] = useState("");
 
   const [InternOldDepartment, setInternOldDepartment] = useState("");
@@ -66,7 +66,7 @@ const InternRegisterPage = () => {
   const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
   const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
-  const [InternBloodType, setInternBloodType] = useState("A+");
+  const [InternBloodType, setInternBloodType] = useState("");
   const [InternContacts = [], setInternContacts] = useState<DataEmergencyContact[]>([]);
 
   interface EmergencyContacts {
@@ -115,6 +115,9 @@ const InternRegisterPage = () => {
   const [Departments, setDepartments] = useState<DataDepartment[]>([]);
   const [Properties, setProperties] = useState<DataProperty[]>([]);
   const [formAction, setFormAction] = useState<boolean>(false);
+  const [hasErrors, setHasErrors] = useState<boolean>(false);
+  const newErrors: { [key: string]: string | undefined } = {};
+  const navigate = useNavigate();
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value);
@@ -176,10 +179,9 @@ const InternRegisterPage = () => {
     fetchProperties();
   }, [userToken]);
 
-  const formSubmit = () => {
+  const InputValidation = () => {
     const validators = InputValidators();
-    setFormAction(true);
-    const newErrors: { [key: string]: string | undefined } = {};
+
 
     const resultName = validators.string(InternFirstName);
     if (resultName) {
@@ -211,10 +213,11 @@ const InternRegisterPage = () => {
       newErrors.internDepartment = resultDepartment;
     }
 
-    const resutSupervisor = validators.string(InternSupervisor);
-    if (resutSupervisor) {
-      newErrors.internSupervisor = resutSupervisor;
+
+    if (InternBloodType === "Seleccione un tipo" || InternBloodType === "") {
+      newErrors.internBloodType = "Seleccione un tipo";
     }
+
 
     if (InternType === "Interno") {
       const resultOldDepartment = validators.string(InternOldDepartment);
@@ -229,7 +232,7 @@ const InternRegisterPage = () => {
         newErrors.internUniversity = resultUniversity;
       }
 
-      const resultProgram = validators.number(InternProgram);
+      const resultProgram = validators.string(InternProgram);
       if (resultProgram) {
         newErrors.internProgram = resultProgram;
       }
@@ -325,77 +328,77 @@ const InternRegisterPage = () => {
     }
 
     setErrors(newErrors);
-    postInternFunction({
-            userToken: userToken,
-            internType: InternType,
-            dataUser: {
-              firstName: InternFirstName,
-              lastName: InternLastName,
-              email: InternEmail,
-              password: InternPassword,
-            },
-            dataIntern: {
-              bloodType: InternBloodType,
-              phone: InternPhone,
-              address: InternAddress,
-              schoolEnrollment: InternID,
-              internshipStart: InterBeginDate,
-              internshipEnd: InternEndDate,
-              entryTime: InternCheckIn,
-              exitTime: InternCheckOut,
-              status: "ACTIVE",    
-              careerId: InternProgram,
-              departmentId: InternOldDepartment,
-              internshipDepartmentId: InternDepartment,
-              institutionId: InternUniversity,
-              propertyId: InternProperty,
-            },
-            contacts: InternContacts,
-            onSuccess: () => {
-              console.log("Usuario registrado correctamente");
-            }
-          });
-
-    // if(!newErrors.internProperty && 
-    //   !newErrors.internName && 
-    //   !newErrors.internEmail && 
-    //   !newErrors.internPhone &&
-    //   !newErrors.internAddress &&
-    //   !newErrors.internDepartment &&
-    //   !newErrors.internSupervisor &&
-    //   !newErrors.internOldDepartment &&
-    //   !newErrors.internUniversity &&
-    //   !newErrors.internProgram &&
-    //   !newErrors.internID &&
-    //   !newErrors.internInstitutePhone &&
-    //   !newErrors.internBeginDate &&
-    //   !newErrors.internEndDate &&
-    //   !newErrors.internCheckIn &&
-    //   !newErrors.internCheckOut &&
-    //   !newErrors.internTotalTime &&
-    //   !newErrors.internPicture && 
-    //   !newErrors.internCurp && 
-    //   !newErrors.internBirthCertificate && 
-    //   !newErrors.internProofofaddress && 
-    //   !newErrors.internMedicalInsurance){
-    //     postInternFunction({
-    //       userToken: userToken, // O simplemente `userToken` si es una variable existente con el mismo nombre
-    //       dataUser: {
-    //         firstName: InternFirstName,
-    //         lastName: InternLastName,
-    //         email: InternEmail,
-    //         password: InternPassword,
-    //       },
-    //       onSuccess: () => {
-    //         // Acción a realizar en caso de éxito, si la necesitas
-    //         console.log("Usuario registrado correctamente");
-    //       }
-    //     });
-    //   }
-        
-
+    if(!newErrors.internProperty && 
+      !newErrors.internName && 
+      !newErrors.internEmail && 
+      !newErrors.internPhone &&
+      !newErrors.internAddress &&
+      !newErrors.internDepartment &&
+      !newErrors.internOldDepartment &&
+      !newErrors.internUniversity &&
+      !newErrors.internProgram &&
+      !newErrors.internID &&
+      !newErrors.internInstitutePhone &&
+      !newErrors.internBeginDate &&
+      !newErrors.internEndDate &&
+      !newErrors.internCheckIn &&
+      !newErrors.internCheckOut
+      // !newErrors.internTotalTime &&
+      // !newErrors.internPicture && 
+      // !newErrors.internCurp && 
+      // !newErrors.internBirthCertificate && 
+      // !newErrors.internProofofaddress && 
+      // !newErrors.internMedicalInsurance
+    ){
+      setHasErrors(false);
+      setFormAction(true);
+    }
+    else{
+      setHasErrors(true);
+    }
+  }
+  const formSubmit = () => { 
+     if(hasErrors === false && formAction === true){
+        postInternFunction({
+          userToken: userToken,
+          internType: InternType,
+          dataUser: {
+            firstName: InternFirstName,
+            lastName: InternLastName,
+            email: InternEmail,
+            password: InternPassword,
+          },
+          dataIntern: {
+            bloodType: InternBloodType,
+            phone: InternPhone,
+            address: InternAddress,
+            schoolEnrollment: InternID,
+            internshipStart: InterBeginDate,
+            internshipEnd: InternEndDate,
+            entryTime: InternCheckIn,
+            exitTime: InternCheckOut,
+            status: "ACTIVE",    
+            careerId: InternProgram,
+            departmentId: InternOldDepartment,
+            internshipDepartmentId: InternDepartment,
+            institutionId: InternUniversity,
+            propertyId: InternProperty,
+          },
+          contacts: InternContacts,
+          onSuccess: () => {
+            setInternContacts([]);
+            console.log("Usuario registrado correctamente");
+            navigate("/interns");
+          }
+        });
+      }
   };
 
+useEffect(() => { 
+  if(InternContacts.length > 0 && hasErrors === false){
+    formSubmit();
+  }
+}, [InternContacts]);
 
 
   const ReceiveContacts = (contacts : DataEmergencyContact[]) => {
@@ -485,9 +488,9 @@ const InternRegisterPage = () => {
                     id="bloodtype"
                     type="select"
                     show={true}
-                    options={["A+", "A-", "B+","B-","AB+","AB-","O+","O-"]}
-                    validate={errors.internAddress ? "Error" : "Normal"}
-                    typeError={errors.internAddress}
+                    options={["Seleccione un tipo","A+", "A-", "B+","B-","AB+","AB-","O+","O-"]}
+                    validate={errors.internBloodType  ? "Error" : "Normal"}
+                    typeError={errors.internBloodType }
                   />
                   <p
                       className="register-intern-suggestion"
@@ -792,9 +795,7 @@ const InternRegisterPage = () => {
             <div className="button-container-intern">
               <ButtonComponent
                 text="Guardar"
-                onClick={() => {
-                  formSubmit();
-                }}
+                onClick={ () => InputValidation() }
               />
               <ButtonComponent text="Cancelar" onClick={() => history.back()} />
             </div>

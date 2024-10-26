@@ -94,8 +94,8 @@ export const EmergencyContactModal = ({
   const [phone, setPhone] = useState("");
   const [positionContact, setPositionContact] = useState("");
   const [errors, setErrors] = useState<
-    Partial<{ contactName: string; relationship: string; phone: string }>
-  >({ contactName: undefined, relationship: undefined, phone: undefined });
+    Partial<{ contactName: string; relationship: string; phone: string; positionContact: string  }>
+  >({ contactName: undefined, relationship: undefined, phone: undefined, positionContact: undefined });
 
   const validateAndSubmit = () => {
     const validators = InputValidators();
@@ -132,6 +132,7 @@ export const EmergencyContactModal = ({
             label="Nombre:"
             onChange={(value) => setContactName(value || "")}
             validate={errors.contactName ? "Error" : "Normal"}
+            typeError={errors.contactName }
             id={"name"}
             type="text"
             show={true}
@@ -140,6 +141,7 @@ export const EmergencyContactModal = ({
             label="Parentesco:"
             onChange={(value) => setRelationship(value || "")}
             validate={errors.relationship ? "Error" : "Normal"}
+            typeError={errors.relationship }
             id={"parent"}
             type="text"
             show={true}
@@ -148,6 +150,7 @@ export const EmergencyContactModal = ({
             label="Número:"
             onChange={(value) => setPhone(value || "")}
             validate={errors.phone ? "Error" : "Normal"}
+            typeError={errors.phone }
             value={phone}
             type="phone"
             id={"number"}
@@ -157,7 +160,8 @@ export const EmergencyContactModal = ({
           <RegisterRow
             label="Cargo laboral:"
             onChange={(value) => setPositionContact(value || "")}
-            validate={errors.phone ? "Error" : "Normal"}
+            validate={errors.positionContact ? "Error" : "Normal"}
+            typeError={errors.positionContact }
             type="text"
             id={"number"}
             show={true}

@@ -1,6 +1,28 @@
-import { DataIntern, InternsInterface, PostIntern } from "../../interfaces/interns/interns.interface";
+import { DataIntern, GetByIDDataInter, GetByIDInternInterface, InternsInterface, PostIntern } from "../../interfaces/interns/interns.interface";
 import { apiUrl } from "../api-request";
 
+export async function getInternsData(Token: string): Promise<InternsInterface | null> {
+  try {
+    const response = await fetch(apiUrl + "/interns", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${Token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Error al traer los datos de los practicantes");
+      throw new Error("Error al traer los datos de los practicantes");
+    }
+
+    const InternsData: InternsInterface = await response.json(); 
+    console.log(InternsData);
+    return InternsData;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+}
 export async function postIntern(Token: string, data: PostIntern): Promise<PostIntern | null> {
     try {
       const response = await fetch(apiUrl + "/interns", {
@@ -22,5 +44,29 @@ export async function postIntern(Token: string, data: PostIntern): Promise<PostI
     } catch (error: any) {
       console.error("Error:", error);
       throw error;
+    }
+  }
+
+
+  export async function getInternById(Token: string, id: string): Promise<GetByIDInternInterface | null> {
+    try {
+      const response = await fetch(apiUrl + "/interns/" + id, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        console.error("Error al traer los datos del practicante");
+        throw new Error("Error al traer los datos del practicante");
+      }
+  
+      const InternsData: GetByIDInternInterface = await response.json(); 
+      console.log(InternsData);
+      return InternsData;
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
     }
   }

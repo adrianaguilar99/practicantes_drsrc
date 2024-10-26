@@ -6,50 +6,47 @@ import { CircularProgress, NothingToSee } from "../../components/utils/circular-
 import { useEffect, useState } from "react";
 import { InternCredentialComponent } from "../../components/interns/interns-components/intern-credential.component";
 import { id } from "date-fns/locale";
+import { GetByIDDataInter, GetByIDInternInterface } from "../../interfaces/interns/interns.interface";
+import { useLocation } from "react-router-dom";
+import { getInternById } from "../../api/interns/interns.api";
 
-export const data_intern = {
-        name: "LEONARDO DANIEL REBOLLO CALERO",
-        id: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        internCode: "386740",
-        bloodType: "O+",
-        phone: "9988774455",
-        address: "Blvd. Kukulcan Km 14, Zona Hotelera, 77500 Cancun, Quintana Roo · 15 km",
-        schoolEnrollment: "202100142",
-        internshipStart: "2024-10-01",
-        internshipEnd: "2025-03-01",
-        status: "ACTIVE",
-        career: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        department: {
-            id: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-            name: "Human Resources"
-        },
-        internshipDepartment: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        institution: {
-            id: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-            name: "Universidad de Cancun"
-        },
-        property: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        user: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe"   
-}
 
-const InternCredentialPage = () => {
-    const [data, setData] = useState({});
+const InternCredentialPage = () => { 
+    const { pathname } = useLocation();
+    const uuidMatch = pathname.match(/interns-credentials\/([a-fA-F0-9-]{36})/);
+    const internId = uuidMatch ? uuidMatch[1] : null;
+    const [data, setData] = useState<GetByIDDataInter>();
     const [isLoading, setIsLoading] = useState(true); 
     const [hasError, setHasError] = useState(false);  
-    
-    useEffect(() => {
+    const userToken = sessionStorage.getItem("_Token") || "";
 
-        setTimeout(() => {
-          try {
-            const fetchedData = data_intern;  
-              setData(fetchedData);
-          } catch (error) {
-            setHasError(true);  
-          } finally {
-            setIsLoading(false);  
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+          const fetchedData: GetByIDInternInterface | null = await getInternById(
+            userToken,
+            internId || ""
+          );
+          if (fetchedData) {
+              setData(fetchedData.data);
+              console.log(fetchedData.data);
+              setHasError(false); 
+          } else {
+              setHasError(false);
           }
-        }, 1000); 
-      }, []);
+      } catch (error) {
+          setHasError(true);
+      } finally {
+          setIsLoading(false);
+      }
+  };
+  
+  
+    useEffect(() => {
+      fetchData();
+    }, [userToken]);
+    
+   
 
     return (
         <div className="body-page">
@@ -65,7 +62,10 @@ const InternCredentialPage = () => {
                 <NothingToSee />
               ) : (
                 <div className="interns-data">
-                  <InternCredentialComponent data={data} />
+                  {data && (
+                    <InternCredentialComponent data={data} />
+                  )}
+                  
                 </div>
               )}
             </div>

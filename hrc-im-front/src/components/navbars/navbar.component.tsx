@@ -158,6 +158,9 @@ export const Navbar = () => {
                 onClick={() => window.location.pathname = "/home"}
               />
           </Typography>
+          <div className="nav-rol-display" style={{ display: "flex", alignItems: "center", width: "100%", justifyContent: "center", fontFamily: "Lato" }}>
+               <span className="nav-rol">{userRol === "ADMINISTRATOR" ? "Admin RCD" : userRol + " RCD"}</span>
+          </div>
 
           <div className="notifications-container" ref={notificationMenuRef}>
             <NotificationsMenu anchorEl={isNotificationMenuOpen} />

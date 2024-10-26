@@ -1,5 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
-import { Pagination, Avatar, IconButton } from "@mui/material";
+import { Pagination, Avatar, IconButton, Tooltip } from "@mui/material";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
 import { formatPhoneNumber, LightstringToColor, stringAvatar } from '../../functions/utils.functions';
@@ -136,10 +136,15 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
               return (
                 <tr key={index} className={`generic-table-row  ${supervisor.user.isActive ? '' : 'inactive'}`} >
                   <td className="table-avatar">
+                  <Tooltip title={supervisor.user.email} placement="right"> 
                     <div className="supervisor-info">
                       <Avatar {...stringAvatar(fullName)} />
-                      <p>{fullName}</p>
+                      
+                         <p>{fullName}</p>
+                      
+                     
                     </div>
+                    </Tooltip>
                   </td>
                   <td>{formatPhoneNumber(supervisor.phone)}</td>
                   <td>

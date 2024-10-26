@@ -15,6 +15,8 @@ export interface DataSupervisor {
 export interface Department {
     id:   string;
     name: string;
+    createdAt?: string;
+    supervisors?: any[]
 }
 
 export interface User {
