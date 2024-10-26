@@ -89,8 +89,6 @@ export class EmergencyContactService {
       throw new NotFoundException(
         `Emergency contact with id: ${id} not found.`,
       );
-    console.log({ emergencyContact });
-
     return emergencyContact;
   }
 
