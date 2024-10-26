@@ -7,7 +7,7 @@ import { fileFilter } from 'src/intern-files/helpers';
 const multerOptions = {
   storage: diskStorage({
     destination: (req, file, cb) => {
-      const uploadDir = `./public/intern-files/${req.params.internId}`;
+      const uploadDir = `public/intern-files/${req.params.internId}`;
       // console.log({ reqFiles: req });
 
       if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
