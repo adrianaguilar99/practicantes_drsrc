@@ -319,7 +319,7 @@ export class InternsService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingIntern = await this.findOne(id);
     try {
       const removedIntern = await this.internsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -329,7 +329,10 @@ export class InternsService {
           role,
         },
         'DELETE INTERN',
-        { id, data: 'Intern' },
+        {
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        },
         'SUCCESS',
       );
       return removedIntern.affected;
@@ -341,7 +344,10 @@ export class InternsService {
           role,
         },
         'TRY TO DELETE INTERN',
-        { id, data: 'Intern' },
+        {
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        },
         'FAILED TO DELETE INTERN',
         error.message,
       );
