@@ -56,7 +56,7 @@ export class UsersService {
         'CREATE USER',
         {
           id: savedUser.id,
-          name: `${savedUser.firstName} ${savedUser.lastName}`,
+          data: `${savedUser.firstName} ${savedUser.lastName}`,
         },
         'SUCCESS',
       );
@@ -71,7 +71,7 @@ export class UsersService {
         'TRY TO CREATE USER',
         {
           id: null,
-          name: `${createUserDto.firstName} ${createUserDto.lastName}`,
+          data: `${createUserDto.firstName} ${createUserDto.lastName}`,
         },
         'FAILED TO CREATE USER',
         error.message,
@@ -148,8 +148,8 @@ export class UsersService {
         { id: userId, fullName, role },
         'TRY TO UPDATE USER',
         {
-          id: existingUser.id,
-          name: `${existingUser.firstName} ${existingUser.lastName}`,
+          id,
+          data: `${existingUser.firstName} ${existingUser.lastName}`,
         },
         'FAILED TO UPDATE USER',
         'Attempted to update fields that are not allowed: email, password, role',
@@ -175,8 +175,8 @@ export class UsersService {
         },
         'UPDATE USER',
         {
-          id: updatedUser.id,
-          name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+          id,
+          data: `${updatedUser.firstName} ${updatedUser.lastName}`,
         },
         'SUCCESS',
       );
@@ -189,7 +189,7 @@ export class UsersService {
           role,
         },
         'TRY TO UPDATE USER',
-        { id, name: 'Update Error' },
+        { id, data: `${updateUserDto.firstName} ${updateUserDto.lastName}` },
         'FAILED TO UPDATE USER',
         error.message,
       );
@@ -198,7 +198,7 @@ export class UsersService {
   }
 
   async deactivate(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingUser = await this.findOne(id);
     try {
       const removedUser = await this.usersRepository.update(
         { id },
@@ -211,7 +211,7 @@ export class UsersService {
           role,
         },
         'DEACTIVE USER',
-        { id, name: 'User' },
+        { id, data: `${existingUser.firstName} ${existingUser.lastName}` },
         'SUCCESS',
       );
       return removedUser.affected;
@@ -223,7 +223,7 @@ export class UsersService {
           role,
         },
         'TRY TO DEACTIVE USER',
-        { id, name: 'User' },
+        { id, data: `${existingUser.firstName} ${existingUser.lastName}` },
         'FAILED TO DEACTIVE USER',
         error.message,
       );
