@@ -5,6 +5,7 @@ import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/emergency-contact/entities/emergency-contact.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
+import { InternFile } from 'src/intern-files/entities/intern-file.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -220,6 +221,11 @@ export class Intern {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToOne(() => InternFile, (internFiles) => internFiles.intern, {
+    eager: true,
+  })
+  internFiles: InternFile;
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

@@ -129,9 +129,9 @@ export class InternsService {
         'FAILED TO CREATE INTERN',
         error.message,
       );
-      if (error.code === '23505') {
+      if (error.code === '23505')
         throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
-      }
+      if (error instanceof BadRequestException) throw error;
       handleInternalServerError(error.message);
     }
   }
