@@ -122,7 +122,7 @@ export class InternsService {
         'CREATE INTERN',
         {
           id: createdIntern.id,
-          name: `${createdIntern.user.firstName} ${createdIntern.user.lastName}`,
+          data: `${createdIntern.user.firstName} ${createdIntern.user.lastName}`,
         },
         'SUCCESS',
       );
@@ -135,7 +135,7 @@ export class InternsService {
           role,
         },
         'TRY TO CREATE INTERN',
-        { id: null, name: `${user.firstName} ${user.lastName}` },
+        { id: null, data: `${user.firstName} ${user.lastName}` },
         'FAILED TO CREATE INTERN',
         error.message,
       );
@@ -211,8 +211,8 @@ export class InternsService {
         { id: userReq, fullName, role },
         'TRY TO UPDATE INTERN',
         {
-          id: existingIntern.id,
-          name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
         },
         'FAILED TO UPDATE INTERN',
         'Attempted to update fields that are not allowed: User',
@@ -296,8 +296,8 @@ export class InternsService {
         { id: userReq, fullName, role },
         'UPDATE INTERN',
         {
-          id: updatedIntern.id,
-          name: `${updatedIntern.user.firstName} ${updatedIntern.user.lastName}`,
+          id,
+          data: `${updatedIntern.user.firstName} ${updatedIntern.user.lastName}`,
         },
         'SUCCESS',
       );
@@ -307,8 +307,8 @@ export class InternsService {
         { id: userReq, fullName, role },
         'FAILED TO UPDATE INTERN',
         {
-          id: null,
-          name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
         },
         'FAILED',
         error.message,
@@ -329,7 +329,7 @@ export class InternsService {
           role,
         },
         'DELETE INTERN',
-        { id, name: 'Intern' },
+        { id, data: 'Intern' },
         'SUCCESS',
       );
       return removedIntern.affected;
@@ -341,7 +341,7 @@ export class InternsService {
           role,
         },
         'TRY TO DELETE INTERN',
-        { id, name: 'User' },
+        { id, data: 'Intern' },
         'FAILED TO DELETE INTERN',
         error.message,
       );
