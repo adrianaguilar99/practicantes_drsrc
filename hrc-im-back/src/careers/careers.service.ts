@@ -178,7 +178,7 @@ export class CareersService {
           role,
         },
         'DELETE ALL CAREERS',
-        { id: careers.toString(), data: 'Career' },
+        { id: careers.toString(), data: `${[...careersWithoutRelations]}` },
         'SUCCESS',
       );
       return `Deleted careers without relations: ${careersWithoutRelations
