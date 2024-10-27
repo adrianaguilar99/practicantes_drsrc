@@ -179,7 +179,7 @@ export class DepartmentsService {
           fullName,
           role,
         },
-        'DELETE ALL CAREERS',
+        'DELETE ALL DEPARTMENTS',
         {
           id: departments.toString(),
           data: `${[...departmentsWithoutRelations]}`,
@@ -190,6 +190,17 @@ export class DepartmentsService {
         .map((d) => d.name)
         .join(', ')}`;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE ALL DEPARTMENTS',
+        { id: null, data: 'Deparment' },
+        'FAILED TO DELETE ALL DEPARTMENTS',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }
