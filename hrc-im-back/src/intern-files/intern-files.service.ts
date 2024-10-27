@@ -247,7 +247,7 @@ export class InternFilesService {
     internId: string,
     { fullName, role, userId }: IRequestUser,
   ) {
-    await this.findOne(id);
+    const existingInternFiles = await this.findOne(id);
     try {
       const deletedInternFiles = await this.internFilesRepository.delete(id);
       rollbackFiles(internId);
@@ -258,7 +258,7 @@ export class InternFilesService {
           role,
         },
         'DELETE INTERN FILES',
-        { id, data: 'Intern Files' },
+        { id, data: `${existingInternFiles}` },
         'SUCCESS',
       );
       return deletedInternFiles.affected;
@@ -270,7 +270,7 @@ export class InternFilesService {
           role,
         },
         'TRY TO DELETE INTERN FILES',
-        { id, data: 'Intern Files' },
+        { id, data: `${existingInternFiles}` },
         'FAILED TO DELETE INTERN FILES',
         error.message,
       );
