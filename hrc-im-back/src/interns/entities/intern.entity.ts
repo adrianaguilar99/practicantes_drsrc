@@ -123,6 +123,14 @@ export class Intern {
   exitTime: string;
 
   @ApiProperty({
+    example: '300:00:00',
+    description: 'Total hours the practitioner is expected to cover.',
+    nullable: false,
+  })
+  @Column({ name: 'internship_duration', type: 'interval', nullable: true })
+  internshipDuration: string;
+
+  @ApiProperty({
     example: InternStatus.ACTIVE,
     description: "Intern's status.",
     nullable: false,

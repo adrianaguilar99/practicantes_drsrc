@@ -20,6 +20,7 @@ import { IRequestUser } from 'src/common/interfaces';
 import { handleInternalServerError } from 'src/common/utils';
 import { RESOURCE_NAME_ALREADY_EXISTS } from 'src/common/constants/constants';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
+import { convertToInterval } from './helpers';
 
 @Injectable()
 export class InternsService {
@@ -57,6 +58,16 @@ export class InternsService {
         `User with ID ${createInternDto.userId} does not have the required role to be a intern.`,
       );
     }
+
+    // Si todo se valida correctamente continuamos con el registro del practicante
+    // Asignamos un codigo unico para el practicante
+    const internCode = await this.generateUniqueInternCode();
+
+    // Convertimos el tiempo de practicas a un formato valido "INTERVAL"
+    const internshipDurationInterval = convertToInterval(
+      createInternDto.internshipDuration,
+    );
+
     /** Buscamos las relaciones, en caso de que se exista o se este se agregando
      * en el cuerpo de la solicitud, se agrega al nuevo registro
      * Esto se aplica a: Carrera, Departamento e Institucion  */
@@ -89,17 +100,16 @@ export class InternsService {
       );
     }
 
-    const internCode = await this.generateUniqueInternCode();
-
     const newIntern = this.internsRepository.create({
       ...createInternDto,
+      internCode,
+      internshipDuration: internshipDurationInterval,
       career,
       department,
       internshipDepartment,
       institution,
       property,
       user,
-      internCode,
     });
     try {
       const createdIntern = await this.internsRepository.save(newIntern);
@@ -182,6 +192,7 @@ export class InternsService {
       internshipStart,
       entryTime,
       exitTime,
+      internshipDuration,
       phone,
       propertyId,
       schoolEnrollment,
@@ -249,6 +260,8 @@ export class InternsService {
     if (internshipEnd) existingIntern.internshipEnd = internshipEnd;
     if (entryTime) existingIntern.entryTime = entryTime;
     if (exitTime) existingIntern.exitTime = exitTime;
+    if (internshipDuration)
+      existingIntern.internshipDuration = convertToInterval(internshipDuration);
 
     if (careerId) {
       const career = await this.careersService.findOne(careerId);
