@@ -163,7 +163,7 @@ export class EmergencyContactService {
           role,
         },
         'DELETE EMERGENCY CONTACT',
-        { id, data: `${existingEmergencyContact.name}` },
+        { id, data: existingEmergencyContact.name },
         'SUCCESS',
       );
       return deletedEmergencyContact.affected;
