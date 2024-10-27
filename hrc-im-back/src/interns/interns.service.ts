@@ -140,7 +140,6 @@ export class InternsService {
     let allInterns: Intern[];
     if (role === UserRole.SUPERVISOR) {
       const { department } = await this.supervisorsService.findByUser(userId);
-      // console.log(supervisor);
       allInterns = await this.internsRepository.find({
         where: { internshipDepartment: department },
       });
