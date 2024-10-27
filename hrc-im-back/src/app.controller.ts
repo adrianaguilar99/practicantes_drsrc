@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Public } from './auth/decorators';
 
@@ -18,6 +18,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @ApiBearerAuth()
   @Get('dbDev')
   getDbDev() {
     return this.configService.getOrThrow(
@@ -25,6 +26,7 @@ export class AppController {
     );
   }
 
+  @ApiBearerAuth()
   @Get('dbProd')
   getDbProd() {
     return this.configService.getOrThrow('dbConfig.production.env.synchronize');
