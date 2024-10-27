@@ -124,7 +124,9 @@ export class SupervisorsService {
   async findByUser(id: string) {
     const supervisor = await this.supervisorsRepository.findOne({
       where: { user: { id } },
-      select: ['department'],
+      relations: {
+        department: true,
+      },
     });
     if (!supervisor)
       throw new NotFoundException(`Supervisor not found using user.`);
