@@ -41,7 +41,9 @@ export class SystemAuditsService {
 
   async findAll() {
     try {
-      return await this.systemAuditsRepository.find();
+      return await this.systemAuditsRepository.find({
+        order: { auditDate: 'DESC' },
+      });
     } catch (error) {
       handleInternalServerError(error.message);
     }
