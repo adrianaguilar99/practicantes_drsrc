@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
   Param,
   Delete,
@@ -13,8 +12,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { InternFilesService } from './intern-files.service';
-import { CreateInternFileDto } from './dto/create-intern-file.dto';
-import { UpdateInternFileDto } from './dto/update-intern-file.dto';
 import { UploadInternFiles } from './decorators';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
@@ -26,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import {
   BAD_REQUEST,
+  CONFLICT_ERROR,
   CREATE_RECORD,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
@@ -45,6 +43,7 @@ import { Public, UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
 import { Response } from 'express';
+import { rollbackFiles } from './helpers';
 
 @ApiTags('Intern Files')
 @ApiBearerAuth()
@@ -82,6 +81,10 @@ export class InternFilesController {
     type: InternFile,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({
+    status: 409,
+    description: `${CONFLICT_ERROR} Only one can be created.`,
+  })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async uploadFiles(
     @Param('internId', ParseUUIDPipe) internId: string,
@@ -104,9 +107,11 @@ export class InternFilesController {
     ];
 
     // Validamos y manejamos el rollback en caso de error
-    await this.internFilesService.validateAndHandleFiles(internId, internFiles);
-
-    // console.log({ internFiles });
+    try {
+      await this.internFilesService.validateAndHandleFiles(internFiles);
+    } catch (error) {
+      rollbackFiles(internId);
+    }
 
     // Si todo sale bien, continuamos con la insercion de las rutas de los archivos
     const createdInternFiles = await this.internFilesService.create(
@@ -155,7 +160,7 @@ export class InternFilesController {
   }
 
   @Public()
-  @Get('intern-files/:internId/:fileName')
+  @Get(':internId/:fileName')
   @HttpCode(200)
   @ApiOperation({
     summary: `${READ_RECORD} All users can access this endpoint`,
@@ -170,7 +175,7 @@ export class InternFilesController {
     @Param('internId') internId: string,
     @Param('fileName') fileName: string,
   ) {
-    const path = this.internFilesService.searchFile(internId, fileName);
+    const path = this.internFilesService.searchFiles(internId, fileName);
     res.sendFile(path);
   }
 
@@ -178,6 +183,18 @@ export class InternFilesController {
   @Patch(':id/:internId')
   @HttpCode(200)
   @UploadInternFiles()
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'photo', maxCount: 1 },
+        { name: 'curp', maxCount: 1 },
+        { name: 'proofOfAddress', maxCount: 1 },
+        { name: 'birthCertificate', maxCount: 1 },
+        { name: 'medicalInsurance', maxCount: 1 },
+      ],
+      multerOptions,
+    ),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
@@ -186,25 +203,40 @@ export class InternFilesController {
     status: 200,
     description: SUCCESSFUL_UPDATE,
   })
-  update(
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  async updateFiles(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('internId', ParseUUIDPipe) internId: string,
-    @Body() updateInternFileDto: UpdateInternFileDto,
     @UploadedFiles()
     files: {
-      photo?: Express.Multer.File[];
-      curp?: Express.Multer.File[];
-      proofOfAddress?: Express.Multer.File[];
-      birthCertificate?: Express.Multer.File[];
-      medicalInsurance?: Express.Multer.File[];
+      photo: Express.Multer.File[];
+      curp: Express.Multer.File[];
+      proofOfAddress: Express.Multer.File[];
+      birthCertificate: Express.Multer.File[];
+      medicalInsurance: Express.Multer.File[];
     },
-  ) {
-    return this.internFilesService.update(
+  ): Promise<IApiResponse<any>> {
+    // Agrupar todos los archivos en un solo array para trabajar con ellos
+    const internFiles = [
+      ...(files.photo || []),
+      ...(files.curp || []),
+      ...(files.proofOfAddress || []),
+      ...(files.birthCertificate || []),
+      ...(files.medicalInsurance || []),
+    ];
+
+    // Validamos y manejamos el rollback en caso de error
+    await this.internFilesService.validateAndHandleFiles(internFiles);
+
+    // Si todo sale bien, continuamos con la actualizacion de las rutas de los archivos
+    const updatedInternFiles = await this.internFilesService.update(
       id,
       internId,
-      updateInternFileDto,
-      files,
+      internFiles,
     );
+    return { message: SUCCESSFUL_UPDATE, data: updatedInternFiles };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)

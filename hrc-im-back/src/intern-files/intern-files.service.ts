@@ -1,9 +1,9 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateInternFileDto } from './dto/update-intern-file.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InternFile } from './entities/intern-file.entity';
 import { Repository } from 'typeorm';
@@ -12,7 +12,7 @@ import { checkForDuplicates, rollbackFiles } from './helpers';
 import { handleInternalServerError } from 'src/common/utils';
 import { ENV } from 'src/configs';
 import { join } from 'path';
-import { existsSync, rmSync, unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 
 @Injectable()
 export class InternFilesService {
@@ -23,7 +23,7 @@ export class InternFilesService {
   ) {}
 
   async create(internId: string, files: Express.Multer.File[]) {
-    const intern = await this.internsService.findOne(internId);
+    const existingIntern = await this.internsService.findOne(internId);
 
     const securePhotoUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[0].filename}`;
     const secureCurpUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
@@ -37,18 +37,23 @@ export class InternFilesService {
       medicalInsurance: secureMedicalInsuranceUrl,
       photo: securePhotoUrl,
       proofOfAddress: secureProofOfAddressUrl,
-      intern,
+      intern: existingIntern,
     });
     try {
       const savedInternFiles =
         await this.internFilesRepository.save(newInternFiles);
       return savedInternFiles;
     } catch (error) {
-      handleInternalServerError(error.message);
+      if (error.code === '23505')
+        throw new ConflictException(
+          "A record already exists containing the intern's files. Only one can be created.",
+        );
+      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
+      handleInternalServerError(error.detail);
     }
   }
 
-  async validateAndHandleFiles(internId: string, files: Express.Multer.File[]) {
+  async validateAndHandleFiles(files: Express.Multer.File[]) {
     try {
       // Valida que exactamente cinco archivos fueron subidos
       if (files.length !== 5)
@@ -62,7 +67,6 @@ export class InternFilesService {
       // Validacion de archivos duplicados
       checkForDuplicates(files);
     } catch (error) {
-      rollbackFiles(internId); // Hacer rollback a la carpeta si ocurre un error
       if (error instanceof BadRequestException) throw error;
       handleInternalServerError(error.message);
     }
@@ -86,13 +90,13 @@ export class InternFilesService {
     return existingInternFiles;
   }
 
-  searchFile = (internId: string, fileName: string) => {
+  searchFiles = (internId: string, fileName: string) => {
     const path = join(
       __dirname,
       '../../',
       `${ENV.INTERN_FILES_PATH}${internId}/${fileName}`,
     );
-    console.log({ path });
+    // console.log({ path });
 
     if (!existsSync(path))
       throw new BadRequestException(
@@ -101,93 +105,69 @@ export class InternFilesService {
     return path;
   };
 
-  async update(
-    id: string,
-    internId: string,
-    {
-      birthCertificate,
-      curp,
-      medicalInsurance,
-      photo,
-      proofOfAddress,
-    }: UpdateInternFileDto,
-    files: {
-      photo?: Express.Multer.File[];
-      curp?: Express.Multer.File[];
-      proofOfAddress?: Express.Multer.File[];
-      birthCertificate?: Express.Multer.File[];
-      medicalInsurance?: Express.Multer.File[];
-    },
-  ) {
-    const existingInternFiles = await this.findOne(id);
+  async update(id: string, internId: string, files: Express.Multer.File[]) {
     await this.internsService.findOne(internId);
+    const existingInternFiles = await this.findOne(id);
 
-    let newSecurePhotoUrl: string = photo;
-    if (photo) {
-      newSecurePhotoUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[0].filename}`;
-      const oldPhotoPath = join(
-        __dirname,
-        '../../',
-        ENV.INTERN_FILES_PATH,
-        existingInternFiles.photo.split('/').pop(),
-      );
-      if (existsSync(oldPhotoPath)) unlinkSync(oldPhotoPath);
-    }
+    const newSecurePhotoUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[0].filename}`;
+    const oldPhotoPath = join(
+      __dirname,
+      '../../',
+      `${ENV.INTERN_FILES_PATH}${internId}`,
+      existingInternFiles.photo.split('/').pop(),
+    );
+    // console.log({ newSecurePhotoUrl, oldPhotoPath });
+    if (existsSync(oldPhotoPath)) unlinkSync(oldPhotoPath);
 
-    let newSecureCurpUrl: string = curp;
-    if (curp) {
-      newSecureCurpUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
-      const oldCurpPath = join(
-        __dirname,
-        '../../',
-        ENV.INTERN_FILES_PATH,
-        existingInternFiles.curp.split('/').pop(),
-      );
-      if (existsSync(oldCurpPath)) unlinkSync(oldCurpPath);
-    }
+    const newSecureCurpUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
+    const oldCurpPath = join(
+      __dirname,
+      '../../',
+      `${ENV.INTERN_FILES_PATH}${internId}`,
+      existingInternFiles.curp.split('/').pop(),
+    );
+    if (existsSync(oldCurpPath)) unlinkSync(oldCurpPath);
 
-    let newSecureProofOfAddressUrl: string = proofOfAddress;
-    if (proofOfAddress) {
-      newSecureProofOfAddressUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[2].filename}`;
-      const oldProofOfAddressPath = join(
-        __dirname,
-        '../../',
-        ENV.INTERN_FILES_PATH,
-        existingInternFiles.proofOfAddress.split('/').pop(),
-      );
-      if (existsSync(oldProofOfAddressPath)) unlinkSync(oldProofOfAddressPath);
-    }
+    const newSecureProofOfAddressUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[2].filename}`;
+    const oldProofOfAddressPath = join(
+      __dirname,
+      '../../',
+      `${ENV.INTERN_FILES_PATH}${internId}`,
+      existingInternFiles.proofOfAddress.split('/').pop(),
+    );
+    if (existsSync(oldProofOfAddressPath)) unlinkSync(oldProofOfAddressPath);
 
-    let newSecureBirthCertificateUrl: string = birthCertificate;
-    if (birthCertificate) {
-      newSecureBirthCertificateUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[3].filename}`;
-      const oldBirthCertificatePath = join(
-        __dirname,
-        '../../',
-        ENV.INTERN_FILES_PATH,
-        existingInternFiles.birthCertificate.split('/').pop(),
-      );
-      if (existsSync(oldBirthCertificatePath))
-        unlinkSync(oldBirthCertificatePath);
-    }
+    const newSecureBirthCertificateUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[3].filename}`;
+    const oldBirthCertificatePath = join(
+      __dirname,
+      '../../',
+      `${ENV.INTERN_FILES_PATH}${internId}`,
+      existingInternFiles.birthCertificate.split('/').pop(),
+    );
+    if (existsSync(oldBirthCertificatePath))
+      unlinkSync(oldBirthCertificatePath);
 
-    let newSecureMedicalInsuranceUrl: string = medicalInsurance;
-    if (medicalInsurance) {
-      newSecureMedicalInsuranceUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[4].filename}`;
-      const oldMedicalInsurancePath = join(
-        __dirname,
-        '../../',
-        ENV.INTERN_FILES_PATH,
-        existingInternFiles.medicalInsurance.split('/').pop(),
-      );
-      if (existsSync(oldMedicalInsurancePath))
-        unlinkSync(oldMedicalInsurancePath);
-    }
+    const newSecureMedicalInsuranceUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[4].filename}`;
+    const oldMedicalInsurancePath = join(
+      __dirname,
+      '../../',
+      `${ENV.INTERN_FILES_PATH}${internId}`,
+      existingInternFiles.medicalInsurance.split('/').pop(),
+    );
+    if (existsSync(oldMedicalInsurancePath))
+      unlinkSync(oldMedicalInsurancePath);
 
+    const internFilesToUpdate = {
+      id: existingInternFiles.id,
+      birthCertificate: newSecureBirthCertificateUrl,
+      curp: newSecureCurpUrl,
+      medicalInsurance: newSecureMedicalInsuranceUrl,
+      photo: newSecurePhotoUrl,
+      proofOfAddress: newSecureProofOfAddressUrl,
+    };
     try {
-      const updatedInternFiles =
-        await this.internFilesRepository.save(existingInternFiles);
-      return updatedInternFiles;
+      await this.internFilesRepository.update(id, internFilesToUpdate);
+      return internFilesToUpdate;
     } catch (error) {
       handleInternalServerError(error.message);
     }
