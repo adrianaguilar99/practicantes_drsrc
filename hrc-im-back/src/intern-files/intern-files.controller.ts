@@ -44,7 +44,6 @@ import { Public, UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
 import { Response } from 'express';
-import { rollbackFiles } from './helpers';
 
 @ApiTags('Intern Files')
 @ApiBearerAuth()
@@ -110,11 +109,11 @@ export class InternFilesController {
     ];
 
     // Validamos y manejamos el rollback en caso de error
-    try {
-      await this.internFilesService.validateAndHandleFiles(internFiles, user);
-    } catch (error) {
-      rollbackFiles(internId);
-    }
+    await this.internFilesService.validateAndHandleFiles(
+      internId,
+      internFiles,
+      user,
+    );
 
     // Si todo sale bien, continuamos con la insercion de las rutas de los archivos
     const createdInternFiles = await this.internFilesService.create(
@@ -234,7 +233,11 @@ export class InternFilesController {
     ];
 
     // Validamos y manejamos el rollback en caso de error
-    await this.internFilesService.validateAndHandleFiles(internFiles, user);
+    await this.internFilesService.validateAndHandleFiles(
+      internId,
+      internFiles,
+      user,
+    );
 
     // Si todo sale bien, continuamos con la actualizacion de las rutas de los archivos
     const updatedInternFiles = await this.internFilesService.update(

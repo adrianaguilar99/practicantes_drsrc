@@ -64,6 +64,7 @@ export class InternFilesService {
       );
       return savedInternFiles;
     } catch (error) {
+      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -79,12 +80,12 @@ export class InternFilesService {
         throw new ConflictException(
           "A record already exists containing the intern's files. Only one can be created.",
         );
-      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
       handleInternalServerError(error.detail);
     }
   }
 
   async validateAndHandleFiles(
+    internId: string,
     files: Express.Multer.File[],
     { fullName, role, userId }: IRequestUser,
   ) {
@@ -101,6 +102,7 @@ export class InternFilesService {
       // Validacion de archivos duplicados
       checkForDuplicates(files);
     } catch (error) {
+      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
