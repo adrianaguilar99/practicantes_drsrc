@@ -8,9 +8,15 @@ import { Footer } from "../../components/navbars/footer.component";
 import { useSelector } from "react-redux";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { RootState } from "../../redux/store";
+import { BarChart, LineChart } from "@mui/x-charts";
+import InternsLineChart from "../../components/charts/interns-perdate.component";
 
 const HomePage = () => {
-  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
+  
+  const userRol = useSelector(
+    (state: RootState) => decryptData(state.auth.rol || "") || ""
+  );
+  const userFullName = sessionStorage.getItem("_ProfileName");
 
   const pageVariants = {
     initial: { opacity: 0, scale: 0.8 },
@@ -32,24 +38,68 @@ const HomePage = () => {
           <InternViewPage />
         ) : (
           <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
-    >
-            <div style={{ width: "70vw" }}></div>
-            <div className="home-container">
-              <div className="home-text-container"><h1>Bienvenid@</h1></div>
-              <div className="home-lines-container">
-                <img className="lines-logo" src={LinesLogo} alt="Lines Logo" />
+            initial="initial"
+            animate="in"
+            exit="out"
+            variants={pageVariants}
+            transition={pageTransition}
+            style={{ display: "flex" }}
+          >
+            <section className="home-left-container"></section>
+            <section className="home-right-container">
+              <h2>Bienvenido {userFullName}</h2>
+              <div className="home-data-container">
+                <div className="home-totalinterns-container">
+                  <label>Practicantes activos:</label>
+                  <p>6</p>
+                </div>
+                <div className="home-chart-container">
+                  <InternsLineChart/>
+                </div>
+                <div className="home-chart-container">
+                  <label>Practicantes por departamentos:</label>
+                  {/* <TickParamsSelector
+                    tickPlacement={tickPlacement}
+                    tickLabelPlacement={tickLabelPlacement}
+                    setTickPlacement={setTickPlacement}
+                    setTickLabelPlacement={setTickLabelPlacement}
+                  />
+                  <BarChart
+                    dataset={dataset}
+                    xAxis={[
+                      {
+                        scaleType: "band",
+                        dataKey: "month",
+                        tickPlacement,
+                        tickLabelPlacement,
+                      },
+                    ]}
+                    {...chartSetting}
+                  /> */}
+                </div>
+                <div className="home-chart-container">
+                  <label>Practicantes proximos a terminar:</label>
+                  {/* <TickParamsSelector
+                    tickPlacement={tickPlacement}
+                    tickLabelPlacement={tickLabelPlacement}
+                    setTickPlacement={setTickPlacement}
+                    setTickLabelPlacement={setTickLabelPlacement}
+                  />
+                  <BarChart
+                    dataset={dataset}
+                    xAxis={[
+                      {
+                        scaleType: "band",
+                        dataKey: "month",
+                        tickPlacement,
+                        tickLabelPlacement,
+                      },
+                    ]}
+                    {...chartSetting}
+                  /> */}
+                </div>
               </div>
-              <h2>
-                Plataforma de practicantes
-                <br />
-                Hotel Hard Rock Cancún
-              </h2>
-            </div>
+            </section>
           </motion.div>
         )}
       </div>

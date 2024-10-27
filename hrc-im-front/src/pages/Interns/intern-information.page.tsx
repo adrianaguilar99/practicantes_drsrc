@@ -118,7 +118,7 @@ const InternInformationPage = () => {
         setHasError(false);
       } else {
         setInternData(undefined);
-        setHasError(false);
+        setHasError(true);
       }
     } catch (error) {
       setHasError(true);
@@ -275,7 +275,7 @@ const InternInformationPage = () => {
                       id="address"
                       type="textarea"
                       editable={editable}
-                      show={InternType === "Interno"}
+                      show={InternType === "Externo" || InternType === "Interno"}
                       onChange={(value) => setInternAddress(value || "")}
                     />
                     <InfoRow
@@ -423,8 +423,10 @@ const InternInformationPage = () => {
                       ModalClose={ClickCloseSupervisor}
                     />
                     <InternEmergenciesModal
-                      data={internData?.emergencyContacts}
+                      data={internData?.emergencyContacts || []}
+                      internId={internData?.id || ""}
                       open={ModalEmergency}
+                      onUpdate={() => fetchData()}
                       ModalClose={ClickCloseEmergency}
                     />
                     <InternFilesModal

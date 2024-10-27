@@ -10,12 +10,15 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import {
+  Box,
+  Button,
   Dialog,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
 import { on } from "events";
+import { ButtonComponent } from "../../buttons/buttons.component";
 
 export const EmergencyContactsRegister = ({ triggerAction = false, onReceiveContacts = (contacts: DataEmergencyContact[]) => {} }) => {
   const [contacts, setContacts] = useState<DataEmergencyContact[]>([]);
@@ -166,8 +169,29 @@ export const EmergencyContactModal = ({
             id={"number"}
             show={true}
           />
-          <button onClick={validateAndSubmit}>Añadir</button>
-          <button onClick={onClose}>Cancelar</button>
+          <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "30px",
+              }}
+            >
+              <div style={{ maxWidth: "80%" }}>
+                <ButtonComponent text="Aceptar" onClick={validateAndSubmit} />
+              </div>
+  
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{
+                  bgcolor: "#A0522D",
+                  "&:hover": { bgcolor: "#8b4513" },
+                }}
+                onClick={onClose}
+              >
+                Cancelar
+              </Button>
+            </Box>
         </DialogContentText>
       </DialogContent>
     </Dialog>

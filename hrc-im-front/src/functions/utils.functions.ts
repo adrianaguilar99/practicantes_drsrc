@@ -44,18 +44,22 @@ export function stringToColor(string: string) {
   
 
   // Get avatar from string {Function from MUI}
-  export function stringAvatar(name: string) {
+  export function stringAvatar(name: string, size: number = 40, fontSize: number = size / 2.5) {
     const nameParts = name.split(' ');
   
     return {
       sx: {
         bgcolor: stringToColor(name),
+        width: size,
+        height: size,
+        fontSize: fontSize,
       },
       children: nameParts.length === 1 
         ? `${nameParts[0][0]}`
         : `${nameParts[0][0]}${nameParts[1][0]}`,
     };
   }
+  
   
   
 

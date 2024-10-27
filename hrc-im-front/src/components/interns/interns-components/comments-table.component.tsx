@@ -12,7 +12,7 @@ export const CommentsTable = () => {
     },
     {
         id: 2,
-        name: "BRIAN WILFRIDO ROMERO CUPUL",
+        name: "BRIAN WILFRIDO ROMERO",
         time: DateConversor("29/9/2024, 2:14:33 p.m."),
         comment: "Comentario 2",
     },

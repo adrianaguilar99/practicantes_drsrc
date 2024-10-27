@@ -28,7 +28,7 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
     const ResizePage = () => {
       const screenWidth = window.innerWidth;
       if (screenWidth < 1375) {
-        setRowsPerPage(6);
+        setRowsPerPage(5);
       } else if (screenWidth < 1024) {
         setRowsPerPage(4);
       } else {
