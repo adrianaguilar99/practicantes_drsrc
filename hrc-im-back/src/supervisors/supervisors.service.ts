@@ -130,8 +130,9 @@ export class SupervisorsService {
     });
     if (!supervisor)
       throw new NotFoundException(`Supervisor not found using user.`);
+    const { supervisors, interns, ...department } = supervisor.department;
 
-    return supervisor;
+    return { ...supervisor, department };
   }
 
   async update(
