@@ -69,7 +69,7 @@ export class SupervisorsService {
         'CREATE SUPERVISOR',
         {
           id: createdSupervisor.id,
-          name: `${createdSupervisor.user.firstName} ${createdSupervisor.user.lastName}`,
+          data: `${createdSupervisor.user.firstName} ${createdSupervisor.user.lastName}`,
         },
         'SUCCESS',
       );
@@ -82,7 +82,7 @@ export class SupervisorsService {
           role,
         },
         'TRY TO CREATE SUPERVISOR',
-        { id: null, name: `${user.firstName} ${user.lastName}` },
+        { id: null, data: `${user.firstName} ${user.lastName}` },
         'FAILED TO CREATE SUPERVISOR',
         error.message,
       );
@@ -149,8 +149,8 @@ export class SupervisorsService {
         { id: userId, fullName, role },
         'TRY TO UPDATE SUPERVISOR',
         {
-          id: existingSupervisor.id,
-          name: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
+          id,
+          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
         },
         'FAILED TO UPDATE SUPERVISOR',
         'Attempted to update fields that are not allowed: department or user',
@@ -172,8 +172,8 @@ export class SupervisorsService {
         },
         'UPDATE SUPERVISOR',
         {
-          id: updatedSupervisor.id,
-          name: `${updatedSupervisor.user.firstName} ${updatedSupervisor.user.lastName}`,
+          id,
+          data: `${updatedSupervisor.user.firstName} ${updatedSupervisor.user.lastName}`,
         },
         'SUCCESS',
       );
@@ -186,7 +186,10 @@ export class SupervisorsService {
           role,
         },
         'TRY TO UPDATE SUPERVISOR',
-        { id, name: 'Update Error' },
+        {
+          id,
+          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
+        },
         'FAILED TO UPDATE SUPERVISOR',
         error.message,
       );
@@ -195,7 +198,7 @@ export class SupervisorsService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingSupervisor = await this.findOne(id);
     try {
       const deletedSupervisor = await this.supervisorsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -205,7 +208,10 @@ export class SupervisorsService {
           role,
         },
         'DELETE SUPERVISOR',
-        { id, name: 'Supervisor' },
+        {
+          id,
+          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
+        },
         'SUCCESS',
       );
       return deletedSupervisor.affected;
@@ -217,7 +223,10 @@ export class SupervisorsService {
           role,
         },
         'TRY TO DELETE SUPERVISOR',
-        { id, name: 'Supervisor' },
+        {
+          id,
+          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
+        },
         'FAILED TO DELETE SUPERVISOR',
         error.message,
       );
