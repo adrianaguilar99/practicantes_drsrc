@@ -110,7 +110,7 @@ export class CareersService {
           role: reqUser.role,
         },
         'TRY TO UPDATE CAREER',
-        { id, data: 'Update Error' },
+        { id, data: `${updateCareerDto.name}` },
         'FAILED TO UPDATE CAREER',
         error.message,
       );
