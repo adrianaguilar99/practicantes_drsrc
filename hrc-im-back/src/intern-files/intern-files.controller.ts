@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   Res,
+  Req,
 } from '@nestjs/common';
 import { InternFilesService } from './intern-files.service';
 import { UploadInternFiles } from './decorators';
@@ -96,7 +97,9 @@ export class InternFilesController {
       birthCertificate: Express.Multer.File[];
       medicalInsurance: Express.Multer.File[];
     },
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     // Agrupar todos los archivos en un solo array para trabajar con ellos
     const internFiles = [
       ...(files.photo || []),
@@ -108,7 +111,7 @@ export class InternFilesController {
 
     // Validamos y manejamos el rollback en caso de error
     try {
-      await this.internFilesService.validateAndHandleFiles(internFiles);
+      await this.internFilesService.validateAndHandleFiles(internFiles, user);
     } catch (error) {
       rollbackFiles(internId);
     }
@@ -117,6 +120,7 @@ export class InternFilesController {
     const createdInternFiles = await this.internFilesService.create(
       internId,
       internFiles,
+      user,
     );
     return { message: SUCCESSFUL_CREATION, data: createdInternFiles };
   }
@@ -217,7 +221,9 @@ export class InternFilesController {
       birthCertificate: Express.Multer.File[];
       medicalInsurance: Express.Multer.File[];
     },
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     // Agrupar todos los archivos en un solo array para trabajar con ellos
     const internFiles = [
       ...(files.photo || []),
@@ -228,13 +234,14 @@ export class InternFilesController {
     ];
 
     // Validamos y manejamos el rollback en caso de error
-    await this.internFilesService.validateAndHandleFiles(internFiles);
+    await this.internFilesService.validateAndHandleFiles(internFiles, user);
 
     // Si todo sale bien, continuamos con la actualizacion de las rutas de los archivos
     const updatedInternFiles = await this.internFilesService.update(
       id,
       internId,
       internFiles,
+      user,
     );
     return { message: SUCCESSFUL_UPDATE, data: updatedInternFiles };
   }
@@ -255,10 +262,13 @@ export class InternFilesController {
   async deleteFiles(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('internId', ParseUUIDPipe) internId: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     const deletedInternFiles = await this.internFilesService.remove(
       id,
       internId,
+      user,
     );
     return { message: SUCCESSFUL_DELETION, data: deletedInternFiles };
   }
