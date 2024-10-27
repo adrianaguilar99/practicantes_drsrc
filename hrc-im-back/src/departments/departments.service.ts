@@ -123,7 +123,7 @@ export class DepartmentsService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingDepartment = await this.findOne(id);
     try {
       const deletedDepartment = await this.departmentsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -133,7 +133,7 @@ export class DepartmentsService {
           role,
         },
         'DELETE DEPARTMENT',
-        { id, data: 'Department' },
+        { id, data: existingDepartment.name },
         'SUCCESS',
       );
       return deletedDepartment.affected;
@@ -145,7 +145,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO DELETE DEPARTMENT',
-        { id, data: 'Department' },
+        { id, data: existingDepartment.name },
         'FAILED TO DELETE DEPARTMENT',
         error.message,
       );

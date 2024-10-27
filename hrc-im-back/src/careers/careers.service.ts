@@ -121,6 +121,7 @@ export class CareersService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
+    const existingCareer = await this.findOne(id);
     try {
       const deletedCareer = await this.careersRepository.delete(id);
       if (!deletedCareer.affected)
@@ -132,7 +133,7 @@ export class CareersService {
           role,
         },
         'DELETE CAREER',
-        { id, data: 'Career' },
+        { id, data: existingCareer.name },
         'SUCCESS',
       );
       return deletedCareer.affected;
@@ -144,7 +145,7 @@ export class CareersService {
           role,
         },
         'TRY TO DELETE CAREER',
-        { id, data: 'Career' },
+        { id, data: existingCareer.name },
         'FAILED TO DELETE CAREER',
         error.message,
       );
