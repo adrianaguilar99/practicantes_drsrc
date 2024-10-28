@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Department } from 'src/departments/entities/department.entity';
+import { InternComment } from 'src/intern-comments/entities/intern-comment.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -45,6 +47,9 @@ export class Supervisor {
   })
   @JoinColumn({ name: 'department_id' })
   department: Department;
+
+  @OneToMany(() => InternComment, (internComments) => internComments.supervisor)
+  internComents: InternComment[];
 
   @ApiProperty({
     type: () => User,
