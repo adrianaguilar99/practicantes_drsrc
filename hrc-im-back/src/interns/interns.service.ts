@@ -128,6 +128,11 @@ export class InternsService {
       );
       return createdIntern;
     } catch (error) {
+      await this.usersService.physicalRemove(newIntern.user.id, {
+        fullName,
+        role,
+        userId,
+      });
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
