@@ -26,6 +26,7 @@ import {
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   READ_ALL_RECORDS,
@@ -81,6 +82,7 @@ export class InternFilesController {
     type: InternFile,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({
     status: 409,
     description: `${CONFLICT_ERROR} Only one can be created.`,
@@ -206,6 +208,7 @@ export class InternFilesController {
     description: SUCCESSFUL_UPDATE,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async updateFiles(
@@ -259,6 +262,7 @@ export class InternFilesController {
     description: `${REMOVE_RECORD} Delete all the practitioner's files.`,
     type: InternFile,
   })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async deleteFiles(
