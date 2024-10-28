@@ -162,7 +162,6 @@ export class InternFilesController {
     return { message: SUCCESSFUL_FETCH, data: internFiles };
   }
 
-  @Public()
   @Get(':internId/:fileName')
   @HttpCode(200)
   @ApiOperation({
