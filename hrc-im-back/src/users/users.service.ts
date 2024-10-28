@@ -274,11 +274,32 @@ export class UsersService {
   }
 
   async physicalRemove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingUser = await this.findOne(id);
     try {
       const removedUser = await this.usersRepository.delete(id);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'REMOVE USER',
+        { id, data: `${existingUser.firstName} ${existingUser.lastName}` },
+        'SUCCESS',
+      );
       return removedUser.affected;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO REMOVE USER',
+        { id, data: `${existingUser.firstName} ${existingUser.lastName}` },
+        'FAILED TO REMOVE USER',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }
