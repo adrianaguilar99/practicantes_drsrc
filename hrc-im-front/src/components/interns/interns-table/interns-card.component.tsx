@@ -2,14 +2,18 @@ import React, { useState } from "react";
 import "../../components.css";
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
+import LiveHelpOutlinedIcon from '@mui/icons-material/LiveHelpOutlined';
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useNavigate } from "react-router-dom";
 import { ConfirmationModal } from "../../modals/confirmation-modal.component";
 import { DataIntern } from "../../../interfaces/interns/interns.interface";
 import { IconButton } from "@mui/material";
-import { deleteUser, patchUser } from "../../../api/users/users.api";
+import { activateUser, deleteUser, patchUser } from "../../../api/users/users.api";
 import { enqueueSnackbar } from "notistack";
 import { DataUser } from "../../../interfaces/users.interface";
+import { useSelector } from "react-redux";
+import { decryptData } from "../../../functions/encrypt-data.function";
+import { RootState } from "../../../redux/store";
 
 interface InternCardProps {
   id: string;
@@ -27,6 +31,7 @@ const InternCardComponent: React.FC<InternCardProps> = ({
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const userToken = sessionStorage.getItem("_Token") || "";
   const [typeAction, setTypeAction] = useState('');
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const navigate = useNavigate();
 
   const Click = () => {
@@ -61,16 +66,14 @@ const InternCardComponent: React.FC<InternCardProps> = ({
         }
       })
       .catch((error) => {
-        enqueueSnackbar("Error al desactivar el supervisor", { variant: "error" });
+        enqueueSnackbar("Error al desactivar el practicante", { variant: "error" });
         ConfirmationModalClose();
       });
   };
 
   const ActiveSupervisor = () => {
     if (!selectedIntern) return;
-    patchUser(userToken, selectedIntern.id,{
-      isActive: true,
-    })
+    activateUser(userToken, selectedIntern.id)
       .then((data) => {
         if (data) {
           enqueueSnackbar("Cuenta del practicante activado correctamente", {
@@ -81,7 +84,7 @@ const InternCardComponent: React.FC<InternCardProps> = ({
         }
       })
       .catch((error) => {
-        enqueueSnackbar("Error al activar el supervisor", { variant: "error" });
+        enqueueSnackbar("Error al activar el practicante", { variant: "error" });
         ConfirmationModalClose();
       });
   };
@@ -125,7 +128,8 @@ const InternCardComponent: React.FC<InternCardProps> = ({
             <PersonOffOutlinedIcon />
           </IconButton>
         ) : (
-          <IconButton
+          userRol === "ADMINISTRATOR" ? (
+             <IconButton
             aria-label="active"
             onClick={() => {
               DeleteClick(data.user);
@@ -133,18 +137,27 @@ const InternCardComponent: React.FC<InternCardProps> = ({
             }}
           >
             <CheckBoxOutlinedIcon />
-          </IconButton>
+          </IconButton> ): (<IconButton
+            aria-label="active"
+            onClick={() => {
+              DeleteClick(data.user);
+              setTypeAction("active");
+            }}
+          >
+            <LiveHelpOutlinedIcon />
+          </IconButton>)
+          
         )}
       </div>
       <ConfirmationModal
         open={confirmationOpen}
         onConfirm={typeAction == "active" ? ActiveSupervisor : DeleteSupervisor}
         onCancel={ConfirmationModalClose}
-        title="Desactivar Supervisor"
+        title="Desactivar Cuenta de Practicante"
         message={
           typeAction == "active"
-            ? "¿Estas seguro de activar la cuenta de este supervisor?"
-            : "¿Estas seguro que quieres desactivar la cuenta de este supervisor?"
+            ? "¿Estas seguro de activar la cuenta de este practicante?"
+            : "¿Estas seguro que quieres desactivar la cuenta de este practicante?"
         }
       />
     </div>

@@ -30,6 +30,7 @@ import { postInternFunction } from "../../functions/intern-functions/post-intern
 import { DataEmergencyContact } from "../../interfaces/interns/emergency-contacts/emergency-contacts.interface";
 import { set } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { Contacts } from "@mui/icons-material";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -64,7 +65,7 @@ const InternRegisterPage = () => {
   const [InternProofofaddress, setInternProofofaddress] = useState("");
   const [InternBirthCertificate, setInternBirthCertificate] = useState("");
   const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
-  const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
+  const defaultPassword = process.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("");
   const [InternContacts = [], setInternContacts] = useState<DataEmergencyContact[]>([]);
@@ -117,6 +118,7 @@ const InternRegisterPage = () => {
   const [formAction, setFormAction] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
   const newErrors: { [key: string]: string | undefined } = {};
+  const [summitPressed, setSummitPressed] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const TypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -352,9 +354,12 @@ const InternRegisterPage = () => {
     ){
       setHasErrors(false);
       setFormAction(true);
+      setInternContacts({...InternContacts});
     }
     else{
       setHasErrors(true);
+      setFormAction(false);
+      setSummitPressed(false)
     }
   }
   const formSubmit = () => { 
@@ -375,6 +380,7 @@ const InternRegisterPage = () => {
             schoolEnrollment: InternID,
             internshipStart: InterBeginDate,
             internshipEnd: InternEndDate,
+            internshipDuration: InternTotalTime + " hours",
             entryTime: InternCheckIn,
             exitTime: InternCheckOut,
             status: "ACTIVE",    
@@ -389,16 +395,21 @@ const InternRegisterPage = () => {
             setInternContacts([]);
             console.log("Usuario registrado correctamente");
             navigate("/interns");
+          },
+          onError: () => {
+            setHasErrors(true);
+            setSummitPressed(false);
+            console.log("Error al registrar el usuario");
           }
-        });
+        })
       }
   };
 
 useEffect(() => { 
-  if(InternContacts.length > 0 && hasErrors === false){
+  if(InternContacts.length > 1 && hasErrors === false && formAction === true && summitPressed === true){
     formSubmit();
   }
-}, [InternContacts]);
+}, [InternContacts, summitPressed === true]);
 
 
   const ReceiveContacts = (contacts : DataEmergencyContact[]) => {
@@ -795,7 +806,7 @@ useEffect(() => {
             <div className="button-container-intern">
               <ButtonComponent
                 text="Guardar"
-                onClick={ () => InputValidation() }
+                onClick={() => {InputValidation(); setSummitPressed(true)} }
               />
               <ButtonComponent text="Cancelar" onClick={() => history.back()} />
             </div>

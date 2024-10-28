@@ -3,7 +3,7 @@ import { RegisterRow } from "../inputs/register-row.component";
 import { getDepartmentsData } from "../../api/departments/departments.api";
 import { useEffect, useState } from "react";
 import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
-import { FormModalProps } from "../modals/form-modal.component";
+import { FormModal, FormModalProps } from "../modals/form-modal.component";
 import { ButtonComponent } from "../buttons/buttons.component";
 import { enqueueSnackbar } from "notistack";
 import { InputValidators } from "../../functions/input-validators.functions";
@@ -41,6 +41,11 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
   const [SupervisorPassword, setSupervisorPassword] = useState<string>(defaultPassword);
   const [Departments, setDepartments] = useState<DataDepartment[]>([]);
   const userToken = sessionStorage.getItem("_Token") || "";
+  const [entity, setEntity] = useState<string>("");
+  const [open, setOpen] = useState(false);
+
+  const ModalOpen = () => setOpen(true);
+  const ModalClose = () => setOpen(false);
 
 
   const fetchDepartments = async () => {
@@ -328,6 +333,16 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               validate={errors.supervisorEmail ? "Error" : "Normal"}
               typeError={errors.supervisorEmail}
             />
+            <div>
+            <p
+                      className="register-intern-suggestion"
+                      onClick={() => {
+                        setEntity("departments");
+                        ModalOpen();
+                      }}
+                    >
+                      ¿No encuetra el departamento que busca?
+                    </p>
             <RegisterRow
               label="Departamento"
               value={SupervisorDepartment}
@@ -352,6 +367,8 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               validate={errors.supervisorDepartment ? "Error" : "Normal"}
               typeError={errors.supervisorDepartment}
             />
+            </div>
+             
 
 
           </Box>
@@ -424,6 +441,16 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               Cancelar
             </Button>
           </Box>
+          <FormModal
+        open={open}
+        onConfirm={() => {
+          fetchDepartments();
+        }}
+        onCancel={ModalClose}
+        title="Agregar"
+        type="Add"
+        entity={entity}
+      />
         </div>
       )}
     </>
