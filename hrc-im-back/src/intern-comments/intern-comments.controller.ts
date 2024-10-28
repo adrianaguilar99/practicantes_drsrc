@@ -108,6 +108,25 @@ export class InternCommentsController {
     return { message: SUCCESSFUL_FETCH, data: internComment };
   }
 
+  @Get(':internId/comments')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: `${SUCCESSFUL_FETCH}. All comments from a single intern.`,
+    type: [InternComment],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  async findAllByIntern(
+    @Param('internId', ParseUUIDPipe) internId: string,
+  ): Promise<IApiResponse<any>> {
+    const allInternComments =
+      await this.internCommentsService.findAllByIntern(internId);
+    return { message: SUCCESSFUL_FETCH, data: allInternComments };
+  }
+
   @Patch(':id')
   @HttpCode(200)
   @ApiOperation({

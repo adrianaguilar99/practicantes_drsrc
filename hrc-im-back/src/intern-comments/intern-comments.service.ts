@@ -93,6 +93,25 @@ export class InternCommentsService {
     }
   }
 
+  async findAllByIntern(id: string) {
+    try {
+      const allInternComments = await this.internCommentsRepository.find({
+        relations: {
+          intern: true,
+          supervisor: true,
+        },
+        where: { intern: { id } },
+        order: { updatedAt: 'DESC' },
+      });
+      return allInternComments.map((comment) => ({
+        ...comment,
+        intern: cleanInternData(comment.intern),
+      }));
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
+
   async findOne(id: string) {
     try {
       const existingInternComment = await this.internCommentsRepository.findOne(

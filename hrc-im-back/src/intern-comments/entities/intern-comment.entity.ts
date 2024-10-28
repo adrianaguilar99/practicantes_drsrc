@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { Intern } from 'src/interns/entities/intern.entity';
 import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 import {
@@ -55,6 +56,7 @@ export class InternComment {
   })
   updatedAt: Date;
 
+  @Exclude()
   @ApiProperty({
     type: () => Intern,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -68,6 +70,7 @@ export class InternComment {
   @JoinColumn({ name: 'intern_id' })
   intern: Intern;
 
+  @Exclude()
   @ApiProperty({
     type: () => Supervisor,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
