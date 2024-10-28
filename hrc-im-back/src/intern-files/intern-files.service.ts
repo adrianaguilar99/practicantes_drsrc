@@ -220,7 +220,7 @@ export class InternFilesService {
     try {
       await this.internFilesRepository.update(id, internFilesToUpdate);
       await this.systemAuditsService.createSystemAudit(
-        { id, fullName, role },
+        { id: userId, fullName, role },
         'UPDATE INTERN FILES',
         {
           id,
@@ -231,7 +231,7 @@ export class InternFilesService {
       return internFilesToUpdate;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
-        { id, fullName, role },
+        { id: userId, fullName, role },
         'FAILED TO UPDATE INTERN FILES',
         {
           id,
