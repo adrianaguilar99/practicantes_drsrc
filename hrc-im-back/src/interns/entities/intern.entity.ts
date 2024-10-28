@@ -275,11 +275,11 @@ export class Intern {
 
     /**
      * La fecha de inicio y fin si puede ser en el pasado
-     * pero la fecha de fin no puede ser menor que la fecha de inicio
+     * pero la fecha de inicio no puede ser mayor o igual que la fecha de fin
      */
-    if (endDate.getTime() < startDate.getTime())
+    if (startDate.getTime() >= endDate.getTime())
       throw new BadRequestException(
-        'The internship end date cannot be less than the start date.',
+        'The internship start date cannot be greater or equal than the end date.',
       );
   }
 
