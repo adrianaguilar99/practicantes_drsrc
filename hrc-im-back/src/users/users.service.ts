@@ -86,10 +86,13 @@ export class UsersService {
     let allUsers: User[];
     try {
       if (role === UserRole.ADMINISTRATOR)
-        allUsers = await this.usersRepository.find();
+        allUsers = await this.usersRepository.find({
+          order: { createdAt: 'DESC' },
+        });
       else
         allUsers = await this.usersRepository.find({
           where: { isActive: true },
+          order: { createdAt: 'DESC' },
         });
 
       return allUsers;
@@ -102,6 +105,7 @@ export class UsersService {
     try {
       const admins = await this.usersRepository.find({
         where: { userRole: UserRole.ADMINISTRATOR },
+        order: { createdAt: 'DESC' },
       });
       return admins;
     } catch (error) {

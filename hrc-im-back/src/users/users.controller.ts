@@ -104,13 +104,9 @@ export class UsersController {
     };
   }
 
-  @UserRoles(
-    UserRole.ADMINISTRATOR,
-    UserRole.SUPERVISOR,
-    UserRole.SUPERVISOR_RH,
-  )
+  @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({
-    summary: `${READ_ALL_RECORDS} Use to find all administrators. Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR} and ${UserRole.SUPERVISOR_RH}`,
+    summary: `${READ_ALL_RECORDS} Use to find all administrators. Only: ${UserRole.ADMINISTRATOR}`,
   })
   @ApiResponse({
     status: 200,
