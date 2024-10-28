@@ -32,6 +32,7 @@ import {
   REMOVE_RECORD,
   SUCCESSFUL_ALL_MARKED_DELETED,
   SUCCESSFUL_CREATION,
+  SUCCESSFUL_DELETION,
   SUCCESSFUL_FETCH,
   SUCCESSFUL_MARKED_DELETED,
   SUCCESSFUL_UPDATE,
@@ -233,6 +234,7 @@ export class UsersController {
     type: User,
   })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete(':id')
@@ -244,6 +246,33 @@ export class UsersController {
     const removedUser = await this.usersService.deactivate(id, user);
     return {
       message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
+      data: removedUser,
+    };
+  }
+
+  @Delete(':id/physicalRemove')
+  @HttpCode(200)
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_MARKED_DELETED,
+    type: User,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
+  ): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const removedUser = await this.usersService.physicalRemove(id, user);
+    return {
+      message: `${SUCCESSFUL_DELETION}`,
       data: removedUser,
     };
   }

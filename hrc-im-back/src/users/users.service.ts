@@ -234,4 +234,14 @@ export class UsersService {
       handleInternalServerError(error.message);
     }
   }
+
+  async physicalRemove(id: string, { fullName, role, userId }: IRequestUser) {
+    await this.findOne(id);
+    try {
+      const removedUser = await this.usersRepository.delete(id);
+      return removedUser.affected;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
 }
