@@ -5,6 +5,7 @@ import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/emergency-contact/entities/emergency-contact.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
+import { InternComment } from 'src/intern-comments/entities/intern-comment.entity';
 import { InternFile } from 'src/intern-files/entities/intern-file.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -216,6 +217,9 @@ export class Intern {
     { eager: true },
   )
   emergencyContacts: EmergencyContact[];
+
+  @OneToMany(() => InternComment, (internComments) => internComments.intern)
+  internComents: InternComment[];
 
   @ApiProperty({
     type: () => User,
