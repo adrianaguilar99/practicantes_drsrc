@@ -28,13 +28,12 @@ import {
   NOT_FOUND,
   READ_ALL_RECORDS,
   READ_RECORD,
-  REMOVE_ALL_RECORDS,
   REMOVE_RECORD,
-  SUCCESSFUL_ALL_MARKED_DELETED,
   SUCCESSFUL_CREATION,
   SUCCESSFUL_DELETION,
   SUCCESSFUL_FETCH,
-  SUCCESSFUL_MARKED_DELETED,
+  SUCCESSFUL_MARKED_ACTIVE,
+  SUCCESSFUL_MARKED_DEACTIVE,
   SUCCESSFUL_UPDATE,
   UNAUTHORIZED_ACCESS,
   UPDATE_RECORD,
@@ -226,18 +225,37 @@ export class UsersController {
 
   @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({
-    summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
+    summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}`,
   })
   @ApiResponse({
     status: 200,
-    description: SUCCESSFUL_MARKED_DELETED,
+    description: SUCCESSFUL_MARKED_ACTIVE,
+    type: User,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  @HttpCode(200)
+  @Patch(':id/active')
+  async active(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+    const user = req.user;
+    const updatedIntern = await this.usersService.active(id, user);
+    return { message: SUCCESSFUL_MARKED_ACTIVE, data: updatedIntern };
+  }
+
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_MARKED_DEACTIVE,
     type: User,
   })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
-  @Delete(':id')
+  @Delete(':id/deactive')
   async deactivate(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,
@@ -245,7 +263,7 @@ export class UsersController {
     const user = req.user;
     const removedUser = await this.usersService.deactivate(id, user);
     return {
-      message: `${SUCCESSFUL_MARKED_DELETED}. User marked as inactive, check with the database administrator to reactivate it.`,
+      message: `${SUCCESSFUL_MARKED_DEACTIVE} User marked as inactive, check with the database administrator to reactivate it.`,
       data: removedUser,
     };
   }
@@ -258,7 +276,7 @@ export class UsersController {
   })
   @ApiResponse({
     status: 200,
-    description: SUCCESSFUL_MARKED_DELETED,
+    description: SUCCESSFUL_DELETION,
     type: User,
   })
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })

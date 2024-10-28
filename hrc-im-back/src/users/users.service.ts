@@ -146,7 +146,10 @@ export class UsersService {
 
     // Prohibimos actualizar los siguientes campos
     const isUnauthorizedUpdate =
-      updateUserDto.email || updateUserDto.password || updateUserDto.userRole;
+      updateUserDto.email ||
+      updateUserDto.password ||
+      updateUserDto.isActive ||
+      updateUserDto.userRole;
     if (isUnauthorizedUpdate) {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
@@ -156,18 +159,18 @@ export class UsersService {
           data: `${existingUser.firstName} ${existingUser.lastName}`,
         },
         'FAILED TO UPDATE USER',
-        'Attempted to update fields that are not allowed: email, password, role',
+        'Attempted to update fields that are not allowed: email, password, role, active',
       );
       throw new ConflictException(
-        'You are not allowed to update email, password or role of the user.',
+        'You are not allowed to update email, password, role, or active of the user.',
       );
     }
 
-    const { firstName, lastName, isActive } = updateUserDto;
+    const { firstName, lastName } = updateUserDto;
 
     if (firstName) existingUser.firstName = firstName;
     if (lastName) existingUser.lastName = lastName;
-    if (isActive !== undefined) existingUser.isActive = isActive;
+    // if (isActive !== undefined) existingUser.isActive = isActive;
 
     try {
       const updatedUser = await this.usersRepository.save(existingUser);
@@ -195,6 +198,41 @@ export class UsersService {
         'TRY TO UPDATE USER',
         { id, data: `${updateUserDto.firstName} ${updateUserDto.lastName}` },
         'FAILED TO UPDATE USER',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
+  }
+
+  async active(id: string, { fullName, role, userId }: IRequestUser) {
+    const existingUser = await this.findOneByPrivilegedUsers(id);
+    existingUser.isActive = true;
+    try {
+      const updatedUser = await this.usersRepository.save(existingUser);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'ACTIVE USER',
+        {
+          id,
+          data: `${updatedUser.firstName} ${updatedUser.lastName}`,
+        },
+        'SUCCESS',
+      );
+      return updatedUser;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO ACTIVE USER',
+        { id, data: 'TRY TO ACTIVE USER' },
+        'FAILED TO ACTIVE USER',
         error.message,
       );
       handleInternalServerError(error.message);
