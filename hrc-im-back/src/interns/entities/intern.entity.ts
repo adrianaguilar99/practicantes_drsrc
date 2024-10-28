@@ -258,41 +258,28 @@ export class Intern {
   }
 
   private validateDates() {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
     const startDate = new Date(this.internshipStart);
     startDate.setHours(
       startDate.getHours() + startDate.getTimezoneOffset() / 60,
     );
-
     const endDate = new Date(this.internshipEnd);
     endDate.setHours(endDate.getHours() + endDate.getTimezoneOffset() / 60);
 
     // Verificacion de fechas
     // console.log({
     //   startDateString: startDate.toDateString(),
-    //   nowDateString: now.toDateString(),
     //   endDateString: endDate.toDateString(),
     //   startDateGetTime: startDate.getTime(),
-    //   nowDateGetTime: now.getTime(),
     //   endDateGetTime: endDate.getTime(),
     // });
 
-    // Permitir que la fecha de inicio sea igual o mayor a la fecha actual
-    if (startDate.getTime() < now.getTime())
+    /**
+     * La fecha de inicio y fin si puede ser en el pasado
+     * pero la fecha de fin no puede ser menor que la fecha de inicio
+     */
+    if (endDate.getTime() < startDate.getTime())
       throw new BadRequestException(
-        'The internship start date cannot be in the past.',
-      );
-
-    if (startDate.getTime() > endDate.getTime())
-      throw new BadRequestException(
-        'The internship start date cannot be greater than the end date.',
-      );
-
-    if (endDate.getTime() < now.getTime())
-      throw new BadRequestException(
-        'The internship end date cannot be in the past.',
+        'The internship end date cannot be less than the start date.',
       );
   }
 
