@@ -80,7 +80,7 @@ export class InternCommentsController {
     summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: SUCCESSFUL_FETCH,
     type: [InternComment],
   })

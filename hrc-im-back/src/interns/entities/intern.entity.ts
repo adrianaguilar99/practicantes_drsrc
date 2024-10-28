@@ -218,7 +218,9 @@ export class Intern {
   )
   emergencyContacts: EmergencyContact[];
 
-  @OneToMany(() => InternComment, (internComments) => internComments.intern)
+  @OneToMany(() => InternComment, (internComments) => internComments.intern, {
+    eager: true,
+  })
   internComents: InternComment[];
 
   @ApiProperty({

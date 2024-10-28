@@ -156,7 +156,7 @@ export class InternFilesService {
     id: string,
     internId: string,
     files: Express.Multer.File[],
-    { fullName, role, userId: userReq }: IRequestUser,
+    { fullName, role, userId }: IRequestUser,
   ) {
     await this.internsService.findOne(internId);
     const existingInternFiles = await this.findOne(id);
@@ -220,7 +220,7 @@ export class InternFilesService {
     try {
       await this.internFilesRepository.update(id, internFilesToUpdate);
       await this.systemAuditsService.createSystemAudit(
-        { id: userReq, fullName, role },
+        { id, fullName, role },
         'UPDATE INTERN FILES',
         {
           id,
@@ -231,7 +231,7 @@ export class InternFilesService {
       return internFilesToUpdate;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
-        { id: userReq, fullName, role },
+        { id, fullName, role },
         'FAILED TO UPDATE INTERN FILES',
         {
           id,
