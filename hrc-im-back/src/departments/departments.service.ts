@@ -38,7 +38,7 @@ export class DepartmentsService {
           role,
         },
         'CREATE DEPARTMENT',
-        { id: createdDepartment.id, name: createdDepartment.name },
+        { id: createdDepartment.id, data: createdDepartment.name },
         'SUCCESS',
       );
       return createdDepartment;
@@ -50,7 +50,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO CREATE DEPARTMENT',
-        { id: null, name: createDepartmentDto.name },
+        { id: null, data: createDepartmentDto.name },
         'FAILED TO CREATE DEPARTMENT',
         error.message,
       );
@@ -100,7 +100,7 @@ export class DepartmentsService {
           role,
         },
         'UPDATE DEPARTMENT',
-        { id: updatedDepartment.id, name: updatedDepartment.name },
+        { id, data: updatedDepartment.name },
         'SUCCESS',
       );
       return updatedDepartment;
@@ -112,7 +112,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO UPDATE DEPARTMENT',
-        { id, name: 'Update Error' },
+        { id, data: `${updateDepartmentDto.name}` },
         'FAILED TO UPDATE DEPARTMENT',
         error.message,
       );
@@ -123,7 +123,7 @@ export class DepartmentsService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingDepartment = await this.findOne(id);
     try {
       const deletedDepartment = await this.departmentsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -133,7 +133,7 @@ export class DepartmentsService {
           role,
         },
         'DELETE DEPARTMENT',
-        { id, name: 'Department' },
+        { id, data: existingDepartment.name },
         'SUCCESS',
       );
       return deletedDepartment.affected;
@@ -145,7 +145,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO DELETE DEPARTMENT',
-        { id, name: 'Department' },
+        { id, data: existingDepartment.name },
         'FAILED TO DELETE DEPARTMENT',
         error.message,
       );
@@ -153,7 +153,7 @@ export class DepartmentsService {
     }
   }
 
-  async removeAll() {
+  async removeAll({ fullName, role, userId }: IRequestUser) {
     try {
       // Obtener todos los departamentos
       const allDepartments = await this.departmentsRepository
@@ -173,11 +173,34 @@ export class DepartmentsService {
       // Eliminar solo los departamentos sin relaciones
       const departments = departmentsWithoutRelations.map((d) => d.id);
       await this.departmentsRepository.delete(departments);
-
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE ALL DEPARTMENTS',
+        {
+          id: departments.toString(),
+          data: `${[...departmentsWithoutRelations]}`,
+        },
+        'SUCCESS',
+      );
       return `Deleted departments without relations: ${departmentsWithoutRelations
         .map((d) => d.name)
         .join(', ')}`;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE ALL DEPARTMENTS',
+        { id: null, data: 'Deparment' },
+        'FAILED TO DELETE ALL DEPARTMENTS',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

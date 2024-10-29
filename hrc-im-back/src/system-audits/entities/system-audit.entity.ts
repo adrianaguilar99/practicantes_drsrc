@@ -24,7 +24,7 @@ export class SystemAudit {
     type: 'json',
     nullable: false,
   })
-  entityAffected: { id: string; name: string };
+  entityAffected: { id: string; data: string };
 
   @Column({
     name: 'status',

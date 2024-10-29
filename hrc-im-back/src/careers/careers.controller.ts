@@ -166,8 +166,9 @@ export class CareersController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete()
-  async removeAll(): Promise<IApiResponse<any>> {
-    const removedCareers = await this.careersService.removeAll();
+  async removeAll(@Req() req): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const removedCareers = await this.careersService.removeAll(user);
     return { message: SUCCESSFUL_DELETION, data: removedCareers };
   }
 }

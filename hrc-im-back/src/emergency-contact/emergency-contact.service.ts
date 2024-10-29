@@ -47,7 +47,7 @@ export class EmergencyContactService {
         'CREATE EMERGENCY CONTACT',
         {
           id: createdEmergencyContact.id,
-          name: `${createdEmergencyContact.name}`,
+          data: `${createdEmergencyContact.name}`,
         },
         'SUCCESS',
       );
@@ -60,7 +60,7 @@ export class EmergencyContactService {
           role,
         },
         'TRY TO CREATE EMERGENCY CONTACT',
-        { id: null, name: `${newEmergencyContact.name}` },
+        { id: null, data: `${newEmergencyContact.name}` },
         'FAILED TO CREATE INTERN',
         error.message,
       );
@@ -97,19 +97,19 @@ export class EmergencyContactService {
     updateEmergencyContactDto: UpdateEmergencyContactDto,
     { fullName, role, userId }: IRequestUser,
   ) {
-    const existingContact = await this.findOne(id);
+    const existingEmergencyContact = await this.findOne(id);
 
     // Nos aseguramos de que no se cambie el internId
     if (
       updateEmergencyContactDto.internId &&
-      updateEmergencyContactDto.internId !== existingContact.intern.id
+      updateEmergencyContactDto.internId !== existingEmergencyContact.intern.id
     ) {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'TRY TO UPDATE EMERGENCY CONTACT',
         {
-          id: existingContact.id,
-          name: `${existingContact.name}`,
+          id: existingEmergencyContact.id,
+          data: `${existingEmergencyContact.name}`,
         },
         'FAILED TO UPDATE EMERGENCY CONTACT',
         'Attempted to update fields that are not allowed: intern',
@@ -119,20 +119,22 @@ export class EmergencyContactService {
 
     const { name, phone, relationship, positionContact } =
       updateEmergencyContactDto;
-    if (name) existingContact.name = name;
-    if (phone) existingContact.phone = phone;
-    if (relationship) existingContact.relationship = relationship;
-    if (positionContact) existingContact.positionContact = positionContact;
+    if (name) existingEmergencyContact.name = name;
+    if (phone) existingEmergencyContact.phone = phone;
+    if (relationship) existingEmergencyContact.relationship = relationship;
+    if (positionContact)
+      existingEmergencyContact.positionContact = positionContact;
 
     try {
-      const updatedContact =
-        await this.emergencyContactsRepository.save(existingContact);
+      const updatedContact = await this.emergencyContactsRepository.save(
+        existingEmergencyContact,
+      );
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'UPDATE EMERGENCY CONTACT',
         {
-          id: updatedContact.id,
-          name: `${updatedContact.name}`,
+          id,
+          data: `${updatedContact.name}`,
         },
         'SUCCESS',
       );
@@ -141,7 +143,7 @@ export class EmergencyContactService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'TRY TO UPDATE EMERGENCY CONTACT',
-        { id, name: `${existingContact.name}` },
+        { id, data: `${updateEmergencyContactDto.name}` },
         'FAILED TO UPDATE EMERGENCY CONTACT',
         error.message,
       );
@@ -150,7 +152,7 @@ export class EmergencyContactService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingEmergencyContact = await this.findOne(id);
     try {
       const deletedEmergencyContact =
         await this.emergencyContactsRepository.delete(id);
@@ -161,7 +163,7 @@ export class EmergencyContactService {
           role,
         },
         'DELETE EMERGENCY CONTACT',
-        { id, name: 'Emergency Contact' },
+        { id, data: existingEmergencyContact.name },
         'SUCCESS',
       );
       return deletedEmergencyContact.affected;
@@ -173,7 +175,7 @@ export class EmergencyContactService {
           role,
         },
         'TRY TO DELETE EMERGENCY CONTACT',
-        { id, name: 'Emergency Contact' },
+        { id, data: `${existingEmergencyContact.name}` },
         'FAILED TO DELETE EMERGENCY CONTACT',
         error.message,
       );

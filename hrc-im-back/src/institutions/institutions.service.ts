@@ -37,7 +37,7 @@ export class InstitutionsService {
           role,
         },
         'CREATE INSTITUTION',
-        { id: createdInstitution.id, name: createdInstitution.name },
+        { id: createdInstitution.id, data: createdInstitution.name },
         'SUCCESS',
       );
       return createdInstitution;
@@ -49,7 +49,7 @@ export class InstitutionsService {
           role,
         },
         'TRY TO CREATE INSTITUTION',
-        { id: null, name: createInstitutionDto.name },
+        { id: null, data: createInstitutionDto.name },
         'FAILED TO CREATE INSTITUTION',
         error.message,
       );
@@ -98,7 +98,7 @@ export class InstitutionsService {
           role: reqUser.role,
         },
         'UPDATE INSTITUTION',
-        { id: updatedInstitution.id, name: updatedInstitution.name },
+        { id, data: updatedInstitution.name },
         'SUCCESS',
       );
       return updatedInstitution;
@@ -110,7 +110,7 @@ export class InstitutionsService {
           role: reqUser.role,
         },
         'TRY TO UPDATE INSTITUTION',
-        { id, name: 'Update Error' },
+        { id, data: `${updateInstitutionDto.name}` },
         'FAILED TO UPDATE INSTITUTION',
         error.message,
       );
@@ -120,11 +120,9 @@ export class InstitutionsService {
     }
   }
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
+    const existingInstitution = await this.findOne(id);
     try {
       const deletedInstitution = await this.institutionsRepository.delete(id);
-      if (!deletedInstitution.affected)
-        throw new NotFoundException(`Institution with id: ${id} not found.`);
-
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -132,7 +130,7 @@ export class InstitutionsService {
           role,
         },
         'DELETE INSTITUTION',
-        { id, name: 'Institution' },
+        { id, data: existingInstitution.name },
         'SUCCESS',
       );
       return deletedInstitution.affected;
@@ -144,7 +142,7 @@ export class InstitutionsService {
           role,
         },
         'TRY TO DELETE INSTITUTION',
-        { id, name: 'Institution' },
+        { id, data: existingInstitution.name },
         'FAILED TO DELETE INSTITUTION',
         error.message,
       );
@@ -152,7 +150,7 @@ export class InstitutionsService {
     }
   }
 
-  async removeAll() {
+  async removeAll({ fullName, role, userId }: IRequestUser) {
     try {
       // Obtener todos las instituciones
       const allInstitutions = await this.institutionsRepository
@@ -171,11 +169,35 @@ export class InstitutionsService {
       // Eliminar solo los departamentos sin relaciones
       const institutions = institutionsWithoutRelations.map((i) => i.id);
       await this.institutionsRepository.delete(institutions);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE ALL INSTITUTIONS',
+        {
+          id: institutions.toString(),
+          data: `${[...institutionsWithoutRelations]}`,
+        },
+        'SUCCESS',
+      );
 
       return `Deleted institutions without relations: ${institutionsWithoutRelations
         .map((i) => i.name)
         .join(', ')}`;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE ALL INSTITUTIONS',
+        { id: null, data: 'Institutions' },
+        'FAILED TO DELETE ALL INSTITUTIONS',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

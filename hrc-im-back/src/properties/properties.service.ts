@@ -35,7 +35,7 @@ export class PropertiesService {
           role,
         },
         'CREATE PROPERTY',
-        { id: createdProperty.id, name: createdProperty.name },
+        { id: createdProperty.id, data: createdProperty.name },
         'SUCCESS',
       );
       return createdProperty;
@@ -47,7 +47,7 @@ export class PropertiesService {
           role,
         },
         'TRY TO CREATE PROPERTY',
-        { id: null, name: createPropertyDto.name },
+        { id: null, data: createPropertyDto.name },
         'FAILED TO CREATE PROPERTY',
         error.message,
       );
@@ -97,7 +97,7 @@ export class PropertiesService {
           role,
         },
         'UPDATE PROPERTY',
-        { id: updatedProperty.id, name: updatedProperty.name },
+        { id, data: updatedProperty.name },
         'SUCCESS',
       );
       return updatedProperty;
@@ -109,7 +109,7 @@ export class PropertiesService {
           role,
         },
         'TRY TO UPDATE PROPERTY',
-        { id, name: 'Update Error' },
+        { id, data: updatePropertyDto.name },
         'FAILED TO UPDATE PROPERTY',
         error.message,
       );
@@ -120,7 +120,7 @@ export class PropertiesService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingProperty = await this.findOne(id);
     try {
       const deletedProperty = await this.propertiesRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -130,7 +130,7 @@ export class PropertiesService {
           role,
         },
         'DELETE PROPERTY',
-        { id, name: 'Property' },
+        { id, data: existingProperty.name },
         'SUCCESS',
       );
       return deletedProperty.affected;
@@ -142,7 +142,7 @@ export class PropertiesService {
           role,
         },
         'TRY TO DELETE PROPERTY',
-        { id, name: 'Property' },
+        { id, data: existingProperty.name },
         'FAILED TO DELETE PROPERTY',
         error.message,
       );
@@ -150,10 +150,50 @@ export class PropertiesService {
     }
   }
 
-  async removeAll() {
+  async removeAll({ fullName, role, userId }: IRequestUser) {
     try {
-      await this.propertiesRepository.delete({});
+      const allProperties = await this.propertiesRepository
+        .createQueryBuilder('property')
+        .leftJoinAndSelect('property.interns', 'intern')
+        .getMany();
+      const propertiesWithoutRelations = allProperties.filter(
+        (p) => !p.interns.length,
+      );
+
+      if (propertiesWithoutRelations.length === 0)
+        return 'No properties without relations to delete.';
+
+      const properties = propertiesWithoutRelations.map((p) => p.id);
+      await this.propertiesRepository.delete(properties);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE ALL PROPERTIES',
+        {
+          id: properties.toString(),
+          data: `${[...propertiesWithoutRelations]}`,
+        },
+        'SUCCESS',
+      );
+
+      return `Deleted properties without relations: ${propertiesWithoutRelations
+        .map((p) => p.name)
+        .join(', ')}`;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE ALL PROPERTIES',
+        { id: null, data: 'Properties' },
+        'FAILED TO DELETE ALL PROPERTIES',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

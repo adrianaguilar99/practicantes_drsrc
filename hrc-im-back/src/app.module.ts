@@ -17,6 +17,7 @@ import { UsersModule } from './users/users.module';
 import { InternsModule } from './interns/interns.module';
 import { EmergencyContactModule } from './emergency-contact/emergency-contact.module';
 import { InternFilesModule } from './intern-files/intern-files.module';
+import { InternCommentsModule } from './intern-comments/intern-comments.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -43,6 +44,7 @@ import dbConfigProduction from './configs/db.config.production';
     InternsModule,
     EmergencyContactModule,
     InternFilesModule,
+    InternCommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
