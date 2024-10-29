@@ -103,7 +103,7 @@ export const Sidebar = () => {
       label: "Mis Practicantes",
       path: "/interns",
     },
-    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout"},
+    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
   ];
 

@@ -35,6 +35,9 @@ import {
   NothingToSee,
 } from "../../components/utils/circular-progress.component";
 import { RetryElement } from "../../components/utils/retry-element.component";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { decryptData } from "../../functions/encrypt-data.function";
 
 const InternInformationPage = () => {
   const [internData, setInternData] = useState<GetByIDDataInter>();
@@ -51,7 +54,9 @@ const InternInformationPage = () => {
   const [ModalSupervisor, setModalSupervisor] = useState(false);
   const [ModalEmergency, setModalEmergency] = useState(false);
   const [ModalFiles, setModalFiles] = useState(false);
-
+  const userRol = useSelector(
+    (state: RootState) => decryptData(state.auth.rol || "") || ""
+  );
   const [InternName, setInternName] = useState("");
   const [InternEmail, setInternEmail] = useState("");
   const [InternUniversity, setInternUniversity] = useState("");
@@ -275,7 +280,9 @@ const InternInformationPage = () => {
                       id="address"
                       type="textarea"
                       editable={editable}
-                      show={InternType === "Externo" || InternType === "Interno"}
+                      show={
+                        InternType === "Externo" || InternType === "Interno"
+                      }
                       onChange={(value) => setInternAddress(value || "")}
                     />
                     <InfoRow
@@ -314,7 +321,7 @@ const InternInformationPage = () => {
                         <label>Encargados:</label>
                       </div>
                       <div className="info-section-left-options-encargados">
-                        {internData?.internshipDepartment?.supervisors &&
+                        {(internData?.internshipDepartment?.supervisors &&
                           (internData.internshipDepartment.supervisors.length >
                           1 ? (
                             <button onClick={ClickOpenSupervisor}>
@@ -335,7 +342,8 @@ const InternInformationPage = () => {
                                     .user.lastName}
                               </p>
                             )
-                          )) || "Sin encargados"}
+                          ))) ||
+                          "Sin encargados"}
                       </div>
                     </div>
 
@@ -347,7 +355,10 @@ const InternInformationPage = () => {
                         {internData?.emergencyContacts &&
                           (internData?.emergencyContacts.length > 1 ? (
                             <button onClick={ClickOpenEmergency}>
-                              {"( " + internData?.emergencyContacts.length + " )"} Ver todos
+                              {"( " +
+                                internData?.emergencyContacts.length +
+                                " )"}{" "}
+                              Ver todos
                             </button>
                           ) : (
                             internData?.emergencyContacts.length === 1 && (
@@ -440,7 +451,22 @@ const InternInformationPage = () => {
                     <div className="info-section-right-options">
                       <img src={MyAvatar} />
                       <div className="info-section-right-options-buttons">
-                        <EditButton onClick={EditPage} editing={editable} />
+                       
+                        {userRol != "SUPERVISOR" && (
+                          <>
+                           <EditButton onClick={EditPage} editing={editable} />
+                           <ButtonComponent
+                            text="Generar Tarjeta del practicante"
+                            onClick={() =>
+                              navigate(
+                                "/interns/intern-information/interns-credentials" +
+                                  `/${internData?.id}`
+                              )
+                            }
+                          />
+                          </>
+                       
+                        )}
 
                         <ConfirmationModal
                           open={saveEdit}
@@ -448,14 +474,6 @@ const InternInformationPage = () => {
                           onCancel={CancelSave}
                           title="Confirmación de guardado"
                           message="¿Estás seguro que deseas guardar los cambios?"
-                        />
-                        <ButtonComponent
-                          text="Generar Tarjeta del practicante"
-                          onClick={() =>
-                            navigate(
-                              "/interns/intern-information/interns-credentials" + `/${internData?.id}`
-                            )
-                          }
                         />
                       </div>
                     </div>

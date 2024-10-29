@@ -10,6 +10,9 @@ import { IconButton } from "@mui/material";
 import { deleteUser, patchUser } from "../../../api/users/users.api";
 import { enqueueSnackbar } from "notistack";
 import { DataUser } from "../../../interfaces/users.interface";
+import { decryptData } from "../../../functions/encrypt-data.function";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 interface InternCardProps {
   id: string;
@@ -26,6 +29,7 @@ const InternCardComponent: React.FC<InternCardProps> = ({
   const [selectedIntern, setselectedIntern] = useState<DataIntern | null>(null); 
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const userToken = sessionStorage.getItem("_Token") || "";
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [typeAction, setTypeAction] = useState('');
   const navigate = useNavigate();
 
@@ -101,41 +105,44 @@ const InternCardComponent: React.FC<InternCardProps> = ({
         </div>
         <div className="progress-section">
           <span>
-            {data.phone.length === 100 ? "¡Completado!" : `${data.entryTime}%`}
+            {data.phone.length === 100 ? "¡Completado!" : `${90}%`}
           </span>
           <div className="progress-bar">
             <div
               className="progress"
-              style={{ width: `${data.phone.length}%` }}
+              style={{ width: `${90}%` }}
             ></div>
           </div>
         </div>
       </div>
-      <div className="actions">
-        <EditOutlinedIcon onClick={EditClick} />
+      {userRol != "SUPERVISOR" && (
+              <div className="actions" >
+              <EditOutlinedIcon onClick={EditClick} />
+      
+              {data.user.isActive ? (
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => {
+                    DeleteClick(data.user);
+                    setTypeAction("delete");
+                  }}
+                >
+                  <PersonOffOutlinedIcon />
+                </IconButton>
+              ) : (
+                <IconButton
+                  aria-label="active"
+                  onClick={() => {
+                    DeleteClick(data.user);
+                    setTypeAction("active");
+                  }}
+                >
+                  <CheckBoxOutlinedIcon />
+                </IconButton>
+              )}
+            </div>
+      )}
 
-        {data.user.isActive ? (
-          <IconButton
-            aria-label="delete"
-            onClick={() => {
-              DeleteClick(data.user);
-              setTypeAction("delete");
-            }}
-          >
-            <PersonOffOutlinedIcon />
-          </IconButton>
-        ) : (
-          <IconButton
-            aria-label="active"
-            onClick={() => {
-              DeleteClick(data.user);
-              setTypeAction("active");
-            }}
-          >
-            <CheckBoxOutlinedIcon />
-          </IconButton>
-        )}
-      </div>
       <ConfirmationModal
         open={confirmationOpen}
         onConfirm={typeAction == "active" ? ActiveSupervisor : DeleteSupervisor}

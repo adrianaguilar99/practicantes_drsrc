@@ -4,6 +4,9 @@ import { Pagination } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { DataIntern } from '../../../interfaces/interns/interns.interface';
 import { on } from 'events';
+import { useSelector } from 'react-redux';
+import { decryptData } from '../../../functions/encrypt-data.function';
+import { RootState } from '../../../redux/store';
 interface InternsTableProps {
   data?: DataIntern[];  
   onUpdate: () => void;
@@ -12,6 +15,7 @@ interface InternsTableProps {
 const InternsTable: React.FC<InternsTableProps> = ({ onUpdate, data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); 
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
  
 
   useEffect(() => {
@@ -48,14 +52,13 @@ const InternsTable: React.FC<InternsTableProps> = ({ onUpdate, data = [] }) => {
         <span>Tipo practicante</span>
         <span>Practicante</span>
         <span>Progreso</span>
-        <span>Acciones</span>
+        {userRol != "SUPERVISOR" && <span>Acciones</span>}
+        
       </div>
 
       <div className="interns-table">
         {displayedInterns.map((intern) => (
-          <InternCardComponent
-            id={intern.id}
-            data={intern}
+          <InternCardComponent id={intern.id} data={intern}
             onUpdate={onUpdate}
           />
         ))}

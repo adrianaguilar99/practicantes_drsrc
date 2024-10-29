@@ -352,9 +352,11 @@ const InternRegisterPage = () => {
     ){
       setHasErrors(false);
       setFormAction(true);
+      setInternContacts(InternContacts);
     }
     else{
       setHasErrors(true);
+      setFormAction(false);
     }
   }
   const formSubmit = () => { 
@@ -395,8 +397,11 @@ const InternRegisterPage = () => {
   };
 
 useEffect(() => { 
-  if(InternContacts.length > 0 && hasErrors === false){
+  if(InternContacts.length > 1 && hasErrors === false && formAction === true){
     formSubmit();
+  }
+  else{
+    setFormAction(false);
   }
 }, [InternContacts]);
 

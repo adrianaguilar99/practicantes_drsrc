@@ -80,7 +80,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
     deleteSupervisor(userToken, selectedSupervisor.id)
       .then((data) => {
         if (data) {
-          enqueueSnackbar("supervisor desactivado correctamente", {
+          enqueueSnackbar("Cuenta del supervisor desactivada correctamente", {
             variant: "success",
           });
           ConfirmationModalClose();
@@ -88,7 +88,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
         }
       })
       .catch((error) => {
-        enqueueSnackbar("Error al desactivar el supervisor", { variant: "error" });
+        enqueueSnackbar("Error al desactivar la cuenta del supervisor", { variant: "error" });
         ConfirmationModalClose();
       });
   };
@@ -124,7 +124,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
               <th>Permisos</th>
               <th>Departamento</th>
               <th>Estado</th>
-              <th>Acciones</th>
+              {userRol != "SUPERVISOR" && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -176,7 +176,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
                   <td className={`table-status  ${supervisor.user.isActive ? 'active' : 'inactive'}`}>{supervisor.user.isActive ? "Activo" : "Inactivo"}</td>
 
                   <td className="table-actions" >
-                  {fullName != userFullName ? (
+                  {fullName != userFullName && userRol != "SUPERVISOR" ?  (
                     <div style={{display: 'flex'}}>
   <IconButton aria-label="edit" onClick={() => EditClick(supervisor)}>
                       <EditOutlinedIcon />

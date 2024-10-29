@@ -203,10 +203,32 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
                 id={"position"}
                 show={true}
               />
-              <button onClick={validateAndSubmit}>
+                  <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "30px",
+              }}
+            >
+               <Button
+                variant="contained"
+                color="primary"
+                onClick={validateAndSubmit}>
                 {mode === "add" ? "Añadir" : "Guardar"}
-              </button>
-              <button onClick={() => setMode("normal")}>Cancelar</button>
+              </Button>
+  
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{
+                  bgcolor: "#A0522D",
+                  "&:hover": { bgcolor: "#8b4513" },
+                }}
+                onClick={() => setMode("normal")}
+              >
+                Cancelar
+              </Button>
+              </Box>
             </div>
           </Box>
           {mode === "normal" && (
