@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Intern } from 'src/interns/entities/intern.entity';
-import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -26,7 +26,8 @@ export class InternComment {
   @ApiProperty({
     example:
       'Sit consectetur fugiat minim mollit aliqua sit fugiat laboris voluptate ut deserunt elit et. Duis deserunt ullamco dolor adipisicing in aute fugiat pariatur et quis.',
-    description: 'The content of the comment written by the supervisor.',
+    description:
+      'The content of the comment written by the supervisor or user.',
     nullable: false,
   })
   @Column({
@@ -70,19 +71,18 @@ export class InternComment {
   @JoinColumn({ name: 'intern_id' })
   intern: Intern;
 
-  @Exclude()
   @ApiProperty({
-    type: () => Supervisor,
+    type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
     description:
-      'The supervisor who wrote the comment, identified by Supervisor ID (UUID).',
+      'The user who wrote the comment, identified by User ID (UUID).',
     nullable: false,
   })
-  @ManyToOne(() => Supervisor, (supervisor) => supervisor.internComents, {
+  @ManyToOne(() => User, (user) => user.internComents, {
     nullable: false,
   })
-  @JoinColumn({ name: 'supervisor_id' })
-  supervisor: Supervisor;
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

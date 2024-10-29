@@ -36,16 +36,31 @@ export class Intern {
     example: '123456',
     description: 'Unique 6-digit code generated for the intern.',
     uniqueItems: true,
-    nullable: false,
+    nullable: true,
   })
   @Column({
-    name: 'intern_code',
+    name: 'external_intern_code',
     type: 'varchar',
     length: 6,
     unique: true,
-    nullable: false,
+    nullable: true,
   })
-  internCode: string;
+  externalInternCode: string;
+
+  @ApiProperty({
+    example: '123456',
+    description: 'Unique 6-digit code generated for the intern.',
+    uniqueItems: true,
+    nullable: true,
+  })
+  @Column({
+    name: 'internal_intern_code',
+    type: 'varchar',
+    length: 6,
+    unique: true,
+    nullable: true,
+  })
+  internalInternCode: string;
 
   @ApiProperty({
     example: 'O+',

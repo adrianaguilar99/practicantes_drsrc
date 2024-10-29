@@ -40,18 +40,6 @@ export class InternsService {
     createInternDto: CreateInternDto,
     { fullName, role, userId }: IRequestUser,
   ) {
-    if (createInternDto.departmentId) {
-      if (
-        createInternDto.schoolEnrollment ||
-        createInternDto.institutionId ||
-        createInternDto.careerId
-      ) {
-        throw new ConflictException(
-          'If department is provided, schoolEnrollment, institution, and career cannot be provided.',
-        );
-      }
-    }
-
     const user = await this.usersService.findOne(createInternDto.userId);
     if (user.userRole !== UserRole.INTERN) {
       throw new ConflictException(
@@ -59,9 +47,33 @@ export class InternsService {
       );
     }
 
-    // Si todo se valida correctamente continuamos con el registro del practicante
-    // Asignamos un codigo unico para el practicante
-    const internCode = await this.generateUniqueInternCode();
+    if (createInternDto.departmentId) {
+      if (
+        createInternDto.schoolEnrollment ||
+        createInternDto.institutionId ||
+        createInternDto.careerId
+      ) {
+        throw new ConflictException(
+          'If department is provided, school enrollment, institution, and career cannot be provided.',
+        );
+      }
+      // No generar codigo de practicante externo si departmentId está presente
+      createInternDto.externalInternCode = null;
+
+      // Asegurarse de que se pase un internalInternCode manualmente si departmentId está presente
+      if (!createInternDto.internalInternCode) {
+        throw new ConflictException(
+          'If department is provided, internal intern code must be assigned.',
+        );
+      }
+    } else {
+      // No crear el codigo de practicante interno si no se pasa departmentId
+      createInternDto.internalInternCode = null;
+
+      // Generar codigo de practicante externo si no se proporciona departmentId
+      createInternDto.externalInternCode =
+        await this.generateUniqueInternCode();
+    }
 
     // Convertimos el tiempo de practicas a un formato valido "INTERVAL"
     const internshipDurationInterval = convertToInterval(
@@ -90,6 +102,7 @@ export class InternsService {
     const property = await this.propertiesService.findOne(
       createInternDto.propertyId,
     );
+
     const existingIntern = await this.internsRepository.findOne({
       where: { user },
     });
@@ -102,7 +115,6 @@ export class InternsService {
 
     const newIntern = this.internsRepository.create({
       ...createInternDto,
-      internCode,
       internshipDuration: internshipDurationInterval,
       career,
       department,
@@ -186,32 +198,12 @@ export class InternsService {
 
   async update(
     id: string,
-    {
-      address,
-      bloodType,
-      careerId,
-      departmentId,
-      institutionId,
-      internshipDepartmentId,
-      internshipEnd,
-      internshipStart,
-      entryTime,
-      exitTime,
-      internshipDuration,
-      phone,
-      propertyId,
-      schoolEnrollment,
-      status,
-      userId,
-    }: UpdateInternDto,
+    updateInternDto: UpdateInternDto,
     { fullName, role, userId: userReq }: IRequestUser,
   ) {
     const existingIntern = await this.findOne(id);
-
-    // console.log(existingIntern);
-
     // Bloqueamos que se actualicen campos no permitidos
-    if (userId) {
+    if (updateInternDto.userId) {
       await this.systemAuditsService.createSystemAudit(
         { id: userReq, fullName, role },
         'TRY TO UPDATE INTERN',
@@ -226,72 +218,118 @@ export class InternsService {
     }
 
     // Validación de exclusión mutua entre departmentId y otros campos
-    if (departmentId) {
-      // Verificar si ya existen valores para schoolEnrollment, institutionId o careerId en el registro existente
+    if (updateInternDto.departmentId) {
+      /**
+       * Verificar si ya existen valores para externalInternCode,
+       * schoolEnrollment, institutionId o careerId en el registro existente
+       */
       if (
+        existingIntern.externalInternCode ||
         existingIntern.schoolEnrollment ||
         existingIntern.institution ||
         existingIntern.career
       )
         throw new ConflictException(
-          'Cannot assign departmentId because schoolEnrollment, institutionId, or careerId already exist for this intern.',
+          'Cannot assign departmentId because externalInternCode, schoolEnrollment, institutionId, or careerId already exist for this intern.',
         );
+      existingIntern.externalInternCode = null;
 
-      // También verificar que no se envíen en la misma solicitud
-      if (schoolEnrollment || institutionId || careerId)
+      if (!updateInternDto.internalInternCode)
         throw new ConflictException(
-          'If departmentId is provided, schoolEnrollment, institutionId, and careerId cannot be provided.',
+          'If departmentId is provided, internalInternCode must be manually assigned.',
         );
-    }
+      existingIntern.internalInternCode = updateInternDto.internalInternCode;
+    } else {
+      /**
+       * Si no se esta pasando el departamento pero si existe el departamento es necesario que venga el internal code
+       */
+      if (existingIntern.department) {
+        if (!updateInternDto.internalInternCode)
+          throw new ConflictException(
+            'If the intern is already assigned a department, internalInternCode must be assigned manually.',
+          );
+        existingIntern.internalInternCode = updateInternDto.internalInternCode;
+      } else {
+        /**
+         * Si no se proporciona el departamento en el cuerpo y tampoco
+         * existe registro de departamento en el intern
+         * entonces limpiamos el codigo internal y validamos el external
+         */
+        existingIntern.internalInternCode = null;
 
-    // Si ya existe un departmentId, no permitir actualizar schoolEnrollment, institutionId, y careerId
+        if (!updateInternDto.externalInternCode)
+          throw new ConflictException('Please enter the externalInternCode');
+        existingIntern.externalInternCode = updateInternDto.externalInternCode;
+      }
+    }
+    // Si ya existe un departmentId, no permitir actualizar externalInternCode schoolEnrollment, institutionId, y careerId
     if (
       existingIntern.department &&
-      (schoolEnrollment || institutionId || careerId)
+      (updateInternDto.externalInternCode ||
+        updateInternDto.schoolEnrollment ||
+        updateInternDto.institutionId ||
+        updateInternDto.careerId)
     )
       throw new ConflictException(
-        'Cannot update schoolEnrollment, institutionId, or careerId because departmentId is already assigned to this intern.',
+        'Cannot update externalInternCode, schoolEnrollment, institutionId, or careerId because departmentId is already assigned to this intern.',
       );
 
     /** Al igual que en la creacion, se verifica si alguno de las propiedades
      * si estan mandando en el cuerpo de la peticion, en dado caso de que se manden
      * y existan se actualiza el registro */
-    if (bloodType) existingIntern.bloodType = bloodType;
-    if (schoolEnrollment) existingIntern.schoolEnrollment = schoolEnrollment;
-    if (address) existingIntern.address = address;
-    if (phone) existingIntern.phone = phone;
-    if (status) existingIntern.status = status;
-    if (internshipStart) existingIntern.internshipStart = internshipStart;
-    if (internshipEnd) existingIntern.internshipEnd = internshipEnd;
-    if (entryTime) existingIntern.entryTime = entryTime;
-    if (exitTime) existingIntern.exitTime = exitTime;
-    if (internshipDuration)
-      existingIntern.internshipDuration = convertToInterval(internshipDuration);
+    if (updateInternDto.bloodType)
+      existingIntern.bloodType = updateInternDto.bloodType;
+    if (updateInternDto.schoolEnrollment)
+      existingIntern.schoolEnrollment = updateInternDto.schoolEnrollment;
+    if (updateInternDto.address)
+      existingIntern.address = updateInternDto.address;
+    if (updateInternDto.phone) existingIntern.phone = updateInternDto.phone;
+    if (updateInternDto.status) existingIntern.status = updateInternDto.status;
+    if (updateInternDto.internshipStart)
+      existingIntern.internshipStart = updateInternDto.internshipStart;
+    if (updateInternDto.internshipEnd)
+      existingIntern.internshipEnd = updateInternDto.internshipEnd;
+    if (updateInternDto.entryTime)
+      existingIntern.entryTime = updateInternDto.entryTime;
+    if (updateInternDto.exitTime)
+      existingIntern.exitTime = updateInternDto.exitTime;
+    if (updateInternDto.internshipDuration)
+      existingIntern.internshipDuration = convertToInterval(
+        updateInternDto.internshipDuration,
+      );
 
-    if (careerId) {
-      const career = await this.careersService.findOne(careerId);
+    if (updateInternDto.careerId) {
+      const career = await this.careersService.findOne(
+        updateInternDto.careerId,
+      );
       existingIntern.career = career;
     }
 
-    if (departmentId) {
-      const department = await this.departmentsService.findOne(departmentId);
+    if (updateInternDto.departmentId) {
+      const department = await this.departmentsService.findOne(
+        updateInternDto.departmentId,
+      );
       existingIntern.department = department;
     }
 
-    if (internshipDepartmentId) {
+    if (updateInternDto.internshipDepartmentId) {
       const internshipDepartment = await this.departmentsService.findOne(
-        internshipDepartmentId,
+        updateInternDto.internshipDepartmentId,
       );
       existingIntern.internshipDepartment = internshipDepartment;
     }
 
-    if (institutionId) {
-      const institution = await this.institutionsService.findOne(institutionId);
+    if (updateInternDto.institutionId) {
+      const institution = await this.institutionsService.findOne(
+        updateInternDto.institutionId,
+      );
       existingIntern.institution = institution;
     }
 
-    if (propertyId) {
-      const property = await this.propertiesService.findOne(propertyId);
+    if (updateInternDto.propertyId) {
+      const property = await this.propertiesService.findOne(
+        updateInternDto.propertyId,
+      );
       existingIntern.property = property;
     }
 
@@ -367,7 +405,7 @@ export class InternsService {
     do {
       code = Math.floor(100000 + Math.random() * 900000).toString();
       codeExists = !!(await this.internsRepository.findOne({
-        where: { internCode: code },
+        where: { externalInternCode: code },
       }));
     } while (codeExists);
 

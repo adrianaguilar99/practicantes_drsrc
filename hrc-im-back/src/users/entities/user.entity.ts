@@ -3,6 +3,7 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -14,6 +15,7 @@ import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 import { Intern } from 'src/interns/entities/intern.entity';
 import { Exclude } from 'class-transformer';
 import { normalizeString } from 'src/common/utils';
+import { InternComment } from 'src/intern-comments/entities/intern-comment.entity';
 
 @Entity('users')
 export class User {
@@ -113,6 +115,9 @@ export class User {
 
   @OneToOne(() => Intern, (intern) => intern.user)
   intern: Intern;
+
+  @OneToMany(() => InternComment, (internComments) => internComments.user)
+  internComents: InternComment[];
 
   @BeforeInsert()
   async setCreation?() {
