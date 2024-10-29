@@ -96,7 +96,7 @@ export interface GetByIDDataInter {
     schoolEnrollment:     string;
     internshipStart:      Date;
     internshipEnd:        Date;
-    internshipDuration: string;
+    internshipDuration:   string;
     entryTime:            string;
     exitTime:             string;
     status:               string;

@@ -74,10 +74,13 @@ useEffect(() => {
   const SearchAction = (query: string) => {
     const searchData = data.map(intern => ({
       name: intern.user.firstName + " " + intern.user.lastName,
+      intershipDepartment: intern.internshipDepartment.name,
     }));
-    const results = search(searchData, query, { keys: ['name'] });
+    const results = search(searchData, query, { keys: ['name', 'intershipDepartment' ]  });
     const filteredResults = data.filter(intern =>
-      results.some(result => result.name === intern.user.firstName + " " + intern.user.lastName)
+      results.some(result => result.name === intern.user.firstName + " " + intern.user.lastName) ||
+      results.some(result => result.intershipDepartment === intern.internshipDepartment.name)
+
     );
     setFilteredData(filteredResults);
   };

@@ -8,6 +8,7 @@ import { InstitutionFormModal } from '../interns/interns-institutions-table/inte
 import { SupervisorFormModal } from '../supervisors/supervisors-modal.component';
 import { AdminsFormModal } from '../supervisors/admins-modal.component';
 import { PropertiesFormModal } from '../properties/properties-modal.component';
+import { CommentFormModal } from '../interns/interns-components/comments-modal.component';
 
 interface FormModalPropsMain {
     open: boolean;
@@ -63,7 +64,7 @@ interface FormModalPropsMain {
             transform: 'translate(-50%, -50%)',
             width: entityModalWidth,
             bgcolor: '#EDEDED',
-            borderRadius: '8px',
+            borderRadius: '5px',
             boxShadow: 24,
             p: 0,
           }}
@@ -74,8 +75,8 @@ interface FormModalPropsMain {
               bgcolor: '#2C3E50',
               color: '#fff',
               padding: '10px 16px',
-              borderTopLeftRadius: '8px',
-              borderTopRightRadius: '8px',
+              borderTopLeftRadius: '5px',
+              borderTopRightRadius: '5px',
               display: 'flex',
               justifyContent: 'space-between',
             }}
@@ -86,14 +87,15 @@ interface FormModalPropsMain {
           </Box>
   
           {/* Modal body */}
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ padding: '10px 16px' }}>
             {entity === "departments" ? <DepartmentFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "supervisors" ? <SupervisorFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-institutions" ? <InstitutionFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "administrators" ? <AdminsFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "properties" ? <PropertiesFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
-            {entity === "report" ? <ReportGenerationModal onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "report" ? <ReportGenerationModal onCancel={onCancel} onSuccess={onConfirm} initialDate={data.initialDate} finalDate={data.finalDate} /> : null}
+            {entity === "comment" ? <CommentFormModal type='edit' data={{...data}} onCancel={onCancel} onSuccess={onConfirm} /> : null}
           </Box>
         </Box>
       </Modal>

@@ -114,41 +114,45 @@ const InternCardComponent: React.FC<InternCardProps> = ({
           </div>
         </div>
       </div>
-      <div className="actions">
-        <EditOutlinedIcon onClick={EditClick} />
-
-        {data.user.isActive ? (
-          <IconButton
-            aria-label="delete"
-            onClick={() => {
-              DeleteClick(data.user);
-              setTypeAction("delete");
-            }}
-          >
-            <PersonOffOutlinedIcon />
-          </IconButton>
-        ) : (
-          userRol === "ADMINISTRATOR" ? (
+      {userRol != "SUPERVISOR" && (
+           <div className="actions">
+      
+           <EditOutlinedIcon onClick={EditClick} />
+   
+           {data.user.isActive ? (
              <IconButton
-            aria-label="active"
-            onClick={() => {
-              DeleteClick(data.user);
-              setTypeAction("active");
-            }}
-          >
-            <CheckBoxOutlinedIcon />
-          </IconButton> ): (<IconButton
-            aria-label="active"
-            onClick={() => {
-              DeleteClick(data.user);
-              setTypeAction("active");
-            }}
-          >
-            <LiveHelpOutlinedIcon />
-          </IconButton>)
-          
+               aria-label="delete"
+               onClick={() => {
+                 DeleteClick(data.user);
+                 setTypeAction("delete");
+               }}
+             >
+               <PersonOffOutlinedIcon />
+             </IconButton>
+           ) : (
+             userRol === "ADMINISTRATOR" ? (
+                <IconButton
+               aria-label="active"
+               onClick={() => {
+                 DeleteClick(data.user);
+                 setTypeAction("active");
+               }}
+             >
+               <CheckBoxOutlinedIcon />
+             </IconButton> ): (<IconButton
+               aria-label="active"
+               onClick={() => {
+                 DeleteClick(data.user);
+                 setTypeAction("active");
+               }}
+             >
+               <LiveHelpOutlinedIcon />
+             </IconButton>)
+             
+           )}
+         </div>
         )}
-      </div>
+     
       <ConfirmationModal
         open={confirmationOpen}
         onConfirm={typeAction == "active" ? ActiveSupervisor : DeleteSupervisor}

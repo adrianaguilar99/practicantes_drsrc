@@ -1779,10 +1779,32 @@ transition: 0.5s;
 
 .comment-card{
     display: flex;
-    flex-direction: column;
     background-color: #F9F9F9;
     border-radius: 10px;
+    justify-content: space-between;
+    width: 100%;
     margin-bottom: 1%;
+    margin-left: 1%;
+    margin-right: 1%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+.comment-card-content{
+    width: 85%;
+}
+
+.comment-card-options{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 2%;
+}
+
+
+.comment-card.mine:hover{
+    background-color: #f0f0f0;
+    cursor: pointer;
+    animation: fadeIn 0.5s;
 }
 
 .comment-card-header{
@@ -1802,12 +1824,14 @@ transition: 0.5s;
 .comment-card-header p{
     font-size: .80rem;
     font-weight: 100;
+
 }
 
 .comment-card-body{
     padding-left: 3%;
     text-align: start;
     font-size: .90rem;
+    text-align: justify;
     font-weight: 100;
 }
 
@@ -2267,18 +2291,19 @@ transition: 0.5s;
 .report-modal-buttons button{
   padding: 5px 10px;
   border-color: #a0a0a0;
-  background-color: #6ccc7fe0;
-  border-radius: 20px;
-  color: #125025;
+  background-color: #1a71d4e0;
+  border-radius: 5px;
+  color: #ffffff;
   font-weight: bold;
   font-size: .8rem;
   font-family: 'Lato', sans-serif;
   transition: .5s;
   min-height: 30px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .report-modal-buttons button:hover{
-  background-color: #58aa68;
+  background-color: #145dafe0;
   transition: .5s;
 }
 

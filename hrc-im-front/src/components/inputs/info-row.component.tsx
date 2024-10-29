@@ -130,6 +130,7 @@ interface InfoRowProps {
               options={coincidences}
               value={inputValue}
               onInputChange={(event, newInputValue) => {
+
                 ValueChange(newInputValue);
               }}
               renderInput={(params) => (

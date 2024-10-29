@@ -57,14 +57,11 @@ const InternRegisterPage = () => {
   const [InternCheckIn, setInternCheckIn] = useState("");
   const [InternCheckOut, setInternCheckOut] = useState("");
   const [InternTotalTime, setInternTotalTime] = useState("");
-
+  const [InternWorkCode, setInternWorkCode] = useState("");
   const [InternAddress, setInternAddress] = useState("");
 
   const [InternPicture, setInternPicture] = useState("");
-  const [InternCurp, setInternCurp] = useState("");
-  const [InternProofofaddress, setInternProofofaddress] = useState("");
-  const [InternBirthCertificate, setInternBirthCertificate] = useState("");
-  const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
+  const [InternFiles, setInternFiles] = useState("");
   const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("");
@@ -99,10 +96,8 @@ const InternRegisterPage = () => {
     internCheckOut: undefined,
     internTotalTime: undefined,
     internPicture: undefined,
-    internCurp: undefined,
-    internProofofaddress: undefined,
-    internBirthCertificate: undefined,
-    internMedicalInsurance: undefined,
+    internFiles : undefined,
+    internWorkCode: undefined,
     InternProperty: undefined,
   });
 
@@ -215,6 +210,11 @@ const InternRegisterPage = () => {
       newErrors.internDepartment = resultDepartment;
     }
 
+    const resultPassword = validators.password(InternPassword);
+    if (resultPassword) {
+      newErrors.internPassword = resultPassword;
+    }
+
 
     if (InternBloodType === "Seleccione un tipo" || InternBloodType === "") {
       newErrors.internBloodType = "Seleccione un tipo";
@@ -225,6 +225,11 @@ const InternRegisterPage = () => {
       const resultOldDepartment = validators.string(InternOldDepartment);
       if (resultOldDepartment) {
         newErrors.internOldDepartment = resultOldDepartment;
+      }
+
+      const resultWorkCode = validators.number(InternWorkCode);
+      if (resultWorkCode) {
+        newErrors.internWorkCode = resultWorkCode;
       }
     }
 
@@ -304,25 +309,12 @@ const InternRegisterPage = () => {
       newErrors.internPicture = resultPicture;
     }
 
-    const resultCurp = validators.filePDF(InternCurp);
-    if (resultCurp) {
-      newErrors.internCurp = resultCurp;
+    const resultFiles = validators.filePDF(InternFiles);
+    if (resultFiles) {
+      newErrors.internFiles = resultFiles;
     }
 
-    const resultBirthCertificate = validators.filePDF(InternBirthCertificate);
-    if (resultBirthCertificate) {
-      newErrors.internBirthCertificate = resultBirthCertificate;
-    }
-
-    const resultProofofaddress = validators.filePDF(InternProofofaddress);
-    if (resultProofofaddress) {
-      newErrors.internProofofaddress = resultProofofaddress;
-    }
-
-    const resultMedicalInsurance = validators.filePDF(InternMedicalInsurance);
-    if (resultMedicalInsurance) {
-      newErrors.internMedicalInsurance = resultMedicalInsurance;
-    }
+    
 
     const resultPropertie = validators.string(InternProperty);
     if (resultPropertie) {
@@ -659,6 +651,17 @@ useEffect(() => {
 
                 <section className="register-section-middle">
                 <RegisterRow
+                    label="Codigo de empleado:"
+                    onChange={(value) => setInternWorkCode(value || "")}
+                    id="workCode"
+                    value={InternWorkCode}
+                    type="text"
+                    maxLength={6}
+                    show={selectedType === "Interno"}
+                    validate={errors.internWorkCode ? "Error" : "Normal"}
+                    typeError={errors.internWorkCode}
+                  />
+                <RegisterRow
                     label="Constraseña:"
                     onChange={(value) => setInternPassword(value || "")}
                     id="password"
@@ -711,7 +714,7 @@ useEffect(() => {
                   <RegisterRow
                     label="Hora entrada:"
                     onChange={(value) => setInternCheckIn(value || "")}
-                    id="horaEntrada"
+                    id="checkIn"
                     type="time"
                     show={true}
                     validate={errors.internCheckIn ? "Error" : "Normal"}
@@ -720,14 +723,14 @@ useEffect(() => {
                   <RegisterRow
                     label="Hora salida:"
                     onChange={(value) => setInternCheckOut(value || "")}
-                    id="horaSalida"
+                    id="checkOut"
                     type="time"
                     show={true}
                     validate={errors.internCheckOut ? "Error" : "Normal"}
                     typeError={errors.internCheckOut}
                   />
                   <RegisterRow
-                    label="Total de tiempo a cubrir:"
+                    label="Total de horas a cubrir:"
                     onChange={(value) => setInternTotalTime(value || "")}
                     id="tiempoTotal"
                     type="number"
@@ -735,7 +738,31 @@ useEffect(() => {
                     validate={errors.internTotalTime ? "Error" : "Normal"}
                     typeError={errors.internTotalTime}
                   />
+                 
+                </section>
+                <section className="register-section-right">
                   <div className="register-intern-divider">
+                    <UploadFileOutlinedIcon /> <h3>Archivos del practicante</h3>
+                  </div>
+                  <RegisterRow
+                    label="Foto:"
+                    onChange={(value) => setInternPicture(value || "")}
+                    id="internPicture"
+                    type="file"
+                    show={true}
+                    validate={errors.internPicture ? "Error" : "Normal"}
+                    typeError={errors.internPicture}
+                  />
+                  <RegisterRow
+                    label="Archivos del practicante:"
+                    onChange={(value) => setInternFiles(value || "")}
+                    id="internFiles"
+                    type="file"
+                    show={true}
+                    validate={errors.internFiles ? "Error" : "Normal"}
+                    typeError={errors.internFiles}
+                  />
+                   <div className="register-intern-divider">
                     <ContactPhoneRoundedIcon /> <h3>Contactos de emergencia</h3>
                   </div>
 
@@ -745,60 +772,6 @@ useEffect(() => {
                       Ingrese minimo 2 contactos de emergencia
                     </p>
                   )}
-                </section>
-                <section className="register-section-right">
-                  <div className="register-intern-divider">
-                    <UploadFileOutlinedIcon /> <h3>Archivos del practicante</h3>
-                  </div>
-                  <RegisterRow
-                    label="Foto:"
-                    onChange={(value) => setInternPicture(value || "")}
-                    id="tiempoTotal"
-                    type="file"
-                    show={true}
-                    validate={errors.internPicture ? "Error" : "Normal"}
-                    typeError={errors.internPicture}
-                  />
-                  <RegisterRow
-                    label="CURP:"
-                    onChange={(value) => setInternCurp(value || "")}
-                    id="tiempoTotal"
-                    type="file"
-                    show={true}
-                    validate={errors.internCurp ? "Error" : "Normal"}
-                    typeError={errors.internCurp}
-                  />
-                  <RegisterRow
-                    label="Comprobante de domicilio:"
-                    onChange={(value) => setInternProofofaddress(value || "")}
-                    id="tiempoTotal"
-                    type="file"
-                    show={true}
-                    validate={errors.internProofofaddress ? "Error" : "Normal"}
-                    typeError={errors.internProofofaddress}
-                  />
-                  <RegisterRow
-                    label="Acta de nacimiento:"
-                    onChange={(value) => setInternBirthCertificate(value || "")}
-                    id="tiempoTotal"
-                    type="file"
-                    show={true}
-                    validate={
-                      errors.internBirthCertificate ? "Error" : "Normal"
-                    }
-                    typeError={errors.internBirthCertificate}
-                  />
-                  <RegisterRow
-                    label="Comprobante de seguro medico:"
-                    onChange={(value) => setInternMedicalInsurance(value || "")}
-                    id="tiempoTotal"
-                    type="file"
-                    show={true}
-                    validate={
-                      errors.internMedicalInsurance ? "Error" : "Normal"
-                    }
-                    typeError={errors.internMedicalInsurance}
-                  />
                 </section>
               </div>
             </div>

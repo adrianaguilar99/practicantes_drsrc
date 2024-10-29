@@ -38,12 +38,19 @@ import { RetryElement } from "../../components/utils/retry-element.component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { decryptData } from "../../functions/encrypt-data.function";
+import { getCareersData } from "../../api/interns/careers/careers.api";
+import { CareersInterface, DataCareer } from "../../interfaces/careers/careers.intarface";
+import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
+import { getDepartmentsData } from "../../api/departments/departments.api";
+import { getInstitutionsData } from "../../api/interns/institutions/institutions.api";
+import { DataInstitution, InstitutionsInterface } from "../../interfaces/institutions/institutions.interface";
+import { getPropertiesData } from "../../api/properties/propertie.api";
+import { DataProperty, PropertiesInterface } from "../../interfaces/properties/properties.interface";
 
 const InternInformationPage = () => {
   const [internData, setInternData] = useState<GetByIDDataInter>();
   const { pathname } = useLocation();
 
-  // Expresión regular para capturar UUID
   const uuidMatch = pathname.match(/intern-information\/([a-fA-F0-9-]{36})/);
   const internId = uuidMatch ? uuidMatch[1] : null;
   const [editable, setEditable] = useState(false);
@@ -79,6 +86,11 @@ const InternInformationPage = () => {
   const [hasError, setHasError] = useState(false);
   const userToken = sessionStorage.getItem("_Token") || "";
 
+  const [Careers, setCareers] = useState<DataCareer[]>([]);
+  const [Institutions, setInstitutions] = useState<DataInstitution[]>([]);
+  const [Departments, setDepartments] = useState<DataDepartment[]>([]);
+  const [Properties, setProperties] = useState<DataProperty[]>([]);
+
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -106,11 +118,13 @@ const InternInformationPage = () => {
         if (fetchedData.data.institution) {
           setInternUniversity(fetchedData.data.institution.name);
           setInternProgram(fetchedData.data.career.name);
+          setInternInstitutePhone(fetchedData.data.institution.phone || "");
+          setInternID(fetchedData.data.schoolEnrollment || "");
         }
         if (fetchedData.data.department) {
           setInternOldDepartment(fetchedData.data.department.name);
         }
-
+        setInternTotalTime(fetchedData.data.internshipDuration || "no hay data");
         setInternBloodType(fetchedData.data.bloodType);
         setInternDepartment(fetchedData.data.internshipDepartment.name);
         setInternPhone(fetchedData.data.phone);
@@ -119,7 +133,10 @@ const InternInformationPage = () => {
         setInternEndDate(fetchedData.data.internshipEnd.toString());
         setInternCheckIn(fetchedData.data.entryTime);
         setInternCheckOut(fetchedData.data.exitTime);
-        set;
+        if(fetchedData.data.internshipDuration){
+          
+        }
+     
         setHasError(false);
       } else {
         setInternData(undefined);
@@ -134,7 +151,64 @@ const InternInformationPage = () => {
 
   useEffect(() => {
     fetchData();
+    if(InternType === "Externo"){
+      fetchInstitutions();
+      fetchCareers();
+    }
+
+    fetchDepartments();
+    fetchProperties();
+
   }, [userToken]);
+
+  const fetchCareers = async () => {
+    try {
+      const fetchedData: CareersInterface | null =
+        await getCareersData(userToken);
+      if (fetchedData) {
+        setCareers(fetchedData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const fetchedData: DepartmentsInterface | null =
+        await getDepartmentsData(userToken);
+      if (fetchedData) {
+        setDepartments(fetchedData.data);
+      }
+    }catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchInstitutions = async () => {
+    try {
+      const fetchedData: InstitutionsInterface | null =
+        await getInstitutionsData(userToken);
+      if (fetchedData) {
+        setInstitutions(fetchedData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchProperties = async () => {
+    try {
+      const fetchedData: PropertiesInterface | null =
+        await getPropertiesData(userToken);
+      if (fetchedData) {
+        setProperties(fetchedData.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -268,7 +342,7 @@ const InternInformationPage = () => {
                       value={InternEmail}
                       id="email"
                       type="text"
-                      editable={editable}
+                      editable={false}
                       show={
                         InternType === "Externo" || InternType === "Interno"
                       }
@@ -288,8 +362,9 @@ const InternInformationPage = () => {
                     <InfoRow
                       label="Tipo de sangre:"
                       value={InternBloodType || "Sin datos disponibles"}
-                      id="encargado"
-                      type="text"
+                      id="bloodType"
+                      type={editable ? "select" : "text"}
+                      options={["Seleccione un tipo","A+", "A-", "B+","B-","AB+","AB-","O+","O-"]}
                       editable={editable}
                       show={
                         InternType === "Externo" || InternType === "Interno"
@@ -300,8 +375,12 @@ const InternInformationPage = () => {
                       label="Departamento de practicas:"
                       value={InternDepartment}
                       id="oldDepartment"
-                      type="text"
+                      type={editable ? "select" : "text"}
                       editable={editable}
+                      options={[
+                        { id: "", name: "Seleccione un departamento" },
+                        ...Departments.map((department) => ({ id: department.id, name: department.name }))
+                      ].map((department) => department.name)}
                       show={
                         InternType === "Externo" || InternType === "Interno"
                       }
@@ -311,8 +390,12 @@ const InternInformationPage = () => {
                       label="Departamento de procedencia:"
                       value={InternOldDepartment}
                       id="department"
-                      type="text"
+                      type={editable ? "select" : "text"}
                       editable={editable}
+                      options={[
+                        { id: "", name: "Seleccione un departamento" },
+                        ...Departments.map((department) => ({ id: department.id, name: department.name }))
+                      ].map((department) => department.name)}
                       show={InternType === "Interno"}
                       onChange={(value) => setInternDepartment(value || "")}
                     />
@@ -394,8 +477,11 @@ const InternInformationPage = () => {
                       label="Institución de procedencia:"
                       value={InternUniversity}
                       id="institution"
-                      type="text"
+                      type={editable ? "autocomplete" : "text"}
                       editable={editable}
+                      coincidences={Institutions.map(
+                        (institution: { name: any }) => institution.name
+                      )}
                       show={InternType === "Externo"}
                       onChange={(value) => setInternUniversity(value || "")}
                     />
@@ -403,16 +489,19 @@ const InternInformationPage = () => {
                       label="Carrera:"
                       value={InternProgram}
                       id="career"
-                      type="text"
+                      type={editable ? "autocomplete" : "text"}
+                      coincidences={Careers.map(
+                        (career: { name: any }) => career.name
+                      )}
                       editable={editable}
                       show={InternType === "Externo"}
                       onChange={(value) => setInternProgram(value || "")}
                     />
                     <InfoRow
                       label="Matrícula escolar:"
-                      value="202100167"
+                      value={InternID}
                       id="matricula"
-                      type="text"
+                      type={editable ? "number" : "text"}
                       editable={editable}
                       show={InternType === "Externo"}
                       onChange={(value) => setInternID(value || "")}
@@ -420,7 +509,7 @@ const InternInformationPage = () => {
 
                     <InfoRow
                       label="Tel Internacional:"
-                      value="9983847681"
+                      value={InternInstitutePhone}
                       id="matricula"
                       type="text"
                       editable={false}
@@ -491,7 +580,7 @@ const InternInformationPage = () => {
                     <InfoRow
                       label="Fecha de fin:"
                       value={InternEndDate}
-                      id="startDate"
+                      id="endDate"
                       type="date"
                       editable={editable}
                       show={
@@ -502,7 +591,7 @@ const InternInformationPage = () => {
                     <InfoRow
                       label="Hora entrada:"
                       value={InternCheckIn}
-                      id="startDate"
+                      id="checkIn"
                       type="time"
                       editable={editable}
                       show={
@@ -513,7 +602,7 @@ const InternInformationPage = () => {
                     <InfoRow
                       label="Hora salida:"
                       value={InternCheckOut}
-                      id="startDate"
+                      id="checkOut"
                       type="time"
                       editable={editable}
                       show={
@@ -523,27 +612,14 @@ const InternInformationPage = () => {
                     />
                     <InfoRow
                       label="Total de tiempo a cubrir:"
-                      value="600 horas"
-                      id="startDate"
-                      type="date"
+                      value={InternTotalTime}
+                      id="totalTime"
+                      type="text"
                       editable={editable}
                       show={
                         InternType === "Externo" || InternType === "Interno"
                       }
                       onChange={(value) => setInternTotalTime(value || "")}
-                    />
-                    <InfoRow
-                      label="Tiempo cubierto:"
-                      value="254 horas"
-                      id="startDate"
-                      type="text"
-                      show={
-                        InternType === "Externo" || InternType === "Interno"
-                      }
-                      editable={false}
-                      onChange={function (value?: string): void {
-                        throw new Error("Function not implemented.");
-                      }}
                     />
                   </section>
                   <div className="intern-progress-space-container">
@@ -570,7 +646,7 @@ const InternInformationPage = () => {
                   </div>
                 </div>
                 <div className="comments-container">
-                  <CommentsTable />
+                  <CommentsTable internId={internData?.id || ""} />
                 </div>
               </div>
             </section>
@@ -582,6 +658,9 @@ const InternInformationPage = () => {
         open={open}
         onConfirm={onConfirm}
         onCancel={Close}
+        data={{
+          initialDate: internData?.internshipStart || "",
+          finalDate: internData?.internshipEnd || "",}}
         title="Generar reporte del practicante"
         type="Generete"
         entity="report"

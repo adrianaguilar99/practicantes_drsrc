@@ -9,7 +9,7 @@ import { FormModal } from "../modals/form-modal.component";
 import { DataUser } from "../../interfaces/users.interface";
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { enqueueSnackbar } from "notistack";
-import { deleteUser, patchUser } from "../../api/users/users.api";
+import { activateUser, deleteUser, patchUser } from "../../api/users/users.api";
 import { ConfirmationModal } from "../modals/confirmation-modal.component";
 export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,7 +76,7 @@ const DeleteAdministrator = () => {
   deleteUser(userToken, selectedAdministrator.id)
     .then((data) => {
       if (data) {
-        enqueueSnackbar("administrador desactivado correctamente", {
+        enqueueSnackbar("Administrador desactivado correctamente", {
           variant: "success",
         });
         ConfirmationModalClose();
@@ -91,12 +91,10 @@ const DeleteAdministrator = () => {
 
 const ActiveAdministrator = () => {
   if (!selectedAdministrator) return;
-  patchUser(userToken, selectedAdministrator.id,{
-    isActive: true,
-  })
+  activateUser(userToken, selectedAdministrator.id)
     .then((data) => {
       if (data) {
-        enqueueSnackbar("administrador activado correctamente", {
+        enqueueSnackbar("Administrador activado correctamente", {
           variant: "success",
         });
         ConfirmationModalClose();

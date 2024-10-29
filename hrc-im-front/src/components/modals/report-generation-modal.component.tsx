@@ -2,13 +2,18 @@ import { Box, Button } from "@mui/material";
 import { ButtonComponent } from "../buttons/buttons.component";
 import { RegisterRow } from "../inputs/register-row.component";
 import { useState } from "react";
+import { InputValidators } from "../../functions/input-validators.functions";
 
 interface ReportGenerationModalProps {
+  initialDate: string;
+  finalDate: string;
   onCancel: () => void;
   onSuccess: () => void;
 }
 
 export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
+  initialDate,
+  finalDate,
   onCancel,
   onSuccess,
 }) => {
@@ -21,19 +26,64 @@ export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
 
   const GetLastWeekClick = () => {
     const today = new Date();
-    const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 7);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1); 
+  
+    const lastWeek = new Date(yesterday);
+    lastWeek.setDate(yesterday.getDate() - 6);
+  
     setInitialDate(formatDate(lastWeek));
-    setFinalDate(formatDate(today));
+    setFinalDate(formatDate(yesterday));
   };
-
+  
   const GetLastMonthClick = () => {
     const today = new Date();
-    const lastMonth = new Date(today);
-    lastMonth.setMonth(today.getMonth() - 1);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1); 
+  
+    const lastMonth = new Date(yesterday);
+    lastMonth.setMonth(yesterday.getMonth() - 1); 
+  
     setInitialDate(formatDate(lastMonth));
-    setFinalDate(formatDate(today));
+    setFinalDate(formatDate(yesterday));
   };
+
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
+    internBeginDate: undefined,
+    InternEndDate: undefined,
+  });
+  const formSubmit = () => {
+    const validators = InputValidators();
+    const newErrors: { [key: string]: string | undefined } = {};
+   
+
+
+    const resultBeginDate = validators.date(InitialDate);
+    if (resultBeginDate) {
+      newErrors.internBeginDate = resultBeginDate;
+    }
+    if (InitialDate < initialDate || InitialDate > finalDate) {
+      newErrors.internBeginDate = "La fecha inicial no puede ser menor o mayor al periodo de practicas";
+    }
+
+    const resultEndDate = validators.date(FinalDate);
+    if (resultEndDate) {
+      newErrors.InternEndDate = resultEndDate;
+    }
+    if (FinalDate < InitialDate) {
+      newErrors.InternEndDate = "La fecha final no puede ser menor a la inicial";
+    }
+    
+
+    setErrors(newErrors);
+    if (!newErrors.internBeginDate && !newErrors.InternEndDate) {
+        
+      }
+    if(FinalDate > finalDate){
+      newErrors.InternEndDate = "La fecha final no puede ser mayor al periodo de practicas";
+    }  
+  };
+  
 
   return (
     <div>
@@ -42,7 +92,7 @@ export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
         <div className="report-modal-buttons">
           <button onClick={GetLastWeekClick}>Hace una semana</button>
           <button onClick={GetLastMonthClick}>Hace un mes</button>
-          <button>Tiempo total</button>
+          <button onClick={() => {setInitialDate(initialDate); setFinalDate(finalDate)}}>Tiempo total</button>
         </div>
 
         <p>Fechas personalizadas</p>
@@ -52,16 +102,21 @@ export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
             id={"InitialDate"}
             show={true}
             type="date"
-            value={InitialDate} // Mostrar la fecha en el input
-            onChange={() => setInitialDate}
+            value={InitialDate} 
+            onChange={(value) => setInitialDate(value || "")}
+            validate={errors.internBeginDate ? "Error" : "Normal"}
+            typeError={errors.internBeginDate}
           />
           <RegisterRow
             label="Fecha final"
             id="FinalDate"
             show={true}
             type="date"
-            value={FinalDate} // Mostrar la fecha en el input
-            onChange={() => setFinalDate}
+            value={FinalDate} 
+            onChange={(value) => setFinalDate(value || "")}
+            validate={errors.InternEndDate ? "Error" : "Normal"}
+            typeError={errors.InternEndDate}
+         
           />
         </div>
       </div>
@@ -72,7 +127,7 @@ export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
         }}
       >
         <div style={{ maxWidth: "70%" }}>
-          <ButtonComponent text="Aceptar" onClick={onSuccess} />
+          <ButtonComponent text="Aceptar" onClick={formSubmit} />
         </div>
 
         <Button

@@ -89,6 +89,18 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               autoComplete="off"
             />
           )}
+          {type === "textarea" && (
+            <input
+              type="textarea"
+              id={id}
+              defaultValue={value}
+              onChange={(e) => ValueChange(e.target.value)}
+              className={`edit-mode ${errorClass}`}
+              readOnly={!editable}
+              maxLength={maxLength}
+              autoComplete="off"
+            />
+          )}
 
           {type === "password" && (
              <div className="password-input-container">

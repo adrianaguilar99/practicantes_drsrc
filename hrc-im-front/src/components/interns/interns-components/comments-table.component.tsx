@@ -1,59 +1,74 @@
+import { useEffect, useState } from "react";
 import { DateConversor } from "../../../functions/date-conversor.function";
 import { AddNewComment } from "./add-new-comment.component";
 import { CommentCard } from "./comments-card.component";
+import { CommentsOfInternInterface, DataComment } from "../../../interfaces/interns/intern-comments/intern-comments.interface";
+import { RetryElement } from "../../utils/retry-element.component";
+import { CircularProgress, NothingToSee } from "../../utils/circular-progress.component";
+import { getCommentsByInternId } from "../../../api/interns/intern-comments/intern-comments.api";
+import { da } from "date-fns/locale";
+interface CommentCardProps {
+    internId: string;
+}
+export const CommentsTable : React.FC<CommentCardProps> = ({ internId } ) => {
+    const [data, setData] = useState<DataComment[]>([]);
+    const [isLoading, setIsLoading] = useState(true); 
+    const [hasError, setHasError] = useState(false);   
+    const userToken = sessionStorage.getItem("_Token") || "";
 
-export const CommentsTable = () => {
-   const comments = [
-    {
-        id: 1,
-        name: "JUAN JOSE",
-        time: DateConversor("29/9/2024, 3:14:33 p.m."),
-        comment: "Me parece muy bien! 🙌👍",
-    },
-    {
-        id: 2,
-        name: "BRIAN WILFRIDO ROMERO",
-        time: DateConversor("29/9/2024, 2:14:33 p.m."),
-        comment: "Comentario 2",
-    },
-    {
-        id: 3,
-        name: "STEVEN RODRIGUEZ RODRIGUEZ",
-        time: "2024-09-20T17:30:00",
-        comment: "Comentario 3",
-    },
-    {
-        id: 1,
-        name: "JUAN JOSE",
-        time: "2023-09-20T17:30:00",
-        comment: "Me parece muy bien! 🙌👍",
-    },
-    {
-        id: 1,
-        name: "JUAN JOSE",
-        time: "2024-09-20T12:30:00",
-        comment: "Me parece muy bien! 🙌👍",
-    },
-    {
-        id: 1,
-        name: "JUAN JOSE",
-        time: "2024-09-20T17:30:00",
-        comment: "Me parece muy bien! 🙌👍",
-    },
-   ]
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+          const fetchedData: CommentsOfInternInterface  | null = await getCommentsByInternId(userToken, internId);
+          if (fetchedData && fetchedData.data.length > 0) {
+            setData(fetchedData.data);
+            setHasError(false); 
+          } else if (fetchedData && fetchedData.data.length === 0) {
+            setData([]);
+            setHasError(false);
+          } else {
+            setHasError(true);
+          }
+        } catch (error) {
+          setHasError(true);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+    
+      useEffect(() => {
+        fetchData();
+      }, [userToken]);
+    const PostSuccess = () => {
+        fetchData();
+    
+      };
+   
     return (
         <div>
-            <h2 className="comments-title">{comments.length} Comentarios</h2>
-            <AddNewComment />   
+            <h2 className="comments-title"> {"( " + data.length + " )"} {data.length === 1 ? "Comentario" : "Comentarios"}</h2>
+            <AddNewComment onSuccess={PostSuccess} internId={internId} />   
             <div className="comments-table">
-                {comments.map((comment, index) => (
+            {isLoading ? (
+              <CircularProgress type="secondary" />
+            ) : hasError ? (
+               <RetryElement onClick={() => fetchData()}/>
+            ) : data.length === 0 ? (
+              <h2 className="comments-title">No hay comentarios</h2>
+            ) : (
+                data.map((comment, index) => (
                     <CommentCard
                         key={index}
-                        name={comment.name}
-                        time={comment.time}
-                        comment={comment.comment}
+                        id={comment.id}
+                        name={comment.user.firstName + " " + comment.user.lastName}
+                        time={comment.createdAt.toString()}
+                        comment={comment.postedComment}
+                        timeUpdated={comment.updatedAt.toString()}
+                        onUpdate={fetchData}
                     />
-                ))}
+                ))
+            )}
+               
             </div>
         </div>
        

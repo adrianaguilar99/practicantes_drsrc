@@ -13,7 +13,7 @@ import { ConfirmationModal } from "../modals/confirmation-modal.component";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { patchUser } from "../../api/users/users.api";
+import { activateUser, patchUser } from "../../api/users/users.api";
 
 export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const userToken = sessionStorage.getItem("_Token") || "";
@@ -95,9 +95,7 @@ export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) 
 
   const ActiveSupervisor = () => {
     if (!selectedSupervisor) return;
-    patchUser(userToken, selectedSupervisor.id,{
-      isActive: true,
-    })
+    activateUser(userToken, selectedSupervisor.id)
       .then((data) => {
         if (data) {
           enqueueSnackbar("supervisor activado correctamente", {
