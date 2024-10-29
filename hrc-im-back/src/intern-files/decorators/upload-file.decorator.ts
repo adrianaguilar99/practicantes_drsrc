@@ -11,25 +11,10 @@ export const UploadInternFiles = (): MethodDecorator => {
             format: 'binary',
             description: 'Intern photo (PNG, JPG, SVG only)',
           },
-          curp: {
+          compiledDocuments: {
             type: 'string',
             format: 'binary',
-            description: 'CURP document (PDF only)',
-          },
-          proofOfAddress: {
-            type: 'string',
-            format: 'binary',
-            description: 'Proof of address (PDF only)',
-          },
-          birthCertificate: {
-            type: 'string',
-            format: 'binary',
-            description: 'Birth certificate (PDF only)',
-          },
-          medicalInsurance: {
-            type: 'string',
-            format: 'binary',
-            description: 'Medical insurance document (PDF only)',
+            description: "The rest of the intern's documents. (PDF only)",
           },
         },
       },

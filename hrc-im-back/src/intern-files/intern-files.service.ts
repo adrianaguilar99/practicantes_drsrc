@@ -33,17 +33,11 @@ export class InternFilesService {
     const existingIntern = await this.internsService.findOne(internId);
 
     const securePhotoUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[0].filename}`;
-    const secureCurpUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
-    const secureProofOfAddressUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[2].filename}`;
-    const secureBirthCertificateUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[3].filename}`;
-    const secureMedicalInsuranceUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[4].filename}`;
+    const secureCompiledDocumentsUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
 
     const newInternFiles = this.internFilesRepository.create({
-      birthCertificate: secureBirthCertificateUrl,
-      curp: secureCurpUrl,
-      medicalInsurance: secureMedicalInsuranceUrl,
       photo: securePhotoUrl,
-      proofOfAddress: secureProofOfAddressUrl,
+      compiledDocuments: secureCompiledDocumentsUrl,
       intern: existingIntern,
     });
     try {
@@ -91,8 +85,8 @@ export class InternFilesService {
   ) {
     try {
       // Valida que exactamente cinco archivos fueron subidos
-      if (files.length !== 5)
-        throw new BadRequestException('Exactly five files must be uploaded');
+      if (files.length !== 2)
+        throw new BadRequestException('Exactly two files must be uploaded');
 
       // Valida que el primer archivo (photo) sea una imagen
       if (!files[0].originalname.match(/\.(jpg|jpeg|png|svg)$/))
@@ -171,51 +165,20 @@ export class InternFilesService {
     // console.log({ newSecurePhotoUrl, oldPhotoPath });
     if (existsSync(oldPhotoPath)) unlinkSync(oldPhotoPath);
 
-    const newSecureCurpUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
-    const oldCurpPath = join(
+    const newCompiledDocumentsCurpUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[1].filename}`;
+    const oldCompiledDocumentsPath = join(
       __dirname,
       '../../',
       `${ENV.INTERN_FILES_PATH}${internId}`,
-      existingInternFiles.curp.split('/').pop(),
+      existingInternFiles.compiledDocuments.split('/').pop(),
     );
-    if (existsSync(oldCurpPath)) unlinkSync(oldCurpPath);
-
-    const newSecureProofOfAddressUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[2].filename}`;
-    const oldProofOfAddressPath = join(
-      __dirname,
-      '../../',
-      `${ENV.INTERN_FILES_PATH}${internId}`,
-      existingInternFiles.proofOfAddress.split('/').pop(),
-    );
-    if (existsSync(oldProofOfAddressPath)) unlinkSync(oldProofOfAddressPath);
-
-    const newSecureBirthCertificateUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[3].filename}`;
-    const oldBirthCertificatePath = join(
-      __dirname,
-      '../../',
-      `${ENV.INTERN_FILES_PATH}${internId}`,
-      existingInternFiles.birthCertificate.split('/').pop(),
-    );
-    if (existsSync(oldBirthCertificatePath))
-      unlinkSync(oldBirthCertificatePath);
-
-    const newSecureMedicalInsuranceUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[4].filename}`;
-    const oldMedicalInsurancePath = join(
-      __dirname,
-      '../../',
-      `${ENV.INTERN_FILES_PATH}${internId}`,
-      existingInternFiles.medicalInsurance.split('/').pop(),
-    );
-    if (existsSync(oldMedicalInsurancePath))
-      unlinkSync(oldMedicalInsurancePath);
+    if (existsSync(oldCompiledDocumentsPath))
+      unlinkSync(oldCompiledDocumentsPath);
 
     const internFilesToUpdate = {
       id: existingInternFiles.id,
-      birthCertificate: newSecureBirthCertificateUrl,
-      curp: newSecureCurpUrl,
-      medicalInsurance: newSecureMedicalInsuranceUrl,
       photo: newSecurePhotoUrl,
-      proofOfAddress: newSecureProofOfAddressUrl,
+      compiledDocuments: newCompiledDocumentsCurpUrl,
     };
     try {
       await this.internFilesRepository.update(id, internFilesToUpdate);

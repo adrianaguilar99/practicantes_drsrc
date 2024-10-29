@@ -28,7 +28,6 @@ const multerOptions = {
     },
   }),
   fileFilter,
-  limits: { files: 5 },
 };
 
 export default multerOptions;
