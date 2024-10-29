@@ -41,7 +41,7 @@ import {
 } from 'src/common/constants/constants';
 import multerOptions from 'src/configs/multer.config';
 import { InternFile } from './entities/intern-file.entity';
-import { Public, UserRoles } from 'src/auth/decorators';
+import { UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
 import { Response } from 'express';
@@ -64,10 +64,7 @@ export class InternFilesController {
     FileFieldsInterceptor(
       [
         { name: 'photo', maxCount: 1 },
-        { name: 'curp', maxCount: 1 },
-        { name: 'proofOfAddress', maxCount: 1 },
-        { name: 'birthCertificate', maxCount: 1 },
-        { name: 'medicalInsurance', maxCount: 1 },
+        { name: 'compiledDocuments', maxCount: 1 },
       ],
       multerOptions,
     ),
@@ -93,10 +90,7 @@ export class InternFilesController {
     @UploadedFiles()
     files: {
       photo: Express.Multer.File[];
-      curp: Express.Multer.File[];
-      proofOfAddress: Express.Multer.File[];
-      birthCertificate: Express.Multer.File[];
-      medicalInsurance: Express.Multer.File[];
+      compiledDocuments: Express.Multer.File[];
     },
     @Req() req,
   ): Promise<IApiResponse<any>> {
@@ -104,10 +98,7 @@ export class InternFilesController {
     // Agrupar todos los archivos en un solo array para trabajar con ellos
     const internFiles = [
       ...(files.photo || []),
-      ...(files.curp || []),
-      ...(files.proofOfAddress || []),
-      ...(files.birthCertificate || []),
-      ...(files.medicalInsurance || []),
+      ...(files.compiledDocuments || []),
     ];
 
     // Validamos y manejamos el rollback en caso de error
@@ -191,10 +182,7 @@ export class InternFilesController {
     FileFieldsInterceptor(
       [
         { name: 'photo', maxCount: 1 },
-        { name: 'curp', maxCount: 1 },
-        { name: 'proofOfAddress', maxCount: 1 },
-        { name: 'birthCertificate', maxCount: 1 },
-        { name: 'medicalInsurance', maxCount: 1 },
+        { name: 'compiledDocuments', maxCount: 1 },
       ],
       multerOptions,
     ),
@@ -217,10 +205,7 @@ export class InternFilesController {
     @UploadedFiles()
     files: {
       photo: Express.Multer.File[];
-      curp: Express.Multer.File[];
-      proofOfAddress: Express.Multer.File[];
-      birthCertificate: Express.Multer.File[];
-      medicalInsurance: Express.Multer.File[];
+      compiledDocuments: Express.Multer.File[];
     },
     @Req() req,
   ): Promise<IApiResponse<any>> {
@@ -228,10 +213,7 @@ export class InternFilesController {
     // Agrupar todos los archivos en un solo array para trabajar con ellos
     const internFiles = [
       ...(files.photo || []),
-      ...(files.curp || []),
-      ...(files.proofOfAddress || []),
-      ...(files.birthCertificate || []),
-      ...(files.medicalInsurance || []),
+      ...(files.compiledDocuments || []),
     ];
 
     // Validamos y manejamos el rollback en caso de error

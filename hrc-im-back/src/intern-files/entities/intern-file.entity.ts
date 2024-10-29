@@ -25,7 +25,11 @@ export class InternFile {
     description: 'The file path of the intern photo.',
     nullable: true,
   })
-  @Column({ type: 'varchar', nullable: true })
+  @Column({
+    name: 'photo_path',
+    type: 'varchar',
+    nullable: true,
+  })
   photo: string;
 
   @ApiProperty({
@@ -33,32 +37,12 @@ export class InternFile {
     description: 'The file path of the intern CURP document.',
     nullable: true,
   })
-  @Column({ type: 'varchar', nullable: true })
-  curp: string;
-
-  @ApiProperty({
-    example: 'proofOfAddress-123456.pdf',
-    description: 'The file path of the proof of address document.',
+  @Column({
+    name: 'compiled_documents_path',
+    type: 'varchar',
     nullable: true,
   })
-  @Column({ type: 'varchar', nullable: true })
-  proofOfAddress: string;
-
-  @ApiProperty({
-    example: 'birthCertificate-123456.pdf',
-    description: 'The file path of the birth certificate document.',
-    nullable: true,
-  })
-  @Column({ type: 'varchar', nullable: true })
-  birthCertificate: string;
-
-  @ApiProperty({
-    example: 'medicalInsurance-123456.pdf',
-    description: 'The file path of the medical insurance document.',
-    nullable: true,
-  })
-  @Column({ type: 'varchar', nullable: true })
-  medicalInsurance: string;
+  compiledDocuments: string;
 
   @Exclude()
   @ApiProperty({
