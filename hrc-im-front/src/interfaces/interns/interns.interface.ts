@@ -15,6 +15,7 @@ export interface DataIntern {
     schoolEnrollment:     string;
     internshipStart:      Date;
     internshipEnd:        Date;
+    internshipDuration: string;
     entryTime: string,
     exitTime: string,
     status:               string;
@@ -66,6 +67,7 @@ export interface PostIntern{
     internshipEnd: string,
     entryTime: string,
     exitTime: string,
+    internshipDuration: string,
     status: "ACTIVE",
     careerId?: string,
     departmentId?: string,
@@ -94,6 +96,7 @@ export interface GetByIDDataInter {
     schoolEnrollment:     string;
     internshipStart:      Date;
     internshipEnd:        Date;
+    internshipDuration: string;
     entryTime:            string;
     exitTime:             string;
     status:               string;

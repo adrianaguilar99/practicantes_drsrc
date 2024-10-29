@@ -13,6 +13,7 @@ interface InternData {
   contacts?: DataEmergencyContact[];
   internType?: string;
   onSuccess?: () => void;
+  onError?: () => void;
 }
 
 const postEmergencyContacts = async (
@@ -54,6 +55,7 @@ export const postInternFunction = async ({
   internType,
   contacts = [],
   onSuccess,
+  onError,
 }: InternData): Promise<void> => {
   try {
     const data: UserPostResponse = await postUser(userToken, {
@@ -74,6 +76,7 @@ export const postInternFunction = async ({
           address: dataIntern.address,
           internshipStart: dataIntern.internshipStart,
           internshipEnd: dataIntern.internshipEnd,
+          internshipDuration: dataIntern.internshipDuration,
           entryTime: dataIntern.entryTime,
           exitTime: dataIntern.exitTime,
           status: "ACTIVE",
@@ -103,5 +106,6 @@ export const postInternFunction = async ({
     }
   } catch (error) {
     enqueueSnackbar("Algo salió mal: " + error, { variant: "error" });
+    onError && onError();
   }
 };

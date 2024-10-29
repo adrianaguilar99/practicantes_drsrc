@@ -11,7 +11,7 @@ export interface AuditsInterface {
 
 export interface EntityAffected {
     id:   null | string;
-    name: string;
+    data: string;
 }
 
 export interface Responsible {
