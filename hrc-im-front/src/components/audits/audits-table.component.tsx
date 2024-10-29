@@ -84,7 +84,7 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
                 <tr key={index} className="generic-table-row">
                   <td>
                     <Tooltip
-                      title={`Se ha realizado la acción "${audit?.action}" de ${audit?.entityAffected.name} en la base de datos`}
+                      title={`Se ha realizado la acción "${audit?.action}" de ${audit?.entityAffected.data} en la base de datos`}
                       arrow
                       style={{ marginLeft: "15px" }}
                     >

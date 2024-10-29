@@ -15,12 +15,12 @@ export interface UserData {
             },
           });
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Error del servidor');
         }
         const result = await response.json();
         console.log(result);
         if (!result.data) {
-          throw new Error('No data found in the response');
+          throw new Error('Los datos no han sido encontrados');
         }
         const filteredData: UserData[] = result.data.filter(
           (user: UserData) => user.userRole === "INTERN"
@@ -34,7 +34,7 @@ export interface UserData {
         return internsByDate;
 
       } catch (error) {
-        console.error("Error fetching interns by role:", error);
+        console.error("Error al obtener los datos:", error);
         throw error;
       }
   }

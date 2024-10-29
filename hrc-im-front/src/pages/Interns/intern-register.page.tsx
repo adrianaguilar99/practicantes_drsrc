@@ -65,7 +65,7 @@ const InternRegisterPage = () => {
   const [InternProofofaddress, setInternProofofaddress] = useState("");
   const [InternBirthCertificate, setInternBirthCertificate] = useState("");
   const [InternMedicalInsurance, setInternMedicalInsurance] = useState("");
-  const defaultPassword = process.env.VITE_DEFAULT_PASSWORD || "";
+  const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("");
   const [InternContacts = [], setInternContacts] = useState<DataEmergencyContact[]>([]);

@@ -32,7 +32,6 @@ const InternCardComponent: React.FC<InternCardProps> = ({
   const userToken = sessionStorage.getItem("_Token") || "";
   const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const [typeAction, setTypeAction] = useState('');
-  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const navigate = useNavigate();
 
   const Click = () => {

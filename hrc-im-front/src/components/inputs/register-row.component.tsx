@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, IconButton } from "@mui/material";
 import { TextField } from "@mui/material";
 import { useSpring, animated } from "@react-spring/web";
 import { formatPhoneNumber } from "../../functions/utils.functions";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface RegisterRowProps {
   label: string;
@@ -46,7 +47,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   coincidences = [],
 }) => {
   const [inputValue, setInputValue] = useState(value);
+  const [showPassword, setShowPassword] = useState(false);
 
+  const PasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const animationStyles = useSpring({
     opacity: show ? 1 : 0,
     transform: show ? "translateY(0px)" : "translateY(20px)",
@@ -86,16 +91,21 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
           )}
 
           {type === "password" && (
-            <input
-              type="password"
-              id={id}
-              defaultValue={value}
-              onChange={(e) => ValueChange(e.target.value)}
-              className={`edit-mode ${errorClass}`}
-              readOnly={!editable}
-              maxLength={maxLength}
-              autoComplete="off"
-            />
+             <div className="password-input-container">
+             <input
+               type={showPassword ? "text" : "password"}
+               id={id}
+               defaultValue={value}
+               onChange={(e) => ValueChange(e.target.value)}
+               className={`edit-mode ${errorClass}`}
+               readOnly={!editable}
+               maxLength={maxLength}
+               autoComplete="off"
+             />
+             <IconButton onClick={PasswordVisibility}>
+               {showPassword ? <VisibilityOff /> : <Visibility />}
+             </IconButton>
+           </div>
           )}
 
           {type === "number" && (
