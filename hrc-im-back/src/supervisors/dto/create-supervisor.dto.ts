@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID, Matches } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 
 export class CreateSupervisorDto {
   @ApiProperty({
@@ -23,6 +24,7 @@ export class CreateSupervisorDto {
   departmentId: string;
 
   @ApiProperty({
+    type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
     description: 'User ID',
     nullable: false,

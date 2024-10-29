@@ -20,6 +20,7 @@ import { IRequestUser } from 'src/common/interfaces';
 import { handleInternalServerError } from 'src/common/utils';
 import { RESOURCE_NAME_ALREADY_EXISTS } from 'src/common/constants/constants';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
+import { convertToInterval } from './helpers';
 
 @Injectable()
 export class InternsService {
@@ -57,6 +58,16 @@ export class InternsService {
         `User with ID ${createInternDto.userId} does not have the required role to be a intern.`,
       );
     }
+
+    // Si todo se valida correctamente continuamos con el registro del practicante
+    // Asignamos un codigo unico para el practicante
+    const internCode = await this.generateUniqueInternCode();
+
+    // Convertimos el tiempo de practicas a un formato valido "INTERVAL"
+    const internshipDurationInterval = convertToInterval(
+      createInternDto.internshipDuration,
+    );
+
     /** Buscamos las relaciones, en caso de que se exista o se este se agregando
      * en el cuerpo de la solicitud, se agrega al nuevo registro
      * Esto se aplica a: Carrera, Departamento e Institucion  */
@@ -89,17 +100,16 @@ export class InternsService {
       );
     }
 
-    const internCode = await this.generateUniqueInternCode();
-
     const newIntern = this.internsRepository.create({
       ...createInternDto,
+      internCode,
+      internshipDuration: internshipDurationInterval,
       career,
       department,
       internshipDepartment,
       institution,
       property,
       user,
-      internCode,
     });
     try {
       const createdIntern = await this.internsRepository.save(newIntern);
@@ -112,12 +122,17 @@ export class InternsService {
         'CREATE INTERN',
         {
           id: createdIntern.id,
-          name: `${createdIntern.user.firstName} ${createdIntern.user.lastName}`,
+          data: `${createdIntern.user.firstName} ${createdIntern.user.lastName}`,
         },
         'SUCCESS',
       );
       return createdIntern;
     } catch (error) {
+      await this.usersService.physicalRemove(newIntern.user.id, {
+        fullName,
+        role,
+        userId,
+      });
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -125,7 +140,7 @@ export class InternsService {
           role,
         },
         'TRY TO CREATE INTERN',
-        { id: null, name: `${user.firstName} ${user.lastName}` },
+        { id: null, data: `${user.firstName} ${user.lastName}` },
         'FAILED TO CREATE INTERN',
         error.message,
       );
@@ -182,6 +197,7 @@ export class InternsService {
       internshipStart,
       entryTime,
       exitTime,
+      internshipDuration,
       phone,
       propertyId,
       schoolEnrollment,
@@ -200,8 +216,8 @@ export class InternsService {
         { id: userReq, fullName, role },
         'TRY TO UPDATE INTERN',
         {
-          id: existingIntern.id,
-          name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
         },
         'FAILED TO UPDATE INTERN',
         'Attempted to update fields that are not allowed: User',
@@ -249,6 +265,8 @@ export class InternsService {
     if (internshipEnd) existingIntern.internshipEnd = internshipEnd;
     if (entryTime) existingIntern.entryTime = entryTime;
     if (exitTime) existingIntern.exitTime = exitTime;
+    if (internshipDuration)
+      existingIntern.internshipDuration = convertToInterval(internshipDuration);
 
     if (careerId) {
       const career = await this.careersService.findOne(careerId);
@@ -283,8 +301,8 @@ export class InternsService {
         { id: userReq, fullName, role },
         'UPDATE INTERN',
         {
-          id: updatedIntern.id,
-          name: `${updatedIntern.user.firstName} ${updatedIntern.user.lastName}`,
+          id,
+          data: `${updatedIntern.user.firstName} ${updatedIntern.user.lastName}`,
         },
         'SUCCESS',
       );
@@ -294,8 +312,8 @@ export class InternsService {
         { id: userReq, fullName, role },
         'FAILED TO UPDATE INTERN',
         {
-          id: null,
-          name: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
         },
         'FAILED',
         error.message,
@@ -306,7 +324,7 @@ export class InternsService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
-    await this.findOne(id);
+    const existingIntern = await this.findOne(id);
     try {
       const removedIntern = await this.internsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -316,7 +334,10 @@ export class InternsService {
           role,
         },
         'DELETE INTERN',
-        { id, name: 'Intern' },
+        {
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        },
         'SUCCESS',
       );
       return removedIntern.affected;
@@ -328,7 +349,10 @@ export class InternsService {
           role,
         },
         'TRY TO DELETE INTERN',
-        { id, name: 'User' },
+        {
+          id,
+          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        },
         'FAILED TO DELETE INTERN',
         error.message,
       );

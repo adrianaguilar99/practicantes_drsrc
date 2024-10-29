@@ -35,7 +35,7 @@ export class CareersService {
           role,
         },
         'CREATE CAREER',
-        { id: createdCareer.id, name: createdCareer.name },
+        { id: createdCareer.id, data: createdCareer.name },
         'SUCCESS',
       );
       return createdCareer;
@@ -47,7 +47,7 @@ export class CareersService {
           role,
         },
         'TRY TO CREATE CAREER',
-        { id: null, name: createCareerDto.name },
+        { id: null, data: createCareerDto.name },
         'FAILED TO CREATE CAREER',
         error.message,
       );
@@ -97,7 +97,7 @@ export class CareersService {
           role: reqUser.role,
         },
         'UPDATE CAREER',
-        { id: updatedCareer.id, name: updatedCareer.name },
+        { id, data: updatedCareer.name },
         'SUCCESS',
       );
 
@@ -110,7 +110,7 @@ export class CareersService {
           role: reqUser.role,
         },
         'TRY TO UPDATE CAREER',
-        { id, name: 'Update Error' },
+        { id, data: `${updateCareerDto.name}` },
         'FAILED TO UPDATE CAREER',
         error.message,
       );
@@ -121,11 +121,11 @@ export class CareersService {
   }
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
+    const existingCareer = await this.findOne(id);
     try {
       const deletedCareer = await this.careersRepository.delete(id);
       if (!deletedCareer.affected)
         throw new NotFoundException(`Career with id: ${id} not found.`);
-
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -133,10 +133,9 @@ export class CareersService {
           role,
         },
         'DELETE CAREER',
-        { id, name: 'Career' },
+        { id, data: existingCareer.name },
         'SUCCESS',
       );
-
       return deletedCareer.affected;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
@@ -146,7 +145,7 @@ export class CareersService {
           role,
         },
         'TRY TO DELETE CAREER',
-        { id, name: 'Career' },
+        { id, data: existingCareer.name },
         'FAILED TO DELETE CAREER',
         error.message,
       );
@@ -154,7 +153,7 @@ export class CareersService {
     }
   }
 
-  async removeAll() {
+  async removeAll({ fullName, role, userId }: IRequestUser) {
     try {
       // Obtener todos las carreras
       const allCareers = await this.careersRepository
@@ -173,11 +172,31 @@ export class CareersService {
       // Eliminar solo los departamentos sin relaciones
       const careers = careersWithoutRelations.map((c) => c.id);
       await this.careersRepository.delete(careers);
-
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE ALL CAREERS',
+        { id: careers.toString(), data: `${[...careersWithoutRelations]}` },
+        'SUCCESS',
+      );
       return `Deleted careers without relations: ${careersWithoutRelations
         .map((c) => c.name)
         .join(', ')}`;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE ALL CAREERS',
+        { id: null, data: 'Career' },
+        'FAILED TO DELETE ALL CAREERS',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

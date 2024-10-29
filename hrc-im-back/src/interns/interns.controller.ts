@@ -23,6 +23,7 @@ import {
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   READ_ALL_RECORDS,
@@ -46,6 +47,7 @@ import { IApiResponse } from 'src/common/interfaces';
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
 })
+@ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
 @Controller('interns')
 export class InternsController {
   constructor(private readonly internsService: InternsService) {}

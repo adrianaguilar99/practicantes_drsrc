@@ -5,6 +5,7 @@ import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
 import { EmergencyContact } from 'src/emergency-contact/entities/emergency-contact.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
+import { InternComment } from 'src/intern-comments/entities/intern-comment.entity';
 import { InternFile } from 'src/intern-files/entities/intern-file.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -123,6 +124,14 @@ export class Intern {
   exitTime: string;
 
   @ApiProperty({
+    example: '300:00:00',
+    description: 'Total hours the practitioner is expected to cover.',
+    nullable: false,
+  })
+  @Column({ name: 'internship_duration', type: 'interval', nullable: true })
+  internshipDuration: string;
+
+  @ApiProperty({
     example: InternStatus.ACTIVE,
     description: "Intern's status.",
     nullable: false,
@@ -209,6 +218,11 @@ export class Intern {
   )
   emergencyContacts: EmergencyContact[];
 
+  @OneToMany(() => InternComment, (internComments) => internComments.intern, {
+    eager: true,
+  })
+  internComents: InternComment[];
+
   @ApiProperty({
     type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -244,41 +258,28 @@ export class Intern {
   }
 
   private validateDates() {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
     const startDate = new Date(this.internshipStart);
     startDate.setHours(
       startDate.getHours() + startDate.getTimezoneOffset() / 60,
     );
-
     const endDate = new Date(this.internshipEnd);
     endDate.setHours(endDate.getHours() + endDate.getTimezoneOffset() / 60);
 
     // Verificacion de fechas
     // console.log({
     //   startDateString: startDate.toDateString(),
-    //   nowDateString: now.toDateString(),
     //   endDateString: endDate.toDateString(),
     //   startDateGetTime: startDate.getTime(),
-    //   nowDateGetTime: now.getTime(),
     //   endDateGetTime: endDate.getTime(),
     // });
 
-    // Permitir que la fecha de inicio sea igual o mayor a la fecha actual
-    if (startDate.getTime() < now.getTime())
+    /**
+     * La fecha de inicio y fin si puede ser en el pasado
+     * pero la fecha de inicio no puede ser mayor o igual que la fecha de fin
+     */
+    if (startDate.getTime() >= endDate.getTime())
       throw new BadRequestException(
-        'The internship start date cannot be in the past.',
-      );
-
-    if (startDate.getTime() > endDate.getTime())
-      throw new BadRequestException(
-        'The internship start date cannot be greater than the end date.',
-      );
-
-    if (endDate.getTime() < now.getTime())
-      throw new BadRequestException(
-        'The internship end date cannot be in the past.',
+        'The internship start date cannot be greater or equal than the end date.',
       );
   }
 

@@ -14,7 +14,7 @@ export class SystemAuditsService {
   async createSystemAudit(
     responsible: { id: string; fullName: string; role: string },
     action: string,
-    entity: { id: string; name: string },
+    entity: { id: string; data: string },
     status: string,
     errorMessage?: string,
   ) {
@@ -41,7 +41,9 @@ export class SystemAuditsService {
 
   async findAll() {
     try {
-      return await this.systemAuditsRepository.find();
+      return await this.systemAuditsRepository.find({
+        order: { auditDate: 'DESC' },
+      });
     } catch (error) {
       handleInternalServerError(error.message);
     }

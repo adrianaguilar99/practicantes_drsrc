@@ -13,6 +13,8 @@ import { handleInternalServerError } from 'src/common/utils';
 import { ENV } from 'src/configs';
 import { join } from 'path';
 import { existsSync, unlinkSync } from 'fs';
+import { SystemAuditsService } from 'src/system-audits/system-audits.service';
+import { IRequestUser } from 'src/common/interfaces';
 
 @Injectable()
 export class InternFilesService {
@@ -20,9 +22,14 @@ export class InternFilesService {
     @InjectRepository(InternFile)
     private readonly internFilesRepository: Repository<InternFile>,
     private readonly internsService: InternsService,
+    private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
-  async create(internId: string, files: Express.Multer.File[]) {
+  async create(
+    internId: string,
+    files: Express.Multer.File[],
+    { fullName, role, userId }: IRequestUser,
+  ) {
     const existingIntern = await this.internsService.findOne(internId);
 
     const securePhotoUrl = `${ENV.HOST_API}/api/intern-files/${internId}/${files[0].filename}`;
@@ -42,18 +49,46 @@ export class InternFilesService {
     try {
       const savedInternFiles =
         await this.internFilesRepository.save(newInternFiles);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'CREATE INTERN FILES',
+        {
+          id: savedInternFiles.id,
+          data: `${newInternFiles}`,
+        },
+        'SUCCESS',
+      );
       return savedInternFiles;
     } catch (error) {
+      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO CREATE INTERN FILES',
+        { id: null, data: `${newInternFiles}` },
+        'FAILED TO CREATE INTERN FILES',
+        error.message,
+      );
       if (error.code === '23505')
         throw new ConflictException(
           "A record already exists containing the intern's files. Only one can be created.",
         );
-      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
       handleInternalServerError(error.detail);
     }
   }
 
-  async validateAndHandleFiles(files: Express.Multer.File[]) {
+  async validateAndHandleFiles(
+    internId: string,
+    files: Express.Multer.File[],
+    { fullName, role, userId }: IRequestUser,
+  ) {
     try {
       // Valida que exactamente cinco archivos fueron subidos
       if (files.length !== 5)
@@ -67,6 +102,18 @@ export class InternFilesService {
       // Validacion de archivos duplicados
       checkForDuplicates(files);
     } catch (error) {
+      rollbackFiles(internId); // Se eliminan los archivos "huerfanos" en caso de error
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO CREATE INTERN FILES',
+        { id: null, data: `${files}` },
+        'FAILED TO CREATE INTERN FILES',
+        error.message,
+      );
       if (error instanceof BadRequestException) throw error;
       handleInternalServerError(error.message);
     }
@@ -105,7 +152,12 @@ export class InternFilesService {
     return path;
   };
 
-  async update(id: string, internId: string, files: Express.Multer.File[]) {
+  async update(
+    id: string,
+    internId: string,
+    files: Express.Multer.File[],
+    { fullName, role, userId }: IRequestUser,
+  ) {
     await this.internsService.findOne(internId);
     const existingInternFiles = await this.findOne(id);
 
@@ -167,19 +219,63 @@ export class InternFilesService {
     };
     try {
       await this.internFilesRepository.update(id, internFilesToUpdate);
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'UPDATE INTERN FILES',
+        {
+          id,
+          data: `${internFilesToUpdate}`,
+        },
+        'SUCCESS',
+      );
       return internFilesToUpdate;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userId, fullName, role },
+        'FAILED TO UPDATE INTERN FILES',
+        {
+          id,
+          data: `${internFilesToUpdate}`,
+        },
+        'FAILED',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }
 
-  async remove(id: string, internId: string) {
-    await this.findOne(id);
+  async remove(
+    id: string,
+    internId: string,
+    { fullName, role, userId }: IRequestUser,
+  ) {
+    const existingInternFiles = await this.findOne(id);
     try {
       const deletedInternFiles = await this.internFilesRepository.delete(id);
       rollbackFiles(internId);
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'DELETE INTERN FILES',
+        { id, data: `${existingInternFiles}` },
+        'SUCCESS',
+      );
       return deletedInternFiles.affected;
     } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'TRY TO DELETE INTERN FILES',
+        { id, data: `${existingInternFiles}` },
+        'FAILED TO DELETE INTERN FILES',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

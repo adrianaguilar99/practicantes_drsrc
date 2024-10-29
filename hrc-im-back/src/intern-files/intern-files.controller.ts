@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   Res,
+  Req,
 } from '@nestjs/common';
 import { InternFilesService } from './intern-files.service';
 import { UploadInternFiles } from './decorators';
@@ -25,6 +26,7 @@ import {
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   READ_ALL_RECORDS,
@@ -43,7 +45,6 @@ import { Public, UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
 import { Response } from 'express';
-import { rollbackFiles } from './helpers';
 
 @ApiTags('Intern Files')
 @ApiBearerAuth()
@@ -81,6 +82,7 @@ export class InternFilesController {
     type: InternFile,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({
     status: 409,
     description: `${CONFLICT_ERROR} Only one can be created.`,
@@ -96,7 +98,9 @@ export class InternFilesController {
       birthCertificate: Express.Multer.File[];
       medicalInsurance: Express.Multer.File[];
     },
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     // Agrupar todos los archivos en un solo array para trabajar con ellos
     const internFiles = [
       ...(files.photo || []),
@@ -107,16 +111,17 @@ export class InternFilesController {
     ];
 
     // Validamos y manejamos el rollback en caso de error
-    try {
-      await this.internFilesService.validateAndHandleFiles(internFiles);
-    } catch (error) {
-      rollbackFiles(internId);
-    }
+    await this.internFilesService.validateAndHandleFiles(
+      internId,
+      internFiles,
+      user,
+    );
 
     // Si todo sale bien, continuamos con la insercion de las rutas de los archivos
     const createdInternFiles = await this.internFilesService.create(
       internId,
       internFiles,
+      user,
     );
     return { message: SUCCESSFUL_CREATION, data: createdInternFiles };
   }
@@ -159,7 +164,6 @@ export class InternFilesController {
     return { message: SUCCESSFUL_FETCH, data: internFiles };
   }
 
-  @Public()
   @Get(':internId/:fileName')
   @HttpCode(200)
   @ApiOperation({
@@ -204,6 +208,7 @@ export class InternFilesController {
     description: SUCCESSFUL_UPDATE,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async updateFiles(
@@ -217,7 +222,9 @@ export class InternFilesController {
       birthCertificate: Express.Multer.File[];
       medicalInsurance: Express.Multer.File[];
     },
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     // Agrupar todos los archivos en un solo array para trabajar con ellos
     const internFiles = [
       ...(files.photo || []),
@@ -228,13 +235,18 @@ export class InternFilesController {
     ];
 
     // Validamos y manejamos el rollback en caso de error
-    await this.internFilesService.validateAndHandleFiles(internFiles);
+    await this.internFilesService.validateAndHandleFiles(
+      internId,
+      internFiles,
+      user,
+    );
 
     // Si todo sale bien, continuamos con la actualizacion de las rutas de los archivos
     const updatedInternFiles = await this.internFilesService.update(
       id,
       internId,
       internFiles,
+      user,
     );
     return { message: SUCCESSFUL_UPDATE, data: updatedInternFiles };
   }
@@ -250,15 +262,19 @@ export class InternFilesController {
     description: `${REMOVE_RECORD} Delete all the practitioner's files.`,
     type: InternFile,
   })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async deleteFiles(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('internId', ParseUUIDPipe) internId: string,
+    @Req() req,
   ): Promise<IApiResponse<any>> {
+    const user = req.user;
     const deletedInternFiles = await this.internFilesService.remove(
       id,
       internId,
+      user,
     );
     return { message: SUCCESSFUL_DELETION, data: deletedInternFiles };
   }
