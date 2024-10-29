@@ -1,19 +1,14 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateInternCommentDto } from './dto/create-intern-comment.dto';
 import { UpdateInternCommentDto } from './dto/update-intern-comment.dto';
 import { IRequestUser } from 'src/common/interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InternComment } from './entities/intern-comment.entity';
 import { Repository } from 'typeorm';
-import { SupervisorsService } from 'src/supervisors/supervisors.service';
 import { InternsService } from 'src/interns/interns.service';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 import { handleInternalServerError } from 'src/common/utils';
-import { cleanInternData } from './helpers';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class InternCommentsService {
@@ -21,7 +16,7 @@ export class InternCommentsService {
     @InjectRepository(InternComment)
     private readonly internCommentsRepository: Repository<InternComment>,
     private readonly internsService: InternsService,
-    private readonly supervisorsService: SupervisorsService,
+    private readonly usersService: UsersService,
     private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
@@ -32,14 +27,12 @@ export class InternCommentsService {
     const existingIntern = await this.internsService.findOne(
       createInternCommentDto.internId,
     );
-    const existingSupervisor = await this.supervisorsService.findOne(
-      createInternCommentDto.supervisorId,
-    );
+    const existingUser = await this.usersService.findOne(userId);
 
     const internCommentToCreate = this.internCommentsRepository.create({
       ...createInternCommentDto,
       intern: existingIntern,
-      supervisor: existingSupervisor,
+      user: existingUser,
     });
     try {
       const savedInternComment = await this.internCommentsRepository.save(
@@ -80,14 +73,11 @@ export class InternCommentsService {
       const allInternComments = await this.internCommentsRepository.find({
         relations: {
           intern: true,
-          supervisor: true,
+          user: true,
         },
         order: { updatedAt: 'DESC' },
       });
-      return allInternComments.map((comment) => ({
-        ...comment,
-        intern: cleanInternData(comment.intern),
-      }));
+      return allInternComments;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -95,18 +85,16 @@ export class InternCommentsService {
 
   async findAllByIntern(id: string) {
     try {
-      const allInternComments = await this.internCommentsRepository.find({
-        relations: {
-          intern: true,
-          supervisor: true,
-        },
-        where: { intern: { id } },
-        order: { updatedAt: 'DESC' },
-      });
-      return allInternComments.map((comment) => ({
-        ...comment,
-        intern: cleanInternData(comment.intern),
-      }));
+      const allInternCommentsByIntern =
+        await this.internCommentsRepository.find({
+          relations: {
+            intern: true,
+            user: true,
+          },
+          where: { intern: { id } },
+          order: { updatedAt: 'DESC' },
+        });
+      return allInternCommentsByIntern;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -119,17 +107,14 @@ export class InternCommentsService {
           where: { id },
           relations: {
             intern: true,
-            supervisor: true,
+            user: true,
           },
         },
       );
       if (!existingInternComment)
         throw new NotFoundException('Intern comment not found.');
 
-      return {
-        ...existingInternComment,
-        intern: cleanInternData(existingInternComment.intern),
-      };
+      return existingInternComment;
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -174,9 +159,8 @@ export class InternCommentsService {
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingInternComment = await this.findOne(id);
     try {
-      const deletedInternComment = await this.internCommentsRepository.delete(
-        existingInternComment,
-      );
+      const deletedInternComment =
+        await this.internCommentsRepository.delete(id);
 
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },

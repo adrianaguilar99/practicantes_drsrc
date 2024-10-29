@@ -74,7 +74,8 @@ export class InstitutionsService {
     const institution = await this.institutionsRepository.findOne({
       where: { id },
     });
-    if (!institution) throw new NotFoundException('Institution not found.');
+    if (!institution)
+      throw new NotFoundException(`Institution with ${id} not found.`);
     return institution;
   }
 

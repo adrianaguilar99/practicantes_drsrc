@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Length,
   Matches,
 } from 'class-validator';
 import { Career } from 'src/careers/entities/career.entity';
@@ -16,6 +17,28 @@ import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 
 export class CreateInternDto {
+  @ApiProperty({
+    example: '123456',
+    description: 'Unique 6-digit code generated for the intern.',
+    uniqueItems: true,
+    nullable: true,
+  })
+  @Length(6, 6)
+  @IsString()
+  @IsOptional()
+  externalInternCode: string;
+
+  @ApiProperty({
+    example: '123456',
+    description: 'Unique 6-digit code generated for the intern.',
+    uniqueItems: true,
+    nullable: true,
+  })
+  @Length(6, 6)
+  @IsString()
+  @IsOptional()
+  internalInternCode: string;
+
   @ApiProperty({
     example: 'O+',
     description: "Intern's blood type.",

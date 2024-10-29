@@ -87,7 +87,11 @@ export class InternCommentsController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async findAll(): Promise<IApiResponse<any>> {
     const allInternComments = await this.internCommentsService.findAll();
-    return { message: SUCCESSFUL_FETCH, data: allInternComments };
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allInternComments,
+      records: allInternComments.length,
+    };
   }
 
   @Get(':id')
@@ -122,9 +126,13 @@ export class InternCommentsController {
   async findAllByIntern(
     @Param('internId', ParseUUIDPipe) internId: string,
   ): Promise<IApiResponse<any>> {
-    const allInternComments =
+    const allInternCommentsByIntern =
       await this.internCommentsService.findAllByIntern(internId);
-    return { message: SUCCESSFUL_FETCH, data: allInternComments };
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allInternCommentsByIntern,
+      records: allInternCommentsByIntern.length,
+    };
   }
 
   @Patch(':id')

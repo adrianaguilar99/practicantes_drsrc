@@ -61,6 +61,8 @@ export class InternsController {
     description: SUCCESSFUL_CREATION,
     type: Intern,
   })
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(201)
@@ -154,6 +156,7 @@ export class InternsController {
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
   @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Patch(':id')
