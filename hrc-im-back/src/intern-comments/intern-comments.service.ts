@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateInternCommentDto } from './dto/create-intern-comment.dto';
 import { UpdateInternCommentDto } from './dto/update-intern-comment.dto';
 import { IRequestUser } from 'src/common/interfaces';
@@ -32,14 +28,12 @@ export class InternCommentsService {
     const existingIntern = await this.internsService.findOne(
       createInternCommentDto.internId,
     );
-    const existingSupervisor = await this.supervisorsService.findOne(
-      createInternCommentDto.supervisorId,
-    );
+    const existingUser = await this.supervisorsService.findByUser(userId);
 
     const internCommentToCreate = this.internCommentsRepository.create({
       ...createInternCommentDto,
       intern: existingIntern,
-      supervisor: existingSupervisor,
+      supervisor: existingUser,
     });
     try {
       const savedInternComment = await this.internCommentsRepository.save(
