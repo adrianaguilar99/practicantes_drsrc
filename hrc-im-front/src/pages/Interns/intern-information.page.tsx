@@ -46,6 +46,7 @@ import { getInstitutionsData } from "../../api/interns/institutions/institutions
 import { DataInstitution, InstitutionsInterface } from "../../interfaces/institutions/institutions.interface";
 import { getPropertiesData } from "../../api/properties/propertie.api";
 import { DataProperty, PropertiesInterface } from "../../interfaces/properties/properties.interface";
+import { getFilesSPLIT } from "../../api/interns/intern-files/intern-files.api";
 
 const InternInformationPage = () => {
   const [internData, setInternData] = useState<GetByIDDataInter>();
@@ -82,6 +83,9 @@ const InternInformationPage = () => {
   const [InternCheckOut, setInternCheckOut] = useState("");
   const [InternTotalTime, setInternTotalTime] = useState("");
 
+  const[InternPhoto, setInternPhoto] = useState("");
+  const [InternFile, setInternFile] = useState("");
+
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const userToken = sessionStorage.getItem("_Token") || "";
@@ -90,6 +94,9 @@ const InternInformationPage = () => {
   const [Institutions, setInstitutions] = useState<DataInstitution[]>([]);
   const [Departments, setDepartments] = useState<DataDepartment[]>([]);
   const [Properties, setProperties] = useState<DataProperty[]>([]);
+
+  const [Photo, setPhoto] = useState("");
+  const [File, setFile] = useState("");
 
   const navigate = useNavigate();
 
@@ -124,7 +131,7 @@ const InternInformationPage = () => {
         if (fetchedData.data.department) {
           setInternOldDepartment(fetchedData.data.department.name);
         }
-        setInternTotalTime(fetchedData.data.internshipDuration || "no hay data");
+        setInternTotalTime(fetchedData.data.internshipDuration.hours || "no hay data");
         setInternBloodType(fetchedData.data.bloodType);
         setInternDepartment(fetchedData.data.internshipDepartment.name);
         setInternPhone(fetchedData.data.phone);
@@ -133,9 +140,10 @@ const InternInformationPage = () => {
         setInternEndDate(fetchedData.data.internshipEnd.toString());
         setInternCheckIn(fetchedData.data.entryTime);
         setInternCheckOut(fetchedData.data.exitTime);
-        if(fetchedData.data.internshipDuration){
-          
-        }
+        setInternPhoto(fetchedData.data.internFiles?.photo || "");
+        console.log( "Foto del practico: ",fetchedData.data.internFiles?.compiledDocuments);
+        setInternFile(fetchedData.data.internFiles?.compiledDocuments || "");
+        console.log( "File: ",fetchedData.data.internFiles?.compiledDocuments);
      
         setHasError(false);
       } else {
@@ -148,6 +156,44 @@ const InternInformationPage = () => {
       setIsLoading(false);
     }
   };
+  const fetchFiles = async () => {
+    const splitPhoto = InternPhoto.split("/");
+    const photoName = splitPhoto[splitPhoto.length - 1];
+    console.log("Nombre de la foto:", photoName);
+  
+    const splitFile = InternFile.split("/");
+    const fileName = splitFile[splitFile.length - 1];
+    console.log("Nombre del archivo:", fileName);
+  
+    try {
+      const photoBlob = await getFilesSPLIT(userToken, internId || "", photoName);
+      if (photoBlob) {
+        const photoUrl = URL.createObjectURL(photoBlob);
+        setPhoto(photoUrl); 
+      } else {
+        console.error("No se pudo cargar la foto");
+      }
+  
+      const fileBlob = await getFilesSPLIT(userToken, internId || "", fileName);
+      if (fileBlob) {
+        const fileUrl = URL.createObjectURL(fileBlob);
+        setFile(fileUrl);
+        console.log("URL del archivo:", fileBlob);
+      } else {
+        console.error("No se pudo cargar el archivo");
+      }
+    } catch (error) {
+      console.error("Error en fetchFiles:", error);
+    }
+  };
+  
+  
+  useEffect(() => {
+    if (InternPhoto && InternFile) {
+      fetchFiles();
+    }
+  }, [InternPhoto, InternFile]);
+  
 
   useEffect(() => {
     fetchData();
@@ -232,6 +278,7 @@ const InternInformationPage = () => {
       setEditable(true);
     }
   }, [location]);
+
 
   const ConfirmSave = () => {
     setEditable(false);
@@ -538,7 +585,10 @@ const InternInformationPage = () => {
 
                   <section className="info-section-right">
                     <div className="info-section-right-options">
-                      <img src={MyAvatar} />
+                      <img src={Photo} />
+                      <a href={File} target="_blank" rel="noopener noreferrer">
+        Ver PDF
+      </a>
                       <div className="info-section-right-options-buttons">
                        
                         {userRol != "SUPERVISOR" && (

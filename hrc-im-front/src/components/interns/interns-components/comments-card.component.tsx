@@ -46,6 +46,11 @@ export const CommentCard: React.FC<CommentCardProps> = ({ id, name, time, timeUp
                 </div>
                 <div className="comment-card-body">
                     <p>{comment}</p>
+                    {/* <div
+                    className="rendered-comment"
+                    dangerouslySetInnerHTML={{ __html: comment }}
+                /> */}
+               
                 </div>
             </div>
             {(showOptions && isHovered) && (

@@ -209,7 +209,7 @@
     max-height: 80vh;
     overflow: scroll;
     overflow-x: hidden;
-    
+    min-width: 80vw;
 }
 
 .info-section-left{

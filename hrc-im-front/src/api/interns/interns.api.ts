@@ -16,10 +16,8 @@ export async function getInternsData(Token: string): Promise<InternsInterface | 
     }
 
     const InternsData: InternsInterface = await response.json(); 
-    console.log(InternsData);
     return InternsData;
   } catch (error) {
-    console.error("Error:", error);
     return null;
   }
 }
@@ -42,7 +40,6 @@ export async function postIntern(Token: string, data: PostIntern): Promise<PostI
       const responseJson: any = await response.json();
       return responseJson;
     } catch (error: any) {
-      console.error("Error:", error);
       throw error;
     }
   }
@@ -63,7 +60,6 @@ export async function postIntern(Token: string, data: PostIntern): Promise<PostI
       }
   
       const InternsData: GetByIDInternInterface = await response.json(); 
-      console.log(InternsData);
       return InternsData;
     } catch (error) {
       console.error("Error:", error);

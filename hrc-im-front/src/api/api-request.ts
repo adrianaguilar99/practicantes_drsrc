@@ -1,8 +1,5 @@
-import { ca } from "date-fns/locale";
-import { ProfileData, ProfileInterface } from "../interfaces/profile.interface";
-import { CareersInterface, DataCareer, PatchCareer, PostCareer } from "../interfaces/careers/careers.intarface";
-import process from "process";
-import { PostUser, UserPostResponse} from "../interfaces/users.interface";
+
+import { ProfileInterface } from "../interfaces/profile.interface";
 
 export const apiUrl = import.meta.env.VITE_API_KEY;
 

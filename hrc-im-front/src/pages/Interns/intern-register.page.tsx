@@ -59,9 +59,8 @@ const InternRegisterPage = () => {
   const [InternTotalTime, setInternTotalTime] = useState("");
   const [InternWorkCode, setInternWorkCode] = useState("");
   const [InternAddress, setInternAddress] = useState("");
-
-  const [InternPicture, setInternPicture] = useState("");
-  const [InternFiles, setInternFiles] = useState("");
+  const [InternPicture, setInternPicture] = useState<File | null>(null);
+  const [InternFiles, setInternFiles] = useState<File | null>(null);
   const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("");
@@ -177,8 +176,8 @@ const InternRegisterPage = () => {
   }, [userToken]);
 
   const InputValidation = () => {
+    setSummitPressed(true);
     const validators = InputValidators();
-
 
     const resultName = validators.string(InternFirstName);
     if (resultName) {
@@ -231,6 +230,10 @@ const InternRegisterPage = () => {
       if (resultWorkCode) {
         newErrors.internWorkCode = resultWorkCode;
       }
+      if(InternWorkCode.length < 6){
+        newErrors.internWorkCode = "El código debe tener 6 dígitos";
+      }
+
     }
 
     if (InternType === "Externo") {
@@ -304,12 +307,16 @@ const InternRegisterPage = () => {
       newErrors.internTotalTime = resultTotalTime;
     }
 
-    const resultPicture = validators.fileImage(InternPicture);
+    if(InternTotalTime < "120"){
+      newErrors.internTotalTime = "La duración mínima de practicas es de 120 horas";
+    }
+
+    const resultPicture = validators.fileImage(InternPicture as File);
     if (resultPicture) {
       newErrors.internPicture = resultPicture;
     }
 
-    const resultFiles = validators.filePDF(InternFiles);
+    const resultFiles = validators.filePDF(InternFiles as File);
     if (resultFiles) {
       newErrors.internFiles = resultFiles;
     }
@@ -336,17 +343,13 @@ const InternRegisterPage = () => {
       !newErrors.internBeginDate &&
       !newErrors.internEndDate &&
       !newErrors.internCheckIn &&
-      !newErrors.internCheckOut
-      // !newErrors.internTotalTime &&
-      // !newErrors.internPicture && 
-      // !newErrors.internCurp && 
-      // !newErrors.internBirthCertificate && 
-      // !newErrors.internProofofaddress && 
-      // !newErrors.internMedicalInsurance
+      !newErrors.internCheckOut &&
+      !newErrors.internWorkCode &&
+      !newErrors.internPicture && 
+      !newErrors.internFiles
     ){
       setHasErrors(false);
       setFormAction(true);
-      setInternContacts({...InternContacts});
     }
     else{
       setHasErrors(true);
@@ -355,7 +358,7 @@ const InternRegisterPage = () => {
     }
   }
   const formSubmit = () => { 
-     if(hasErrors === false && formAction === true){
+     if(InternContacts.length > 1 && hasErrors === false && formAction === true){
         postInternFunction({
           userToken: userToken,
           internType: InternType,
@@ -376,6 +379,7 @@ const InternRegisterPage = () => {
             entryTime: InternCheckIn,
             exitTime: InternCheckOut,
             status: "ACTIVE",    
+            internalInternCode: InternWorkCode,
             careerId: InternProgram,
             departmentId: InternOldDepartment,
             internshipDepartmentId: InternDepartment,
@@ -383,6 +387,12 @@ const InternRegisterPage = () => {
             propertyId: InternProperty,
           },
           contacts: InternContacts,
+          dataFiles: {
+            photo: InternPicture as File,
+            compiledDocuments: InternFiles as File,
+          },
+          
+
           onSuccess: () => {
             setInternContacts([]);
             console.log("Usuario registrado correctamente");
@@ -395,13 +405,17 @@ const InternRegisterPage = () => {
           }
         })
       }
+      else{
+        alert("Por favor, rellene todos los campos");
+        setSummitPressed(false)
+      }
   };
 
 useEffect(() => { 
-  if(InternContacts.length > 1 && hasErrors === false && formAction === true && summitPressed === true){
+  if(summitPressed){
     formSubmit();
   }
-}, [InternContacts, summitPressed === true]);
+}, [summitPressed]);
 
 
   const ReceiveContacts = (contacts : DataEmergencyContact[]) => {
@@ -427,7 +441,7 @@ useEffect(() => {
                 <section className="register-section-left">
                   <RegisterRow
                     label="Nombres del practicante:"
-                    onChange={(value) => setInternFirstName(value || "")}
+                    onChange={(value) => setInternFirstName(value as string  || "")}
                     id="firstname"
                     type="text"
                     show={true}
@@ -436,7 +450,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Apellidos del practicante:"
-                    onChange={(value) => setInternLastName(value || "")}
+                    onChange={(value) => setInternLastName(value as string  || "")}
                     id="lastname"
                     type="text"
                     show={true}
@@ -446,7 +460,7 @@ useEffect(() => {
 
                   <RegisterRow
                     label="Correo:"
-                    onChange={(value) => setInternEmail(value || "")}
+                    onChange={(value) => setInternEmail(value as string  || "")}
                     id="email"
                     type="text"
                     show={true}
@@ -455,7 +469,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Tel Personal:"
-                    onChange={(value) => setInternPhone(value || "")}
+                    onChange={(value) => setInternPhone(value as string  || "")}
                     value={formatPhoneNumber(InternPhone)}
                     id="celphone"
                     type="phone"
@@ -478,7 +492,7 @@ useEffect(() => {
                   </div>
                   <RegisterRow
                     label="Dirección:"
-                    onChange={(value) => setInternAddress(value || "")}
+                    onChange={(value) => setInternAddress(value as string  || "")}
                     id="address"
                     type="text"
                     show={true}
@@ -487,7 +501,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Tipo de sangre:"
-                    onChange={(value) => setInternBloodType(value || "")}
+                    onChange={(value) => setInternBloodType(value as string  || "")}
                     id="bloodtype"
                     type="select"
                     show={true}
@@ -627,7 +641,7 @@ useEffect(() => {
 
                   <RegisterRow
                     label="Matrícula escolar:"
-                    onChange={(value) => setInternID(value || "")}
+                    onChange={(value) => setInternID(value as string || "")}
                     id="matricula"
                     type="number"
                     show={selectedType === "Externo"}
@@ -636,7 +650,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Tel Institucional:"
-                    onChange={(value) => setInternInstitutePhone(value || "")}
+                    onChange={(value) => setInternInstitutePhone(value  as string || "")}
                     type="phone"
                     value={InternInstitutePhone} 
                     id="telInstitutional"
@@ -652,7 +666,7 @@ useEffect(() => {
                 <section className="register-section-middle">
                 <RegisterRow
                     label="Codigo de empleado:"
-                    onChange={(value) => setInternWorkCode(value || "")}
+                    onChange={(value) => setInternWorkCode(value as string || "")}
                     id="workCode"
                     value={InternWorkCode}
                     type="text"
@@ -663,7 +677,7 @@ useEffect(() => {
                   />
                 <RegisterRow
                     label="Constraseña:"
-                    onChange={(value) => setInternPassword(value || "")}
+                    onChange={(value) => setInternPassword(value as string  || "")}
                     id="password"
                     value={InternPassword}
                     type="password"
@@ -695,7 +709,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Fecha de inicio:"
-                    onChange={(value) => setInternBeginDate(value || "")}
+                    onChange={(value) => setInternBeginDate(value as string  || "")}
                     id="startDate"
                     type="date"
                     show={true}
@@ -704,7 +718,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Fecha de fin:"
-                    onChange={(value) => setInternEndDate(value || "")}
+                    onChange={(value) => setInternEndDate(value as string  || "")}
                     id="endDate"
                     type="date"
                     show={true}
@@ -713,7 +727,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Hora entrada:"
-                    onChange={(value) => setInternCheckIn(value || "")}
+                    onChange={(value) => setInternCheckIn(value as string  || "")}
                     id="checkIn"
                     type="time"
                     show={true}
@@ -722,7 +736,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Hora salida:"
-                    onChange={(value) => setInternCheckOut(value || "")}
+                    onChange={(value) => setInternCheckOut(value as string  || "")}
                     id="checkOut"
                     type="time"
                     show={true}
@@ -731,7 +745,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Total de horas a cubrir:"
-                    onChange={(value) => setInternTotalTime(value || "")}
+                    onChange={(value) => setInternTotalTime(value as string  || "")}
                     id="tiempoTotal"
                     type="number"
                     show={true}
@@ -746,7 +760,7 @@ useEffect(() => {
                   </div>
                   <RegisterRow
                     label="Foto:"
-                    onChange={(value) => setInternPicture(value || "")}
+                    onChange={(file) => setInternPicture(file as File)}
                     id="internPicture"
                     type="file"
                     show={true}
@@ -755,7 +769,7 @@ useEffect(() => {
                   />
                   <RegisterRow
                     label="Archivos del practicante:"
-                    onChange={(value) => setInternFiles(value || "")}
+                    onChange={(file) => setInternFiles(file as File)}
                     id="internFiles"
                     type="file"
                     show={true}
@@ -779,7 +793,7 @@ useEffect(() => {
             <div className="button-container-intern">
               <ButtonComponent
                 text="Guardar"
-                onClick={() => {InputValidation(); setSummitPressed(true)} }
+                onClick={InputValidation}
               />
               <ButtonComponent text="Cancelar" onClick={() => history.back()} />
             </div>

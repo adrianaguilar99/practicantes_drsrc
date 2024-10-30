@@ -1,4 +1,5 @@
 import { Department } from "../supervisors/supervisor.interface";
+import { DataInternFiles } from "./intern-files/intern-files.interface";
 
 export interface InternsInterface {
     message: string;
@@ -8,8 +9,9 @@ export interface InternsInterface {
 
 export interface DataIntern {
     id:                   string;
-    internCode:           string;
     bloodType:            string;
+    externalInternCode:   string;
+    internalInternCode:   string;
     phone:                string;
     address:              string;
     schoolEnrollment:     string;
@@ -64,6 +66,7 @@ export interface PostIntern{
     address: string,
     schoolEnrollment?: string,
     internshipStart: string,
+    internalInternCode?: string,
     internshipEnd: string,
     entryTime: string,
     exitTime: string,
@@ -89,14 +92,15 @@ export interface PostIntern{
 
 export interface GetByIDDataInter {
     id:                   string;
-    internCode:           string;
     bloodType:            string;
     phone:                string;
     address:              string;
+    externalInternCode :  string;
+    internalInternCode:   string;
     schoolEnrollment:     string;
     internshipStart:      Date;
     internshipEnd:        Date;
-    internshipDuration:   string;
+    internshipDuration :   internshipDuration;
     entryTime:            string;
     exitTime:             string;
     status:               string;
@@ -105,8 +109,13 @@ export interface GetByIDDataInter {
     internshipDepartment: Career;
     institution:          Career;
     property:             Career;
+    internFiles?:          DataInternFiles
     emergencyContacts:    EmergencyContact[];
     user:                 User;
+}
+
+export interface internshipDuration{
+    hours: string,
 }
 
 export interface Career {

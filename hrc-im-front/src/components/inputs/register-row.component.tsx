@@ -7,7 +7,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface RegisterRowProps {
   label: string;
-  onChange: (value?: string) => void;
+  onChange: (value?: string | File) => void;
   type?:
     | "text"
     | "number"
@@ -59,10 +59,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
     width: "100%",
   });
 
-  const ValueChange = (newValue: string) => {
-    setInputValue(newValue);
+  const ValueChange = (newValue: string | File) => {
+    setInputValue(newValue instanceof File ? newValue.name : newValue); // Muestra el nombre del archivo si es un File
     onChange(newValue);
   };
+  
 
   const errorClass = validate === "Error" ? "error-input" : "";
 
@@ -152,7 +153,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               min={1}
               id={id}
               defaultValue={value}
-              onChange={(e) => ValueChange(e.target.value)}
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  ValueChange(e.target.files[0]); 
+                }
+              }}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               autoComplete="off"

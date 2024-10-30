@@ -25,7 +25,7 @@ function RoutesConfig() {
     <BrowserRouter>
       <Routes>
          <Route path="/not-found-page" element={<NotFoundPage />} />
-         <Route path="*" element={<NotFoundPage />} />
+         {/* <Route path="*" element={<NotFoundPage />} /> */}
          <Route path="/" element={<Login />} />
          <Route
            path="/home"

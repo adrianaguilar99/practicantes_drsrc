@@ -25,7 +25,7 @@ export const InternCredentialComponent: React.FC<InternCredentialProps> = ({
       <div className="intern-credential-body" ref={contentRef}>
         <section className="intern-credential-left">
           <h3>{data?.user.firstName + " " + data?.user.lastName || ""}</h3>
-          <Barcode value={data?.internCode || ""} />
+          <Barcode value={data?.externalInternCode ? data?.externalInternCode : data?.internalInternCode ? data?.internalInternCode : ""} />
         </section>
         <section className="intern-credential-right">
           <h3>{data?.user.firstName + " " + data?.user.lastName || ""}</h3>

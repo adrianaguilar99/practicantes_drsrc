@@ -54,7 +54,7 @@ export const CommentsTable : React.FC<CommentCardProps> = ({ internId } ) => {
             ) : hasError ? (
                <RetryElement onClick={() => fetchData()}/>
             ) : data.length === 0 ? (
-              <h2 className="comments-title">No hay comentarios</h2>
+              <h6 className="comments-title" style={{ textAlign: "center" , color: "gray"}}>No hay comentarios acerca de este practicante</h6>
             ) : (
                 data.map((comment, index) => (
                     <CommentCard

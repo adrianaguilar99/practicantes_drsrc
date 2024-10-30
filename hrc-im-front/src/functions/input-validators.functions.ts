@@ -74,23 +74,25 @@ export function InputValidators () {
             }
         },
 
-        fileImage: (value: string) => {
-            const regex = /(\.jpg|\.jpeg|\.png)$/i;
-            if(value === ""){
+        fileImage: (value: string | File) => {
+            const regex = /\.(jpg|jpeg|png)$/i;
+            const fileName = value instanceof File ? value.name : value;
+            if (fileName === "") {
                 return 'Rellena este campo';
             }
-            if (!regex.test(value)) {
-                return 'Ingresa una imagen válida';
+            if (!regex.test(fileName)) {
+                return 'Ingresa una imagen válida (jpg, jpeg o png)';
             }
         },
 
-        filePDF: (value: string) => {
-            const regex = /(\.pdf)$/i;
-            if(value === ""){
+        filePDF: (value: string | File) => {
+            const regex = /\.pdf$/i;
+            const fileName = value instanceof File ? value.name : value;
+            if (fileName === "") {
                 return 'Rellena este campo';
             }
-            if (!regex.test(value)) {
-                return 'Ingresa un archivo PDF válido';
+            if (!regex.test(fileName)) {
+                return 'Ingresa un archivo PDF válido';
             }
         },
 
