@@ -162,12 +162,14 @@ export class Intern {
   status: InternStatus;
 
   @ApiProperty({
-    example: 50,
-    description: 'The percentage of the internship completed.',
+    example: 50.75,
+    description: 'The percentage of the internship completed, with decimals.',
   })
   @Column({
     name: 'total_internship_completion',
-    type: 'smallint',
+    type: 'numeric', // Cambia smallint por numeric o decimal
+    precision: 5, // Número total de dígitos
+    scale: 2, // Número de dígitos después del punto decimal
   })
   totalInternshipCompletion: number;
 
@@ -354,7 +356,8 @@ export class Intern {
     } else {
       const totalDuration = end.getTime() - start.getTime();
       const elapsedTime = now.getTime() - start.getTime();
-      return Math.round((elapsedTime / totalDuration) * 100);
+      // Cambiamos a toFixed(2) para obtener dos decimales y convertir a número flotante
+      return parseFloat(((elapsedTime / totalDuration) * 100).toFixed(2));
     }
   }
 }
