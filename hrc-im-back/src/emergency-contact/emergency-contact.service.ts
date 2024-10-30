@@ -94,31 +94,11 @@ export class EmergencyContactService {
 
   async update(
     id: string,
-    updateEmergencyContactDto: UpdateEmergencyContactDto,
+    { name, phone, relationship, positionContact }: UpdateEmergencyContactDto,
     { fullName, role, userId }: IRequestUser,
   ) {
     const existingEmergencyContact = await this.findOne(id);
 
-    // Nos aseguramos de que no se cambie el internId
-    if (
-      updateEmergencyContactDto.internId &&
-      updateEmergencyContactDto.internId !== existingEmergencyContact.intern.id
-    ) {
-      await this.systemAuditsService.createSystemAudit(
-        { id: userId, fullName, role },
-        'TRY TO UPDATE EMERGENCY CONTACT',
-        {
-          id: existingEmergencyContact.id,
-          data: `${existingEmergencyContact.name}`,
-        },
-        'FAILED TO UPDATE EMERGENCY CONTACT',
-        'Attempted to update fields that are not allowed: intern',
-      );
-      throw new ConflictException('You are not allowed to update intern.');
-    }
-
-    const { name, phone, relationship, positionContact } =
-      updateEmergencyContactDto;
     if (name) existingEmergencyContact.name = name;
     if (phone) existingEmergencyContact.phone = phone;
     if (relationship) existingEmergencyContact.relationship = relationship;
@@ -143,7 +123,7 @@ export class EmergencyContactService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'TRY TO UPDATE EMERGENCY CONTACT',
-        { id, data: `${updateEmergencyContactDto.name}` },
+        { id, data: name },
         'FAILED TO UPDATE EMERGENCY CONTACT',
         error.message,
       );
