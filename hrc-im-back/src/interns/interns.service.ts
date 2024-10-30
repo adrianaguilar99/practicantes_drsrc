@@ -202,20 +202,6 @@ export class InternsService {
     { fullName, role, userId: userReq }: IRequestUser,
   ) {
     const existingIntern = await this.findOne(id);
-    // Bloqueamos que se actualicen campos no permitidos
-    if (updateInternDto.userId) {
-      await this.systemAuditsService.createSystemAudit(
-        { id: userReq, fullName, role },
-        'TRY TO UPDATE INTERN',
-        {
-          id,
-          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
-        },
-        'FAILED TO UPDATE INTERN',
-        'Attempted to update fields that are not allowed: User',
-      );
-      throw new ConflictException('You are not allowed to update: User.');
-    }
 
     // Validación de exclusión mutua entre departmentId y otros campos
     if (updateInternDto.departmentId) {
