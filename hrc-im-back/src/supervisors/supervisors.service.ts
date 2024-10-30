@@ -75,7 +75,7 @@ export class SupervisorsService {
       );
       return createdSupervisor;
     } catch (error) {
-      await this.usersService.physicalRemove(newSupervisor.user.id, {
+      await this.usersService.physicalRemove(user.id, {
         fullName,
         role,
         userId,
@@ -147,31 +147,12 @@ export class SupervisorsService {
 
   async update(
     id: string,
-    updateSupervisorDto: UpdateSupervisorDto,
+    { phone }: UpdateSupervisorDto,
     { fullName, role, userId }: IRequestUser,
   ) {
     const existingSupervisor = await this.findOne(id);
-    const isUnauthorizedUpdate =
-      updateSupervisorDto.departmentId || updateSupervisorDto.userId;
-
-    if (isUnauthorizedUpdate) {
-      await this.systemAuditsService.createSystemAudit(
-        { id: userId, fullName, role },
-        'TRY TO UPDATE SUPERVISOR',
-        {
-          id,
-          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
-        },
-        'FAILED TO UPDATE SUPERVISOR',
-        'Attempted to update fields that are not allowed: department or user',
-      );
-      throw new ConflictException(
-        'You are not allowed to update the department or user of the supervisor.',
-      );
-    }
     try {
-      existingSupervisor.phone =
-        updateSupervisorDto.phone ?? existingSupervisor.phone;
+      existingSupervisor.phone = phone ?? existingSupervisor.phone;
       const updatedSupervisor =
         await this.supervisorsRepository.save(existingSupervisor);
       await this.systemAuditsService.createSystemAudit(

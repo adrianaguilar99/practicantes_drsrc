@@ -162,6 +162,18 @@ export class Intern {
   status: InternStatus;
 
   @ApiProperty({
+    example: 50.75,
+    description: 'The percentage of the internship completed, with decimals.',
+  })
+  @Column({
+    name: 'total_internship_completion',
+    type: 'numeric', // Cambia smallint por numeric o decimal
+    precision: 5, // Número total de dígitos
+    scale: 2, // Número de dígitos después del punto decimal
+  })
+  totalInternshipCompletion: number;
+
+  @ApiProperty({
     type: () => Career,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
     description: 'Career ID to make the relationship.',
@@ -226,18 +238,6 @@ export class Intern {
   @JoinColumn({ name: 'property_id' })
   property: Property;
 
-  @OneToMany(
-    () => EmergencyContact,
-    (emergencyContacts) => emergencyContacts.intern,
-    { eager: true },
-  )
-  emergencyContacts: EmergencyContact[];
-
-  @OneToMany(() => InternComment, (internComments) => internComments.intern, {
-    eager: true,
-  })
-  internComents: InternComment[];
-
   @ApiProperty({
     type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -250,6 +250,18 @@ export class Intern {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(
+    () => EmergencyContact,
+    (emergencyContacts) => emergencyContacts.intern,
+    { eager: true },
+  )
+  emergencyContacts: EmergencyContact[];
+
+  @OneToMany(() => InternComment, (internComments) => internComments.intern, {
+    eager: true,
+  })
+  internComents: InternComment[];
 
   @OneToOne(() => InternFile, (internFiles) => internFiles.intern, {
     eager: true,
@@ -265,6 +277,7 @@ export class Intern {
     }
     this.validateDates();
     this.validateTimes();
+    this.totalInternshipCompletion = this.internshipCompletionCalculation();
   }
 
   @BeforeUpdate()
@@ -325,5 +338,26 @@ export class Intern {
     const now = new Date();
     now.setHours(hours, minutes, seconds || 0);
     return now;
+  }
+
+  /**
+   * Calcula el porcentaje de la pasantía completada.
+   * Retorna un valor entre 0 y 100.
+   */
+  private internshipCompletionCalculation(): number {
+    const now = new Date();
+    const start = new Date(this.internshipStart);
+    const end = new Date(this.internshipEnd);
+
+    if (now <= start) {
+      return 0;
+    } else if (now >= end) {
+      return 100;
+    } else {
+      const totalDuration = end.getTime() - start.getTime();
+      const elapsedTime = now.getTime() - start.getTime();
+      // Cambiamos a toFixed(2) para obtener dos decimales y convertir a número flotante
+      return parseFloat(((elapsedTime / totalDuration) * 100).toFixed(2));
+    }
   }
 }

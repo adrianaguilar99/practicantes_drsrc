@@ -53,6 +53,7 @@ export class InternFile {
   })
   @OneToOne(() => Intern, (intern) => intern.internFiles, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'intern_id' })
   intern: Intern;
