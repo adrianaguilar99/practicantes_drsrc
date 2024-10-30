@@ -67,6 +67,7 @@ export class InternComment {
   })
   @ManyToOne(() => Intern, (intern) => intern.internComents, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'intern_id' })
   intern: Intern;

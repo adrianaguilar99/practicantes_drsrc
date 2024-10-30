@@ -245,6 +245,7 @@ export class InternsService {
 
         if (!updateInternDto.externalInternCode)
           throw new ConflictException('Please enter the externalInternCode');
+        // El updataDto valida que sea de 6 digitos
         existingIntern.externalInternCode = updateInternDto.externalInternCode;
       }
     }

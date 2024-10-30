@@ -226,18 +226,6 @@ export class Intern {
   @JoinColumn({ name: 'property_id' })
   property: Property;
 
-  @OneToMany(
-    () => EmergencyContact,
-    (emergencyContacts) => emergencyContacts.intern,
-    { eager: true },
-  )
-  emergencyContacts: EmergencyContact[];
-
-  @OneToMany(() => InternComment, (internComments) => internComments.intern, {
-    eager: true,
-  })
-  internComents: InternComment[];
-
   @ApiProperty({
     type: () => User,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -250,6 +238,18 @@ export class Intern {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(
+    () => EmergencyContact,
+    (emergencyContacts) => emergencyContacts.intern,
+    { eager: true },
+  )
+  emergencyContacts: EmergencyContact[];
+
+  @OneToMany(() => InternComment, (internComments) => internComments.intern, {
+    eager: true,
+  })
+  internComents: InternComment[];
 
   @OneToOne(() => InternFile, (internFiles) => internFiles.intern, {
     eager: true,

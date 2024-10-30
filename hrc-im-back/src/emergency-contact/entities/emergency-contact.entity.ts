@@ -94,8 +94,8 @@ export class EmergencyContact {
     nullable: false,
   })
   @ManyToOne(() => Intern, (intern) => intern.emergencyContacts, {
-    // eager: true,
     nullable: false,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'intern_id' })
   intern: Intern;
