@@ -162,6 +162,16 @@ export class Intern {
   status: InternStatus;
 
   @ApiProperty({
+    example: 50,
+    description: 'The percentage of the internship completed.',
+  })
+  @Column({
+    name: 'total_internship_completion',
+    type: 'smallint',
+  })
+  totalInternshipCompletion: number;
+
+  @ApiProperty({
     type: () => Career,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
     description: 'Career ID to make the relationship.',
@@ -265,6 +275,7 @@ export class Intern {
     }
     this.validateDates();
     this.validateTimes();
+    this.totalInternshipCompletion = this.internshipCompletionCalculation();
   }
 
   @BeforeUpdate()
@@ -325,5 +336,25 @@ export class Intern {
     const now = new Date();
     now.setHours(hours, minutes, seconds || 0);
     return now;
+  }
+
+  /**
+   * Calcula el porcentaje de la pasantía completada.
+   * Retorna un valor entre 0 y 100.
+   */
+  private internshipCompletionCalculation(): number {
+    const now = new Date();
+    const start = new Date(this.internshipStart);
+    const end = new Date(this.internshipEnd);
+
+    if (now <= start) {
+      return 0;
+    } else if (now >= end) {
+      return 100;
+    } else {
+      const totalDuration = end.getTime() - start.getTime();
+      const elapsedTime = now.getTime() - start.getTime();
+      return Math.round((elapsedTime / totalDuration) * 100);
+    }
   }
 }

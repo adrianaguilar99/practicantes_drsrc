@@ -140,7 +140,7 @@ export class InternsService {
       );
       return createdIntern;
     } catch (error) {
-      await this.usersService.physicalRemove(newIntern.user.id, {
+      await this.usersService.physicalRemove(user.id, {
         fullName,
         role,
         userId,

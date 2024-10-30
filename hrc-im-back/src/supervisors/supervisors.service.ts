@@ -75,7 +75,7 @@ export class SupervisorsService {
       );
       return createdSupervisor;
     } catch (error) {
-      await this.usersService.physicalRemove(newSupervisor.user.id, {
+      await this.usersService.physicalRemove(user.id, {
         fullName,
         role,
         userId,
