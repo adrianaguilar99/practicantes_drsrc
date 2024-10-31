@@ -121,7 +121,7 @@ export class UsersService {
     return user;
   }
 
-  async findOneByPrivilegedUsers(id: string) {
+  async findOneRegardlessStatus(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id },
     });
@@ -142,14 +142,10 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
     { fullName, role, userId }: IRequestUser,
   ) {
-    const existingUser = await this.findOneByPrivilegedUsers(id);
+    const existingUser = await this.findOneRegardlessStatus(id);
 
     // Prohibimos actualizar los siguientes campos
-    const isUnauthorizedUpdate =
-      updateUserDto.email ||
-      updateUserDto.password ||
-      updateUserDto.isActive ||
-      updateUserDto.userRole;
+    const isUnauthorizedUpdate = updateUserDto.email || updateUserDto.password;
     if (isUnauthorizedUpdate) {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
@@ -159,19 +155,16 @@ export class UsersService {
           data: `${existingUser.firstName} ${existingUser.lastName}`,
         },
         'FAILED TO UPDATE USER',
-        'Attempted to update fields that are not allowed: email, password, role, active',
+        'Attempted to update fields that are not allowed: email, password, active',
       );
       throw new ConflictException(
-        'You are not allowed to update email, password, role, or active of the user.',
+        'You are not allowed to update email, password, or active of the user.',
       );
     }
 
     const { firstName, lastName } = updateUserDto;
-
     if (firstName) existingUser.firstName = firstName;
     if (lastName) existingUser.lastName = lastName;
-    // if (isActive !== undefined) existingUser.isActive = isActive;
-
     try {
       const updatedUser = await this.usersRepository.save(existingUser);
       await this.systemAuditsService.createSystemAudit(
@@ -205,7 +198,7 @@ export class UsersService {
   }
 
   async active(id: string, { fullName, role, userId }: IRequestUser) {
-    const existingUser = await this.findOneByPrivilegedUsers(id);
+    const existingUser = await this.findOneRegardlessStatus(id);
     existingUser.isActive = true;
     try {
       const updatedUser = await this.usersRepository.save(existingUser);

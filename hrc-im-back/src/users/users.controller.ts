@@ -185,11 +185,11 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: BAD_REQUEST })
   @HttpCode(200)
-  @Get(':id')
-  async findOneByPrivilegedUsers(
+  @Get(':id/unfiltered')
+  async findOneRegardlessStatus(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
-    const user = await this.usersService.findOneByPrivilegedUsers(id);
+    const user = await this.usersService.findOneRegardlessStatus(id);
     return {
       message: SUCCESSFUL_FETCH,
       data: user,
