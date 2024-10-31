@@ -1,6 +1,6 @@
-import { OmitType } from '@nestjs/swagger';
+import { OmitType, PartialType } from '@nestjs/swagger';
 import { CreateInternDto } from './create-intern.dto';
 
-export class UpdateInternDto extends OmitType(CreateInternDto, [
-  'userId',
-] as const) {}
+export class UpdateInternDto extends PartialType(
+  OmitType(CreateInternDto, ['userId'] as const),
+) {}

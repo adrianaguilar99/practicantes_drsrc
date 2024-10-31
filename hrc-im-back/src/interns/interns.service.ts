@@ -276,10 +276,6 @@ export class InternsService {
       existingIntern.internshipStart = updateInternDto.internshipStart;
     if (updateInternDto.internshipEnd)
       existingIntern.internshipEnd = updateInternDto.internshipEnd;
-    if (updateInternDto.entryTime)
-      existingIntern.entryTime = updateInternDto.entryTime;
-    if (updateInternDto.exitTime)
-      existingIntern.exitTime = updateInternDto.exitTime;
     if (updateInternDto.internshipDuration)
       existingIntern.internshipDuration = convertToInterval(
         updateInternDto.internshipDuration,
