@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateInternScheduleDto } from './dto/create-intern-schedule.dto';
 import { UpdateInternScheduleDto } from './dto/update-intern-schedule.dto';
 import { IRequestUser } from 'src/common/interfaces';
@@ -7,6 +7,7 @@ import { InternSchedule } from './entities/intern-schedule.entity';
 import { Repository } from 'typeorm';
 import { InternsService } from 'src/interns/interns.service';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
+import { handleInternalServerError } from 'src/common/utils';
 
 @Injectable()
 export class InternScheduleService {
@@ -20,7 +21,30 @@ export class InternScheduleService {
   async create(
     createInternScheduleDto: CreateInternScheduleDto,
     { fullName, role, userId }: IRequestUser,
-  ) {}
+  ) {
+    // Validamos que exista un practicante
+    const existingIntern = await this.internsService.findOne(
+      createInternScheduleDto.internId,
+    );
+
+    const internScheduleToCreate = this.internScheduleRepository.create({
+      ...createInternScheduleDto,
+      intern: existingIntern,
+    });
+
+    try {
+      const createdInternSchedule = await this.internScheduleRepository.save(
+        internScheduleToCreate,
+      );
+      return createdInternSchedule;
+    } catch (error) {
+      if (error.code === '23505')
+        throw new ConflictException(
+          "A record already exists containing the intern's schedule. Only one can be created.",
+        );
+      handleInternalServerError(error.message);
+    }
+  }
 
   async findAll() {
     return `This action returns all internSchedule`;
@@ -42,3 +66,5 @@ export class InternScheduleService {
     return `This action removes a #${id} internSchedule`;
   }
 }
+
+// TODO: Creacion terminada implementar auditoria y terminar los demas servicios

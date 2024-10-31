@@ -1,7 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { Intern } from 'src/interns/entities/intern.entity';
-import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
+@Entity('intern_schedule')
 export class InternSchedule {
   @ApiProperty({
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -124,6 +132,7 @@ export class InternSchedule {
   @Column({ name: 'sunday_out', type: 'time', nullable: false })
   sundayOut: string;
 
+  @Exclude()
   @ApiProperty({
     type: () => Intern,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
