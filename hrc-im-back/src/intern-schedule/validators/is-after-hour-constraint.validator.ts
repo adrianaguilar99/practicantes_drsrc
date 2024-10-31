@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ async: false })
-export class IsAfterConstraint implements ValidatorConstraintInterface {
+export class IsAfterHourConstraint implements ValidatorConstraintInterface {
   validate(outTime: string, args: ValidationArguments) {
     const [inTimeKey] = args.constraints;
     const inTime = (args.object as any)[inTimeKey];

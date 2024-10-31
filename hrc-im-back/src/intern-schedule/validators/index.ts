@@ -1,1 +1,1 @@
-export { IsAfterConstraint } from './is-after-constraint.validator';
+export { IsAfterHourConstraint } from './is-after-hour-constraint.validator';
