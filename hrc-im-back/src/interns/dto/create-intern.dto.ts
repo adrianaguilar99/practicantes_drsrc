@@ -8,6 +8,7 @@ import {
   IsUUID,
   Length,
   Matches,
+  Validate,
 } from 'class-validator';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
@@ -15,6 +16,7 @@ import { Department } from 'src/departments/entities/department.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
+import { IsAfterDateConstraint } from '../validators';
 
 export class CreateInternDto {
   @ApiProperty({
@@ -95,6 +97,9 @@ export class CreateInternDto {
   })
   @IsDateString()
   @IsNotEmpty()
+  @Validate(IsAfterDateConstraint, ['internshipStart'], {
+    message: 'internshipEnd must be after internshipStart',
+  })
   internshipEnd: Date;
 
   @ApiProperty({

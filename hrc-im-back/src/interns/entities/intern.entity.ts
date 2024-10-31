@@ -122,22 +122,6 @@ export class Intern {
   @Column({ name: 'internship_end', type: 'date', nullable: false })
   internshipEnd: Date;
 
-  // @ApiProperty({
-  //   example: '08:00:00',
-  //   description: 'Time of entry for the intern.',
-  //   nullable: false,
-  // })
-  // @Column({ name: 'entry_time', type: 'time', nullable: false })
-  // entryTime: string;
-
-  // @ApiProperty({
-  //   example: '17:00:00',
-  //   description: 'Time of exit for the intern.',
-  //   nullable: false,
-  // })
-  // @Column({ name: 'exit_time', type: 'time', nullable: false })
-  // exitTime: string;
-
   @ApiProperty({
     example: '300:00:00',
     description: 'Total hours the practitioner is expected to cover.',
@@ -167,9 +151,9 @@ export class Intern {
   })
   @Column({
     name: 'total_internship_completion',
-    type: 'numeric', // Cambia smallint por numeric o decimal
-    precision: 5, // Número total de dígitos
-    scale: 2, // Número de dígitos después del punto decimal
+    type: 'numeric',
+    precision: 5,
+    scale: 2,
   })
   totalInternshipCompletion: number;
 
@@ -275,8 +259,7 @@ export class Intern {
     if (this.schoolEnrollment) {
       this.schoolEnrollment = this.schoolEnrollment.trim();
     }
-    this.validateDates();
-    // this.validateTimes();
+    // this.validateDates();
     this.totalInternshipCompletion = this.internshipCompletionCalculation();
   }
 
@@ -285,60 +268,31 @@ export class Intern {
     this.checkFieldsBeforeInsert();
   }
 
-  private validateDates() {
-    const startDate = new Date(this.internshipStart);
-    startDate.setHours(
-      startDate.getHours() + startDate.getTimezoneOffset() / 60,
-    );
-    const endDate = new Date(this.internshipEnd);
-    endDate.setHours(endDate.getHours() + endDate.getTimezoneOffset() / 60);
+  // private validateDates() {
+  //   const startDate = new Date(this.internshipStart);
+  //   startDate.setHours(
+  //     startDate.getHours() + startDate.getTimezoneOffset() / 60,
+  //   );
+  //   const endDate = new Date(this.internshipEnd);
+  //   endDate.setHours(endDate.getHours() + endDate.getTimezoneOffset() / 60);
 
-    // Verificacion de fechas
-    // console.log({
-    //   startDateString: startDate.toDateString(),
-    //   endDateString: endDate.toDateString(),
-    //   startDateGetTime: startDate.getTime(),
-    //   endDateGetTime: endDate.getTime(),
-    // });
+  //   // Verificacion de fechas
+  //   // console.log({
+  //   //   startDateString: startDate.toDateString(),
+  //   //   endDateString: endDate.toDateString(),
+  //   //   startDateGetTime: startDate.getTime(),
+  //   //   endDateGetTime: endDate.getTime(),
+  //   // });
 
-    /**
-     * La fecha de inicio y fin si puede ser en el pasado
-     * pero la fecha de inicio no puede ser mayor o igual que la fecha de fin
-     */
-    if (startDate.getTime() >= endDate.getTime())
-      throw new BadRequestException(
-        'The internship start date cannot be greater or equal than the end date.',
-      );
-  }
-
-  // private validateTimes() {
-  //   const entryTime = this.parseTime(this.entryTime);
-  //   const exitTime = this.parseTime(this.exitTime);
-
-  //   const minEntryTime = this.parseTime('07:00:00'); // Hora mínima de entrada
-  //   const maxEntryTime = this.parseTime('10:00:00'); // Hora máxima de entrada
-
-  //   // Validacion: Hora de entrada esté dentro del rango permitido
-  //   if (entryTime < minEntryTime || entryTime > maxEntryTime) {
+  //   /**
+  //    * La fecha de inicio y fin si puede ser en el pasado
+  //    * pero la fecha de inicio no puede ser mayor o igual que la fecha de fin
+  //    */
+  //   if (startDate.getTime() >= endDate.getTime())
   //     throw new BadRequestException(
-  //       'The entry time must be between 07:00 and 10:00.',
+  //       'The internship start date cannot be greater or equal than the end date.',
   //     );
-  //   }
-
-  //   // Validacion: Hora de salida sea mayor que la hora de entrada
-  //   if (exitTime <= entryTime) {
-  //     throw new BadRequestException(
-  //       'The exit time must be later than the entry time.',
-  //     );
-  //   }
   // }
-
-  private parseTime(time: string): Date {
-    const [hours, minutes, seconds] = time.split(':').map(Number);
-    const now = new Date();
-    now.setHours(hours, minutes, seconds || 0);
-    return now;
-  }
 
   /**
    * Calcula el porcentaje de la pasantía completada.
