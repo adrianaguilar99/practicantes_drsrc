@@ -205,7 +205,15 @@ export class UsersController {
     description: SUCCESSFUL_UPDATE,
     type: User,
   })
+  @ApiResponse({
+    status: 400,
+    description: `${BAD_REQUEST} Please verify your data.`,
+  })
   @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({
+    status: 409,
+    description: `${CONFLICT_ERROR} Not allowed some properties to update.`,
+  })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Patch(':id')
