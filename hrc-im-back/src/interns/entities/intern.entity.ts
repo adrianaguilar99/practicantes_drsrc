@@ -122,21 +122,21 @@ export class Intern {
   @Column({ name: 'internship_end', type: 'date', nullable: false })
   internshipEnd: Date;
 
-  @ApiProperty({
-    example: '08:00:00',
-    description: 'Time of entry for the intern.',
-    nullable: false,
-  })
-  @Column({ name: 'entry_time', type: 'time', nullable: false })
-  entryTime: string;
+  // @ApiProperty({
+  //   example: '08:00:00',
+  //   description: 'Time of entry for the intern.',
+  //   nullable: false,
+  // })
+  // @Column({ name: 'entry_time', type: 'time', nullable: false })
+  // entryTime: string;
 
-  @ApiProperty({
-    example: '17:00:00',
-    description: 'Time of exit for the intern.',
-    nullable: false,
-  })
-  @Column({ name: 'exit_time', type: 'time', nullable: false })
-  exitTime: string;
+  // @ApiProperty({
+  //   example: '17:00:00',
+  //   description: 'Time of exit for the intern.',
+  //   nullable: false,
+  // })
+  // @Column({ name: 'exit_time', type: 'time', nullable: false })
+  // exitTime: string;
 
   @ApiProperty({
     example: '300:00:00',
@@ -276,7 +276,7 @@ export class Intern {
       this.schoolEnrollment = this.schoolEnrollment.trim();
     }
     this.validateDates();
-    this.validateTimes();
+    // this.validateTimes();
     this.totalInternshipCompletion = this.internshipCompletionCalculation();
   }
 
@@ -311,27 +311,27 @@ export class Intern {
       );
   }
 
-  private validateTimes() {
-    const entryTime = this.parseTime(this.entryTime);
-    const exitTime = this.parseTime(this.exitTime);
+  // private validateTimes() {
+  //   const entryTime = this.parseTime(this.entryTime);
+  //   const exitTime = this.parseTime(this.exitTime);
 
-    const minEntryTime = this.parseTime('07:00:00'); // Hora mínima de entrada
-    const maxEntryTime = this.parseTime('10:00:00'); // Hora máxima de entrada
+  //   const minEntryTime = this.parseTime('07:00:00'); // Hora mínima de entrada
+  //   const maxEntryTime = this.parseTime('10:00:00'); // Hora máxima de entrada
 
-    // Validacion: Hora de entrada esté dentro del rango permitido
-    if (entryTime < minEntryTime || entryTime > maxEntryTime) {
-      throw new BadRequestException(
-        'The entry time must be between 07:00 and 10:00.',
-      );
-    }
+  //   // Validacion: Hora de entrada esté dentro del rango permitido
+  //   if (entryTime < minEntryTime || entryTime > maxEntryTime) {
+  //     throw new BadRequestException(
+  //       'The entry time must be between 07:00 and 10:00.',
+  //     );
+  //   }
 
-    // Validacion: Hora de salida sea mayor que la hora de entrada
-    if (exitTime <= entryTime) {
-      throw new BadRequestException(
-        'The exit time must be later than the entry time.',
-      );
-    }
-  }
+  //   // Validacion: Hora de salida sea mayor que la hora de entrada
+  //   if (exitTime <= entryTime) {
+  //     throw new BadRequestException(
+  //       'The exit time must be later than the entry time.',
+  //     );
+  //   }
+  // }
 
   private parseTime(time: string): Date {
     const [hours, minutes, seconds] = time.split(':').map(Number);
