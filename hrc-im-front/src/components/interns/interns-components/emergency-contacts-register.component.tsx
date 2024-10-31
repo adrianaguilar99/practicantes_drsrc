@@ -4,7 +4,6 @@ import { RegisterRow } from "../../inputs/register-row.component";
 import AddIcCallRoundedIcon from "@mui/icons-material/AddIcCallRounded";
 import {
   DataEmergencyContact,
-  EmergencyContactInterface,
 } from "../../../interfaces/interns/emergency-contacts/emergency-contacts.interface";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
@@ -17,7 +16,6 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { on } from "events";
 import { ButtonComponent } from "../../buttons/buttons.component";
 
 export const EmergencyContactsRegister = ({ triggerAction = false, onReceiveContacts = (contacts: DataEmergencyContact[]) => {} }) => {
@@ -133,7 +131,7 @@ export const EmergencyContactModal = ({
         <DialogContentText>
           <RegisterRow
             label="Nombre:"
-            onChange={(value) => setContactName(value || "")}
+            onChange={(value) => setContactName(value as string || "")}
             validate={errors.contactName ? "Error" : "Normal"}
             typeError={errors.contactName }
             id={"name"}
@@ -142,7 +140,7 @@ export const EmergencyContactModal = ({
           />
           <RegisterRow
             label="Parentesco:"
-            onChange={(value) => setRelationship(value || "")}
+            onChange={(value) => setRelationship(value as string || "")}
             validate={errors.relationship ? "Error" : "Normal"}
             typeError={errors.relationship }
             id={"parent"}
@@ -151,7 +149,7 @@ export const EmergencyContactModal = ({
           />
           <RegisterRow
             label="Número:"
-            onChange={(value) => setPhone(value || "")}
+            onChange={(value) => setPhone(value as string || "")}
             validate={errors.phone ? "Error" : "Normal"}
             typeError={errors.phone }
             value={phone}
@@ -162,7 +160,7 @@ export const EmergencyContactModal = ({
           />
           <RegisterRow
             label="Cargo laboral:"
-            onChange={(value) => setPositionContact(value || "")}
+            onChange={(value) => setPositionContact(value as string || "")}
             validate={errors.positionContact ? "Error" : "Normal"}
             typeError={errors.positionContact }
             type="text"

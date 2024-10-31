@@ -7,7 +7,7 @@ import { RegisterRow } from "../../inputs/register-row.component";
 import { InputValidators } from "../../../functions/input-validators.functions";
 import { ButtonComponent, EditButton } from "../../buttons/buttons.component";
 import { on } from "events";
-import { patchEmergencyContact, postEmergencyContact } from "../../../api/interns/emergency-contacts/emergency-contacts.api";
+import { deleteEmergencyContact, patchEmergencyContact, postEmergencyContact } from "../../../api/interns/emergency-contacts/emergency-contacts.api";
 import { enqueueSnackbar } from "notistack";
 
 interface InternEmergenciesModalProps {
@@ -116,10 +116,26 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
   }
 
   const RemoveContact = (index: number) => {
-    resetForm();
-    data.splice(index, 1);
-    setMode("normal");
-    
+    const userToken = sessionStorage.getItem("_Token") || "";
+    if(data.length < 3){
+      enqueueSnackbar("No se puede tener menos de 2 contactos de emergencia ",{
+        variant: "error",
+      })
+    }
+    else{
+      deleteEmergencyContact(userToken, data[index].id).then(() => {
+        onUpdate();
+              enqueueSnackbar("Contacto de emergencia eliminado correctamente: ",{
+                variant: "success",
+              })
+      }).catch((error)=>
+        enqueueSnackbar("Error al eliminar los contactos de emergencia: " + error, {
+          variant: "error",
+        })       
+      );
+      
+    }
+
   };
 
   return (
@@ -164,7 +180,7 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
             <div hidden={mode === "normal"} style={{ width: "50%" }}>
               <RegisterRow
                 label="Nombre:"
-                onChange={(value) => setContactName(value || "")}
+                onChange={(value) => setContactName(value as string || "")}
                 validate={errors.contactName ? "Error" : "Normal"}
                 typeError={errors.contactName}
                 value={contactName}
@@ -174,7 +190,7 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
               />
               <RegisterRow
                 label="Parentesco:"
-                onChange={(value) => setRelationship(value || "")}
+                onChange={(value) => setRelationship(value as string || "")}
                 validate={errors.relationship ? "Error" : "Normal"}
                 typeError={errors.relationship}
                 value={relationship}
@@ -184,7 +200,7 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
               />
               <RegisterRow
                 label="Número:"
-                onChange={(value) => setPhone(value || "")}
+                onChange={(value) => setPhone(value as string || "")}
                 validate={errors.phone ? "Error" : "Normal"}
                 typeError={errors.phone}
                 value={phone}
@@ -195,7 +211,7 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
               />
               <RegisterRow
                 label="Cargo laboral:"
-                onChange={(value) => setPositionContact(value || "")}
+                onChange={(value) => setPositionContact(value as string || "")}
                 validate={errors.positionContact ? "Error" : "Normal"}
                 typeError={errors.positionContact}
                 value={positionContact}

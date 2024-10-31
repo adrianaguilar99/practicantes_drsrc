@@ -103,7 +103,7 @@ export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
             show={true}
             type="date"
             value={InitialDate} 
-            onChange={(value) => setInitialDate(value || "")}
+            onChange={(value) => setInitialDate(value as string ||  "")}
             validate={errors.internBeginDate ? "Error" : "Normal"}
             typeError={errors.internBeginDate}
           />
@@ -113,7 +113,7 @@ export const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
             show={true}
             type="date"
             value={FinalDate} 
-            onChange={(value) => setFinalDate(value || "")}
+            onChange={(value) => setFinalDate(value  as string || "")}
             validate={errors.InternEndDate ? "Error" : "Normal"}
             typeError={errors.InternEndDate}
          

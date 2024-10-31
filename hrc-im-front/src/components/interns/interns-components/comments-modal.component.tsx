@@ -1,5 +1,4 @@
 import { Box, Button } from "@mui/material";
-import { RegisterRow } from "../../inputs/register-row.component";
 import { enqueueSnackbar } from "notistack";
 import { InputValidators } from "../../../functions/input-validators.functions";
 import React, { useState } from "react";
@@ -13,7 +12,6 @@ export const CommentFormModal: React.FC<FormModalProps> = ({
   }) => {
     const CommentId = data?.id;
     const [commentPosted, setCommentPosted] = React.useState<string>(data?.comment || "");
-    const userToken = sessionStorage.getItem("_Token") || "";
   
     const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
       commentPosted: undefined,

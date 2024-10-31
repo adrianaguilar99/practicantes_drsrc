@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { DateConversor } from "../../../functions/date-conversor.function";
 import { AddNewComment } from "./add-new-comment.component";
 import { CommentCard } from "./comments-card.component";
 import { CommentsOfInternInterface, DataComment } from "../../../interfaces/interns/intern-comments/intern-comments.interface";
 import { RetryElement } from "../../utils/retry-element.component";
-import { CircularProgress, NothingToSee } from "../../utils/circular-progress.component";
+import { CircularProgress} from "../../utils/circular-progress.component";
 import { getCommentsByInternId } from "../../../api/interns/intern-comments/intern-comments.api";
-import { da } from "date-fns/locale";
 interface CommentCardProps {
     internId: string;
 }

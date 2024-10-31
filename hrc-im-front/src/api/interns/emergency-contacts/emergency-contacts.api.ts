@@ -50,3 +50,26 @@ export async function postEmergencyContact(Token: string, data: PostEmergencyCon
     }
   }
 
+  export async function deleteEmergencyContact(Token: string, id: string) {
+    try {
+      const response = await fetch(apiUrl + "/emergency-contact/" + id + "", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Error al eliminar el contacto de emergencia");
+      }
+  
+      const responseJson:any = await response.json();
+      return responseJson;
+    } catch (error: any) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+

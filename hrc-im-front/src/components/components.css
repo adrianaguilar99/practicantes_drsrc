@@ -2124,6 +2124,10 @@ transition: 0.5s;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.intern-credential-left img{
+  width: 90%;
+}
+
 
 .intern-credential-left h3, .intern-credential-right h3 {
   font-size: 1em;

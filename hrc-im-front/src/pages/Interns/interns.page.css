@@ -94,7 +94,7 @@
 .interns-information-title-type h2 {
     color: #fff;
     text-align: end;
-    font-size: 1rem;
+    font-size: .9rem;
     font-family: 'Lato', sans-serif;
 }
 
@@ -189,7 +189,6 @@
 
 .interns-information-body {
     display: flex;
-    margin-top: 20px;
     text-align: center;
     font-size: 18px;
     font-weight: bold;
@@ -281,13 +280,13 @@
 }
 
 
-.info-section-right-options img {
+/* .info-section-right-options img {
     width: 25%;
     height: 25%;
     margin-bottom: 2%;
     border-radius: 50%; 
     object-fit: cover;
-}
+} */
 @media screen and (max-width: 767px) {
     .info-section-right-options{
         display: none;

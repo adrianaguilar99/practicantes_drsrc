@@ -10,6 +10,7 @@ import { InputValidators } from "../../functions/input-validators.functions";
 import { patchSupervisor, postSupervisor } from "../../api/supervisors/supervisors.api";
 import { deleteUser, patchUser, postUser } from "../../api/users/users.api";
 import { set } from "date-fns";
+import { a } from "@react-spring/web";
 
 export const SupervisorFormModal: React.FC<FormModalProps> = ({
   type,
@@ -212,8 +213,8 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
             value={SupervisorFirstName}
             type="text"
             id={"supervisorName"}
-            show={true}
-            onChange={(value) => setSupervisorFirstName(value || "")}
+            show={true} 
+            onChange={(value) => setSupervisorFirstName(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorFirtsName ? "Error" : "Normal"}
             typeError={errors.supervisorFirtsName}
@@ -224,7 +225,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
             type="text"
             id={"supervisorName"}
             show={true}
-            onChange={(value) => setSupervisorLastName(value || "")}
+            onChange={(value) => setSupervisorLastName(value  as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorLastName ? "Error" : "Normal"}
             typeError={errors.supervisorLastName}
@@ -248,7 +249,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
             id={"supervisorPhone"}
             maxLength={10}
             show={true}
-            onChange={(value) => setSupervisorPhone(value || "")}
+            onChange={(value) => setSupervisorPhone(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorPhone ? "Error" : "Normal"}
             typeError={errors.supervisorPhone}
@@ -295,7 +296,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"supervisorName"}
               show={true}
-              onChange={(value) => setSupervisorFirstName(value || "")}
+              onChange={(value) => setSupervisorFirstName(value as string || "")}
               style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
               validate={errors.supervisorFirtsName ? "Error" : "Normal"}
               typeError={errors.supervisorFirtsName}
@@ -306,7 +307,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"supervisorName"}
               show={true}
-              onChange={(value) => setSupervisorLastName(value || "")}
+              onChange={(value) => setSupervisorLastName(value as string || "")}
               style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
               validate={errors.supervisorLastName ? "Error" : "Normal"}
               typeError={errors.supervisorLastName}
@@ -328,7 +329,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"supervisorEmail"}
               show={true}
-              onChange={(value) => setSupervisorEmail(value || "")}
+              onChange={(value) => setSupervisorEmail(value as string || "")}
               style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
               validate={errors.supervisorEmail ? "Error" : "Normal"}
               typeError={errors.supervisorEmail}
@@ -388,7 +389,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               id={"supervisorPhone"}
               maxLength={10}
               show={true}
-              onChange={(value) => setSupervisorPhone(value || "")}
+              onChange={(value) => setSupervisorPhone(value as string || "")}
               style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
               validate={errors.supervisorPhone ? "Error" : "Normal"}
               typeError={errors.supervisorPhone}
@@ -400,7 +401,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               value={SupervisorRol}
               id={"supervisorRol"}
               show={true}
-              onChange={(value) => setSupervisorRol(value || "")}
+              onChange={(value) => setSupervisorRol(value as string || "")}
               style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
               validate={errors.supervisorRol ? "Error" : "Normal"}
               typeError={errors.supervisorRol}
@@ -411,7 +412,7 @@ export const SupervisorFormModal: React.FC<FormModalProps> = ({
               value={SupervisorPassword}
               id={"supervisorPassword"}
               show={true}
-              onChange={(value) => setSupervisorPassword(value || "")}
+              onChange={(value) => setSupervisorPassword(value as string || "")}
               style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
               validate={errors.supervisorPassword ? "Error" : "Normal"}
               typeError={errors.supervisorPassword}

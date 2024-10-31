@@ -95,8 +95,6 @@ export const postInternFunction = async ({
         internshipStart: dataIntern.internshipStart,
         internshipEnd: dataIntern.internshipEnd,
         internshipDuration: dataIntern.internshipDuration,
-        entryTime: dataIntern.entryTime,
-        exitTime: dataIntern.exitTime,
         status: "ACTIVE",
         userId,
         ...(internType === "Externo"

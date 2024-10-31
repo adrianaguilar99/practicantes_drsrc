@@ -5,10 +5,11 @@ import { Footer } from "../../components/navbars/footer.component";
 import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 import { useEffect, useState } from "react";
 import { InternCredentialComponent } from "../../components/interns/interns-components/intern-credential.component";
-import { id } from "date-fns/locale";
+import { ca, id } from "date-fns/locale";
 import { GetByIDDataInter, GetByIDInternInterface } from "../../interfaces/interns/interns.interface";
 import { useLocation } from "react-router-dom";
 import { getInternById } from "../../api/interns/interns.api";
+import { getFilesSPLIT } from "../../api/interns/intern-files/intern-files.api";
 
 
 const InternCredentialPage = () => { 
@@ -18,6 +19,7 @@ const InternCredentialPage = () => {
     const [data, setData] = useState<GetByIDDataInter>();
     const [isLoading, setIsLoading] = useState(true); 
     const [hasError, setHasError] = useState(false);  
+    const [photo, setPhoto] = useState("");
     const userToken = sessionStorage.getItem("_Token") || "";
 
     const fetchData = async () => {
@@ -40,12 +42,39 @@ const InternCredentialPage = () => {
           setIsLoading(false);
       }
   };
+
+  const fetchFiles = async () => {
+    const splitPhoto = data?.internFiles?.photo.split("/") ?? [];
+    const photoName = splitPhoto[splitPhoto.length - 1] ;
+    console.log("Nombre de la foto:", photoName);
+
+
+    try {
+      const photoBlob = await getFilesSPLIT(
+        userToken,
+        internId || "",
+        photoName
+      );
+      if (photoBlob) {
+        const photoUrl = URL.createObjectURL(photoBlob);
+        setPhoto(photoUrl);
+      } else {
+        console.error("No se pudo cargar la foto");
+      }
+
+  }catch(error){
+    console.error("Error:", error);
+  }
+}
   
   
     useEffect(() => {
       fetchData();
     }, [userToken]);
     
+    useEffect(() => {
+      fetchFiles();
+    }, [data]);
    
 
     return (
@@ -63,7 +92,7 @@ const InternCredentialPage = () => {
               ) : (
                 <div className="interns-data">
                   {data && (
-                    <InternCredentialComponent data={data} />
+                    <InternCredentialComponent data={data} internPhoto={photo} />
                   )}
                   
                 </div>

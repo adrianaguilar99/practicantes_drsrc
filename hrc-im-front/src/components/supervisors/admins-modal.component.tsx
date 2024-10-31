@@ -133,7 +133,7 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             type="text"
             id={"supervisorName"}
             show={true}
-            onChange={(value) => setSupervisorFirstName(value || "")}
+            onChange={(value) => setSupervisorFirstName(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorFirtsName ? "Error" : "Normal"}
             typeError={errors.supervisorFirtsName}
@@ -145,7 +145,7 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             id={"supervisorName"}
             show={true}
             
-            onChange={(value) => setSupervisorLastName(value || "")}
+            onChange={(value) => setSupervisorLastName(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorLastName ? "Error" : "Normal"}
             typeError={errors.supervisorLastName}
@@ -194,7 +194,7 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             type="text"
             id={"supervisorName"}
             show={true}
-            onChange={(value) => setSupervisorFirstName(value || "")}
+            onChange={(value) => setSupervisorFirstName(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorFirtsName ? "Error" : "Normal"}
             typeError={errors.supervisorFirtsName}
@@ -205,7 +205,7 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             type="text"
             id={"supervisorName"}
             show={true}
-            onChange={(value) => setSupervisorLastName(value || "")}
+            onChange={(value) => setSupervisorLastName(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorLastName ? "Error" : "Normal"}
             typeError={errors.supervisorLastName}
@@ -227,7 +227,7 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             type="text"
             id={"supervisorEmail"}
             show={true}
-            onChange={(value) => setSupervisorEmail(value || "")}
+            onChange={(value) => setSupervisorEmail(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorEmail ? "Error" : "Normal"}
             typeError={errors.supervisorEmail}
@@ -238,7 +238,7 @@ export const AdminsFormModal: React.FC<FormModalProps> = ({
             value={SupervisorPassword}
             id={"supervisorPassword"}
             show={true}
-            onChange={(value) => setSupervisorPassword(value || "")}
+            onChange={(value) => setSupervisorPassword(value as string || "")}
             style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
             validate={errors.supervisorPassword ? "Error" : "Normal"}
             typeError={errors.supervisorPassword}

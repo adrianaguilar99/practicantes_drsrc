@@ -96,7 +96,7 @@ export const PropertiesFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"PropertieName"}
               show={true}
-              onChange={(value) => setPropertieName(value || "")}
+              onChange={(value) => setPropertieName(value as string || "")}
             />
             <Box
               sx={{
@@ -128,7 +128,7 @@ export const PropertiesFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"PropertieName"}
               show={true}
-              onChange={(value) => setPropertieName(value || "")}
+              onChange={(value) => setPropertieName(value as string || "")}
             />
             <Box
               sx={{

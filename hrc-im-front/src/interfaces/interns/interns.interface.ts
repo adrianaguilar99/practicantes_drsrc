@@ -68,8 +68,6 @@ export interface PostIntern{
     internshipStart: string,
     internalInternCode?: string,
     internshipEnd: string,
-    entryTime: string,
-    exitTime: string,
     internshipDuration: string,
     status: "ACTIVE",
     careerId?: string,
@@ -81,7 +79,24 @@ export interface PostIntern{
     data?: any
   }
 
-
+  export interface PatchIntern{
+    bloodType?: string,
+    phone?: string,
+    address?: string,
+    schoolEnrollment?: string,
+    internshipStart?: string,
+    externalInternCode?: string,
+    internalInternCode?: string,
+    internshipEnd?: string,
+    internshipDuration?: string,
+    status?: string,
+    careerId?: string,
+    departmentId?: string,
+    internshipDepartmentId?: string,
+    institutionId?: string,
+    propertyId?: string,
+    data?: any
+  }
 
 
 

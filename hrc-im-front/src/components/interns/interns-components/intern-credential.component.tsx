@@ -8,9 +8,11 @@ import { DataIntern, GetByIDDataInter } from "../../../interfaces/interns/intern
 import { Divider } from "@mui/material";
 interface InternCredentialProps {
   data?: GetByIDDataInter;
+  internPhoto?: string;
 }
 export const InternCredentialComponent: React.FC<InternCredentialProps> = ({
   data,
+  internPhoto,
 }) => {
     const navigate = useNavigate ();
     const contentRef = useRef<HTMLDivElement>(null);
@@ -25,6 +27,7 @@ export const InternCredentialComponent: React.FC<InternCredentialProps> = ({
       <div className="intern-credential-body" ref={contentRef}>
         <section className="intern-credential-left">
           <h3>{data?.user.firstName + " " + data?.user.lastName || ""}</h3>
+          <img src={internPhoto} alt="Intern photo"/>
           <Barcode value={data?.externalInternCode ? data?.externalInternCode : data?.internalInternCode ? data?.internalInternCode : ""} />
         </section>
         <section className="intern-credential-right">
