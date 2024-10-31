@@ -3,7 +3,7 @@ import "../components.css";
 import { EntityAffected } from "../../interfaces/audits/audits.interface";
 
 interface EntityInfoModalProps {
-  entity: EntityAffected & { type?: string; email?: string; phone?: string }; // Añadimos las propiedades opcionales
+  entity: EntityAffected & {data: string; type?: string; email?: string; phone?: string }; // Añadimos las propiedades opcionales
 }
 
 export const EntityInfoModal: React.FC<EntityInfoModalProps> = ({ entity }) => {
@@ -13,7 +13,7 @@ export const EntityInfoModal: React.FC<EntityInfoModalProps> = ({ entity }) => {
         <h6>{entity.type || "Entidad"}</h6> 
       </section>
       <section className="entity-info-modal-body">
-        <h6 className="entity-info-modal-name">{entity.name}</h6>
+        <h6 className="entity-info-modal-name">Nombre: {entity.data}</h6>
         {entity.type === "INTERN" && (
           <>
             <h6 className="entity-info-modal-info">Email: {entity.email || "No disponible"}</h6>

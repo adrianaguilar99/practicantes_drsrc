@@ -110,7 +110,7 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"institutionName"}
               show={true}
-              onChange={(value) => setInstitutionName(value || "")}
+              onChange={(value) => setInstitutionName(value as string || "")}
               validate={errors.institutionName ? "Error" : "Normal"}
               typeError={errors.institutionName}
             />
@@ -120,7 +120,7 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
               type="phone"
               id={"institutionEmail"}
               show={true}
-              onChange={(value) => setInstitutionPhone(value || "")}
+              onChange={(value) => setInstitutionPhone(value as  string || "")}
               validate={errors.institutionPhone ? "Error" : "Normal"}
               typeError={errors.institutionPhone}
               maxLength={10}
@@ -155,7 +155,7 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={""}
               show={true}
-              onChange={(value) => setInstitutionName(value || "")}
+              onChange={(value) => setInstitutionName(value as string || "")}
               validate={errors.institutionName ? "Error" : "Normal"}
               typeError={errors.institutionName}
             />
@@ -165,7 +165,7 @@ export const InstitutionFormModal: React.FC<FormModalProps> = ({
               value={InstitutionPhone}
               id={""}
               show={true}
-              onChange={(value) => setInstitutionPhone(value || "")}
+              onChange={(value) => setInstitutionPhone(value as string || "")}
               validate={errors.institutionPhone ? "Error" : "Normal"}
               typeError={errors.institutionPhone}
               maxLength={10}

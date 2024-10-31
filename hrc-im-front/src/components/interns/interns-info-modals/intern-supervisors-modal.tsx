@@ -1,5 +1,6 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Modal } from "@mui/material"
+import { Avatar, Dialog, DialogContent, DialogContentText, DialogTitle, Modal, Tooltip } from "@mui/material"
 import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react"
+import { stringAvatar } from "../../../functions/utils.functions"
 
 interface InternSupervisorsModalProps {
     data?: any
@@ -18,7 +19,12 @@ export const InternSupervisorsModal: React.FC<InternSupervisorsModalProps> = ({ 
         <DialogContent>
           <DialogContentText>
             {data.map((supervisor: any, index: any) => (
-              <p key={index}>{supervisor.name}</p>
+              <Tooltip title={supervisor.user.email} placement="right"> 
+              <div className="supervisor-info">
+                <Avatar {...stringAvatar(supervisor.user.firstName + " " + supervisor.user.lastName, 30,12) } />  
+                   <p>{supervisor.user.firstName + " " + supervisor.user.lastName}</p> 
+              </div>
+              </Tooltip>
             ))}
           </DialogContentText>
         </DialogContent>

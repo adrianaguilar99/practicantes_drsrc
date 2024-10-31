@@ -93,7 +93,7 @@ export const CareerFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"CareerName"}
               show={true}
-              onChange={(value) => setCareerName(value || "")}
+              onChange={(value) => setCareerName(value as string || "")}
               validate={errors.careerName ? "Error" : "Normal"}
               typeError={errors.careerName}
             />
@@ -136,7 +136,7 @@ export const CareerFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={""}
               show={true}
-              onChange={(value) => setCareerName(value || "")}
+              onChange={(value) => setCareerName(value as string || "")}
               validate={errors.careerName ? "Error" : "Normal"}
               typeError={errors.careerName}
             />

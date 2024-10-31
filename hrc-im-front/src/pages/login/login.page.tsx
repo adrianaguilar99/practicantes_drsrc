@@ -118,7 +118,7 @@ const LoginPage = () => {
           <div className="login-form-container">
             <RegisterRow
               label="Correo:"
-              onChange={(value) => setUserEmail(value || "")}
+              onChange={(value) => setUserEmail(value as string || "")}
               id="email"
               type="text"
               show={true}
@@ -128,7 +128,7 @@ const LoginPage = () => {
             />
             <RegisterRow
               label="Contraseña:"
-              onChange={(value) => setPassword(value || "")}
+              onChange={(value) => setPassword(value as string || "")}
               id="password"
               type="password"
               show={true}

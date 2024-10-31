@@ -16,6 +16,33 @@
     opacity: 0.5;
 }
 
+.home-left-container{
+    min-width: 14vw;
+}
+
+.home-right-container{
+    background-image: url('../../assets/images/platform-logo.PNG') ;
+    background-repeat: no-repeat;
+    background-size: 40%;
+    background-position: center;
+    padding: 1% 0%;
+    min-width: 80vw;
+    min-height: 90vh;
+}
+
+@media screen and (max-width: 767px) {
+
+    .home-left-container{
+        display: none;
+    }
+    .home-right-container{
+        padding: 1% 0%;
+        min-width: 100vw;
+        min-height: 90vh;
+    }
+    
+}
+
 
 
 
@@ -74,5 +101,32 @@
     }
     
 }
+.home-data-container{
+    display: flex;
+    gap: 3%;
+    color: #333;
+}
+.home-totalinterns-container{
+    background-color: #ffffff;
+    max-width: auto;
+    height: auto;
+    padding: 1%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    border-radius: 5px;
+    text-align: center;
+    
+}
 
+.home-totalinterns-container p{
+    font-size: 2.5rem;
+    color: #d8461a;
+}
 
+.home-chart-container{
+    background-color: #ffffff;
+    max-width: auto;
+    height: auto;
+    padding: 1%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    border-radius: 5px;
+}

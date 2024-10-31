@@ -96,7 +96,7 @@ export const DepartmentFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"DepartmentName"}
               show={true}
-              onChange={(value) => setDepartmentName(value || "")}
+              onChange={(value) => setDepartmentName(value as string || "")}
             />
             <Box
               sx={{
@@ -128,7 +128,7 @@ export const DepartmentFormModal: React.FC<FormModalProps> = ({
               type="text"
               id={"DepartmentName"}
               show={true}
-              onChange={(value) => setDepartmentName(value || "")}
+              onChange={(value) => setDepartmentName(value as string || "")}
             />
             <Box
               sx={{

@@ -5,51 +5,77 @@ import { Footer } from "../../components/navbars/footer.component";
 import { CircularProgress, NothingToSee } from "../../components/utils/circular-progress.component";
 import { useEffect, useState } from "react";
 import { InternCredentialComponent } from "../../components/interns/interns-components/intern-credential.component";
-import { id } from "date-fns/locale";
+import { ca, id } from "date-fns/locale";
+import { GetByIDDataInter, GetByIDInternInterface } from "../../interfaces/interns/interns.interface";
+import { useLocation } from "react-router-dom";
+import { getInternById } from "../../api/interns/interns.api";
+import { getFilesSPLIT } from "../../api/interns/intern-files/intern-files.api";
 
-export const data_intern = {
-        name: "LEONARDO DANIEL REBOLLO CALERO",
-        id: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        internCode: "386740",
-        bloodType: "O+",
-        phone: "9988774455",
-        address: "Blvd. Kukulcan Km 14, Zona Hotelera, 77500 Cancun, Quintana Roo · 15 km",
-        schoolEnrollment: "202100142",
-        internshipStart: "2024-10-01",
-        internshipEnd: "2025-03-01",
-        status: "ACTIVE",
-        career: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        department: {
-            id: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-            name: "Human Resources"
-        },
-        internshipDepartment: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        institution: {
-            id: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-            name: "Universidad de Cancun"
-        },
-        property: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe",
-        user: "b7ba0f09-5a6e-4146-93c2-0c9b934162fe"   
-}
 
-const InternCredentialPage = () => {
-    const [data, setData] = useState({});
+const InternCredentialPage = () => { 
+    const { pathname } = useLocation();
+    const uuidMatch = pathname.match(/interns-credentials\/([a-fA-F0-9-]{36})/);
+    const internId = uuidMatch ? uuidMatch[1] : null;
+    const [data, setData] = useState<GetByIDDataInter>();
     const [isLoading, setIsLoading] = useState(true); 
     const [hasError, setHasError] = useState(false);  
+    const [photo, setPhoto] = useState("");
+    const userToken = sessionStorage.getItem("_Token") || "";
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+          const fetchedData: GetByIDInternInterface | null = await getInternById(
+            userToken,
+            internId || ""
+          );
+          if (fetchedData) {
+              setData(fetchedData.data);
+              console.log(fetchedData.data);
+              setHasError(false); 
+          } else {
+              setHasError(false);
+          }
+      } catch (error) {
+          setHasError(true);
+      } finally {
+          setIsLoading(false);
+      }
+  };
+
+  const fetchFiles = async () => {
+    const splitPhoto = data?.internFiles?.photo.split("/") ?? [];
+    const photoName = splitPhoto[splitPhoto.length - 1] ;
+    console.log("Nombre de la foto:", photoName);
+
+
+    try {
+      const photoBlob = await getFilesSPLIT(
+        userToken,
+        internId || "",
+        photoName
+      );
+      if (photoBlob) {
+        const photoUrl = URL.createObjectURL(photoBlob);
+        setPhoto(photoUrl);
+      } else {
+        console.error("No se pudo cargar la foto");
+      }
+
+  }catch(error){
+    console.error("Error:", error);
+  }
+}
+  
+  
+    useEffect(() => {
+      fetchData();
+    }, [userToken]);
     
     useEffect(() => {
-
-        setTimeout(() => {
-          try {
-            const fetchedData = data_intern;  
-              setData(fetchedData);
-          } catch (error) {
-            setHasError(true);  
-          } finally {
-            setIsLoading(false);  
-          }
-        }, 1000); 
-      }, []);
+      fetchFiles();
+    }, [data]);
+   
 
     return (
         <div className="body-page">
@@ -65,7 +91,10 @@ const InternCredentialPage = () => {
                 <NothingToSee />
               ) : (
                 <div className="interns-data">
-                  <InternCredentialComponent data={data} />
+                  {data && (
+                    <InternCredentialComponent data={data} internPhoto={photo} />
+                  )}
+                  
                 </div>
               )}
             </div>

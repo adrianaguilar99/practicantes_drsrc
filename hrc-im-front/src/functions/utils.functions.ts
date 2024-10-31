@@ -44,18 +44,22 @@ export function stringToColor(string: string) {
   
 
   // Get avatar from string {Function from MUI}
-  export function stringAvatar(name: string) {
+  export function stringAvatar(name: string, size: number = 40, fontSize: number = size / 2.5) {
     const nameParts = name.split(' ');
   
     return {
       sx: {
         bgcolor: stringToColor(name),
+        width: size,
+        height: size,
+        fontSize: fontSize,
       },
       children: nameParts.length === 1 
         ? `${nameParts[0][0]}`
         : `${nameParts[0][0]}${nameParts[1][0]}`,
     };
   }
+  
   
   
 
@@ -87,3 +91,20 @@ export function formatPhoneNumber(phoneNumber : string) {
 }
 
 
+export const parseTimeString = (timeString: string) => {
+  const timeValue = parseInt(timeString.slice(0, -1));
+  const timeUnit = timeString.slice(-1);
+
+  switch (timeUnit) {
+      case 's': 
+          return timeValue * 1000;
+      case 'm': 
+          return timeValue * 1000 * 60;
+      case 'h': 
+          return timeValue * 1000 * 60 * 60;
+      case 'd': 
+          return timeValue * 1000 * 60 * 60 * 24;
+      default:
+          throw new Error('Formato de tiempo inválido');
+  }
+};

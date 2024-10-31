@@ -8,7 +8,7 @@ interface InfoRowProps {
   type?: "text" | "number" | "date" | "time" | "select" | "autocomplete" | "textarea" | "file" | "phone";
   value?: string;
   id: string;
-  options?: string[];
+  options?: { id: string; name: string }[];
   coincidences?: string[];
   validate?: "Error" | "Normal";
   editable?: boolean;
@@ -39,20 +39,24 @@ interface InfoRowProps {
         {type === "text" && (
                 <input 
                 type="text"
-               
+                value={value}
                 id={id} 
                 typeof={type}
                 defaultValue={value} 
+                onChange={(e) => ValueChange(e.target.value)}
                 className={editable ? "edit-mode" : "view-mode"} 
                 readOnly={!editable}
               />
         )}
+
+
             {type === "number" && (
             <input
               type="number"
               min={1}
               id={id}
               defaultValue={value}
+              value={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
@@ -87,6 +91,7 @@ interface InfoRowProps {
               type="date"
               id={id}
               typeof={type}
+              value={value}
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={editable ? `edit-mode ${errorClass}` : "view-mode"} 
@@ -113,9 +118,9 @@ interface InfoRowProps {
                 className={editable ? `edit-mode ${errorClass}` : "view-mode"} 
             >
               {options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
+                <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
               ))}
             </select>
           )}
@@ -125,6 +130,7 @@ interface InfoRowProps {
               options={coincidences}
               value={inputValue}
               onInputChange={(event, newInputValue) => {
+
                 ValueChange(newInputValue);
               }}
               renderInput={(params) => (

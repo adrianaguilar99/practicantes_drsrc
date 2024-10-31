@@ -7,8 +7,8 @@ import { Footer } from "../../components/navbars/footer.component";
 import { useEffect, useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { ca } from "date-fns/locale";
-import { Data, InternInterface } from "../../interfaces/interns/intern-data/intern-data.interface";
 import { Avatar } from "@mui/material";
+import { DataIntern } from "../../interfaces/interns/interns.interface";
 
 const InternInfo = {
   message: "Data fetched successfully.",
@@ -55,11 +55,11 @@ const InternInfo = {
 
 const ProfilePage = () => {
   const [option, setOption] = useState(0);
-  const [dataInfo, setDataInfo] = useState<Data | null>(null); 
+  const [dataInfo, setDataInfo] = useState<DataIntern | null>(null); 
   const [internType, setInternType] = useState("");
 
   useEffect(() => {
-    setDataInfo(InternInfo.data as unknown as Data); 
+    setDataInfo(InternInfo.data as unknown as DataIntern); 
     setInternType(dataInfo?.department === null ? "Interno" : "Externo");
   }, []);
 

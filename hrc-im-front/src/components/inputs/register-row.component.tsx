@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, IconButton } from "@mui/material";
 import { TextField } from "@mui/material";
 import { useSpring, animated } from "@react-spring/web";
 import { formatPhoneNumber } from "../../functions/utils.functions";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface RegisterRowProps {
   label: string;
-  onChange: (value?: string) => void;
+  onChange: (value?: string | File) => void;
   type?:
     | "text"
     | "number"
@@ -46,7 +47,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   coincidences = [],
 }) => {
   const [inputValue, setInputValue] = useState(value);
+  const [showPassword, setShowPassword] = useState(false);
 
+  const PasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const animationStyles = useSpring({
     opacity: show ? 1 : 0,
     transform: show ? "translateY(0px)" : "translateY(20px)",
@@ -54,10 +59,11 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
     width: "100%",
   });
 
-  const ValueChange = (newValue: string) => {
-    setInputValue(newValue);
+  const ValueChange = (newValue: string | File) => {
+    setInputValue(newValue instanceof File ? newValue.name : newValue); // Muestra el nombre del archivo si es un File
     onChange(newValue);
   };
+  
 
   const errorClass = validate === "Error" ? "error-input" : "";
 
@@ -81,19 +87,38 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
-
-          {type === "password" && (
+          {type === "textarea" && (
             <input
-              type="password"
+              type="textarea"
               id={id}
               defaultValue={value}
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
+          )}
+
+          {type === "password" && (
+             <div className="password-input-container">
+             <input
+               type={showPassword ? "text" : "password"}
+               id={id}
+               defaultValue={value}
+               onChange={(e) => ValueChange(e.target.value)}
+               className={`edit-mode ${errorClass}`}
+               readOnly={!editable}
+               maxLength={maxLength}
+               autoComplete="off"
+             />
+             <IconButton onClick={PasswordVisibility}>
+               {showPassword ? <VisibilityOff /> : <Visibility />}
+             </IconButton>
+           </div>
           )}
 
           {type === "number" && (
@@ -106,6 +131,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
 
@@ -118,6 +144,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               maxLength={maxLength}
+              autoComplete="off"
             />
           )}
           {type === "file" && (
@@ -126,10 +153,14 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               min={1}
               id={id}
               defaultValue={value}
-              onChange={(e) => ValueChange(e.target.value)}
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  ValueChange(e.target.files[0]); 
+                }
+              }}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
-              
+              autoComplete="off"
             />
           )}
 
@@ -141,6 +172,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              autoComplete="off"
             />
           )}
 
@@ -152,6 +184,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               onChange={(e) => ValueChange(e.target.value)}
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
+              autoComplete="off"
             />
           )}
 
@@ -174,6 +207,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
             <Autocomplete
               options={coincidences}
               value={inputValue}
+              
               onInputChange={(event, newInputValue) => {
                 ValueChange(newInputValue);
               }}
@@ -187,8 +221,10 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
                     className: `edit-mode ${errorClass}`,
                   }}
                   fullWidth
+                 
                 />
               )}
+            
               fullWidth
             />
           )}

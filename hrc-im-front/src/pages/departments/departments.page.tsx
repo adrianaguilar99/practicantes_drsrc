@@ -13,12 +13,10 @@ import { CircularProgress, NothingToSee } from "../../components/utils/circular-
 import { RetryElement } from "../../components/utils/retry-element.component";
 
 const DepartmentsPage = () => {
-  type Department = {
-    name: string;
-  };
+
 
   const [data, setData] = useState<DataDepartment[]>([]);
-  const [filteredData, setFilteredData] = useState<Department[]>([]);
+  const [filteredData, setFilteredData] = useState<DataDepartment[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [hasError, setHasError] = useState(false);   
   const userToken = sessionStorage.getItem("_Token") || "";

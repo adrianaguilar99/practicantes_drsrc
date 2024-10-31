@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import MapsHomeWorkOutlinedIcon from '@mui/icons-material/MapsHomeWorkOutlined';
+import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -60,8 +61,10 @@ export const Sidebar = () => {
       ],
     },
       
-    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:"/properties"},
     { icon: <DescriptionOutlinedIcon />, label: "Auditorías", path: "/audits" },
+   
   ];
 
   const menuItemsSupervisorRH: MenuItem[] = [
@@ -82,9 +85,10 @@ export const Sidebar = () => {
         { label: "Carreras", path: "/interns/interns-careers" },
       ],
     },
-    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout"},
+    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
-    { icon: <CorporateFareOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
+    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:""},
   ];
 
   const menuItemsSupervisor: MenuItem[] = [
@@ -99,7 +103,7 @@ export const Sidebar = () => {
       label: "Mis Practicantes",
       path: "/interns",
     },
-    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/checkin-checkout"},
+    {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
   ];
 
