@@ -1,7 +1,7 @@
 import { Navbar } from "../../components/navbars/navbar.component";
 import LinesLogo from "../../assets/images/lines_logo.png";
 import "./home.page.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InternViewPage } from "../Interns/intern-view.page";
 import { motion } from "framer-motion";
 import { Footer } from "../../components/navbars/footer.component";
@@ -16,7 +16,14 @@ const HomePage = () => {
   const userRol = useSelector(
     (state: RootState) => decryptData(state.auth.rol || "") || ""
   );
+  const [loading, setLoading] = useState(true);
   const userFullName = sessionStorage.getItem("_ProfileName");
+
+  useEffect(() => {
+    setLoading(false);
+  }, [userFullName]);
+
+
 
   const pageVariants = {
     initial: { opacity: 0, scale: 0.8 },
@@ -47,7 +54,10 @@ const HomePage = () => {
           >
             <section className="home-left-container"></section>
             <section className="home-right-container">
-              <h2>Bienvenido {userFullName}</h2>
+              {!loading && (
+                <h2>Bienvenido {userFullName}</h2>
+              )}
+              
               <div className="home-data-container">
                 <div className="home-totalinterns-container">
                   <label>Practicantes activos:</label>
