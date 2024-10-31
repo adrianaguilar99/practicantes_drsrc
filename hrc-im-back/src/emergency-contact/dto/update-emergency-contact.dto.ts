@@ -1,7 +1,6 @@
-import { OmitType } from '@nestjs/swagger';
+import { OmitType, PartialType } from '@nestjs/swagger';
 import { CreateEmergencyContactDto } from './create-emergency-contact.dto';
 
-export class UpdateEmergencyContactDto extends OmitType(
-  CreateEmergencyContactDto,
-  ['internId'] as const,
+export class UpdateEmergencyContactDto extends PartialType(
+  OmitType(CreateEmergencyContactDto, ['internId'] as const),
 ) {}
