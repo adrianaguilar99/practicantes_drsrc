@@ -147,11 +147,12 @@ export class Intern {
 
   @ApiProperty({
     example: 50.75,
-    description: 'The percentage of the internship completed, with decimals.',
+    description: 'The percentage of the internship completed.',
   })
   @Column({
     name: 'total_internship_completion',
     type: 'numeric',
+    nullable: true,
     precision: 5,
     scale: 2,
   })
@@ -267,32 +268,6 @@ export class Intern {
   checkFieldsBeforeUpdate() {
     this.checkFieldsBeforeInsert();
   }
-
-  // private validateDates() {
-  //   const startDate = new Date(this.internshipStart);
-  //   startDate.setHours(
-  //     startDate.getHours() + startDate.getTimezoneOffset() / 60,
-  //   );
-  //   const endDate = new Date(this.internshipEnd);
-  //   endDate.setHours(endDate.getHours() + endDate.getTimezoneOffset() / 60);
-
-  //   // Verificacion de fechas
-  //   // console.log({
-  //   //   startDateString: startDate.toDateString(),
-  //   //   endDateString: endDate.toDateString(),
-  //   //   startDateGetTime: startDate.getTime(),
-  //   //   endDateGetTime: endDate.getTime(),
-  //   // });
-
-  //   /**
-  //    * La fecha de inicio y fin si puede ser en el pasado
-  //    * pero la fecha de inicio no puede ser mayor o igual que la fecha de fin
-  //    */
-  //   if (startDate.getTime() >= endDate.getTime())
-  //     throw new BadRequestException(
-  //       'The internship start date cannot be greater or equal than the end date.',
-  //     );
-  // }
 
   /**
    * Calcula el porcentaje de la pasantía completada.

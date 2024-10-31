@@ -36,6 +36,19 @@ export class InternScheduleService {
       const createdInternSchedule = await this.internScheduleRepository.save(
         internScheduleToCreate,
       );
+      await this.systemAuditsService.createSystemAudit(
+        {
+          id: userId,
+          fullName,
+          role,
+        },
+        'CREATE INTERN SCHEDULE',
+        {
+          id: createdInternSchedule.intern.id,
+          data: `${'jj'}`,
+        },
+        'SUCCESS',
+      );
       return createdInternSchedule;
     } catch (error) {
       if (error.code === '23505')
