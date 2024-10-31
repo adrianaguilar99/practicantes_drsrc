@@ -155,10 +155,10 @@ export class UsersService {
           data: `${existingUser.firstName} ${existingUser.lastName}`,
         },
         'FAILED TO UPDATE USER',
-        'Attempted to update fields that are not allowed: email, password, active',
+        'Attempted to update fields that are not allowed: email, password',
       );
       throw new ConflictException(
-        'You are not allowed to update email, password, or active of the user.',
+        'You are not allowed to update email, password of the user.',
       );
     }
 
