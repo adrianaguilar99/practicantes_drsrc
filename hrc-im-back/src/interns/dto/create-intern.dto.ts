@@ -98,24 +98,6 @@ export class CreateInternDto {
   internshipEnd: Date;
 
   @ApiProperty({
-    example: '08:00:00',
-    description: 'Time of entry for the intern.',
-    nullable: false,
-  })
-  @IsString()
-  @IsNotEmpty()
-  entryTime: string;
-
-  @ApiProperty({
-    example: '17:00:00',
-    description: 'Time of exit for the intern.',
-    nullable: false,
-  })
-  @IsString()
-  @IsNotEmpty()
-  exitTime: string;
-
-  @ApiProperty({
     example: '300 hours',
     description:
       'Total time the intern is expected to cover, e.g., "300 hours", "10 days", "1 month".',
