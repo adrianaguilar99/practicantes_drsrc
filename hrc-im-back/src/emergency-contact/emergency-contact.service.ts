@@ -27,17 +27,18 @@ export class EmergencyContactService {
     { fullName, role, userId }: IRequestUser,
   ) {
     // Buscamos y relacionamos al practicante o interno
-    const intern = await this.internsService.findOne(
+    const existingIntern = await this.internsService.findOne(
       createEmergencyContactDto.internId,
     );
 
     const newEmergencyContact = this.emergencyContactsRepository.create({
       ...createEmergencyContactDto,
-      intern,
+      intern: existingIntern,
     });
     try {
       const createdEmergencyContact =
         await this.emergencyContactsRepository.save(newEmergencyContact);
+      const { intern, ...data } = createdEmergencyContact;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -45,10 +46,7 @@ export class EmergencyContactService {
           role,
         },
         'CREATE EMERGENCY CONTACT',
-        {
-          id: createdEmergencyContact.id,
-          data: `${createdEmergencyContact.name}`,
-        },
+        data,
         'SUCCESS',
       );
       return createdEmergencyContact;
@@ -60,7 +58,7 @@ export class EmergencyContactService {
           role,
         },
         'TRY TO CREATE EMERGENCY CONTACT',
-        { id: null, data: `${newEmergencyContact.name}` },
+        createEmergencyContactDto,
         'FAILED TO CREATE INTERN',
         error.message,
       );
@@ -109,13 +107,11 @@ export class EmergencyContactService {
       const updatedContact = await this.emergencyContactsRepository.save(
         existingEmergencyContact,
       );
+      const { intern, ...data } = updatedContact;
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'UPDATE EMERGENCY CONTACT',
-        {
-          id,
-          data: `${updatedContact.name}`,
-        },
+        data,
         'SUCCESS',
       );
       return updatedContact;
@@ -123,7 +119,7 @@ export class EmergencyContactService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'TRY TO UPDATE EMERGENCY CONTACT',
-        { id, data: name },
+        { id, name, phone, relationship, positionContact },
         'FAILED TO UPDATE EMERGENCY CONTACT',
         error.message,
       );
@@ -133,6 +129,7 @@ export class EmergencyContactService {
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingEmergencyContact = await this.findOne(id);
+    const { intern, ...data } = existingEmergencyContact;
     try {
       const deletedEmergencyContact =
         await this.emergencyContactsRepository.delete(id);
@@ -143,7 +140,7 @@ export class EmergencyContactService {
           role,
         },
         'DELETE EMERGENCY CONTACT',
-        { id, data: existingEmergencyContact.name },
+        data,
         'SUCCESS',
       );
       return deletedEmergencyContact.affected;
@@ -155,7 +152,7 @@ export class EmergencyContactService {
           role,
         },
         'TRY TO DELETE EMERGENCY CONTACT',
-        { id, data: `${existingEmergencyContact.name}` },
+        data,
         'FAILED TO DELETE EMERGENCY CONTACT',
         error.message,
       );

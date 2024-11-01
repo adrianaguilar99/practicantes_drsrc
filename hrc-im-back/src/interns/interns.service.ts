@@ -152,7 +152,7 @@ export class InternsService {
           role,
         },
         'TRY TO CREATE INTERN',
-        { id: null, data: `${user.firstName} ${user.lastName}` },
+        createInternDto,
         'FAILED TO CREATE INTERN',
         error.message,
       );
@@ -332,10 +332,7 @@ export class InternsService {
       await this.systemAuditsService.createSystemAudit(
         { id: userReq, fullName, role },
         'FAILED TO UPDATE INTERN',
-        {
-          id,
-          data: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
-        },
+        updateInternDto,
         'FAILED',
         error.message,
       );

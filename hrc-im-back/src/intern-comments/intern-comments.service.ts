@@ -38,6 +38,7 @@ export class InternCommentsService {
       const savedInternComment = await this.internCommentsRepository.save(
         internCommentToCreate,
       );
+      const { intern, user, ...data } = savedInternComment;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -45,10 +46,7 @@ export class InternCommentsService {
           role,
         },
         'CREATE INTERN COMMENT',
-        {
-          id: savedInternComment.id,
-          data: `${savedInternComment.postedComment}`,
-        },
+        data,
         'SUCCESS',
       );
       return savedInternComment;
@@ -60,7 +58,7 @@ export class InternCommentsService {
           role,
         },
         'TRY TO CREATE INTERN FILES',
-        { id: null, data: `${internCommentToCreate}` },
+        createInternCommentDto,
         'FAILED TO CREATE INTERN FILES',
         error.message,
       );
@@ -135,20 +133,19 @@ export class InternCommentsService {
       const savedInternComment = await this.internCommentsRepository.save(
         existingInternComment,
       );
-
+      const { intern, user, ...data } = savedInternComment;
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'UPDATE INTERN COMMENT',
-        { id, data: savedInternComment.postedComment },
+        data,
         'SUCCESS',
       );
-
       return savedInternComment;
     } catch (error) {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'FAILED UPDATE INTERN COMMENT',
-        { id, data: existingInternComment.postedComment },
+        updateInternCommentDto,
         'FAILED',
         error.message,
       );
@@ -158,6 +155,7 @@ export class InternCommentsService {
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingInternComment = await this.findOne(id);
+    const { intern, user, ...data } = existingInternComment;
     try {
       const deletedInternComment =
         await this.internCommentsRepository.delete(id);
@@ -165,7 +163,7 @@ export class InternCommentsService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'DELETE INTERN COMMENT',
-        { id, data: existingInternComment.postedComment },
+        data,
         'SUCCESS',
       );
 
@@ -174,7 +172,7 @@ export class InternCommentsService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'FAILED DELETE INTERN COMMENT',
-        { id, data: existingInternComment.postedComment },
+        data,
         'FAILED',
         error.message,
       );

@@ -40,9 +40,11 @@ export class InternFilesService {
       compiledDocuments: secureCompiledDocumentsUrl,
       intern: existingIntern,
     });
+    const { intern, ...dataToCreate } = newInternFiles;
     try {
       const savedInternFiles =
         await this.internFilesRepository.save(newInternFiles);
+      const { intern, ...data } = savedInternFiles;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -50,10 +52,7 @@ export class InternFilesService {
           role,
         },
         'CREATE INTERN FILES',
-        {
-          id: savedInternFiles.id,
-          data: `${newInternFiles}`,
-        },
+        data,
         'SUCCESS',
       );
       return savedInternFiles;
@@ -66,7 +65,7 @@ export class InternFilesService {
           role,
         },
         'TRY TO CREATE INTERN FILES',
-        { id: null, data: `${newInternFiles}` },
+        dataToCreate,
         'FAILED TO CREATE INTERN FILES',
         error.message,
       );
@@ -104,7 +103,7 @@ export class InternFilesService {
           role,
         },
         'TRY TO CREATE INTERN FILES',
-        { id: null, data: `${files}` },
+        { internId, files },
         'FAILED TO CREATE INTERN FILES',
         error.message,
       );
@@ -185,10 +184,7 @@ export class InternFilesService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'UPDATE INTERN FILES',
-        {
-          id,
-          data: `${internFilesToUpdate}`,
-        },
+        internFilesToUpdate,
         'SUCCESS',
       );
       return internFilesToUpdate;
@@ -196,10 +192,7 @@ export class InternFilesService {
       await this.systemAuditsService.createSystemAudit(
         { id: userId, fullName, role },
         'FAILED TO UPDATE INTERN FILES',
-        {
-          id,
-          data: `${internFilesToUpdate}`,
-        },
+        { internId, internFilesToUpdate },
         'FAILED',
         error.message,
       );
@@ -213,6 +206,7 @@ export class InternFilesService {
     { fullName, role, userId }: IRequestUser,
   ) {
     const existingInternFiles = await this.findOne(id);
+    const { intern, ...data } = existingInternFiles;
     try {
       const deletedInternFiles = await this.internFilesRepository.delete(id);
       rollbackFiles(internId);
@@ -223,7 +217,7 @@ export class InternFilesService {
           role,
         },
         'DELETE INTERN FILES',
-        { id, data: `${existingInternFiles}` },
+        data,
         'SUCCESS',
       );
       return deletedInternFiles.affected;
@@ -235,7 +229,7 @@ export class InternFilesService {
           role,
         },
         'TRY TO DELETE INTERN FILES',
-        { id, data: `${existingInternFiles}` },
+        data,
         'FAILED TO DELETE INTERN FILES',
         error.message,
       );
