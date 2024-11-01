@@ -32,10 +32,13 @@ export class InternScheduleService {
       intern: existingIntern,
     });
 
+    const { intern, ...data } = internScheduleToCreate;
     try {
       const createdInternSchedule = await this.internScheduleRepository.save(
         internScheduleToCreate,
       );
+      console.log(Array(data).map((v) => v));
+
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -45,10 +48,11 @@ export class InternScheduleService {
         'CREATE INTERN SCHEDULE',
         {
           id: createdInternSchedule.intern.id,
-          data: `${'jj'}`,
+          data,
         },
         'SUCCESS',
       );
+
       return createdInternSchedule;
     } catch (error) {
       if (error.code === '23505')
