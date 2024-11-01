@@ -62,7 +62,7 @@ export class InternScheduleController {
     description: SUCCESSFUL_CREATION,
     type: InternSchedule,
   })
-  @ApiResponse({ status: 404, description: BAD_REQUEST })
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @Post()
   async create(
@@ -111,7 +111,7 @@ export class InternScheduleController {
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
-    const internSchedule = await this.internScheduleService.findOne(id);
+    const internSchedule = await this.internScheduleService.findOneByIntern(id);
     return { message: SUCCESSFUL_FETCH, data: internSchedule };
   }
 
@@ -125,6 +125,7 @@ export class InternScheduleController {
     description: SUCCESSFUL_UPDATE,
     type: InternSchedule,
   })
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async update(
@@ -150,6 +151,7 @@ export class InternScheduleController {
     status: 200,
     description: SUCCESSFUL_DELETION,
   })
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async remove(
