@@ -53,6 +53,9 @@ export class AuthController {
     return await this.authService.login(id);
   }
 
+  // Esta ruta es publica ya que debido a que todas las rutas estan protegidas implicitamente
+  // por la configuracion global de Auth, cada ruta necesita un JWT para que se puedan realizar
+  // solicitudes, pero esta es necesario que sea publica para que el refreshToken pueda actualizarse
   @Public()
   @UseGuards(RefreshJwtAuthGuard)
   @ApiBearerAuth()
