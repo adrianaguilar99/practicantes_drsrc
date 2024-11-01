@@ -25,12 +25,12 @@ export class DepartmentsService {
     createDepartmentDto: CreateDepartmentDto,
     { fullName, role, userId }: IRequestUser,
   ) {
+    const newDepartment =
+      this.departmentsRepository.create(createDepartmentDto);
     try {
-      const newDepartment =
-        this.departmentsRepository.create(createDepartmentDto);
-
       const createdDepartment =
         await this.departmentsRepository.save(newDepartment);
+      const { interns, supervisors, ...data } = createdDepartment;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -38,7 +38,7 @@ export class DepartmentsService {
           role,
         },
         'CREATE DEPARTMENT',
-        { id: createdDepartment.id, data: createdDepartment.name },
+        data,
         'SUCCESS',
       );
       return createdDepartment;
@@ -50,7 +50,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO CREATE DEPARTMENT',
-        { id: null, data: createDepartmentDto.name },
+        createDepartmentDto,
         'FAILED TO CREATE DEPARTMENT',
         error.message,
       );
@@ -93,6 +93,7 @@ export class DepartmentsService {
       });
       const updatedDepartment =
         await this.departmentsRepository.save(departmentToUpdate);
+      const { interns, supervisors, ...data } = updatedDepartment;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -100,7 +101,7 @@ export class DepartmentsService {
           role,
         },
         'UPDATE DEPARTMENT',
-        { id, data: updatedDepartment.name },
+        data,
         'SUCCESS',
       );
       return updatedDepartment;
@@ -112,7 +113,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO UPDATE DEPARTMENT',
-        { id, data: `${updateDepartmentDto.name}` },
+        updateDepartmentDto,
         'FAILED TO UPDATE DEPARTMENT',
         error.message,
       );
@@ -124,6 +125,7 @@ export class DepartmentsService {
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingDepartment = await this.findOne(id);
+    const { interns, supervisors, ...data } = existingDepartment;
     try {
       const deletedDepartment = await this.departmentsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -133,7 +135,7 @@ export class DepartmentsService {
           role,
         },
         'DELETE DEPARTMENT',
-        { id, data: existingDepartment.name },
+        data,
         'SUCCESS',
       );
       return deletedDepartment.affected;
@@ -145,7 +147,7 @@ export class DepartmentsService {
           role,
         },
         'TRY TO DELETE DEPARTMENT',
-        { id, data: existingDepartment.name },
+        data,
         'FAILED TO DELETE DEPARTMENT',
         error.message,
       );
@@ -182,7 +184,7 @@ export class DepartmentsService {
         'DELETE ALL DEPARTMENTS',
         {
           id: departments.toString(),
-          data: `${[...departmentsWithoutRelations]}`,
+          data: `${departments}`,
         },
         'SUCCESS',
       );

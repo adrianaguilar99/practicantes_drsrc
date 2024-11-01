@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  ACCESS_TO_ALL,
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
@@ -119,9 +120,7 @@ export class InternFilesController {
 
   @Get()
   @HttpCode(200)
-  @ApiOperation({
-    summary: `${READ_ALL_RECORDS} All users can access this endpoint`,
-  })
+  @ApiOperation({ summary: `${READ_ALL_RECORDS} ${ACCESS_TO_ALL}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -139,9 +138,7 @@ export class InternFilesController {
 
   @Get(':id')
   @HttpCode(200)
-  @ApiOperation({
-    summary: `${READ_RECORD} All users can access this endpoint`,
-  })
+  @ApiOperation({ summary: `${READ_RECORD} ${ACCESS_TO_ALL}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -157,9 +154,7 @@ export class InternFilesController {
 
   @Get(':internId/:fileName')
   @HttpCode(200)
-  @ApiOperation({
-    summary: `${READ_RECORD} All users can access this endpoint`,
-  })
+  @ApiOperation({ summary: `${READ_RECORD} ${ACCESS_TO_ALL}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,

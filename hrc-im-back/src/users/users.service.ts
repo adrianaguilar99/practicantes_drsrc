@@ -47,6 +47,15 @@ export class UsersService {
     const newUser = this.usersRepository.create(createUserDto);
     try {
       const savedUser = await this.usersRepository.save(newUser);
+      const {
+        intern,
+        internComents,
+        supervisor,
+        password,
+        isActive,
+        hashedRefreshToken,
+        ...data
+      } = savedUser;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -54,10 +63,7 @@ export class UsersService {
           role,
         },
         'CREATE USER',
-        {
-          id: savedUser.id,
-          data: `${savedUser.firstName} ${savedUser.lastName}`,
-        },
+        data,
         'SUCCESS',
       );
       return savedUser;
@@ -69,10 +75,7 @@ export class UsersService {
           role,
         },
         'TRY TO CREATE USER',
-        {
-          id: null,
-          data: `${createUserDto.firstName} ${createUserDto.lastName}`,
-        },
+        createUserDto,
         'FAILED TO CREATE USER',
         error.message,
       );
@@ -167,6 +170,15 @@ export class UsersService {
     if (lastName) existingUser.lastName = lastName;
     try {
       const updatedUser = await this.usersRepository.save(existingUser);
+      const {
+        intern,
+        internComents,
+        supervisor,
+        password,
+        isActive,
+        hashedRefreshToken,
+        ...data
+      } = updatedUser;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -174,10 +186,7 @@ export class UsersService {
           role,
         },
         'UPDATE USER',
-        {
-          id,
-          data: `${updatedUser.firstName} ${updatedUser.lastName}`,
-        },
+        data,
         'SUCCESS',
       );
       return updatedUser;
@@ -189,7 +198,7 @@ export class UsersService {
           role,
         },
         'TRY TO UPDATE USER',
-        { id, data: `${updateUserDto.firstName} ${updateUserDto.lastName}` },
+        updateUserDto,
         'FAILED TO UPDATE USER',
         error.message,
       );
@@ -268,6 +277,15 @@ export class UsersService {
 
   async physicalRemove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingUser = await this.findOne(id);
+    const {
+      intern,
+      internComents,
+      supervisor,
+      password,
+      isActive,
+      hashedRefreshToken,
+      ...data
+    } = existingUser;
     try {
       const removedUser = await this.usersRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -277,7 +295,7 @@ export class UsersService {
           role,
         },
         'REMOVE USER',
-        { id, data: `${existingUser.firstName} ${existingUser.lastName}` },
+        data,
         'SUCCESS',
       );
       return removedUser.affected;
@@ -289,7 +307,7 @@ export class UsersService {
           role,
         },
         'TRY TO REMOVE USER',
-        { id, data: `${existingUser.firstName} ${existingUser.lastName}` },
+        data,
         'FAILED TO REMOVE USER',
         error.message,
       );

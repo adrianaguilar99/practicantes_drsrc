@@ -60,6 +60,7 @@ export class SupervisorsService {
     try {
       const createdSupervisor =
         await this.supervisorsRepository.save(newSupervisor);
+      const { user, ...data } = createdSupervisor;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -67,19 +68,11 @@ export class SupervisorsService {
           role,
         },
         'CREATE SUPERVISOR',
-        {
-          id: createdSupervisor.id,
-          data: `${createdSupervisor.user.firstName} ${createdSupervisor.user.lastName}`,
-        },
+        data,
         'SUCCESS',
       );
       return createdSupervisor;
     } catch (error) {
-      await this.usersService.physicalRemove(user.id, {
-        fullName,
-        role,
-        userId,
-      });
       await this.usersService.physicalRemove(user.id, {
         fullName,
         role,
@@ -92,7 +85,7 @@ export class SupervisorsService {
           role,
         },
         'TRY TO CREATE SUPERVISOR',
-        { id: null, data: `${user.firstName} ${user.lastName}` },
+        createSupervisorDto,
         'FAILED TO CREATE SUPERVISOR',
         error.message,
       );
@@ -155,6 +148,7 @@ export class SupervisorsService {
       existingSupervisor.phone = phone ?? existingSupervisor.phone;
       const updatedSupervisor =
         await this.supervisorsRepository.save(existingSupervisor);
+      const { user, ...data } = updatedSupervisor;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -162,10 +156,7 @@ export class SupervisorsService {
           role,
         },
         'UPDATE SUPERVISOR',
-        {
-          id,
-          data: `${updatedSupervisor.user.firstName} ${updatedSupervisor.user.lastName}`,
-        },
+        data,
         'SUCCESS',
       );
       return updatedSupervisor;
@@ -177,10 +168,7 @@ export class SupervisorsService {
           role,
         },
         'TRY TO UPDATE SUPERVISOR',
-        {
-          id,
-          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
-        },
+        UpdateSupervisorDto,
         'FAILED TO UPDATE SUPERVISOR',
         error.message,
       );
@@ -190,6 +178,7 @@ export class SupervisorsService {
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingSupervisor = await this.findOne(id);
+    const { user, ...data } = existingSupervisor;
     try {
       const deletedSupervisor = await this.supervisorsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -199,10 +188,7 @@ export class SupervisorsService {
           role,
         },
         'DELETE SUPERVISOR',
-        {
-          id,
-          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
-        },
+        data,
         'SUCCESS',
       );
       return deletedSupervisor.affected;
@@ -214,10 +200,7 @@ export class SupervisorsService {
           role,
         },
         'TRY TO DELETE SUPERVISOR',
-        {
-          id,
-          data: `${existingSupervisor.user.firstName} ${existingSupervisor.user.lastName}`,
-        },
+        data,
         'FAILED TO DELETE SUPERVISOR',
         error.message,
       );

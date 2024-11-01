@@ -28,6 +28,7 @@ export class PropertiesService {
     const newProperty = this.propertiesRepository.create(createPropertyDto);
     try {
       const createdProperty = await this.propertiesRepository.save(newProperty);
+      const { interns, ...data } = createdProperty;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -35,7 +36,7 @@ export class PropertiesService {
           role,
         },
         'CREATE PROPERTY',
-        { id: createdProperty.id, data: createdProperty.name },
+        data,
         'SUCCESS',
       );
       return createdProperty;
@@ -47,7 +48,7 @@ export class PropertiesService {
           role,
         },
         'TRY TO CREATE PROPERTY',
-        { id: null, data: createPropertyDto.name },
+        createPropertyDto,
         'FAILED TO CREATE PROPERTY',
         error.message,
       );
@@ -90,6 +91,7 @@ export class PropertiesService {
       });
       const updatedProperty =
         await this.propertiesRepository.save(propertyToUpdate);
+      const { interns, ...data } = updatedProperty;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -97,7 +99,7 @@ export class PropertiesService {
           role,
         },
         'UPDATE PROPERTY',
-        { id, data: updatedProperty.name },
+        data,
         'SUCCESS',
       );
       return updatedProperty;
@@ -109,7 +111,7 @@ export class PropertiesService {
           role,
         },
         'TRY TO UPDATE PROPERTY',
-        { id, data: updatePropertyDto.name },
+        updatePropertyDto,
         'FAILED TO UPDATE PROPERTY',
         error.message,
       );
@@ -121,6 +123,7 @@ export class PropertiesService {
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingProperty = await this.findOne(id);
+    const { interns, ...data } = existingProperty;
     try {
       const deletedProperty = await this.propertiesRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -130,7 +133,7 @@ export class PropertiesService {
           role,
         },
         'DELETE PROPERTY',
-        { id, data: existingProperty.name },
+        data,
         'SUCCESS',
       );
       return deletedProperty.affected;
@@ -142,7 +145,7 @@ export class PropertiesService {
           role,
         },
         'TRY TO DELETE PROPERTY',
-        { id, data: existingProperty.name },
+        data,
         'FAILED TO DELETE PROPERTY',
         error.message,
       );
@@ -172,10 +175,7 @@ export class PropertiesService {
           role,
         },
         'DELETE ALL PROPERTIES',
-        {
-          id: properties.toString(),
-          data: `${[...propertiesWithoutRelations]}`,
-        },
+        properties,
         'SUCCESS',
       );
 

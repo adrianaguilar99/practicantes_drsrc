@@ -28,6 +28,7 @@ export class CareersService {
     const newCareer = this.careersRepository.create(createCareerDto);
     try {
       const createdCareer = await this.careersRepository.save(newCareer);
+      const { interns, ...data } = createdCareer;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -35,7 +36,7 @@ export class CareersService {
           role,
         },
         'CREATE CAREER',
-        { id: createdCareer.id, data: createdCareer.name },
+        data,
         'SUCCESS',
       );
       return createdCareer;
@@ -47,7 +48,7 @@ export class CareersService {
           role,
         },
         'TRY TO CREATE CAREER',
-        { id: null, data: createCareerDto.name },
+        createCareerDto,
         'FAILED TO CREATE CAREER',
         error.message,
       );
@@ -89,7 +90,7 @@ export class CareersService {
         ...updateCareerDto,
       });
       const updatedCareer = await this.careersRepository.save(careerToUpdate);
-
+      const { interns, ...data } = updatedCareer;
       await this.systemAuditsService.createSystemAudit(
         {
           id: reqUser.userId,
@@ -97,7 +98,7 @@ export class CareersService {
           role: reqUser.role,
         },
         'UPDATE CAREER',
-        { id, data: updatedCareer.name },
+        data,
         'SUCCESS',
       );
 
@@ -110,7 +111,7 @@ export class CareersService {
           role: reqUser.role,
         },
         'TRY TO UPDATE CAREER',
-        { id, data: `${updateCareerDto.name}` },
+        updateCareerDto,
         'FAILED TO UPDATE CAREER',
         error.message,
       );
@@ -122,6 +123,7 @@ export class CareersService {
 
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingCareer = await this.findOne(id);
+    const { interns, ...data } = existingCareer;
     try {
       const deletedCareer = await this.careersRepository.delete(id);
       if (!deletedCareer.affected)
@@ -133,7 +135,7 @@ export class CareersService {
           role,
         },
         'DELETE CAREER',
-        { id, data: existingCareer.name },
+        data,
         'SUCCESS',
       );
       return deletedCareer.affected;
@@ -145,7 +147,7 @@ export class CareersService {
           role,
         },
         'TRY TO DELETE CAREER',
-        { id, data: existingCareer.name },
+        data,
         'FAILED TO DELETE CAREER',
         error.message,
       );
@@ -179,7 +181,7 @@ export class CareersService {
           role,
         },
         'DELETE ALL CAREERS',
-        { id: careers.toString(), data: `${[...careersWithoutRelations]}` },
+        careers,
         'SUCCESS',
       );
       return `Deleted careers without relations: ${careersWithoutRelations

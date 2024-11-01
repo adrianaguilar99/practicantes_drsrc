@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   Matches,
@@ -18,7 +19,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Monday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -30,7 +31,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Monday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -45,7 +46,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Tuesday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -57,7 +58,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Tuesday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -72,7 +73,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Wednesday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -84,7 +85,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Wednesday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -99,7 +100,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Thursday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -111,7 +112,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Thursday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -126,7 +127,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Friday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -138,7 +139,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Friday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -153,7 +154,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Saturday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -165,7 +166,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Saturday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -180,7 +181,7 @@ export class CreateInternScheduleDto {
     description: 'Time of entry for the intern on Sunday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',
@@ -192,7 +193,7 @@ export class CreateInternScheduleDto {
     description: 'Time of exit for the intern on Sunday.',
     nullable: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Matches(CreateInternScheduleDto.TIME_FORMAT, {
     message: 'Invalid time format, should be HH:MM:SS',

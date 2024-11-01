@@ -23,113 +23,113 @@ export class InternSchedule {
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Monday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'monday_in', type: 'time', nullable: false })
+  @Column({ name: 'monday_in', type: 'time', nullable: true })
   mondayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Monday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'monday_out', type: 'time', nullable: false })
+  @Column({ name: 'monday_out', type: 'time', nullable: true })
   mondayOut: string;
 
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Tuesday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'tuesday_in', type: 'time', nullable: false })
+  @Column({ name: 'tuesday_in', type: 'time', nullable: true })
   tuesdayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Tuesday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'tuesday_out', type: 'time', nullable: false })
+  @Column({ name: 'tuesday_out', type: 'time', nullable: true })
   tuesdayOut: string;
 
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Wednesday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'wednesday_in', type: 'time', nullable: false })
+  @Column({ name: 'wednesday_in', type: 'time', nullable: true })
   wednesdayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Wednesday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'wednesday_out', type: 'time', nullable: false })
+  @Column({ name: 'wednesday_out', type: 'time', nullable: true })
   wednesdayOut: string;
 
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Thursday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'thursday_in', type: 'time', nullable: false })
+  @Column({ name: 'thursday_in', type: 'time', nullable: true })
   thursdayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Thursday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'thursday_out', type: 'time', nullable: false })
+  @Column({ name: 'thursday_out', type: 'time', nullable: true })
   thursdayOut: string;
 
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Friday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'friday_in', type: 'time', nullable: false })
+  @Column({ name: 'friday_in', type: 'time', nullable: true })
   fridayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Friday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'friday_out', type: 'time', nullable: false })
+  @Column({ name: 'friday_out', type: 'time', nullable: true })
   fridayOut: string;
 
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Saturday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'saturday_in', type: 'time', nullable: false })
+  @Column({ name: 'saturday_in', type: 'time', nullable: true })
   saturdayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Saturday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'saturday_out', type: 'time', nullable: false })
+  @Column({ name: 'saturday_out', type: 'time', nullable: true })
   saturdayOut: string;
 
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Sunday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'sunday_in', type: 'time', nullable: false })
+  @Column({ name: 'sunday_in', type: 'time', nullable: true })
   sundayIn: string;
 
   @ApiProperty({
     example: '17:00:00',
     description: 'Time of exit for the intern on Sunday.',
-    nullable: false,
+    nullable: true,
   })
-  @Column({ name: 'sunday_out', type: 'time', nullable: false })
+  @Column({ name: 'sunday_out', type: 'time', nullable: true })
   sundayOut: string;
 
   @Exclude()
