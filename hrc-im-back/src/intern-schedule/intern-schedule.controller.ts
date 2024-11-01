@@ -63,6 +63,7 @@ export class InternScheduleController {
     type: InternSchedule,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @Post()
   async create(
