@@ -20,6 +20,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  ACCESS_TO_ALL,
+  BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
   INTERNAL_SERVER_ERROR,
@@ -60,6 +62,8 @@ export class EmergencyContactController {
     description: SUCCESSFUL_CREATION,
     type: EmergencyContact,
   })
+  @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(201)
@@ -77,9 +81,7 @@ export class EmergencyContactController {
     return { message: SUCCESSFUL_CREATION, data: createdEmergencyContact };
   }
 
-  @ApiOperation({
-    summary: `${READ_ALL_RECORDS} All users can access this endpoint`,
-  })
+  @ApiOperation({ summary: `${READ_ALL_RECORDS} ${ACCESS_TO_ALL}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
@@ -97,9 +99,7 @@ export class EmergencyContactController {
     };
   }
 
-  @ApiOperation({
-    summary: `${READ_RECORD} All users can access this endpoint.`,
-  })
+  @ApiOperation({ summary: `${READ_RECORD} ${ACCESS_TO_ALL}` })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,

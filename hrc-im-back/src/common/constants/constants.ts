@@ -6,6 +6,8 @@ export const LIMIT_RECORDS = 5;
 export const OFFSET_RECORDS = 0;
 
 // JWT MESSAGES
+export const PUBLIC_ROUTE = 'This route is public, anyone can make requests.';
+export const ACCESS_TO_ALL = 'All authenticated users can access this route.';
 export const INVALID_USER_OR_MISSING_REFRESH_TOKEN = 'Invalid refresh token';
 export const REFRESH_TOKEN_DOES_NOT_MATCH = 'Invalid refresh token';
 export const REFRESH_JWT_TOKEN = 'To refresh JWT token';

@@ -14,7 +14,7 @@ export class SystemAuditsService {
   async createSystemAudit(
     responsible: { id: string; fullName: string; role: string },
     action: string,
-    entity: { id: string; data: string },
+    entity: any,
     status: string,
     errorMessage?: string,
   ) {

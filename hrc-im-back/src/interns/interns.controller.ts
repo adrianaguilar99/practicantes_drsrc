@@ -20,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  ACCESS_TO_ALL,
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
@@ -129,8 +130,7 @@ export class InternsController {
   }
 
   @ApiOperation({
-    summary: `${READ_RECORD} Retrieve the intern associated with the given user ID.
-    All users can access this endpoint`,
+    summary: `${READ_RECORD} Retrieve the intern associated with the given user ID. ${ACCESS_TO_ALL}`,
   })
   @ApiResponse({
     status: 200,

@@ -25,11 +25,12 @@ export class InstitutionsService {
     createInstitutionDto: CreateInstitutionDto,
     { userId, role, fullName }: IRequestUser,
   ) {
+    const newInstitution =
+      this.institutionsRepository.create(createInstitutionDto);
     try {
-      const newInstitution =
-        this.institutionsRepository.create(createInstitutionDto);
       const createdInstitution =
         await this.institutionsRepository.save(newInstitution);
+      const { interns, ...data } = createdInstitution;
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
@@ -37,7 +38,7 @@ export class InstitutionsService {
           role,
         },
         'CREATE INSTITUTION',
-        { id: createdInstitution.id, data: createdInstitution.name },
+        data,
         'SUCCESS',
       );
       return createdInstitution;
@@ -49,7 +50,7 @@ export class InstitutionsService {
           role,
         },
         'TRY TO CREATE INSTITUTION',
-        { id: null, data: createInstitutionDto.name },
+        createInstitutionDto,
         'FAILED TO CREATE INSTITUTION',
         error.message,
       );
@@ -92,6 +93,7 @@ export class InstitutionsService {
       });
       const updatedInstitution =
         await this.institutionsRepository.save(institutionToUpdate);
+      const { interns, ...data } = updatedInstitution;
       await this.systemAuditsService.createSystemAudit(
         {
           id: reqUser.userId,
@@ -99,7 +101,7 @@ export class InstitutionsService {
           role: reqUser.role,
         },
         'UPDATE INSTITUTION',
-        { id, data: updatedInstitution.name },
+        data,
         'SUCCESS',
       );
       return updatedInstitution;
@@ -111,7 +113,7 @@ export class InstitutionsService {
           role: reqUser.role,
         },
         'TRY TO UPDATE INSTITUTION',
-        { id, data: `${updateInstitutionDto.name}` },
+        updateInstitutionDto,
         'FAILED TO UPDATE INSTITUTION',
         error.message,
       );
@@ -122,6 +124,7 @@ export class InstitutionsService {
   }
   async remove(id: string, { fullName, role, userId }: IRequestUser) {
     const existingInstitution = await this.findOne(id);
+    const { interns, ...data } = existingInstitution;
     try {
       const deletedInstitution = await this.institutionsRepository.delete(id);
       await this.systemAuditsService.createSystemAudit(
@@ -131,7 +134,7 @@ export class InstitutionsService {
           role,
         },
         'DELETE INSTITUTION',
-        { id, data: existingInstitution.name },
+        data,
         'SUCCESS',
       );
       return deletedInstitution.affected;
@@ -143,7 +146,7 @@ export class InstitutionsService {
           role,
         },
         'TRY TO DELETE INSTITUTION',
-        { id, data: existingInstitution.name },
+        data,
         'FAILED TO DELETE INSTITUTION',
         error.message,
       );
@@ -177,10 +180,7 @@ export class InstitutionsService {
           role,
         },
         'DELETE ALL INSTITUTIONS',
-        {
-          id: institutions.toString(),
-          data: `${[...institutionsWithoutRelations]}`,
-        },
+        institutions,
         'SUCCESS',
       );
 

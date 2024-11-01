@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
@@ -7,6 +6,7 @@ import { EmergencyContact } from 'src/emergency-contact/entities/emergency-conta
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { InternComment } from 'src/intern-comments/entities/intern-comment.entity';
 import { InternFile } from 'src/intern-files/entities/intern-file.entity';
+import { InternSchedule } from 'src/intern-schedule/entities/intern-schedule.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -252,6 +252,11 @@ export class Intern {
     eager: true,
   })
   internFiles: InternFile;
+
+  @OneToOne(() => InternSchedule, (internSchedule) => internSchedule.intern, {
+    eager: true,
+  })
+  internSchedule: InternSchedule;
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
