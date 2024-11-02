@@ -18,6 +18,7 @@ import { handleInternalServerError } from 'src/common/utils';
 import { IRequestUser } from 'src/common/interfaces';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
+import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
 
 @Injectable()
 export class AttendancesService {
@@ -27,11 +28,13 @@ export class AttendancesService {
     private readonly internsService: InternsService,
     private readonly supervisorsService: SupervisorsService,
     private readonly systemAuditsService: SystemAuditsService,
+    private readonly userNotificationsGateway: UserNotificationsGateway,
   ) {}
 
   async registerEntry(internCode: string, timestamp: Date) {
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
+    console.log(existingIntern.user);
 
     // Validacion de que registre asistencias solo en su periodo
     validateAttendancePeriod(existingIntern, timestamp);
@@ -67,7 +70,13 @@ export class AttendancesService {
           worked_hours: null,
           isLate: true,
         });
-        return;
+        this.userNotificationsGateway.emitEvent('attendance', {
+          internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          internInternshipDepartment: existingIntern.internshipDepartment.name,
+          attendanceType: AttendanceStatuses.ABSENCE,
+          notificationDate: new Date(),
+        });
+        return 'You have registered an absence, please consult your supervisor or administrator.';
       }
     } catch (error) {
       handleInternalServerError(error.message);
@@ -102,7 +111,13 @@ export class AttendancesService {
           attendanceStatuses: AttendanceStatuses.ENTRY,
           isLate: true,
         });
-        return;
+        this.userNotificationsGateway.emitEvent('attendance', {
+          internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          internInternshipDepartment: existingIntern.internshipDepartment.name,
+          attendanceType: `${AttendanceStatuses.DELAYED_ENTRY}. ${minutesDifference - 15} MINUTOS DE RETRASO`,
+          notificationDate: new Date(),
+        });
+        return 'You have registered a delayed attendance.';
       } catch (error) {
         handleInternalServerError(error.message);
       }
@@ -116,6 +131,13 @@ export class AttendancesService {
         intern: existingIntern,
         attendanceStatuses: AttendanceStatuses.ENTRY,
       });
+      this.userNotificationsGateway.emitEvent('attendance', {
+        internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+        internInternshipDepartment: existingIntern.internshipDepartment.name,
+        attendanceType: AttendanceStatuses.ENTRY,
+        notificationDate: new Date(),
+      });
+      return 'You have recorded normal attendance.';
     } catch (error) {
       handleInternalServerError(error.message);
     }
@@ -153,28 +175,41 @@ export class AttendancesService {
       timestamp,
       scheduledExitDateTime,
     );
-    console.log('registerExit', { minutesDifference });
+    // console.log('registerExit', { minutesDifference });
     if (minutesDifference <= 0) {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
-        AttendanceStatuses.EARLY_EXIT_ASSISTANCE;
+        AttendanceStatuses.EARLY_EXIT_ATTENDANCE;
       attendanceRecord.worked_hours = calculateWorkedHoursInHHMMSS(
         attendanceRecord.entryTime,
         exitTime,
       );
+      try {
+        await this.attendancesRepository.save(attendanceRecord);
+        this.userNotificationsGateway.emitEvent('attendance', {
+          internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          internInternshipDepartment: existingIntern.internshipDepartment.name,
+          attendanceType: AttendanceStatuses.ENTRY,
+          notificationDate: new Date(),
+        });
+        return 'You have registered an attendance with an early exit.';
+      } catch (error) {
+        handleInternalServerError(error.message);
+      }
     } else {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
-        AttendanceStatuses.SUCCESSFUL_ASSISTANCE;
+        AttendanceStatuses.NORMAL_ATTENDANCE;
       attendanceRecord.worked_hours = calculateWorkedHoursInHHMMSS(
         attendanceRecord.entryTime,
         exitTime,
       );
-    }
-    try {
-      await this.attendancesRepository.save(attendanceRecord);
-    } catch (error) {
-      handleInternalServerError(error.message);
+      try {
+        await this.attendancesRepository.save(attendanceRecord);
+        return 'You have registered an attendance with a regular exit.';
+      } catch (error) {
+        handleInternalServerError(error.message);
+      }
     }
   }
 
@@ -254,7 +289,44 @@ export class AttendancesService {
     } else {
       allAttendances = await this.attendancesRepository.find();
     }
-    return allAttendances;
+    const filteredAttendances = allAttendances.map((attendance) => {
+      // filtramos todos los datos innecesarios del practicante para no sobrecargar al front
+      const {
+        externalInternCode,
+        internalInternCode,
+        bloodType,
+        phone,
+        address,
+        schoolEnrollment,
+        internshipStart,
+        internshipEnd,
+        internshipDuration,
+        status,
+        totalInternshipCompletion,
+        career,
+        department,
+        institution,
+        property,
+        emergencyContacts,
+        internComents,
+        internFiles,
+        internSchedule,
+        ...filteredIntern
+      } = attendance.intern;
+      // ahora filtramos todos los datos innecesarios del lugar de practicas
+      const { supervisors, ...filteredInternshipDepartment } =
+        filteredIntern.internshipDepartment;
+
+      //retornamos data limpia
+      return {
+        ...attendance,
+        intern: {
+          ...filteredIntern,
+          internshipDepartment: filteredInternshipDepartment,
+        },
+      };
+    });
+    return filteredAttendances;
   }
 
   async findOne(id: string) {
@@ -264,7 +336,39 @@ export class AttendancesService {
     if (!attendance)
       throw new NotFoundException(`Intern with id: ${id} not found.`);
 
-    return attendance;
+    const {
+      externalInternCode,
+      internalInternCode,
+      bloodType,
+      phone,
+      address,
+      schoolEnrollment,
+      internshipStart,
+      internshipEnd,
+      internshipDuration,
+      status,
+      totalInternshipCompletion,
+      career,
+      department,
+      institution,
+      property,
+      emergencyContacts,
+      internComents,
+      internFiles,
+      internSchedule,
+      ...filteredIntern
+    } = attendance.intern;
+
+    const { supervisors, ...filteredInternshipDepartment } =
+      filteredIntern.internshipDepartment;
+
+    return {
+      ...attendance,
+      intern: {
+        ...filteredIntern,
+        internshipDepartment: filteredInternshipDepartment,
+      },
+    };
   }
 
   async update(
