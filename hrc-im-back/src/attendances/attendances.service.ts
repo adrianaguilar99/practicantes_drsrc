@@ -34,7 +34,7 @@ export class AttendancesService {
   async registerEntry(internCode: string, timestamp: Date) {
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
-    console.log(existingIntern.user);
+    // console.log(existingIntern.user);
 
     // Validacion de que registre asistencias solo en su periodo
     validateAttendancePeriod(existingIntern, timestamp);
@@ -108,7 +108,7 @@ export class AttendancesService {
           entryTime,
           exitTime: null,
           intern: existingIntern,
-          attendanceStatuses: AttendanceStatuses.ENTRY,
+          attendanceStatuses: AttendanceStatuses.DELAYED_ENTRY,
           isLate: true,
         });
         this.userNotificationsGateway.emitEvent('attendance', {
@@ -155,7 +155,9 @@ export class AttendancesService {
 
     if (
       !attendanceRecord ||
-      attendanceRecord.attendanceStatuses !== AttendanceStatuses.ENTRY
+      (attendanceRecord.attendanceStatuses !== AttendanceStatuses.ENTRY &&
+        attendanceRecord.attendanceStatuses !==
+          AttendanceStatuses.DELAYED_ENTRY)
     )
       throw new BadRequestException('There is no entry registered for today.');
 
@@ -189,7 +191,7 @@ export class AttendancesService {
         this.userNotificationsGateway.emitEvent('attendance', {
           internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
           internInternshipDepartment: existingIntern.internshipDepartment.name,
-          attendanceType: AttendanceStatuses.ENTRY,
+          attendanceType: AttendanceStatuses.EARLY_EXIT_ATTENDANCE,
           notificationDate: new Date(),
         });
         return 'You have registered an attendance with an early exit.';
@@ -206,6 +208,12 @@ export class AttendancesService {
       );
       try {
         await this.attendancesRepository.save(attendanceRecord);
+        this.userNotificationsGateway.emitEvent('attendance', {
+          internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+          internInternshipDepartment: existingIntern.internshipDepartment.name,
+          attendanceType: AttendanceStatuses.NORMAL_ATTENDANCE,
+          notificationDate: new Date(),
+        });
         return 'You have registered an attendance with a regular exit.';
       } catch (error) {
         handleInternalServerError(error.message);
@@ -292,8 +300,6 @@ export class AttendancesService {
     const filteredAttendances = allAttendances.map((attendance) => {
       // filtramos todos los datos innecesarios del practicante para no sobrecargar al front
       const {
-        externalInternCode,
-        internalInternCode,
         bloodType,
         phone,
         address,
@@ -337,8 +343,6 @@ export class AttendancesService {
       throw new NotFoundException(`Intern with id: ${id} not found.`);
 
     const {
-      externalInternCode,
-      internalInternCode,
       bloodType,
       phone,
       address,
