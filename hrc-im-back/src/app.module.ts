@@ -19,6 +19,7 @@ import { EmergencyContactModule } from './emergency-contact/emergency-contact.mo
 import { InternFilesModule } from './intern-files/intern-files.module';
 import { InternCommentsModule } from './intern-comments/intern-comments.module';
 import { InternScheduleModule } from './intern-schedule/intern-schedule.module';
+import { AttendancesModule } from './attendances/attendances.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -47,6 +48,7 @@ import dbConfigProduction from './configs/db.config.production';
     InternFilesModule,
     InternCommentsModule,
     InternScheduleModule,
+    AttendancesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
