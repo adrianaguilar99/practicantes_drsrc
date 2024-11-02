@@ -23,6 +23,7 @@ import { UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 import {
   BAD_REQUEST,
+  CONFLICT_ERROR,
   CREATE_RECORD,
   FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
@@ -64,6 +65,7 @@ export class InternScheduleController {
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
   @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @Post()
   async create(

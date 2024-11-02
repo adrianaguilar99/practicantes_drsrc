@@ -16,7 +16,10 @@ import { Department } from 'src/departments/entities/department.entity';
 import { Institution } from 'src/institutions/entities/institution.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
-import { IsAfterDateConstraint } from '../validators';
+import {
+  IsAfterDateConstraint,
+  IsValidInternshipDurationConstraint,
+} from '../validators';
 
 export class CreateInternDto {
   @ApiProperty({
@@ -110,6 +113,7 @@ export class CreateInternDto {
   })
   @IsString()
   @IsNotEmpty()
+  @Validate(IsValidInternshipDurationConstraint)
   internshipDuration: string;
 
   @ApiProperty({
