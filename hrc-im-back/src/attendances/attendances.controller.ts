@@ -69,12 +69,18 @@ export class AttendancesController {
       date.toDateString(),
     );
     if (existingRecord && !existingRecord.exitTime) {
-      await this.attendancesService.registerExit(internCode, date);
-      return { message: 'Successful attendance' };
+      const registeredExit = await this.attendancesService.registerExit(
+        internCode,
+        date,
+      );
+      return { message: registeredExit };
     }
 
-    await this.attendancesService.registerEntry(internCode, date);
-    return { message: 'Successful entry' };
+    const registeredEntry = await this.attendancesService.registerEntry(
+      internCode,
+      date,
+    );
+    return { message: registeredEntry };
   }
 
   @Get()
