@@ -18,9 +18,7 @@ import { InstitutionsService } from 'src/institutions/institutions.service';
 import { PropertiesService } from 'src/properties/properties.service';
 import { IRequestUser } from 'src/common/interfaces';
 import { handleInternalServerError } from 'src/common/utils';
-import { RESOURCE_NAME_ALREADY_EXISTS } from 'src/common/constants/constants';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
-import { convertToInterval } from './helpers';
 
 @Injectable()
 export class InternsService {
@@ -75,11 +73,6 @@ export class InternsService {
         await this.generateUniqueInternCode();
     }
 
-    // Convertimos el tiempo de practicas a un formato valido "INTERVAL"
-    const internshipDurationInterval = convertToInterval(
-      createInternDto.internshipDuration,
-    );
-
     /** Buscamos las relaciones, en caso de que se exista o se este se agregando
      * en el cuerpo de la solicitud, se agrega al nuevo registro
      * Esto se aplica a: Carrera, Departamento e Institucion  */
@@ -115,7 +108,6 @@ export class InternsService {
 
     const newIntern = this.internsRepository.create({
       ...createInternDto,
-      internshipDuration: internshipDurationInterval,
       career,
       department,
       internshipDepartment,
@@ -157,7 +149,9 @@ export class InternsService {
         error.message,
       );
       if (error.code === '23505')
-        throw new ConflictException(`${RESOURCE_NAME_ALREADY_EXISTS}`);
+        throw new ConflictException(
+          'A resource with the same data already exists.',
+        );
       if (error instanceof BadRequestException) throw error;
       handleInternalServerError(error.message);
     }
@@ -192,6 +186,16 @@ export class InternsService {
     });
     if (!intern)
       throw new NotFoundException(`Intern with id: ${id} not found.`);
+
+    return intern;
+  }
+
+  async findOneByInternCode(code: string) {
+    const intern = await this.internsRepository.findOne({
+      where: [{ internalInternCode: code }, { externalInternCode: code }],
+    });
+    if (!intern)
+      throw new NotFoundException(`Intern with code: ${code} not found.`);
 
     return intern;
   }
@@ -277,9 +281,7 @@ export class InternsService {
     if (updateInternDto.internshipEnd)
       existingIntern.internshipEnd = updateInternDto.internshipEnd;
     if (updateInternDto.internshipDuration)
-      existingIntern.internshipDuration = convertToInterval(
-        updateInternDto.internshipDuration,
-      );
+      existingIntern.internshipDuration = updateInternDto.internshipDuration;
 
     if (updateInternDto.careerId) {
       const career = await this.careersService.findOne(

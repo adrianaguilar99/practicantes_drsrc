@@ -8,12 +8,10 @@ import {
   Validate,
 } from 'class-validator';
 import { Intern } from 'src/interns/entities/intern.entity';
-import { IsAfterHourConstraint } from '../validators';
+import { IsAfterHourConstraint } from '../../common/validators';
+import { TIME_FORMAT } from 'src/common/constants/constants';
 
 export class CreateInternScheduleDto {
-  // HH:MM:SS formato de 24 horas para validar horas
-  private static readonly TIME_FORMAT = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
-
   @ApiProperty({
     example: '08:00:00',
     description: 'Time of entry for the intern on Monday.',
@@ -21,9 +19,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   mondayIn: string;
 
   @ApiProperty({
@@ -33,9 +29,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['mondayIn'], {
     message: 'mondayOut must be after mondayIn',
   })
@@ -48,9 +42,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   tuesdayIn: string;
 
   @ApiProperty({
@@ -60,9 +52,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['tuesdayIn'], {
     message: 'tuesdayOut must be after tuesdayIn',
   })
@@ -75,9 +65,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   wednesdayIn: string;
 
   @ApiProperty({
@@ -87,9 +75,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['wednesdayIn'], {
     message: 'wednesdayOut must be after wednesdayIn',
   })
@@ -102,9 +88,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   thursdayIn: string;
 
   @ApiProperty({
@@ -114,9 +98,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['thursdayIn'], {
     message: 'thursdayOut must be after thursdayIn',
   })
@@ -129,9 +111,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   fridayIn: string;
 
   @ApiProperty({
@@ -141,9 +121,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['fridayIn'], {
     message: 'fridayOut must be after fridayIn',
   })
@@ -156,9 +134,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   saturdayIn: string;
 
   @ApiProperty({
@@ -168,9 +144,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['saturdayIn'], {
     message: 'saturdayOut must be after saturdayIn',
   })
@@ -183,9 +157,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   sundayIn: string;
 
   @ApiProperty({
@@ -195,9 +167,7 @@ export class CreateInternScheduleDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(CreateInternScheduleDto.TIME_FORMAT, {
-    message: 'Invalid time format, should be HH:MM:SS',
-  })
+  @Matches(TIME_FORMAT, { message: 'Invalid time format, should be HH:MM:SS' })
   @Validate(IsAfterHourConstraint, ['sundayIn'], {
     message: 'sundayOut must be after sundayIn',
   })

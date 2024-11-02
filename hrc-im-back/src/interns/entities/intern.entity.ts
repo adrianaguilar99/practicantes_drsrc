@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Attendance } from 'src/attendances/entities/attendance.entity';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
 import { Department } from 'src/departments/entities/department.entity';
@@ -95,13 +96,13 @@ export class Intern {
   @ApiProperty({
     example: '202100142',
     description: 'School enrollment number for external interns.',
-    uniqueItems: true,
+    uniqueItems: false,
     nullable: true,
   })
   @Column({
     name: 'school_enrollment',
     type: 'varchar',
-    unique: true,
+    unique: false,
     nullable: true,
   })
   schoolEnrollment: string;
@@ -123,7 +124,7 @@ export class Intern {
   internshipEnd: Date;
 
   @ApiProperty({
-    example: '300:00:00',
+    example: '300 hours',
     description: 'Total hours the practitioner is expected to cover.',
     nullable: false,
   })
@@ -257,6 +258,9 @@ export class Intern {
     eager: true,
   })
   internSchedule: InternSchedule;
+
+  @OneToMany(() => Attendance, (attendances) => attendances.intern)
+  attendances: Attendance[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
