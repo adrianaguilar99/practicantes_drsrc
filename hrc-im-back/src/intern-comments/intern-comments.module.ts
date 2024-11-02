@@ -19,6 +19,7 @@ import { Institution } from 'src/institutions/entities/institution.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
+import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { User } from 'src/users/entities/user.entity';
     SupervisorsService,
     UsersService,
     SystemAuditsService,
+    UserNotificationsGateway,
   ],
 })
 export class InternCommentsModule {}
