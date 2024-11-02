@@ -9,6 +9,7 @@ import { InternsService } from 'src/interns/interns.service';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 import { handleInternalServerError } from 'src/common/utils';
 import { UsersService } from 'src/users/users.service';
+import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
 
 @Injectable()
 export class InternCommentsService {
@@ -18,6 +19,7 @@ export class InternCommentsService {
     private readonly internsService: InternsService,
     private readonly usersService: UsersService,
     private readonly systemAuditsService: SystemAuditsService,
+    private readonly userNotificationsGateway: UserNotificationsGateway,
   ) {}
 
   async create(
@@ -39,6 +41,10 @@ export class InternCommentsService {
         internCommentToCreate,
       );
       const { intern, user, ...data } = savedInternComment;
+      this.userNotificationsGateway.emitEvent(
+        'comment',
+        `Supervisor: ${fullName} realizó un comentario al practicante: ${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
+      );
       await this.systemAuditsService.createSystemAudit(
         {
           id: userId,
