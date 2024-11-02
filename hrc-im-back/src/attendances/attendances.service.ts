@@ -9,12 +9,15 @@ import { Attendance } from './entities/attendance.entity';
 import { Repository } from 'typeorm';
 import { InternsService } from 'src/interns/interns.service';
 import { differenceInMinutes } from 'date-fns';
-import { AttendanceStatuses } from 'src/common/enums';
+import { AttendanceStatuses, UserRole } from 'src/common/enums';
 import {
   calculateWorkedHoursInHHMMSS,
   validateAttendancePeriod,
 } from './helpers';
 import { handleInternalServerError } from 'src/common/utils';
+import { IRequestUser } from 'src/common/interfaces';
+import { SupervisorsService } from 'src/supervisors/supervisors.service';
+import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 
 @Injectable()
 export class AttendancesService {
@@ -22,6 +25,8 @@ export class AttendancesService {
     @InjectRepository(Attendance)
     private readonly attendancesRepository: Repository<Attendance>,
     private readonly internsService: InternsService,
+    private readonly supervisorsService: SupervisorsService,
+    private readonly systemAuditsService: SystemAuditsService,
   ) {}
 
   async registerEntry(internCode: string, timestamp: Date) {
@@ -239,16 +244,98 @@ export class AttendancesService {
     });
   }
 
-  async findAll() {
-    return `This action returns all attendances`;
+  async findAll({ userId, role }: IRequestUser) {
+    let allAttendances: Attendance[];
+    if (role === UserRole.SUPERVISOR) {
+      const { department } = await this.supervisorsService.findByUser(userId);
+      allAttendances = await this.attendancesRepository.find({
+        where: { intern: { internshipDepartment: department } },
+      });
+    } else {
+      allAttendances = await this.attendancesRepository.find();
+    }
+    return allAttendances;
   }
 
   async findOne(id: string) {
-    return `This action returns a #${id} attendance`;
+    const attendance = await this.attendancesRepository.findOne({
+      where: { id },
+    });
+    if (!attendance)
+      throw new NotFoundException(`Intern with id: ${id} not found.`);
+
+    return attendance;
   }
 
-  async update(id: string, updateAttendanceDto: UpdateAttendanceDto) {
-    return `This action updates a #${id} attendance`;
+  async update(
+    id: string,
+    updateAttendanceDto: UpdateAttendanceDto,
+    { fullName, role, userId: userReq }: IRequestUser,
+  ) {
+    const existingAttendace = await this.findOne(id);
+    if (updateAttendanceDto.entryTime)
+      existingAttendace.entryTime = updateAttendanceDto.entryTime;
+    if (updateAttendanceDto.exitTime)
+      existingAttendace.exitTime = updateAttendanceDto.exitTime;
+    if (updateAttendanceDto.attendanceStatuses)
+      existingAttendace.attendanceStatuses =
+        updateAttendanceDto.attendanceStatuses;
+    if (updateAttendanceDto.isLate !== undefined)
+      existingAttendace.isLate = updateAttendanceDto.isLate;
+    existingAttendace.worked_hours = calculateWorkedHoursInHHMMSS(
+      updateAttendanceDto.entryTime,
+      updateAttendanceDto.exitTime,
+    );
+
+    try {
+      const updatedAttendance =
+        await this.attendancesRepository.save(existingAttendace);
+      await this.systemAuditsService.createSystemAudit(
+        { id: userReq, fullName, role },
+        "SUCCESSFUL UPDATE INTERN'S ATTENDACE",
+        updatedAttendance,
+        'SUCCESS',
+      );
+      return updatedAttendance;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userReq, fullName, role },
+        "FAILED TO UPDATE INTERN'S ATTENDACE",
+        updateAttendanceDto,
+        'FAILED',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
+  }
+
+  async resetExit(
+    id: string,
+    { fullName, role, userId: userReq }: IRequestUser,
+  ) {
+    const existingAttendace = await this.findOne(id);
+    existingAttendace.exitTime = null;
+    existingAttendace.attendanceStatuses = AttendanceStatuses.ENTRY;
+    try {
+      const resetInternExit =
+        await this.attendancesRepository.save(existingAttendace);
+      await this.systemAuditsService.createSystemAudit(
+        { id: userReq, fullName, role },
+        "SUCCESSFUL RESET OF THE INTERN'S EXIT TIME",
+        resetInternExit,
+        'SUCCESS',
+      );
+      return resetInternExit;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: userReq, fullName, role },
+        "FAILED TO RESET OF THE INTERN'S EXIT TIME",
+        `${existingAttendace.exitTime}, ${existingAttendace.attendanceStatuses}`,
+        'FAILED',
+        error.message,
+      );
+      handleInternalServerError(error.message);
+    }
   }
 
   // remove(id: string) {

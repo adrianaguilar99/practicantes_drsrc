@@ -124,7 +124,9 @@ export class InternsController {
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @HttpCode(200)
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IApiResponse<any>> {
     const intern = await this.internsService.findOne(id);
     return { message: SUCCESSFUL_FETCH, data: intern };
   }
@@ -140,7 +142,9 @@ export class InternsController {
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @HttpCode(200)
   @Get(':id/user')
-  async findOneByUserId(@Param('id', ParseUUIDPipe) id: string) {
+  async findOneByUserId(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IApiResponse<any>> {
     const intern = await this.internsService.findOneByUserId(id);
     return { message: SUCCESSFUL_FETCH, data: intern };
   }
@@ -164,7 +168,7 @@ export class InternsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateInternDto: UpdateInternDto,
     @Req() req,
-  ) {
+  ): Promise<IApiResponse<any>> {
     const user = req.user;
     const updatedIntern = await this.internsService.update(
       id,
@@ -186,7 +190,10 @@ export class InternsController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
   @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
+  ): Promise<IApiResponse<any>> {
     const user = req.user;
     const deletedIntern = await this.internsService.remove(id, user);
     return { message: SUCCESSFUL_DELETION, data: deletedIntern };

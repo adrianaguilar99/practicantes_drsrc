@@ -13,6 +13,9 @@ export const REFRESH_TOKEN_DOES_NOT_MATCH = 'Invalid refresh token';
 export const REFRESH_JWT_TOKEN = 'To refresh JWT token';
 export const SUCCESSFUL_REFRESH_TOKEN = 'Token successfully refreshed.';
 
+// HH:MM:SS formato de 24 horas para validar horas
+export const TIME_FORMAT = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+
 // DECORATOR KEYS
 export const USER_ROLES_KEY = 'userRoles';
 export const IS_PUBLIC_KEY = 'IS_PUBLIC';
