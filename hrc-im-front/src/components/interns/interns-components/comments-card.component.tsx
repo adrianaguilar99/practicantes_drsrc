@@ -8,6 +8,9 @@ import { useSelector } from "react-redux";
 import { decryptData } from "../../../functions/encrypt-data.function";
 import { useState } from "react";
 import { FormModal } from "../../modals/form-modal.component";
+import { ConfirmationModal } from "../../modals/confirmation-modal.component";
+import { deleteComment } from "../../../api/interns/intern-comments/intern-comments.api";
+import { enqueueSnackbar } from "notistack";
 
 interface CommentCardProps {
     id: string;
@@ -19,6 +22,7 @@ interface CommentCardProps {
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({ id, name, time, timeUpdated, comment, onUpdate }) => {
+    const [confirmationOpen, setConfirmationOpen] = useState(false);
     const userFullName = sessionStorage.getItem('_ProfileName');
     const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
     const [isHovered, setIsHovered] = useState(false);
@@ -26,9 +30,36 @@ export const CommentCard: React.FC<CommentCardProps> = ({ id, name, time, timeUp
     const isOwner = userFullName === name || userRol === "ADMINISTRATOR";
     const showOptions = isOwner || userRol === "ADMINISTRATOR";
 
+    const DeleteComment = () => {
+        const userToken = sessionStorage.getItem("_Token") || "";
+        try {
+            deleteComment(userToken, id).then(() => {
+                enqueueSnackbar(
+                    "Comentario eliminado con exito",
+                    { variant: "success" }
+                   
+                  );
+            }).catch((error) => {
+                enqueueSnackbar(
+                    "Error al eliminar el comentario: " + error,
+                    { variant: "error" }
+                   
+                  );
+            }).finally(() => {
+                onUpdate();
+            })
+           
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const ModalClose = () => {
         setOpen(false); 
       };
+
+      const ConfirmationModalOpen = () => setConfirmationOpen(true);
+      const ConfirmationModalClose = () => setConfirmationOpen(false);
+      
     return (
         <div 
             className={`comment-card ${isOwner ? 'mine' : ''}`}
@@ -58,7 +89,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({ id, name, time, timeUp
                     <IconButton onClick={() => setOpen(true)}>
                         <EditOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={ConfirmationModalOpen}>
                         <DeleteOutlineOutlinedIcon />
                     </IconButton>
                 </div>
@@ -72,6 +103,13 @@ export const CommentCard: React.FC<CommentCardProps> = ({ id, name, time, timeUp
           title="Editar Comentario"
           entity={"comment"}
         />
+      <ConfirmationModal
+        open={confirmationOpen}
+        onConfirm={DeleteComment}
+        onCancel={ConfirmationModalClose}
+        title="Eliminar Comentario"
+        message={"¿Estas seguro que quieres eliminar este comentario?"}
+      />
         </div>
     );
 };

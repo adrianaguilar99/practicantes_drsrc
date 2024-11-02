@@ -20,6 +20,7 @@ const setStoredRole = (role: string) => {
 const initialState = {
   rol: getStoredRole(),
   userName: getStoredUserName(),
+  isLoaded: false,
 };
 
 const authSlice = createSlice({
@@ -35,12 +36,16 @@ const authSlice = createSlice({
     logout: (state) => {
       state.rol = null;
       state.userName = null;
+      state.isLoaded = false;
       clearStoredRole(); 
       clearStoredUserName();
+    },
+    setIsLoaded: (state, action) => {
+      state.isLoaded = action.payload;  
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, setIsLoaded } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -4,6 +4,8 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { useEffect, useState } from "react";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import MyAvatar from "../../assets/images/avatar-test.jpg";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {
   ButtonComponent,
   EditButton,
@@ -69,6 +71,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import { patchInternFunction } from "../../functions/intern-functions/patch-intern-function";
 import { enqueueSnackbar } from "notistack";
 import { ca } from "date-fns/locale";
+import { InternsSchedule } from "../../components/interns/interns-schedule/intern-schedule.component";
 
 const InternInformationPage = () => {
   const userToken = sessionStorage.getItem("_Token") || "";
@@ -200,9 +203,6 @@ const InternInformationPage = () => {
       },
     });
   };
-  //  else{
-  //    alert("Por favor, rellene todos los campos");
-  //  }
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -240,25 +240,16 @@ const InternInformationPage = () => {
         setInternCheckIn(fetchedData.data.entryTime);
         setInternCheckOut(fetchedData.data.exitTime);
         setInternPhoto(fetchedData.data.internFiles?.photo || "");
-        setInternProperty(fetchedData.data.property.name || "");
-  
+        setInternProperty(fetchedData.data.property.name || "");  
         setPropertyID(fetchedData.data.property.id);
-        setInternShipDepartmentID(fetchedData.data.internshipDepartment.id);
-  
+        setInternShipDepartmentID(fetchedData.data.internshipDepartment.id);  
         console.log("Foto del practico: ", fetchedData.data.internFiles?.compiledDocuments);
         setInternFile(fetchedData.data.internFiles?.compiledDocuments || "");
-  
         setHasError(false);
-  
-        // Load related data based on intern type
         const relatedDataFetches = [fetchDepartments(), fetchProperties()];
-  
-        // If the intern is external, fetch additional data
         if (fetchedData.data.department === null) {
           relatedDataFetches.push(fetchInstitutions(), fetchCareers());
         }
-  
-        // Wait until all necessary data is fetched
         await Promise.all(relatedDataFetches);
       } else {
         setInternData(undefined);
@@ -425,21 +416,6 @@ const InternInformationPage = () => {
     Open();
   };
 
-  const Files = [
-    {
-      name: "Copia de Credencial",
-    },
-    {
-      name: "Copia de Credencial",
-    },
-    {
-      name: "Copia de Credencial",
-    },
-    {
-      name: "Copia de Credencial",
-    },
-  ];
-
   return (
     <div className="body-page">
       <Navbar />
@@ -478,19 +454,50 @@ const InternInformationPage = () => {
                     aria-label="lab API tabs example"
                   >
                     <Tab
+                      icon={<InfoOutlinedIcon sx={{ fontSize: "1.4rem" }} />}
+                      iconPosition="start"
                       label="Informacion"
                       value="1"
                       sx={{ fontSize: ".7rem" }}
                     />
-                    <Tab label="Horario" value="2" sx={{ fontSize: ".7rem" }} />
+                    <Tab icon={<CalendarMonthIcon sx={{ fontSize: "1.4rem" }} />} iconPosition="start" label="Horario" value="2" sx={{ fontSize: ".7rem" }} />
                   </TabList>
-                  <TabPanel value="1" className="info-section-interns">
+                  <TabPanel value="1" className="info-section-interns" style={{ padding: "0px" }}>
                     <div className="info-container">
                       <section className="info-section-left">
-                        <h3>
+                       
+                     
+                        {editable ? (
+                          <>
+                            <InfoRow
+                          label="Nombres:"
+                          value={InternFirstName}
+                          id="firstName"
+                          type="text"
+                          editable={editable}
+                          show={
+                            InternType === "Externo" || InternType === "Interno"
+                          }
+                          onChange={(value) => setInternFirstName(value || "")}
+                        />
+                          <InfoRow
+                          label="Apellidos:"
+                          value={InternLastName}
+                          id="lastName"
+                          type="text"
+                          editable={editable}
+                          show={
+                            InternType === "Externo" || InternType === "Interno"
+                          }
+                          onChange={(value) => setInternLastName(value || "")}
+                        />
+                          </>
+                        ):(
+                          <h3>
                           {internData?.user?.firstName}{" "}
                           {internData?.user?.lastName}
                         </h3>
+                        )}
 
                         <InfoRow
                           label="Tel Personal:"
@@ -661,13 +668,9 @@ const InternInformationPage = () => {
                             <label>Archivos del practicante:</label>
                           </div>
                           <div className="info-section-left-options-encargados">
-                            {Files.length > 1 ? (
                               <button onClick={ClickOpenFiles}>
-                                {"( " + Files.length + " )"} Ver todos
+                                {"( " + 2 + " )"} Ver todos
                               </button>
-                            ) : (
-                              Files.length === 1 && <p>{Files[0].name}</p>
-                            )}
                           </div>
                         </div>
 
@@ -756,22 +759,17 @@ const InternInformationPage = () => {
                           ModalClose={ClickCloseEmergency}
                         />
                         <InternFilesModal
-                          data={Files}
+                          internId={internData?.id || ""}
+                          filesId={internData?.internFiles?.id || ""}
                           open={ModalFiles}
                           ModalClose={ClickCloseFiles}
+                          onUpdate={() => fetchData()}
                         />
                       </section>
 
                       <section className="info-section-right">
                         <div className="info-section-right-options">
                         <Avatar alt="Remy Sharp" sx={{ width:  170, height: 170,marginBottom: "2%" }} src={Photo} />
-                          <a
-                            href={File}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Ver PDF
-                          </a>
                           <div className="info-section-right-options-buttons">
                             {userRol != "SUPERVISOR" && (
                               <>
@@ -796,6 +794,7 @@ const InternInformationPage = () => {
                                         `/${internData?.id}`
                                     )
                                   }
+                                  style={{ maxHeight: "45px" }}
                                 />
                               </>
                             )}
@@ -909,7 +908,9 @@ const InternInformationPage = () => {
                       <CommentsTable internId={internData?.id || ""} />
                     </div>
                   </TabPanel>
-                  <TabPanel value="2">Item Two</TabPanel>
+                  <TabPanel  value="2"  style={{ padding: "0px" }}>
+                    <InternsSchedule internId={internData?.id || ""}  />
+                  </TabPanel>
                 </Box>
               </TabContext>
             </section>

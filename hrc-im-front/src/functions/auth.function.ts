@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { login, logout } from '../redux/auth-redux/authSlice'; // Asegúrate de que la ruta sea correcta
 import { encryptData } from './encrypt-data.function';
 import { clearUserName } from '../redux/auth-redux/profileSlice';
-import { setIndex, setInternsDropdownOpen } from '../redux/sidebar-redux/sidebarSlice';
+import { setIndex, setInternsDropdownOpen, setUsersDropdownOpen } from '../redux/sidebar-redux/sidebarSlice';
 
 
 export function useGetAccessToken() {
@@ -11,7 +11,7 @@ export function useGetAccessToken() {
     const getAccessToken = () => {
         console.log('Obteniendo el token...');
         const token = sessionStorage.getItem('_Token');
-        console.log('token obtenido:', token); // Muestra el token
+        console.log('token obtenido:', token); 
 
         if (!token) {
             throw new Error('No se encontró el token en sessionStorage');
@@ -63,12 +63,12 @@ export function convertToken(accessToken: string) {
 export function useLogout() {
     const dispatch = useDispatch();
     const logoutfunction = () => {
-        window.location.href = '/loading-page';
         sessionStorage.clear();
         dispatch(login(''));
         dispatch(logout());
         dispatch(setIndex(0));
         dispatch(setInternsDropdownOpen(false))
+        dispatch(setUsersDropdownOpen(false))
         dispatch(clearUserName());
       
     };

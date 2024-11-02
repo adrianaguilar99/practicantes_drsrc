@@ -86,7 +86,7 @@ const LoginPage = () => {
         const tokenData = getAccessToken();
         if (tokenData) {
           enqueueSnackbar("Autenticación exitosa", { variant: "success" });
-          navigate("/loading-page-login");
+          navigate("/home");
         }
         return;
       } catch (error) {

@@ -9,6 +9,8 @@ import { SupervisorFormModal } from '../supervisors/supervisors-modal.component'
 import { AdminsFormModal } from '../supervisors/admins-modal.component';
 import { PropertiesFormModal } from '../properties/properties-modal.component';
 import { CommentFormModal } from '../interns/interns-components/comments-modal.component';
+import { InternScheduleModal } from '../interns/interns-schedule/intern-schedule-modal.component';
+import { DataSchedule } from '../../interfaces/interns/intern-schedule/intern-schedule.interface';
 
 interface FormModalPropsMain {
     open: boolean;
@@ -26,6 +28,7 @@ interface FormModalPropsMain {
     data?: any;
     onCancel: () => void;
     onSuccess: () => void;
+    onAddSchedule?: (schelude: DataSchedule) => void;
   }
 
   export const FormModal: React.FC<FormModalPropsMain> = ({ open, onCancel, onConfirm, title, type, entity, data }) => {
@@ -96,6 +99,7 @@ interface FormModalPropsMain {
             {entity === "properties" ? <PropertiesFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "report" ? <ReportGenerationModal onCancel={onCancel} onSuccess={onConfirm} initialDate={data.initialDate} finalDate={data.finalDate} /> : null}
             {entity === "comment" ? <CommentFormModal type='edit' data={{...data}} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "schedule" ? <InternScheduleModal type={type} data={data} onCancel={onCancel} onSuccess={onConfirm}/> : null}
           </Box>
         </Box>
       </Modal>

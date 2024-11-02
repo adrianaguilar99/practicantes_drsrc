@@ -17,3 +17,16 @@ export function DateConversor(dateString: string): string {
   }
   
 
+
+  export const formatTime = (time : any) => {
+    if (typeof time === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(time)) {
+        return time;
+    }
+
+    if (typeof time === 'string' && /^\d{2}:\d{2}$/.test(time)) {
+        return `${time}:00`;
+    }
+    return time instanceof Date && !isNaN(time as any)
+        ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        : "";
+};

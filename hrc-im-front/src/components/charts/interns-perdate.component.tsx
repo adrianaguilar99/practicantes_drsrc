@@ -2,40 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getInternsByDate } from '../../api/charts/charts.api';
 
-interface ChartData {
+export interface ChartData {
   date: string;
   interns: number;
 }
-
-const InternsBarChart: React.FC = () => {
-  const [chartData, setChartData] = useState<ChartData[]>([]);
-  const userToken = sessionStorage.getItem("_Token") || "";  
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const dataByDate = await getInternsByDate(userToken);
-        const formattedData = Object.keys(dataByDate)
-          .map((date) => ({
-            date,  
-            interns: dataByDate[date],
-          }))
-          .sort((a, b) => {
-
-            const dateA = new Date(a.date.split('/').reverse().join('-'));
-            const dateB = new Date(b.date.split('/').reverse().join('-'));
-            return dateA.getTime() - dateB.getTime();
-          });
-  
-        setChartData(formattedData);
-      } catch (error) {
-        console.error("Error loading data:", error);
-      }
-    };
-  
-    loadData();
-  }, []);
-  
+ 
+interface InternsBarChartProps {
+  chartData: any[];
+}
+const InternsBarChart: React.FC<InternsBarChartProps> = ({ chartData }) => {
 
   return (
     <div>

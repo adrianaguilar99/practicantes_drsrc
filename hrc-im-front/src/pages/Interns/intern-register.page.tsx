@@ -31,6 +31,8 @@ import { DataEmergencyContact } from "../../interfaces/interns/emergency-contact
 import { set } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Contacts } from "@mui/icons-material";
+import { InternScheduleModal, ScheduleRegister } from "../../components/interns/interns-schedule/intern-schedule-modal.component";
+import { DataSchedule } from "../../interfaces/interns/intern-schedule/intern-schedule.interface";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -65,6 +67,7 @@ const InternRegisterPage = () => {
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("");
   const [InternContacts = [], setInternContacts] = useState<DataEmergencyContact[]>([]);
+  const [InternSchedule, setInternSchedule] = useState<DataSchedule[]>([]);
 
   interface EmergencyContacts {
     name: string;
@@ -415,8 +418,13 @@ useEffect(() => {
 }, [summitPressed]);
 
 
+
   const ReceiveContacts = (contacts : DataEmergencyContact[]) => {
     setInternContacts(contacts);
+  }
+
+  const ReceiveSchedule = (schedules : DataSchedule[]) => {
+    setInternSchedule(schedules);
   }
 
   return (
@@ -723,24 +731,6 @@ useEffect(() => {
                     typeError={errors.internEndDate}
                   />
                   <RegisterRow
-                    label="Hora entrada:"
-                    onChange={(value) => setInternCheckIn(value as string  || "")}
-                    id="checkIn"
-                    type="time"
-                    show={true}
-                    validate={errors.internCheckIn ? "Error" : "Normal"}
-                    typeError={errors.internCheckIn}
-                  />
-                  <RegisterRow
-                    label="Hora salida:"
-                    onChange={(value) => setInternCheckOut(value as string  || "")}
-                    id="checkOut"
-                    type="time"
-                    show={true}
-                    validate={errors.internCheckOut ? "Error" : "Normal"}
-                    typeError={errors.internCheckOut}
-                  />
-                  <RegisterRow
                     label="Total de horas a cubrir:"
                     onChange={(value) => setInternTotalTime(value as string  || "")}
                     id="tiempoTotal"
@@ -749,6 +739,15 @@ useEffect(() => {
                     validate={errors.internTotalTime ? "Error" : "Normal"}
                     typeError={errors.internTotalTime}
                   />
+
+                  <div className="register-intern-divider">
+                    <ContactPhoneRoundedIcon /> <h3>Horario</h3>
+                  </div>
+
+                  <ScheduleRegister />
+
+                 
+                   
                  
                 </section>
                 <section className="register-section-right">
@@ -763,6 +762,7 @@ useEffect(() => {
                     show={true}
                     validate={errors.internPicture ? "Error" : "Normal"}
                     typeError={errors.internPicture}
+                    accept=".jpg, .jpeg, .png"
                   />
                   <RegisterRow
                     label="Archivos del practicante:"
@@ -772,6 +772,7 @@ useEffect(() => {
                     show={true}
                     validate={errors.internFiles ? "Error" : "Normal"}
                     typeError={errors.internFiles}
+                    accept=".pdf"
                   />
                    <div className="register-intern-divider">
                     <ContactPhoneRoundedIcon /> <h3>Contactos de emergencia</h3>
@@ -813,5 +814,6 @@ useEffect(() => {
     </div>
   );
 };
+
 
 export default InternRegisterPage;

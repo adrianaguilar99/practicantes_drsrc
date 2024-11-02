@@ -56,13 +56,12 @@ export const CommentFormModal: React.FC<FormModalProps> = ({
     return (
       <>
           <div className="form-modal">
-            <div>
+            <div className="comment-form-modal-input">
                 <label>Comentario</label>
-                <input
-                  type="textarea"
-                  value={commentPosted}
-                  onChange={(e) => setCommentPosted(e.target.value)}
-                />
+                <textarea
+                value={commentPosted}
+                onChange={(e) => setCommentPosted(e.target.value)}
+              />
             </div>
   
             <Box
