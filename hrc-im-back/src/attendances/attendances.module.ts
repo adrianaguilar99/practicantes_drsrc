@@ -19,6 +19,7 @@ import { SupervisorsService } from 'src/supervisors/supervisors.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SystemAudit } from 'src/system-audits/entities/system-audit.entity';
+import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SystemAudit } from 'src/system-audits/entities/system-audit.entity';
     SupervisorsService,
     UsersService,
     SystemAuditsService,
+    UserNotificationsGateway,
   ],
 })
 export class AttendancesModule {}

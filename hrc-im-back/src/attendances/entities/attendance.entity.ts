@@ -77,7 +77,6 @@ export class Attendance {
   @Column({ name: 'worked_hours', type: 'time', nullable: true })
   worked_hours: string;
 
-  @Exclude()
   @ApiProperty({
     type: () => Intern,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
@@ -85,6 +84,7 @@ export class Attendance {
     nullable: false,
   })
   @ManyToOne(() => Intern, (intern) => intern.attendances, {
+    eager: true,
     nullable: false,
     onDelete: 'CASCADE',
   })
