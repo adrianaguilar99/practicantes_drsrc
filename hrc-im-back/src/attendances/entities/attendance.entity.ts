@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 import { AttendanceStatuses } from 'src/common/enums';
 import { Intern } from 'src/interns/entities/intern.entity';
 import {

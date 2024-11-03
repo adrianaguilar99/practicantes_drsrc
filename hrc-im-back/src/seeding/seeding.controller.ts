@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Req } from '@nestjs/common';
+import { Controller, Get, HttpCode } from '@nestjs/common';
 import { SeedingService } from './seeding.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/decorators';
