@@ -10,8 +10,16 @@ import {
 import { Server, Socket } from 'socket.io';
 import { UserNotificationsService } from './user-notifications.service';
 import { UsersService } from 'src/users/users.service';
+import { ALLOWED_ORIGINS } from 'src/common/constants/constants';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: ALLOWED_ORIGINS, // Asegúrate de que allowedOrigins esté definido adecuadamente
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  },
+})
 export class UserNotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {

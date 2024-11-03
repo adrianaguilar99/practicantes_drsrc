@@ -21,6 +21,7 @@ import { InternCommentsModule } from './intern-comments/intern-comments.module';
 import { InternScheduleModule } from './intern-schedule/intern-schedule.module';
 import { AttendancesModule } from './attendances/attendances.module';
 import { UserNotificationsModule } from './user-notifications/user-notifications.module';
+import { InternReportsModule } from './intern-reports/intern-reports.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -51,6 +52,7 @@ import dbConfigProduction from './configs/db.config.production';
     InternScheduleModule,
     AttendancesModule,
     UserNotificationsModule,
+    InternReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
