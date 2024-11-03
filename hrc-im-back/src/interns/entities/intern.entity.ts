@@ -262,6 +262,7 @@ export class Intern {
   })
   internSchedule: InternSchedule;
 
+  @Exclude()
   @OneToMany(() => Attendance, (attendances) => attendances.intern)
   attendances: Attendance[];
 
