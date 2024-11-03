@@ -16,7 +16,6 @@ import { Intern } from 'src/interns/entities/intern.entity';
 import { Exclude } from 'class-transformer';
 import { normalizeString } from 'src/common/utils';
 import { InternComment } from 'src/intern-comments/entities/intern-comment.entity';
-import { UserNotification } from 'src/user-notifications/entities/user-notification.entity';
 import { UserNotificationStatus } from 'src/user-notifications/entities/user-notification-status.entity';
 
 @Entity('users')
