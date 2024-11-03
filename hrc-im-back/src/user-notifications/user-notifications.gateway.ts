@@ -8,11 +8,18 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { UserNotificationsService } from './user-notifications.service';
+import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway()
 export class UserNotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(
+    private readonly userNotificationsService: UserNotificationsService,
+    private readonly usersService: UsersService,
+  ) {}
+
   @WebSocketServer()
   server: Server;
 
@@ -34,9 +41,10 @@ export class UserNotificationsGateway
     client.broadcast.emit('server-message', data);
   }
 
-  emitEvent(event: string, data: any) {
+  async emitEvent(event: string, data: any) {
     console.log(event, data);
-
+    const users = await this.usersService.findAllRegardlessStatus();
+    await this.userNotificationsService.createNotification(data, users);
     this.server.emit(event, data);
   }
 }

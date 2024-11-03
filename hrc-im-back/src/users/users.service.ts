@@ -124,6 +124,21 @@ export class UsersService {
     return user;
   }
 
+  async findAllRegardlessStatus() {
+    try {
+      const user = await this.usersRepository.find({
+        where: [
+          { userRole: UserRole.ADMINISTRATOR },
+          { userRole: UserRole.SUPERVISOR_RH },
+          { userRole: UserRole.SUPERVISOR },
+        ],
+      });
+      return user;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
+
   async findOneRegardlessStatus(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id },
