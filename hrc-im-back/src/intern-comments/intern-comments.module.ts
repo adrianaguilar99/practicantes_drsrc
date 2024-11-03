@@ -20,6 +20,9 @@ import { Department } from 'src/departments/entities/department.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
+import { UserNotification } from 'src/user-notifications/entities/user-notification.entity';
+import { UserNotificationsService } from 'src/user-notifications/user-notifications.service';
+import { UserNotificationStatus } from 'src/user-notifications/entities/user-notification-status.entity';
 
 @Module({
   imports: [
@@ -33,6 +36,8 @@ import { UserNotificationsGateway } from 'src/user-notifications/user-notificati
       Supervisor,
       User,
       SystemAudit,
+      UserNotification,
+      UserNotificationStatus,
     ]),
   ],
   controllers: [InternCommentsController],
@@ -47,6 +52,7 @@ import { UserNotificationsGateway } from 'src/user-notifications/user-notificati
     UsersService,
     SystemAuditsService,
     UserNotificationsGateway,
+    UserNotificationsService,
   ],
 })
 export class InternCommentsModule {}

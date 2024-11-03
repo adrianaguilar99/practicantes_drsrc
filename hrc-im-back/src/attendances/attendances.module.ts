@@ -20,6 +20,9 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SystemAudit } from 'src/system-audits/entities/system-audit.entity';
 import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
+import { UserNotification } from 'src/user-notifications/entities/user-notification.entity';
+import { UserNotificationStatus } from 'src/user-notifications/entities/user-notification-status.entity';
+import { UserNotificationsService } from 'src/user-notifications/user-notifications.service';
 
 @Module({
   imports: [
@@ -33,6 +36,8 @@ import { UserNotificationsGateway } from 'src/user-notifications/user-notificati
       Property,
       SystemAudit,
       User,
+      UserNotification,
+      UserNotificationStatus,
     ]),
   ],
   controllers: [AttendancesController],
@@ -47,6 +52,7 @@ import { UserNotificationsGateway } from 'src/user-notifications/user-notificati
     UsersService,
     SystemAuditsService,
     UserNotificationsGateway,
+    UserNotificationsService,
   ],
 })
 export class AttendancesModule {}
