@@ -41,18 +41,18 @@ import {
 import { InternSchedule } from './entities/intern-schedule.entity';
 import { IApiResponse } from 'src/common/interfaces';
 
-@ApiTags('Intern Schedule')
-@UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
 @ApiBearerAuth()
 @ApiResponse({
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
 })
 @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+@ApiTags('Intern Schedule')
 @Controller('intern-schedule')
 export class InternScheduleController {
   constructor(private readonly internScheduleService: InternScheduleService) {}
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @Post()
   @HttpCode(201)
   @ApiOperation({
@@ -80,6 +80,11 @@ export class InternScheduleController {
     return { message: SUCCESSFUL_CREATION, data: createdInternSchedule };
   }
 
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR_RH,
+    UserRole.SUPERVISOR,
+  )
   @Get()
   @HttpCode(200)
   @ApiOperation({
@@ -100,6 +105,11 @@ export class InternScheduleController {
     };
   }
 
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR_RH,
+    UserRole.SUPERVISOR,
+  )
   @Get(':id')
   @HttpCode(200)
   @ApiOperation({
@@ -118,6 +128,7 @@ export class InternScheduleController {
     return { message: SUCCESSFUL_FETCH, data: internSchedule };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @Patch(':id')
   @HttpCode(200)
   @ApiOperation({
@@ -145,6 +156,7 @@ export class InternScheduleController {
     return { message: SUCCESSFUL_UPDATE, data: updatedInternSchedule };
   }
 
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @Delete(':id')
   @HttpCode(200)
   @ApiOperation({
