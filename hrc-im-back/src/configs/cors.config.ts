@@ -1,13 +1,10 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { ENV } from './env.config';
-import { CORS_POLICY } from 'src/common/constants/constants';
+import { ALLOWED_ORIGINS, CORS_POLICY } from 'src/common/constants/constants';
 import { ForbiddenException } from '@nestjs/common';
-
-const allowedOrigins = [ENV.HOST_API, ENV.FRONT_URL_REDIRECT];
 
 export const corsConfig: CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
       // console.log('Origin:', origin);
       callback(null, true);
     } else {
