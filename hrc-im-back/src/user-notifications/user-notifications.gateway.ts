@@ -33,7 +33,7 @@ export class UserNotificationsGateway
 
   @SubscribeMessage('message')
   handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-    console.log(data);
+    // console.log(data);
     // este envia a todos incluido a si mismo
     // this.server.emit('server-message', data);
 
