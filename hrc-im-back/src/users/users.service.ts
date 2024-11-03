@@ -124,6 +124,15 @@ export class UsersService {
     return user;
   }
 
+  async findAllRegardlessStatus() {
+    try {
+      const user = await this.usersRepository.find();
+      return user;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
+
   async findOneRegardlessStatus(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id },
