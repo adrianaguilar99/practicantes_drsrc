@@ -335,6 +335,48 @@ export class AttendancesService {
     return filteredAttendances;
   }
 
+  async findAllByInternId(id: string) {
+    const allAttendances = await this.attendancesRepository.find({
+      where: { intern: { id } },
+    });
+    const filteredAttendances = allAttendances.map((attendance) => {
+      // filtramos todos los datos innecesarios del practicante para no sobrecargar al front
+      const {
+        bloodType,
+        phone,
+        address,
+        schoolEnrollment,
+        internshipStart,
+        internshipEnd,
+        internshipDuration,
+        status,
+        totalInternshipCompletion,
+        career,
+        department,
+        institution,
+        property,
+        emergencyContacts,
+        internComents,
+        internFiles,
+        internSchedule,
+        ...filteredIntern
+      } = attendance.intern;
+      // ahora filtramos todos los datos innecesarios del lugar de practicas
+      const { supervisors, ...filteredInternshipDepartment } =
+        filteredIntern.internshipDepartment;
+
+      //retornamos data limpia
+      return {
+        ...attendance,
+        intern: {
+          ...filteredIntern,
+          internshipDepartment: filteredInternshipDepartment,
+        },
+      };
+    });
+    return filteredAttendances;
+  }
+
   async findOne(id: string) {
     const attendance = await this.attendancesRepository.findOne({
       where: { id },
