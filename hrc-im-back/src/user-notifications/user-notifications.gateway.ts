@@ -1,9 +1,6 @@
 import {
-  ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -14,7 +11,7 @@ import { ALLOWED_ORIGINS } from 'src/common/constants/constants';
 
 @WebSocketGateway({
   cors: {
-    origin: ALLOWED_ORIGINS, // Asegúrate de que allowedOrigins esté definido adecuadamente
+    origin: ALLOWED_ORIGINS,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -31,23 +28,29 @@ export class UserNotificationsGateway
   @WebSocketServer()
   server: Server;
 
+  // handleConnection(client: Socket) {
+  //   console.log(`Client connected: ${client.id}`);
+  // }
+
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
+    console.log(
+      `Client connected: ${client.id} - Total clients: ${this.server.engine.clientsCount}`,
+    );
   }
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('message')
-  handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-    // console.log(data);
-    // este envia a todos incluido a si mismo
-    // this.server.emit('server-message', data);
+  // @SubscribeMessage('message')
+  // handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  //   // console.log(data);
+  //   // este envia a todos incluido a si mismo
+  //   // this.server.emit('server-message', data);
 
-    // este envia a todos pero no a si mismo
-    client.broadcast.emit('server-message', data);
-  }
+  //   // este envia a todos pero no a si mismo
+  //   client.broadcast.emit('server-message', data);
+  // }
 
   async emitEvent(event: string, data: any) {
     console.log(event, data);

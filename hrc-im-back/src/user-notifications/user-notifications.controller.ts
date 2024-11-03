@@ -93,7 +93,7 @@ export class UserNotificationsController {
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   @HttpCode(200)
-  @Patch(':id')
+  @Patch(':id/markAsRead')
   async markAsRead(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,
