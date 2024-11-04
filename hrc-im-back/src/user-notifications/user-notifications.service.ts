@@ -44,14 +44,16 @@ export class UserNotificationsService {
     }
   }
 
-  async findAll() {
+  async findAllByUser({ userId }: IRequestUser) {
     try {
-      const allUserNotifications = await this.userNotificationsRepository.find({
-        order: { createdAt: 'DESC' },
-      });
+      const allUserNotifications =
+        await this.userNotificationStatusRepository.find({
+          where: { user: { id: userId } },
+          order: { notification: { createdAt: 'DESC' } },
+        });
       return allUserNotifications;
     } catch (error) {
-      handleInternalServerError(error.message);
+      handleInternalServerError;
     }
   }
 
@@ -76,7 +78,13 @@ export class UserNotificationsService {
       });
     if (userNotificationStatus) {
       userNotificationStatus.seen = true;
-      await this.userNotificationStatusRepository.save(userNotificationStatus);
+      try {
+        await this.userNotificationStatusRepository.save(
+          userNotificationStatus,
+        );
+      } catch (error) {
+        handleInternalServerError(error.message);
+      }
     }
   }
 }

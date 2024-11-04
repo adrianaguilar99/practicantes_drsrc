@@ -24,6 +24,7 @@ import {
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   READ_ALL_RECORDS,
@@ -41,12 +42,13 @@ import { UserRole } from 'src/common/enums';
 import { EmergencyContact } from './entities/emergency-contact.entity';
 import { IApiResponse } from 'src/common/interfaces';
 
-@ApiTags('Emergency Contacts')
 @ApiBearerAuth()
 @ApiResponse({
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
 })
+@ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+@ApiTags('Emergency Contacts')
 @Controller('emergency-contact')
 export class EmergencyContactController {
   constructor(

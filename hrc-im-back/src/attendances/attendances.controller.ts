@@ -23,6 +23,7 @@ import {
   BAD_REQUEST,
   CONFLICT_ERROR,
   CREATE_RECORD,
+  FORBIDDEN_RESOURCE,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   PUBLIC_ROUTE,
@@ -30,6 +31,7 @@ import {
   READ_RECORD,
   SUCCESSFUL_FETCH,
   SUCCESSFUL_UPDATE,
+  UNAUTHORIZED_ACCESS,
   UPDATE_RECORD,
 } from 'src/common/constants/constants';
 import { Attendance } from './entities/attendance.entity';
@@ -37,6 +39,11 @@ import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
 import { RegisterAttendance } from './decorators';
 
+@ApiResponse({
+  status: 401,
+  description: `${UNAUTHORIZED_ACCESS} Please login`,
+})
+@ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
 @ApiTags('Attendances')
 @Controller('attendances')
 export class AttendancesController {
@@ -122,6 +129,29 @@ export class AttendancesController {
   ): Promise<IApiResponse<any>> {
     const attendance = await this.attendancesService.findOne(id);
     return { message: SUCCESSFUL_FETCH, data: attendance };
+  }
+
+  @Get(':id/intern')
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} ${ACCESS_TO_ALL}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [Attendance],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  async findAllByInternId(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IApiResponse<any>> {
+    const allAttendances = await this.attendancesService.findAllByInternId(id);
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allAttendances,
+      records: allAttendances.length,
+    };
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)

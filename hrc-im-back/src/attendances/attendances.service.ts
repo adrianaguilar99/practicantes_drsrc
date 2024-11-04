@@ -19,6 +19,7 @@ import { IRequestUser } from 'src/common/interfaces';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
+import { Intern } from 'src/interns/entities/intern.entity';
 
 @Injectable()
 export class AttendancesService {
@@ -32,9 +33,9 @@ export class AttendancesService {
   ) {}
 
   async registerEntry(internCode: string, timestamp: Date) {
+    // Mediante el servicio buscamos al practicante mediante su codigo unico
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
-    // console.log(existingIntern.user);
 
     // Validacion de que registre asistencias solo en su periodo
     validateAttendancePeriod(existingIntern, timestamp);
@@ -42,7 +43,7 @@ export class AttendancesService {
     const attendanceDate = timestamp.toDateString();
     const entryTime = timestamp.toTimeString().split(' ')[0];
 
-    // if (timeexistingIntern.internshipStart)
+    // Si ya marco su entrada o su entrada y salida no puede volver a marcar alguna de las dos
     const existingRecord = await this.attendancesRepository.findOne({
       where: { intern: existingIntern, attendanceDate },
     });
@@ -58,6 +59,7 @@ export class AttendancesService {
       }
     }
 
+    // validamos si marca despues de su hora de salida es falta automaticamente
     const exitDeadline = await this.getScheduledExitTime(internCode, timestamp);
     try {
       if (entryTime > exitDeadline) {
@@ -82,6 +84,7 @@ export class AttendancesService {
       handleInternalServerError(error.message);
     }
 
+    // validamos si tiene horario de entrada
     const entryDeadline = await this.getScheduledEntryTime(
       internCode,
       timestamp,
@@ -95,12 +98,12 @@ export class AttendancesService {
     const scheduledEntryDateTime = new Date(timestamp);
     scheduledEntryDateTime.setHours(scheduledHours, scheduledMinutes, 0);
 
+    // Validamos los minutos de tolerancia de entrada
     const minutesDifference = differenceInMinutes(
       timestamp,
       scheduledEntryDateTime,
     );
     // console.log('registerEntry', { minutesDifference });
-    // Validamos los minutos de tolerancia de entrada
     if (minutesDifference >= 15) {
       try {
         await this.attendancesRepository.save({
@@ -123,6 +126,7 @@ export class AttendancesService {
       }
     }
 
+    // si pasa todo lo anterior tiene una entrada normal exitosa
     try {
       await this.attendancesRepository.save({
         attendanceDate,
@@ -149,10 +153,10 @@ export class AttendancesService {
     const attendanceDate = timestamp.toDateString();
     const exitTime = timestamp.toTimeString().split(' ')[0];
 
+    // validamos que no marque salida sin antes una entrada
     const attendanceRecord = await this.attendancesRepository.findOne({
       where: { intern: existingIntern, attendanceDate },
     });
-
     if (
       !attendanceRecord ||
       (attendanceRecord.attendanceStatuses !== AttendanceStatuses.ENTRY &&
@@ -161,6 +165,7 @@ export class AttendancesService {
     )
       throw new BadRequestException('There is no entry registered for today.');
 
+    // validamos que tenga horario de salida
     const scheduledExitTime = await this.getScheduledExitTime(
       internCode,
       timestamp,
@@ -173,12 +178,14 @@ export class AttendancesService {
     const scheduledExitDateTime = new Date(timestamp);
     scheduledExitDateTime.setHours(scheduledHours, scheduledMinutes, 0);
 
+    // validamos los minutos de salida por si sale anticipadamente
     const minutesDifference = differenceInMinutes(
       timestamp,
       scheduledExitDateTime,
     );
     // console.log('registerExit', { minutesDifference });
-    if (minutesDifference <= 0) {
+    // si los minutos de diferencia son menores a 0 es porque salio antes
+    if (minutesDifference < 0) {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
         AttendanceStatuses.EARLY_EXIT_ATTENDANCE;
@@ -187,7 +194,8 @@ export class AttendancesService {
         exitTime,
       );
       try {
-        await this.attendancesRepository.save(attendanceRecord);
+        const registerExit =
+          await this.attendancesRepository.save(attendanceRecord);
         this.userNotificationsGateway.emitEvent('attendance', {
           internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
           internInternshipDepartment: existingIntern.internshipDepartment.name,
@@ -297,6 +305,48 @@ export class AttendancesService {
     } else {
       allAttendances = await this.attendancesRepository.find();
     }
+    const filteredAttendances = allAttendances.map((attendance) => {
+      // filtramos todos los datos innecesarios del practicante para no sobrecargar al front
+      const {
+        bloodType,
+        phone,
+        address,
+        schoolEnrollment,
+        internshipStart,
+        internshipEnd,
+        internshipDuration,
+        status,
+        totalInternshipCompletion,
+        career,
+        department,
+        institution,
+        property,
+        emergencyContacts,
+        internComents,
+        internFiles,
+        internSchedule,
+        ...filteredIntern
+      } = attendance.intern;
+      // ahora filtramos todos los datos innecesarios del lugar de practicas
+      const { supervisors, ...filteredInternshipDepartment } =
+        filteredIntern.internshipDepartment;
+
+      //retornamos data limpia
+      return {
+        ...attendance,
+        intern: {
+          ...filteredIntern,
+          internshipDepartment: filteredInternshipDepartment,
+        },
+      };
+    });
+    return filteredAttendances;
+  }
+
+  async findAllByInternId(id: string) {
+    const allAttendances = await this.attendancesRepository.find({
+      where: { intern: { id } },
+    });
     const filteredAttendances = allAttendances.map((attendance) => {
       // filtramos todos los datos innecesarios del practicante para no sobrecargar al front
       const {

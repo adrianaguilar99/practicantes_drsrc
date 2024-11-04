@@ -1,5 +1,5 @@
-export { normalizeString } from './normalize-string.util';
+export * from './date_formatter.util';
 
-export { dateToFormattedTimestamp } from './get-current-timestamp.util';
+export { normalizeString } from './normalize-string.util';
 
 export { handleInternalServerError } from './handle-internal-server-error.util';

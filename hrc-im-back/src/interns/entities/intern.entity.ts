@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
+import { AttendancesService } from 'src/attendances/attendances.service';
 import { Attendance } from 'src/attendances/entities/attendance.entity';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
@@ -156,6 +158,7 @@ export class Intern {
     nullable: true,
     precision: 5,
     scale: 2,
+    default: 0,
   })
   totalInternshipCompletion: number;
 
@@ -259,6 +262,7 @@ export class Intern {
   })
   internSchedule: InternSchedule;
 
+  @Exclude()
   @OneToMany(() => Attendance, (attendances) => attendances.intern)
   attendances: Attendance[];
 
@@ -269,33 +273,10 @@ export class Intern {
     if (this.schoolEnrollment) {
       this.schoolEnrollment = this.schoolEnrollment.trim();
     }
-    // this.validateDates();
-    this.totalInternshipCompletion = this.internshipCompletionCalculation();
   }
 
   @BeforeUpdate()
   checkFieldsBeforeUpdate() {
     this.checkFieldsBeforeInsert();
-  }
-
-  /**
-   * Calcula el porcentaje de la pasantía completada.
-   * Retorna un valor entre 0 y 100.
-   */
-  private internshipCompletionCalculation(): number {
-    const now = new Date();
-    const start = new Date(this.internshipStart);
-    const end = new Date(this.internshipEnd);
-
-    if (now <= start) {
-      return 0;
-    } else if (now >= end) {
-      return 100;
-    } else {
-      const totalDuration = end.getTime() - start.getTime();
-      const elapsedTime = now.getTime() - start.getTime();
-      // Cambiamos a toFixed(2) para obtener dos decimales y convertir a número flotante
-      return parseFloat(((elapsedTime / totalDuration) * 100).toFixed(2));
-    }
   }
 }
