@@ -278,7 +278,7 @@ export class UsersController {
 
   @Delete(':id/physicalRemove')
   @HttpCode(200)
-  @UserRoles(UserRole.ADMINISTRATOR)
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${REMOVE_RECORD} Only: ${[UserRole.ADMINISTRATOR]}`,
   })

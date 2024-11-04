@@ -19,6 +19,7 @@ import { PropertiesService } from 'src/properties/properties.service';
 import { IRequestUser } from 'src/common/interfaces';
 import { handleInternalServerError } from 'src/common/utils';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
+import { internshipCalculator } from './helpers';
 
 @Injectable()
 export class InternsService {
@@ -162,12 +163,17 @@ export class InternsService {
     if (role === UserRole.SUPERVISOR) {
       const { department } = await this.supervisorsService.findByUser(userId);
       allInterns = await this.internsRepository.find({
+        relations: { attendances: true },
         where: { internshipDepartment: department },
       });
     } else {
-      allInterns = await this.internsRepository.find();
+      allInterns = await this.internsRepository.find({
+        relations: { attendances: true },
+      });
     }
-    return allInterns;
+    return Promise.all(
+      allInterns.map(async (intern) => this.updateCompletion(intern)),
+    );
   }
 
   async findOne(id: string) {
@@ -182,12 +188,13 @@ export class InternsService {
 
   async findOneByUserId(id: string) {
     const intern = await this.internsRepository.findOne({
+      relations: { attendances: true },
       where: { user: { id } },
     });
     if (!intern)
       throw new NotFoundException(`Intern with id: ${id} not found.`);
 
-    return intern;
+    return this.updateCompletion(intern);
   }
 
   async findOneByInternCode(code: string) {
@@ -387,10 +394,22 @@ export class InternsService {
     do {
       code = Math.floor(100000 + Math.random() * 900000).toString();
       codeExists = !!(await this.internsRepository.findOne({
-        where: { externalInternCode: code },
+        where: [{ externalInternCode: code }, { internalInternCode: code }],
       }));
     } while (codeExists);
 
     return code;
+  }
+
+  private async updateCompletion(intern: Intern) {
+    intern.totalInternshipCompletion = internshipCalculator(
+      intern.internshipDuration,
+      intern.attendances,
+    );
+    try {
+      return this.internsRepository.save(intern);
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
   }
 }
