@@ -39,11 +39,6 @@ import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
 import { RegisterAttendance } from './decorators';
 
-@ApiResponse({
-  status: 401,
-  description: `${UNAUTHORIZED_ACCESS} Please login`,
-})
-@ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
 @ApiTags('Attendances')
 @Controller('attendances')
 export class AttendancesController {
@@ -101,6 +96,10 @@ export class AttendancesController {
     description: SUCCESSFUL_FETCH,
     type: [Attendance],
   })
+  @ApiResponse({
+    status: 401,
+    description: `${UNAUTHORIZED_ACCESS} Please login`,
+  })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async findAll(@Req() req): Promise<IApiResponse<any>> {
     const user = req.user;
@@ -123,6 +122,10 @@ export class AttendancesController {
     description: SUCCESSFUL_FETCH,
     type: Attendance,
   })
+  @ApiResponse({
+    status: 401,
+    description: `${UNAUTHORIZED_ACCESS} Please login`,
+  })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
@@ -141,6 +144,10 @@ export class AttendancesController {
     status: 200,
     description: SUCCESSFUL_FETCH,
     type: [Attendance],
+  })
+  @ApiResponse({
+    status: 401,
+    description: `${UNAUTHORIZED_ACCESS} Please login`,
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async findAllByInternId(
@@ -167,6 +174,11 @@ export class AttendancesController {
     type: Attendance,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({
+    status: 401,
+    description: `${UNAUTHORIZED_ACCESS} Please login`,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
@@ -197,6 +209,11 @@ export class AttendancesController {
     type: Attendance,
   })
   @ApiResponse({ status: 400, description: BAD_REQUEST })
+  @ApiResponse({
+    status: 401,
+    description: `${UNAUTHORIZED_ACCESS} Please login`,
+  })
+  @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async resetExit(
