@@ -17,7 +17,6 @@ export async function getDepartmentsData(Token: string): Promise<DepartmentsInte
       }
   
       const DepartmentsData: DepartmentsInterface = await response.json(); 
-      console.log(DepartmentsData);
       return DepartmentsData;
     } catch (error) {
       console.error("Error:", error);

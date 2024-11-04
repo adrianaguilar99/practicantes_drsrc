@@ -11,7 +11,6 @@ const TimeCheck: React.FC = () => {
   const [messageMode, setMessageMode] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Función para enviar la asistencia
   const sendAttendance = async (code: string) => {
     try {
       const response: PostAttendanceResponse = await postAttendance({ internCode: code } as PostAttendance);

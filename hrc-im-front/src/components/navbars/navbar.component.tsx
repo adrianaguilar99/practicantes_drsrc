@@ -41,6 +41,10 @@ export const Navbar = () => {
     setNotificationMenuOpen((prevState) => !prevState);
   };
 
+  const toggleOFNotificationMenu = () => {
+    setNotificationMenuOpen(false);
+  };
+
   
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
@@ -188,11 +192,11 @@ export const Navbar = () => {
               />
           </Typography>
           <div className="nav-rol-display" style={{ display: "flex", alignItems: "center", width: "100%", justifyContent: "center", fontFamily: "Lato" }}>
-               <span className="nav-rol">{userRol === "ADMINISTRATOR" ? "Admin RCD" : userRol + " RCD"}</span>
+               <span className="nav-rol">{userRol === "ADMINISTRATOR" ? "Admin RCD" : userRol === "INTERN" ? "Practicante RCD" : userRol === "SUPERVISOR" ? "Supervisor RCD" : "Supervisor RH RCD"}</span>
           </div>
 
           <div className="notifications-container" ref={notificationMenuRef}>
-            <NotificationsMenu anchorEl={isNotificationMenuOpen} />
+            <NotificationsMenu anchorEl={isNotificationMenuOpen} onClose={toggleOFNotificationMenu}/>
             <IconButton color="inherit" onClick={toggleNotificationMenu}>
               <Badge badgeContent={notificationsLength} color="error">
                 <NotificationsNoneIcon />

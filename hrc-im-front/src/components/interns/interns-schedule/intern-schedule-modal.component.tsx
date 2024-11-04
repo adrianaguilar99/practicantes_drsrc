@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
-import { RegisterRow } from "../../inputs/register-row.component";
-import { FormModal, FormModalProps } from "../../modals/form-modal.component";
 import { Box, Button, Checkbox, DialogTitle } from "@mui/material";
 import { ButtonComponent } from "../../buttons/buttons.component";
-import { da } from "date-fns/locale";
 import { InputValidators } from "../../../functions/input-validators.functions";
-import { set } from "date-fns";
-import { Close } from "@mui/icons-material";
 import { patchSchedule } from "../../../api/interns/intern-schedule/intern-schedule.api";
 import { enqueueSnackbar } from "notistack";
 import { formatTime } from "../../../functions/date-conversor.function";
 import { DataSchedule } from "../../../interfaces/interns/intern-schedule/intern-schedule.interface";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 export interface FormScheduleModalProps {
     type: string;
     data?: any;
@@ -585,36 +579,39 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
   )
 }
 
-export const ScheduleRegister = ({ triggerAction = false, onReceiveContacts = (schedules: DataSchedule[]) => {} }) => {
-    const [schedules, setSchedules] = useState<DataSchedule[]>([]);
-    const [open, setOpen] = useState<boolean>(false);
-  
-    const addSchedule = (newSchedule: DataSchedule) => {
-        setSchedules((prevSchedules) => {
-          const scheduleExists = prevSchedules.some(schedule => schedule.id === newSchedule.id);
-      
-          if (scheduleExists) {
-            return prevSchedules.map(schedule => 
-              schedule.id === newSchedule.id ? newSchedule : schedule
-            );
-          } else {
-            return [...prevSchedules, newSchedule];
-          }
-        });
-      
-        console.log("Horario agregado o reemplazado:", newSchedule);
-      };
-  
-    useEffect(() => {
-      if (triggerAction) {
-        console.log("Acción activada por el componente padre");
-        onReceiveContacts(schedules);
+interface ScheduleRegisterProps {
+  onSendSchedule: (schedule: DataSchedule[]) => void;
+}
+
+export const ScheduleRegister: React.FC<ScheduleRegisterProps> = ({
+  onSendSchedule,
+}) => {
+  const [schedules, setSchedules] = useState<DataSchedule[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const addSchedule = (newSchedule: DataSchedule) => {
+    setSchedules((prevSchedules) => {
+      const scheduleExists = prevSchedules.some(schedule => schedule.id === newSchedule.id);
+
+      if (scheduleExists) {
+        return prevSchedules.map(schedule =>
+          schedule.id === newSchedule.id ? newSchedule : schedule
+        );
+      } else {
+        return [...prevSchedules, newSchedule];
       }
-    }, [triggerAction, schedules, onReceiveContacts]);
+    });
+  };
+
+  useEffect(() => {
+    onSendSchedule(schedules);
+  }, [schedules, onSendSchedule]);
+  
+
   
     return (
-      <div>
-        <button onClick={() => setOpen(true)}>Añadir horario</button>
+      <div style={{ justifyContent: "center" , display: "flex", flexDirection: "column",alignItems: "center" }}>
+        <button onClick={() => setOpen(true)} className="add-contact-button"><EditCalendarIcon/>{schedules.length === 0 ? "Agregar horario" : "Modificar horario"}</button>
         <InternScheduleModal 
           onOpen={open} 
           onCancel={() => setOpen(false)} 
@@ -628,13 +625,42 @@ export const ScheduleRegister = ({ triggerAction = false, onReceiveContacts = (s
         />
         {schedules.map((schedule, index) => (
           <div key={schedule.id} className="schedule-add-map">
-            <label>Lunes: {schedule.mondayIn} - {schedule.mondayOut}</label>
-            <label>Martes: {schedule.tuesdayIn} - {schedule.tuesdayOut}</label>
-            <label>Miercoles: {schedule.wednesdayIn} - {schedule.wednesdayOut}</label>
-            <label>Jueves: {schedule.thursdayIn} - {schedule.thursdayOut}</label>
-            <label>Viernes: {schedule.fridayIn} - {schedule.fridayOut}</label>
-            <label>Sabado: {schedule.saturdayIn} - {schedule.saturdayOut}</label>
-            <label>Domingo: {schedule.sundayIn} - {schedule.sundayOut}</label>
+
+            <div className="schedule-day">
+              <label>Lunes</label>
+              <p>{schedule.mondayIn} - {schedule.mondayOut}</p>
+            </div>
+
+            <div className="schedule-day">
+              <label>Martes</label>
+              <p>{schedule.tuesdayIn} - {schedule.tuesdayOut}</p>
+            </div>
+
+            <div className="schedule-day">
+              <label>Miercoles</label>
+              <p>{schedule.wednesdayIn} - {schedule.wednesdayOut}</p>
+            </div>
+
+            <div className="schedule-day">
+              <label>Jueves</label>
+              <p>{schedule.thursdayIn} - {schedule.thursdayOut}</p>
+            </div>
+
+            <div className="schedule-day">
+              <label>Viernes</label>
+              <p>{schedule.fridayIn} - {schedule.fridayOut}</p>
+            </div>
+
+            <div className="schedule-day">
+              <label>Sabado</label>
+              <p>{schedule.saturdayIn} - {schedule.saturdayOut}</p>
+            </div>
+
+            <div className="schedule-day">
+              <label>Domingo</label>
+              <p>{schedule.sundayIn} - {schedule.sundayOut}</p>
+            </div>
+
           </div>
         ))}
       </div>

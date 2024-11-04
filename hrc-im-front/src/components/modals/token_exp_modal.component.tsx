@@ -26,11 +26,9 @@ export const ManageTokenModal = () => {
         if (inactivityTimeoutRef.current) {
             clearTimeout(inactivityTimeoutRef.current);
         }
-        
-        console.log("Inactividad reseteada. Reiniciando temporizador de inactividad...");
+    
         
         inactivityTimeoutRef.current = setTimeout(() => {
-            console.log("No hubo actividad. Se desplegará el modal de confirmación.");
             setSaveEdit(true);
             setUserIsActive(false);
             setAutoCancelTimeout(); 
@@ -45,12 +43,9 @@ export const ManageTokenModal = () => {
             if (refreshTimeoutRef.current) {
                 clearTimeout(refreshTimeoutRef.current);
             }
-
-            console.log(`Configurando renovación de token en ${refreshTime} segundos.`);
             
             refreshTimeoutRef.current = setTimeout(() => {
                 if (userIsActive && !saveEdit) {
-                    console.log("Token a punto de expirar y usuario activo. Mostrando modal de confirmación...");
                     ConfirmSave();
                 }
             }, refreshTime * 1000);
@@ -67,10 +62,8 @@ export const ManageTokenModal = () => {
         }
 
         if (timeBeforeAutoCancel > 0 && saveEdit) {
-            console.log(`El token expirará en ${timeBeforeAutoCancel} segundos. Configurando auto-cancelación...`);
             
             autoCancelTimeoutRef.current = setTimeout(() => {
-                console.log("Tiempo de cancelación alcanzado. Cierre automático de sesión.");
                 CancelSave();
             }, timeBeforeAutoCancel * 1000);
         }
@@ -86,7 +79,6 @@ export const ManageTokenModal = () => {
 
             const handleUserActivity = () => {
                 if (!saveEdit) {
-                    console.log("Actividad detectada. Reiniciando temporizador de inactividad...");
                     resetInactivityTimeout();
                 }
             };
@@ -107,8 +99,6 @@ export const ManageTokenModal = () => {
     const ConfirmSave = async () => {
         const refreshToken = getRefreshToken();
         if (!refreshToken) return;
-
-        console.log("Intentando renovar token...");
         const token = await getNewToken(refreshToken);
 
         if (token) {
@@ -117,20 +107,17 @@ export const ManageTokenModal = () => {
             sessionStorage.setItem('_refreshToken', token.refreshToken);
             sessionStorage.setItem('_exp_token', parsedToken.exp.toString());
 
-            console.log("Token renovado exitosamente.");
             setSaveEdit(false);
             enqueueSnackbar('La sesión se ha actualizado', { variant: 'success' });
             resetInactivityTimeout();
             setRefreshTimeout(parsedToken.exp);
         } else {
-            console.log("Error al renovar el token. Se procederá a cerrar la sesión.");
             enqueueSnackbar('Error al actualizar la sesión', { variant: 'error' });
             CancelSave();
         }
     };
 
     const CancelSave = () => {
-        console.log("Sesión expirada. Cerrando sesión...");
         enqueueSnackbar('La sesión ha expirado', { variant: 'info' });
         setSaveEdit(false);
         dispatch(logout());

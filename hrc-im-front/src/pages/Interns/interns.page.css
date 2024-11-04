@@ -566,12 +566,17 @@ padding-right: 5%;
 .button-container-intern{
     display: flex;
     gap: 5%;
-    width: 50vw;
-    
+    width: 75%;
+    justify-content: center;
+    align-content: center;
     position: fixed;
     margin: 0;
     margin-bottom: 6vh;
     bottom: 0;
+}
+
+.button-container-intern button{
+    max-width: 300px;
 }
 
 
@@ -697,14 +702,22 @@ padding-right: 5%;
     background-color: rgb(255, 255, 255);
     padding: 1% 2%;
     border-radius: 5px;
+    color: #444444;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-right: 3%;
+    font-family: 'Lato', sans-serif;
     display: flex;
     gap: 5%;
     width: 50%;
     margin-bottom: 2%;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.add-contact-button:hover{
+    background-color: rgb(228, 228, 228);
+    transition: all 0.3s ease;
 }
 
 .register-intern-suggestion{

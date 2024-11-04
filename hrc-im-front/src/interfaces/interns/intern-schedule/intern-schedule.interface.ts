@@ -4,7 +4,7 @@ export interface ScheduleInterface {
 }
 
 export interface DataSchedule {
-    id:           string;
+    id?:           string;
     mondayIn:     string;
     mondayOut:    string;
     tuesdayIn:    string;
@@ -19,6 +19,7 @@ export interface DataSchedule {
     saturdayOut:  string;
     sundayIn:     string;
     sundayOut:    string;
+    internId:     string;
 }
 
 export interface PostSchedule {

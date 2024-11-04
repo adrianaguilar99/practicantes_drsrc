@@ -17,7 +17,7 @@ export const DeleteAllRecordsButton = () => {
             <DeleteSweepOutlinedIcon className="delete-icon" />
             <span className="delete-all-records-text">Borrar todos los datos</span>
         </button>
-         <DeleteAllRecordsConfirmationModal title='Eliminar todos los datos' message='Se borraran todos los datos de esta tabla de la base de datos.' onCancel={Close} onConfirm={() => null} open={open}/>
+         <DeleteAllRecordsConfirmationModal title='Eliminar todos los datos' message='Se borraran todos los datos no relacionados de esta tabla de la base de datos.' onCancel={Close} onConfirm={() => null} open={open}/>
         </>
       
        

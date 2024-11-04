@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { ButtonComponent } from "../../buttons/buttons.component";
 
-export const EmergencyContactsRegister = ({ triggerAction = false, onReceiveContacts = (contacts: DataEmergencyContact[]) => {} }) => {
+export const EmergencyContactsRegister = ({ onReceiveContacts = (contacts: DataEmergencyContact[]) => {} }) => {
   const [contacts, setContacts] = useState<DataEmergencyContact[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,11 +31,8 @@ export const EmergencyContactsRegister = ({ triggerAction = false, onReceiveCont
   };
 
   useEffect(() => {
-    if (triggerAction) {
-      console.log("Acción activada por el componente padre");
       onReceiveContacts(contacts); 
-    }
-  }, [triggerAction, contacts, onReceiveContacts]);
+  }, [contacts, onReceiveContacts]);
 
   return (
     <div className="register-intern-contact-container">

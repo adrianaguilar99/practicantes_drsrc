@@ -65,12 +65,10 @@ export async function getFilesSPLIT(Token: string, internId: string, fileName: s
 
     
         if (!response.ok) {
-          console.error("Error al traer los datos del archivo");
           throw new Error("Error al traer los datos del archivo");
         }
     
         const FileData: any = response.blob(); 
-        console.log("url del archivo:", await FileData);
         return FileData;
       } catch (error) {
         console.error("Error:", error);

@@ -46,3 +46,29 @@ export async function getScheduleData(Token: string, internId: string ): Promise
       throw error;
     }
   }
+
+
+  export async function postInternSchedule(Token: string, data: PostSchedule): Promise<PostSchedule | null> {
+    try {
+      const response = await fetch(apiUrl + "/intern-schedule", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json" // Especificamos el tipo de contenido como JSON
+        },
+        body: JSON.stringify(data), // Convertimos el payload en JSON
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Error al enviar el horario del practicante");
+      }
+  
+      const responseJson: PostSchedule = await response.json();
+      return responseJson;
+    } catch (error: any) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+  

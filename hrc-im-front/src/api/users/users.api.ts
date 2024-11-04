@@ -73,6 +73,29 @@ export async function postUser(Token: string, data: PostUser){
     }
   }
 
+  export async function rollbackUser(Token: string, id: string) {
+    try {
+      const response = await fetch(apiUrl + "/users/" + id + "/physicalRemove", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Error al eliminar el usuario");
+      }
+  
+      const responseJson: DataUser = await response.json();
+      return responseJson;
+    } catch (error: any) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+
   export async function activateUser(Token: string, id: string) {
     try {
       const response = await fetch(apiUrl + "/users/" + id + "/active", {

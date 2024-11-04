@@ -3,11 +3,11 @@ import { apiUrl } from "../api-request";
 
 export async function postAttendance(data: PostAttendance): Promise<PostAttendanceResponse> {
     try {
+     
       const response = await fetch(apiUrl + "/attendances/register", {
         method: "POST",
         body: JSON.stringify(data),
       });
-  
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(errorResponse.message || "Error al enviar los datos de la asistencia");

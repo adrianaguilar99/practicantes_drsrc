@@ -149,7 +149,7 @@ Navbar-Elements
     position: absolute;
     top: 50px; 
     right: 60px; 
-    min-width: 10vw;
+    min-width: 17vw;
     max-width: 320px;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -157,6 +157,8 @@ Navbar-Elements
     z-index: 1000;
     overflow: hidden; 
 }
+
+
 
 @media (max-width: 480px) {
     .notifications-menu {
@@ -227,8 +229,6 @@ Navbar-Elements
 }
 
 .notifications-list {
-    max-height: 400px;
-    overflow-y: auto;
     margin: 0 5%;
 }
 
@@ -246,12 +246,60 @@ Navbar-Elements
     font-size: 0.7em;
 }
 
+.notification-item:hover{
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.notification-item {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.fade-out-right {
+  transform: translateX(100%); 
+  opacity: 0;
+}
+
+
+@media screen and (max-width: 1375px) {
+  .notifications-menu {
+    position: absolute;
+    top: 50px; 
+    right: 60px; 
+    min-width: 25vw;
+    max-width: 320px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1000;
+    overflow: hidden; 
+}
+
+.notification-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px;
+  background-color: rgb(238, 238, 238);
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+  border-radius: 5px;
+  margin-bottom: 1%;
+  text-align: justify;
+  font-size: 0.7em;
+}
+
+}
+
 .notification-type {
     flex: 1;
-    color: #808080;
+    color: #686868;
     font-weight: 600;
-    font-size: .75em;
+    font-size: .95em;
     font-family: 'Lato', sans-serif;
+    margin-bottom: 2%;
 }
 
 .notification-icon {
@@ -259,9 +307,12 @@ Navbar-Elements
 }
 
 .notification-date {
-    flex: 2;
-    font-size: 0.85em;
-    color: #757575;
+    display: flex;
+}
+
+.notification-date p{
+  font-size: 0.95em;
+  color: #2b2b2b;
 }
 
 .notification-close {
@@ -1277,23 +1328,15 @@ transition: 0.5s;
   .notification-card {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 15px;
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     margin-bottom: 15px;
-    width: 100%; /* O ajusta al ancho deseado */
-}
-
-.notification-title {
-    flex: 1;
-}
-
-.notification-type {
-    font-size: 12px;
-    font-weight: bold;
-    margin: 0;
+    width: 100%; 
+    font-size: .8rem;
+    color: #313131;
+    font-family: 'Lato', sans-serif;
 }
 
 .notification-description-icon {
@@ -1307,56 +1350,20 @@ transition: 0.5s;
     font-size: 24px; /* Tamaño del ícono */
 }
 
-.notification-date {
-    margin-left: auto;
-    font-size: 11px;
-    color: #555;
-    text-align: end;
-}
 
-/* Colores para cada tipo de notificación */
-.notification-type.entrada {
-    color: #2d9c44; /* Verde */
-}
 
-.notification-type.salida {
-    color: #2d9c44; /* Verde */
-}
 
-.notification-type.salida-no-registrada {
-    color: #b24040; /* Rojo */
-}
 
-.notification-type.retardo {
-    color: #e4a90e; /* Amarillo */
+.notificacions-data-container{
+  padding-left: 10%;
+  padding-right: 20%;
+  flex: 2;
 }
-
-/* Estilo para íconos */
-.notification-description-icon .MuiSvgIcon-root {
-    font-size: 32px;
-}
-
-.notification-description-icon svg.check-icon {
-    color: #2d9c44; /* Verde para "check" */
-}
-
-.notification-description-icon svg.cancel-icon {
-    color: #b24040; /* Rojo para "cancel" */
-}
-
-.notification-description-icon svg.error-icon {
-    color: #e4a90e; /* Amarillo para "error" */
-}
-
-.notification-description-icon svg.falta-icon {
-    color: #b24040; /* Rojo oscuro para "falta" */
-}
-
 
 .notifications-table{
     max-height: 65vh;
     padding: 0% 10%;
-    overflow: scroll;
+    overflow: auto;
     overflow-x: hidden;
 }
 
@@ -1364,10 +1371,8 @@ transition: 0.5s;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    border-radius: 20px;
+    border-radius: 5px;
     padding: 1% 2%;
-    background-color: #7c7c7c; 
     font-weight: bold;
     font-size: 0.9rem;
     margin-bottom: 1%;
@@ -1375,14 +1380,9 @@ transition: 0.5s;
 
 .notification-header h6{
     margin: 0;
-    color: #ffffff;
+    color: #8d8d8d;
     font-family: 'Lato', sans-serif;
-    font-size: 1.2rem;
-}
-
-.notifications-table-main-container{
-
-    padding: 2% 10%;
+    font-size: .9rem;
 }
 
 
@@ -2500,6 +2500,19 @@ font-family: 'Lato', sans-serif;
 margin-bottom: 4%;
 }
 
+.schedule-day{
+  display: flex;
+  width: 70%;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 5%;
+  margin: 0;
+}
+
+.schedule-day p{
+  margin: 1px;
+  color: #003172af;
+}
 
 .schedule-add-map{
   display: flex;
