@@ -5,8 +5,8 @@ export const internshipCalculator = (
   const requiredHours = internshipDuration.hours; // lo pasamos a numero ya que en la db esta en string
 
   const totalWorkedHours = attendances.reduce((total, attendance) => {
-    if (attendance.worked_hours) {
-      const [hours, minutes, seconds] = attendance.worked_hours
+    if (attendance.workedHours) {
+      const [hours, minutes, seconds] = attendance.workedHours
         .split(':')
         .map(Number);
       return total + hours + minutes / 60 + seconds / 3600;

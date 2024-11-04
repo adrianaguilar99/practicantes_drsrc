@@ -16,6 +16,8 @@ import {
   FORBIDDEN_RESOURCE,
   UNAUTHORIZED_ACCESS,
 } from 'src/common/constants/constants';
+import { Public, UserRoles } from 'src/auth/decorators';
+import { UserRole } from 'src/common/enums';
 // import { UpdateInternReportDto } from './dto/update-intern-report.dto';
 
 @ApiBearerAuth()
@@ -34,6 +36,8 @@ export class InternReportsController {
     return this.internReportsService.create(createInternReportDto);
   }
 
+  // @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Public()
   @Get()
   async intern(@Res() res: Response) {
     const pdfDoc = await this.internReportsService.internsReport();
@@ -52,17 +56,17 @@ export class InternReportsController {
     pdfDoc.end();
   }
 
-  @Get('employment-letter/:id')
-  async employmentLetterById(
-    @Res() res: Response,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    const pdfDoc = await this.internReportsService.employmentLetterById(id);
-    res.setHeader('Content-Type', 'application/pdf');
-    pdfDoc.info.Title = 'Employment Letter';
-    pdfDoc.pipe(res);
-    pdfDoc.end();
-  }
+  // @Get('employment-letter/:id')
+  // async employmentLetterById(
+  //   @Res() res: Response,
+  //   @Param('id', ParseUUIDPipe) id: string,
+  // ) {
+  //   const pdfDoc = await this.internReportsService.employmentLetterById(id);
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   pdfDoc.info.Title = 'Employment Letter';
+  //   pdfDoc.pipe(res);
+  //   pdfDoc.end();
+  // }
   // @Get()
   // findAll() {
   //   return this.internReportsService.findAll();

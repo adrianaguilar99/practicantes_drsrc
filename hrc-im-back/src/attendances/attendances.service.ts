@@ -69,7 +69,7 @@ export class AttendancesService {
           exitTime: null,
           intern: existingIntern,
           attendanceStatuses: AttendanceStatuses.ABSENCE,
-          worked_hours: null,
+          workedHours: null,
           isLate: true,
         });
         this.userNotificationsGateway.emitEvent('attendance', {
@@ -189,7 +189,7 @@ export class AttendancesService {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
         AttendanceStatuses.EARLY_EXIT_ATTENDANCE;
-      attendanceRecord.worked_hours = calculateWorkedHoursInHHMMSS(
+      attendanceRecord.workedHours = calculateWorkedHoursInHHMMSS(
         attendanceRecord.entryTime,
         exitTime,
       );
@@ -210,7 +210,7 @@ export class AttendancesService {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
         AttendanceStatuses.NORMAL_ATTENDANCE;
-      attendanceRecord.worked_hours = calculateWorkedHoursInHHMMSS(
+      attendanceRecord.workedHours = calculateWorkedHoursInHHMMSS(
         attendanceRecord.entryTime,
         exitTime,
       );
@@ -295,7 +295,7 @@ export class AttendancesService {
     });
   }
 
-  async findAll({ userId, role }: IRequestUser) {
+  async findAllBySupervisors({ userId, role }: IRequestUser) {
     let allAttendances: Attendance[];
     if (role === UserRole.SUPERVISOR) {
       const { department } = await this.supervisorsService.findByUser(userId);
@@ -384,6 +384,44 @@ export class AttendancesService {
     });
     return filteredAttendances;
   }
+  async findAll() {
+    const allAttendances = await this.attendancesRepository.find();
+    const filteredAttendances = allAttendances.map((attendance) => {
+      // filtramos todos los datos innecesarios del practicante para no sobrecargar al front
+      const {
+        bloodType,
+        phone,
+        address,
+        schoolEnrollment,
+        internshipStart,
+        internshipEnd,
+        internshipDuration,
+        status,
+        totalInternshipCompletion,
+        career,
+        department,
+        property,
+        emergencyContacts,
+        internComents,
+        internFiles,
+        internSchedule,
+        ...filteredIntern
+      } = attendance.intern;
+      // ahora filtramos todos los datos innecesarios del lugar de practicas
+      const { supervisors, ...filteredInternshipDepartment } =
+        filteredIntern.internshipDepartment;
+
+      //retornamos data limpia
+      return {
+        ...attendance,
+        intern: {
+          ...filteredIntern,
+          internshipDepartment: filteredInternshipDepartment,
+        },
+      };
+    });
+    return filteredAttendances;
+  }
 
   async findOne(id: string) {
     const attendance = await this.attendancesRepository.findOne({
@@ -440,7 +478,7 @@ export class AttendancesService {
         updateAttendanceDto.attendanceStatuses;
     if (updateAttendanceDto.isLate !== undefined)
       existingAttendace.isLate = updateAttendanceDto.isLate;
-    existingAttendace.worked_hours = calculateWorkedHoursInHHMMSS(
+    existingAttendace.workedHours = calculateWorkedHoursInHHMMSS(
       updateAttendanceDto.entryTime,
       updateAttendanceDto.exitTime,
     );

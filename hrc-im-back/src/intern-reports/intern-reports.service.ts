@@ -3,17 +3,16 @@ import { CreateInternReportDto } from './dto/create-intern-report.dto';
 import { PdfPrinterService } from 'src/pdf-printer/pdf-printer.service';
 import {
   getEmploymentLetter,
-  getEmploymentLetterById,
   getInternReport,
   getInternsReport,
 } from 'src/reports';
-import { InternsService } from 'src/interns/interns.service';
+import { AttendancesService } from 'src/attendances/attendances.service';
 
 @Injectable()
 export class InternReportsService {
   constructor(
     private readonly pdfPrinterService: PdfPrinterService,
-    private readonly internsService: InternsService,
+    private readonly attendancesService: AttendancesService,
   ) {}
 
   create(createInternReportDto: CreateInternReportDto) {
@@ -36,26 +35,40 @@ export class InternReportsService {
     return doc;
   }
 
-  async employmentLetterById(id: string) {
-    const intern = await this.internsService.findOne(id);
-    const docDefinition = getEmploymentLetterById({
-      employeeHours: +intern.internshipDuration,
-      employeeName: intern.user.firstName,
-      employeePosition: intern.bloodType,
-      employeeStartDate: new Date(intern.internshipStart),
-      employeeWorkSchedule: intern.internSchedule.fridayIn,
-      employerCompany: intern.property.name,
-      employerName: intern.user.lastName,
-      employerPosition: intern.address,
-    });
+  // async employmentLetterById(id: string) {
+  //   const intern = await this.internsService.findOne(id);
+  //   const docDefinition = getEmploymentLetterById({
+  //     employeeHours: +intern.internshipDuration,
+  //     employeeName: intern.user.firstName,
+  //     employeePosition: intern.bloodType,
+  //     employeeStartDate: new Date(intern.internshipStart),
+  //     employeeWorkSchedule: intern.internSchedule.fridayIn,
+  //     employerCompany: intern.property.name,
+  //     employerName: intern.user.lastName,
+  //     employerPosition: intern.address,
+  //   });
 
-    const doc = this.pdfPrinterService.createPdf(docDefinition);
+  //   const doc = this.pdfPrinterService.createPdf(docDefinition);
 
-    return doc;
-  }
+  //   return doc;
+  // }
 
   async internsReport() {
-    const docDefinition = getInternsReport();
+    const allInternsAttendances = await this.attendancesService.findAll();
+    // allInternsAttendances.map(i=> {
+    //   i.attendanceDate,
+    //   i.attendanceStatuses,
+    //   i.entryTime,
+    //   i.exitTime,
+    //   i.id,
+    //   i.intern.user.firstName,
+    //   i.intern.user.lastName,
+    //   i.isLate,
+    //   i.worked_hours,
+    //   i.intern.institution
+    // })
+
+    const docDefinition = getInternsReport({ allInternsAttendances });
 
     return this.pdfPrinterService.createPdf(docDefinition);
   }

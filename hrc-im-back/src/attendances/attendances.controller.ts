@@ -103,9 +103,10 @@ export class AttendancesController {
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async findAll(@Req() req): Promise<IApiResponse<any>> {
     const user = req.user;
-    const allAttendances = await this.attendancesService.findAll(user);
+    const allAttendances =
+      await this.attendancesService.findAllBySupervisors(user);
     return {
-      message: SUCCESSFUL_FETCH,
+      message: 'SUCCESSFUL_FETCH',
       data: allAttendances,
       records: allAttendances.length,
     };
