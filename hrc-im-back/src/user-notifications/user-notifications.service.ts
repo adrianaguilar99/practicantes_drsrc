@@ -44,6 +44,19 @@ export class UserNotificationsService {
     }
   }
 
+  async findAllUnreadByUser({ userId }: IRequestUser) {
+    try {
+      const allUserNotifications =
+        await this.userNotificationStatusRepository.find({
+          where: { user: { id: userId }, seen: false },
+          order: { notification: { createdAt: 'DESC' } },
+        });
+      return allUserNotifications;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
+
   async findAllByUser({ userId }: IRequestUser) {
     try {
       const allUserNotifications =
@@ -53,7 +66,7 @@ export class UserNotificationsService {
         });
       return allUserNotifications;
     } catch (error) {
-      handleInternalServerError;
+      handleInternalServerError(error.message);
     }
   }
 
