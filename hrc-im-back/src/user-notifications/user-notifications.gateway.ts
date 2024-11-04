@@ -42,16 +42,6 @@ export class UserNotificationsGateway
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  // @SubscribeMessage('message')
-  // handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-  //   // console.log(data);
-  //   // este envia a todos incluido a si mismo
-  //   // this.server.emit('server-message', data);
-
-  //   // este envia a todos pero no a si mismo
-  //   client.broadcast.emit('server-message', data);
-  // }
-
   async emitEvent(event: string, data: any) {
     console.log(event, data);
     const users = await this.usersService.findAllRegardlessStatus();

@@ -54,9 +54,10 @@ export class UserNotificationsController {
     type: [UserNotification],
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  async findAll(): Promise<IApiResponse<any>> {
-    // console.log(user);
-    const allUserNotifications = await this.userNotificationsService.findAll();
+  async findAllByUser(@Req() req): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const allUserNotifications =
+      await this.userNotificationsService.findAllByUser(user);
     return {
       message: SUCCESSFUL_FETCH,
       data: allUserNotifications,

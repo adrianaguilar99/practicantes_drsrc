@@ -22,6 +22,7 @@ import { InternScheduleModule } from './intern-schedule/intern-schedule.module';
 import { AttendancesModule } from './attendances/attendances.module';
 import { UserNotificationsModule } from './user-notifications/user-notifications.module';
 import { InternReportsModule } from './intern-reports/intern-reports.module';
+import { PdfPrinterModule } from './pdf-printer/pdf-printer.module';
 import dbConfig from './configs/db.config';
 import dbConfigProduction from './configs/db.config.production';
 
@@ -53,6 +54,7 @@ import dbConfigProduction from './configs/db.config.production';
     AttendancesModule,
     UserNotificationsModule,
     InternReportsModule,
+    PdfPrinterModule,
   ],
   controllers: [AppController],
   providers: [AppService],

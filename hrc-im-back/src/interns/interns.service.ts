@@ -394,7 +394,7 @@ export class InternsService {
     do {
       code = Math.floor(100000 + Math.random() * 900000).toString();
       codeExists = !!(await this.internsRepository.findOne({
-        where: { externalInternCode: code },
+        where: [{ externalInternCode: code }, { internalInternCode: code }],
       }));
     } while (codeExists);
 

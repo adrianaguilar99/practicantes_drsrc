@@ -2,12 +2,29 @@ import {
   Controller,
   Post,
   Body,
+  Get,
+  Res,
+  Param,
+  ParseUUIDPipe,
   //  Patch, Param, Delete ,Get
 } from '@nestjs/common';
 import { InternReportsService } from './intern-reports.service';
 import { CreateInternReportDto } from './dto/create-intern-report.dto';
+import { Response } from 'express';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  FORBIDDEN_RESOURCE,
+  UNAUTHORIZED_ACCESS,
+} from 'src/common/constants/constants';
 // import { UpdateInternReportDto } from './dto/update-intern-report.dto';
 
+@ApiBearerAuth()
+@ApiResponse({
+  status: 401,
+  description: `${UNAUTHORIZED_ACCESS} Please login`,
+})
+@ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
+@ApiTags('Intern Reports')
 @Controller('intern-reports')
 export class InternReportsController {
   constructor(private readonly internReportsService: InternReportsService) {}
@@ -17,6 +34,35 @@ export class InternReportsController {
     return this.internReportsService.create(createInternReportDto);
   }
 
+  @Get()
+  async intern(@Res() res: Response) {
+    const pdfDoc = await this.internReportsService.internsReport();
+    res.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'Intern Report';
+    pdfDoc.pipe(res);
+    pdfDoc.end();
+  }
+
+  @Get('employment-letter')
+  async employmentLetter(@Res() res: Response) {
+    const pdfDoc = this.internReportsService.employmentLetter();
+    res.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'Employment Letter';
+    pdfDoc.pipe(res);
+    pdfDoc.end();
+  }
+
+  @Get('employment-letter/:id')
+  async employmentLetterById(
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    const pdfDoc = await this.internReportsService.employmentLetterById(id);
+    res.setHeader('Content-Type', 'application/pdf');
+    pdfDoc.info.Title = 'Employment Letter';
+    pdfDoc.pipe(res);
+    pdfDoc.end();
+  }
   // @Get()
   // findAll() {
   //   return this.internReportsService.findAll();

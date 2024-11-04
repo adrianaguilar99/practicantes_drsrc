@@ -13,6 +13,7 @@ export class UserNotificationStatus {
   @ManyToOne(
     () => UserNotification,
     (notification) => notification.userStatuses,
+    { eager: true },
   )
   notification: UserNotification;
 
