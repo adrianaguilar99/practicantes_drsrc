@@ -38,6 +38,7 @@ export class AttendancesService {
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
 
+    // validar practicante no activo
     if (!existingIntern.user.isActive)
       throw new BadRequestException(
         'Your account is inactive, and check-in is unavailable. Please contact your supervisor or administrator for assistance.',
@@ -52,9 +53,7 @@ export class AttendancesService {
     // Si ya marco su entrada o su entrada y salida no puede volver a marcar alguna de las dos
     const existingRecord = await this.attendancesRepository.findOne({
       where: { intern: existingIntern, attendanceDate },
-    }); // validar practicante no activo
-
-    console.log({ activo: existingIntern.user.isActive });
+    });
 
     if (existingRecord) {
       if (!existingRecord.exitTime) {
