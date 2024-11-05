@@ -72,3 +72,27 @@ export async function getCommentsByInternId(Token: string, id: string): Promise<
       throw error;
     }
   }
+
+  export async function deleteComment(Token: string, id: string) {
+    try {
+      const response = await fetch(apiUrl + "/intern-comments/" + id, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Error al eliminar el supervisor");
+      }
+  
+      const responseJson: any = await response.json();
+      return responseJson;
+    } catch (error: any) {
+      console.error("Error:", error);
+      throw error;
+    }
+  }
+  

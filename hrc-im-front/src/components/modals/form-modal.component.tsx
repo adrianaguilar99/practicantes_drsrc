@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Modal, Box, Typography } from '@mui/material';
 import { da } from 'date-fns/locale';
 import { ReportGenerationModal } from './report-generation-modal.component';
@@ -9,6 +9,9 @@ import { SupervisorFormModal } from '../supervisors/supervisors-modal.component'
 import { AdminsFormModal } from '../supervisors/admins-modal.component';
 import { PropertiesFormModal } from '../properties/properties-modal.component';
 import { CommentFormModal } from '../interns/interns-components/comments-modal.component';
+import { InternScheduleModal } from '../interns/interns-schedule/intern-schedule-modal.component';
+import { DataSchedule } from '../../interfaces/interns/intern-schedule/intern-schedule.interface';
+import { set } from 'date-fns';
 
 interface FormModalPropsMain {
     open: boolean;
@@ -26,17 +29,20 @@ interface FormModalPropsMain {
     data?: any;
     onCancel: () => void;
     onSuccess: () => void;
+    onAddSchedule?: (schelude: DataSchedule) => void;
   }
 
   export const FormModal: React.FC<FormModalPropsMain> = ({ open, onCancel, onConfirm, title, type, entity, data }) => {
     const [modalWidth, setModalWidth] = React.useState('30vw');
     const [isLargeScreen, setIsLargeScreen] = React.useState(true);
+    const [pdfLoaded, setPdfLoaded] = React.useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
   
     useEffect(() => {
       const ResizePage = () => {
         const screenWidth = window.innerWidth;
         if (screenWidth < 1024) {
-          setModalWidth('95vw');
+          setModalWidth('85vw');
           setIsLargeScreen(false);
         } else if (screenWidth < 1375) {
           setModalWidth('45vw');
@@ -51,6 +57,33 @@ interface FormModalPropsMain {
       window.addEventListener("resize", ResizePage);
       return () => window.removeEventListener("resize", ResizePage);
     }, []);
+
+    useEffect(() => {
+      if(pdfLoaded === true){
+        setModalWidth('65vw')
+      }
+      if(pdfLoaded === false){
+        setModalWidth('30vw')
+      }
+
+      
+     }, [pdfLoaded]);
+
+
+     useEffect(() => {
+      const ClickOutside = (event : MouseEvent) => {
+          if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+              onCancel();
+              setPdfLoaded(false);
+          }
+      };
+
+      document.addEventListener("mousedown", ClickOutside);
+      return () => {
+          document.removeEventListener("mousedown", ClickOutside);
+      };
+  }, [onCancel]);
+
   
     const entityModalWidth = isLargeScreen && (entity === "supervisors" || entity === "institutions") ? '45vw' : modalWidth;
   
@@ -68,12 +101,13 @@ interface FormModalPropsMain {
             boxShadow: 24,
             p: 0,
           }}
+          ref={menuRef}
         >
           {/* Header modal */}
           <Box
             sx={{
-              bgcolor: '#2C3E50',
-              color: '#fff',
+              bgcolor: "#EDEDED", 
+              color: "#2E3B4E",  
               padding: '10px 16px',
               borderTopLeftRadius: '5px',
               borderTopRightRadius: '5px',
@@ -86,6 +120,8 @@ interface FormModalPropsMain {
             </Typography>
           </Box>
   
+
+  
           {/* Modal body */}
           <Box sx={{ padding: '10px 16px' }}>
             {entity === "departments" ? <DepartmentFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
@@ -94,8 +130,9 @@ interface FormModalPropsMain {
             {entity === "interns-careers" ? <CareerFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "administrators" ? <AdminsFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
             {entity === "properties" ? <PropertiesFormModal data={data} type={type} onCancel={onCancel} onSuccess={onConfirm} /> : null}
-            {entity === "report" ? <ReportGenerationModal onCancel={onCancel} onSuccess={onConfirm} initialDate={data.initialDate} finalDate={data.finalDate} /> : null}
+            {entity === "report" ? <ReportGenerationModal onCancel={onCancel} onSuccess={() => setPdfLoaded(true)}/> : null}
             {entity === "comment" ? <CommentFormModal type='edit' data={{...data}} onCancel={onCancel} onSuccess={onConfirm} /> : null}
+            {entity === "schedule" ? <InternScheduleModal type={type} data={data} onCancel={onCancel} onSuccess={onConfirm}/> : null}
           </Box>
         </Box>
       </Modal>

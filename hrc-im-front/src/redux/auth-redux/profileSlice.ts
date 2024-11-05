@@ -4,7 +4,8 @@ const getStoredUserName = () => sessionStorage.getItem('_ProfileName') || null;
 const setStoredUserName = (name: string) => sessionStorage.setItem('_ProfileName', name);
 
 const initialState = {
-  userName: getStoredUserName(),  
+  userName: getStoredUserName(),
+  notificationsLength: 0, // Nuevo campo para almacenar la longitud de las notificaciones
 };
 
 const profileSlice = createSlice({
@@ -17,10 +18,13 @@ const profileSlice = createSlice({
     },
     clearUserName: (state) => {
       state.userName = null;
-      sessionStorage.removeItem('_ProfileName'); 
+      sessionStorage.removeItem('_ProfileName');
+    },
+    setNotificationsLength: (state, action) => {
+      state.notificationsLength = action.payload; 
     },
   },
 });
 
-export const { setUserNameRedux, clearUserName } = profileSlice.actions;
+export const { setUserNameRedux, clearUserName, setNotificationsLength } = profileSlice.actions;
 export default profileSlice.reducer;

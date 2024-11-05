@@ -24,7 +24,6 @@ export async function getNewToken(refreshToken: string) {
         "Authorization": `Bearer ${refreshToken}`,
       }
     });
-console.log(response);
     if (!response.ok) {
       console.error("Error al obtener el nuevo token");
       throw new Error('Error al obtener el nuevo token');
@@ -52,7 +51,6 @@ export async function getProfileData(Token: string): Promise<ProfileInterface | 
     }
 
     const profileData: ProfileInterface = await response.json(); 
-    console.log('se recuperaron los datos del perfil:' + profileData.data.firstName);
     return profileData;
   } catch (error) {
     console.error("Error:", error);

@@ -270,7 +270,7 @@ export const FiltersButton: React.FC<FiltersProps> = ({
 
             {userRol != "SUPERVISOR" &&(location.pathname === "/interns" ||
               location.pathname === "/supervisors"
-            || location.pathname === "/checkin-checkout") && (
+            || location.pathname === "/interns/checkin-checkout") && (
               <div className="filters-column">
                 <div className="filter-divider">
                   <label>Departamento</label>

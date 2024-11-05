@@ -29,6 +29,7 @@ interface RegisterRowProps {
   options?: string[];
   editable?: boolean;
   coincidences?: string[];
+  accept?: string;
 }
 
 export const RegisterRow: React.FC<RegisterRowProps> = ({
@@ -45,6 +46,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   editable = true,
   options = [],
   coincidences = [],
+  accept,
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [showPassword, setShowPassword] = useState(false);
@@ -60,7 +62,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
   });
 
   const ValueChange = (newValue: string | File) => {
-    setInputValue(newValue instanceof File ? newValue.name : newValue); // Muestra el nombre del archivo si es un File
+    setInputValue(newValue instanceof File ? newValue.name : newValue); 
     onChange(newValue);
   };
   
@@ -161,6 +163,7 @@ export const RegisterRow: React.FC<RegisterRowProps> = ({
               className={`edit-mode ${errorClass}`}
               readOnly={!editable}
               autoComplete="off"
+              accept={accept}
             />
           )}
 

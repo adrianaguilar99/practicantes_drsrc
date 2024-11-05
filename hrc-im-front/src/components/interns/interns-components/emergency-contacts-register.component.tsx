@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { ButtonComponent } from "../../buttons/buttons.component";
 
-export const EmergencyContactsRegister = ({ triggerAction = false, onReceiveContacts = (contacts: DataEmergencyContact[]) => {} }) => {
+export const EmergencyContactsRegister = ({ onReceiveContacts = (contacts: DataEmergencyContact[]) => {} }) => {
   const [contacts, setContacts] = useState<DataEmergencyContact[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,11 +31,8 @@ export const EmergencyContactsRegister = ({ triggerAction = false, onReceiveCont
   };
 
   useEffect(() => {
-    if (triggerAction) {
-      console.log("Acción activada por el componente padre");
       onReceiveContacts(contacts); 
-    }
-  }, [triggerAction, contacts, onReceiveContacts]);
+  }, [contacts, onReceiveContacts]);
 
   return (
     <div className="register-intern-contact-container">
@@ -125,10 +122,25 @@ export const EmergencyContactModal = ({
       onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      fullWidth={true}
     >
-      <DialogTitle>{"Agregar Contacto de Emergencia"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
+        <DialogTitle
+      sx={{
+        bgcolor: "#EDEDED", 
+        color: "#2E3B4E",      
+        padding: 2,
+        textAlign: "start",
+        fontSize: ".9rem",
+        height: 5,
+        lineHeight: 1,
+      }}
+    >
+      {"Agregar contacto de emergencia"}
+    </DialogTitle>
+      <DialogContent  sx={{
+      backgroundColor: "#EDEDED"
+    }}>
+        <DialogContentText sx={{marginTop: 2}}>
           <RegisterRow
             label="Nombre:"
             onChange={(value) => setContactName(value as string || "")}
@@ -182,7 +194,7 @@ export const EmergencyContactModal = ({
                 variant="contained"
                 color="secondary"
                 sx={{
-                  bgcolor: "#A0522D",
+                  bgcolor: "#D32F2F",
                   "&:hover": { bgcolor: "#8b4513" },
                 }}
                 onClick={onClose}

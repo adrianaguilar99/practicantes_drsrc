@@ -4,6 +4,8 @@ import { Breadcrumb } from "../../components/utils/breadcrumb.component";
 import { useEffect, useState } from "react";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
 import MyAvatar from "../../assets/images/avatar-test.jpg";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {
   ButtonComponent,
   EditButton,
@@ -69,6 +71,8 @@ import TabPanel from "@mui/lab/TabPanel";
 import { patchInternFunction } from "../../functions/intern-functions/patch-intern-function";
 import { enqueueSnackbar } from "notistack";
 import { ca } from "date-fns/locale";
+import { InternsSchedule } from "../../components/interns/interns-schedule/intern-schedule.component";
+import { InputValidators } from "../../functions/input-validators.functions";
 
 const InternInformationPage = () => {
   const userToken = sessionStorage.getItem("_Token") || "";
@@ -103,8 +107,6 @@ const InternInformationPage = () => {
   const [InternOldDepartment, setInternOldDepartment] = useState("");
   const [InterBeginDate, setInternBeginDate] = useState("");
   const [InternEndDate, setInternEndDate] = useState("");
-  const [InternCheckIn, setInternCheckIn] = useState("");
-  const [InternCheckOut, setInternCheckOut] = useState("");
   const [InternTotalTime, setInternTotalTime] = useState("");
   const [InternWorkCode, setInternWorkCode] = useState("");
   const [InternPhoto, setInternPhoto] = useState("");
@@ -131,10 +133,6 @@ const InternInformationPage = () => {
 
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const Open = () => setOpen(true);
-  const Close = () => setOpen(false);
-
   const [value, setValue] = useState("1");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -154,55 +152,147 @@ const InternInformationPage = () => {
     internInstitutePhone: undefined,
     internBeginDate: undefined,
     internEndDate: undefined,
-    internCheckIn: undefined,
-    internCheckOut: undefined,
     internTotalTime: undefined,
     internWorkCode: undefined,
     InternProperty: undefined,
   });
 
+  const validateInputs = () => {
+
+    const validators = InputValidators();
+
+    const resultName = validators.string(InternFirstName);
+    if (resultName) {
+      newErrors.internName = resultName;
+    }
+
+    const resultLastName = validators.string(InternLastName);
+    if (resultLastName) {
+      newErrors.internLastName = resultLastName;
+    }
+
+    const resultPhone = validators.phone(InternPhone);
+    if (resultPhone) {
+      newErrors.internPhone = resultPhone;
+    }
+
+    if(InternBloodType === ""){ 
+        newErrors.internBloodType = "Seleccione un tipo de sangre valido";
+    }
+
+    const resultAddress = validators.string(InternAddress);
+    if (resultAddress) {
+      newErrors.internAddress = resultAddress;
+    }
+
+    if(InternType === "Interno"){
+      const resultDepartment = validators.string(DeparmentID); 
+      if (resultDepartment) {
+        newErrors.internDepartment = resultDepartment;
+      }
+
+      const resultWorkCode = validators.string(InternWorkCode);
+    if (resultWorkCode) { 
+      newErrors.internWorkCode = resultWorkCode;
+    }
+    }
+ 
+
+    const resultOldDepartment = validators.string(InternShipDepartmentID);
+    if (resultOldDepartment) {
+      newErrors.internOldDepartment = resultOldDepartment;
+    }
+
+    if(InternType === "Externo"){
+      const resultUniversity = validators.string(InstitutionID);
+      if (resultUniversity) {
+        newErrors.internUniversity = resultUniversity;
+      }
+
+      const resultInternID = validators.string(InternID); 
+      if (resultInternID) {
+        newErrors.internID = resultInternID;
+      }
+  
+      const resultProgram = validators.string(CareerID); 
+      if (resultProgram) {
+        newErrors.internProgram = resultProgram;
+      }
+  
+      const resultInstitutePhone = validators.phone(InternInstitutePhone);
+      if (resultInstitutePhone) {
+        newErrors.internInstitutePhone = resultInstitutePhone;
+      }
+    }
+
+    const resultBeginDate = validators.date(InterBeginDate);
+    if (resultBeginDate) {
+      newErrors.internBeginDate = resultBeginDate;
+    }
+
+    const resultEndDate = validators.date(InternEndDate);
+    if (resultEndDate) {
+      newErrors.internEndDate = resultEndDate;
+    }
+
+    if(InterBeginDate > InternEndDate){
+      newErrors.internEndDate = "La fecha de fin debe ser mayor a la fecha de inicio";
+    }
+
+    const resultTotalTime = validators.string(InternTotalTime);
+    if (resultTotalTime) {
+      newErrors.internTotalTime = resultTotalTime;
+    }
+
+
+    
+
+
+    setErrors(newErrors);
+  }
+
   const formSubmit = () => {
-    // if(InternContacts.length > 1 && hasErrors === false && formAction === true){
-    patchInternFunction({
-      userToken: userToken,
-      internType: InternType,
-      userId: internData?.user.id || "",
-      dataUser: {
-        firstName: InternFirstName,
-        lastName: InternLastName,
-      },
-      dataIntern: {
-        bloodType: InternBloodType,
-        phone: InternPhone,
-        address: InternAddress,
-        schoolEnrollment: InternID,
-        internshipStart: InterBeginDate,
-        internshipEnd: InternEndDate,
-        externalInternCode: internData?.externalInternCode || "",
-        internshipDuration: InternTotalTime + " hours",
-        status: "ACTIVE",
-        internalInternCode: InternWorkCode,
-        careerId: CareerID,
-        departmentId: DeparmentID,
-        internshipDepartmentId: InternShipDepartmentID,
-        institutionId: InstitutionID,
-        propertyId: PropertyID,
-      },
-      internId: internId || "",
-      onSuccess: () => {
-        fetchData();
-        setShowModal(false);
-      },
-      onError: () => {
-        enqueueSnackbar("No se pudo actualizar el practicante: ", {
-          variant: "error",
-        });
-      },
-    });
+   
+
+      patchInternFunction({
+        userToken: userToken,
+        internType: InternType,
+        userId: internData?.user.id || "",
+        dataUser: {
+          firstName: InternFirstName,
+          lastName: InternLastName,
+        },
+        dataIntern: {
+          bloodType: InternBloodType,
+          phone: InternPhone,
+          address: InternAddress,
+          schoolEnrollment: InternID,
+          internshipStart: InterBeginDate,
+          internshipEnd: InternEndDate,
+          externalInternCode: internData?.externalInternCode || "",
+          internshipDuration: InternTotalTime + " hours",
+          status: "ACTIVE",
+          internalInternCode: InternWorkCode,
+          careerId: CareerID,
+          departmentId: DeparmentID,
+          internshipDepartmentId: InternShipDepartmentID,
+          institutionId: InstitutionID,
+          propertyId: PropertyID,
+        },
+        internId: internId || "",
+        onSuccess: () => {
+          fetchData();
+          setShowModal(false);
+        },
+        onError: () => {
+          enqueueSnackbar("No se pudo actualizar el practicante: ", {
+            variant: "error",
+          });
+        },
+      });
+    
+   
   };
-  //  else{
-  //    alert("Por favor, rellene todos los campos");
-  //  }
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -237,28 +327,17 @@ const InternInformationPage = () => {
         setInternAddress(fetchedData.data.address);
         setInternBeginDate(fetchedData.data.internshipStart.toString());
         setInternEndDate(fetchedData.data.internshipEnd.toString());
-        setInternCheckIn(fetchedData.data.entryTime);
-        setInternCheckOut(fetchedData.data.exitTime);
         setInternPhoto(fetchedData.data.internFiles?.photo || "");
-        setInternProperty(fetchedData.data.property.name || "");
-  
+        setInternProperty(fetchedData.data.property.name || "");  
         setPropertyID(fetchedData.data.property.id);
-        setInternShipDepartmentID(fetchedData.data.internshipDepartment.id);
-  
+        setInternShipDepartmentID(fetchedData.data.internshipDepartment.id);  
         console.log("Foto del practico: ", fetchedData.data.internFiles?.compiledDocuments);
         setInternFile(fetchedData.data.internFiles?.compiledDocuments || "");
-  
         setHasError(false);
-  
-        // Load related data based on intern type
         const relatedDataFetches = [fetchDepartments(), fetchProperties()];
-  
-        // If the intern is external, fetch additional data
         if (fetchedData.data.department === null) {
           relatedDataFetches.push(fetchInstitutions(), fetchCareers());
         }
-  
-        // Wait until all necessary data is fetched
         await Promise.all(relatedDataFetches);
       } else {
         setInternData(undefined);
@@ -369,7 +448,10 @@ const InternInformationPage = () => {
 
   const EditPage = () => {
     if (editable) {     
+     validateInputs();
+     if (Object.keys(newErrors).length === 0) {
      setSaveEdit(true);
+     }
     } else {
    
         setEditable(true);
@@ -421,25 +503,6 @@ const InternInformationPage = () => {
     setModalFiles(false);
   };
 
-  const Click = () => {
-    Open();
-  };
-
-  const Files = [
-    {
-      name: "Copia de Credencial",
-    },
-    {
-      name: "Copia de Credencial",
-    },
-    {
-      name: "Copia de Credencial",
-    },
-    {
-      name: "Copia de Credencial",
-    },
-  ];
-
   return (
     <div className="body-page">
       <Navbar />
@@ -478,19 +541,54 @@ const InternInformationPage = () => {
                     aria-label="lab API tabs example"
                   >
                     <Tab
+                      icon={<InfoOutlinedIcon sx={{ fontSize: "1.4rem" }} />}
+                      iconPosition="start"
                       label="Informacion"
                       value="1"
                       sx={{ fontSize: ".7rem" }}
                     />
-                    <Tab label="Horario" value="2" sx={{ fontSize: ".7rem" }} />
+                    <Tab icon={<CalendarMonthIcon sx={{ fontSize: "1.4rem" }} />} iconPosition="start" label="Horario" value="2" sx={{ fontSize: ".7rem" }} />
                   </TabList>
-                  <TabPanel value="1" className="info-section-interns">
+                  <TabPanel value="1" className="info-section-interns" style={{ padding: "0px" }}>
                     <div className="info-container">
                       <section className="info-section-left">
-                        <h3>
+                       
+                     
+                        {editable ? (
+                          <>
+                            <InfoRow
+                          label="Nombres:"
+                          value={InternFirstName}
+                          id="firstName"
+                          type="text"
+                          editable={editable}
+                          show={
+                            InternType === "Externo" || InternType === "Interno"
+                          }
+                          onChange={(value) => setInternFirstName(value || "")}
+                          validate={errors.internName ? "Error" : "Normal"}
+                          typeError={errors.internName}
+                        />
+                          <InfoRow
+                          label="Apellidos:"
+                          value={InternLastName}
+                          id="lastName"
+                          type="text"
+                          editable={editable}
+                          show={
+                            InternType === "Externo" || InternType === "Interno"
+                          }
+                          onChange={(value) => setInternLastName(value || "")}
+                          validate={errors.internLastName ? "Error" : "Normal"}
+                          typeError={errors.internLastName}
+                        />
+                          </>
+                        ):(
+                          <h3>
                           {internData?.user?.firstName}{" "}
                           {internData?.user?.lastName}
                         </h3>
+                        )}
 
                         <InfoRow
                           label="Tel Personal:"
@@ -502,6 +600,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternPhone(value || "")}
+                          validate={errors.internPhone ? "Error" : "Normal"}
+                          typeError={errors.internPhone}
                         />
                         <InfoRow
                           label="Correo:"
@@ -513,6 +613,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternEmail(value || "")}
+                          validate={errors.internEmail ? "Error" : "Normal"}
+                          typeError={errors.internEmail}
                         />
                         <InfoRow
                           label="Dirección:"
@@ -524,6 +626,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternAddress(value || "")}
+                          validate={errors.internAddress ? "Error" : "Normal"}
+                          typeError={errors.internAddress}
                         />
                         <InfoRow
                           label="Tipo de sangre:"
@@ -548,6 +652,8 @@ const InternInformationPage = () => {
                           onChange={(selectedId) =>
                             setInternBloodType(selectedId || "")
                           }
+                          validate={errors.internBloodType ? "Error" : "Normal"}
+                          typeError={errors.internBloodType}
                         />
 
                         <InfoRow
@@ -577,6 +683,9 @@ const InternInformationPage = () => {
                             );
                             setInternShipDepartmentID(selectedId || "");
                           }}
+                          validate={errors.internDepartment ? "Error" : "Normal"}
+                          typeError={errors.internDepartment}
+                          
                         />
 
                         <InfoRow
@@ -602,6 +711,7 @@ const InternInformationPage = () => {
                             );
                             setDeparmentID(selectedId || "");
                           }}
+
                         />
 
                         <div className="info-section-left-options">
@@ -661,13 +771,9 @@ const InternInformationPage = () => {
                             <label>Archivos del practicante:</label>
                           </div>
                           <div className="info-section-left-options-encargados">
-                            {Files.length > 1 ? (
                               <button onClick={ClickOpenFiles}>
-                                {"( " + Files.length + " )"} Ver todos
+                                {"( " + 2 + " )"} Ver todos
                               </button>
-                            ) : (
-                              Files.length === 1 && <p>{Files[0].name}</p>
-                            )}
                           </div>
                         </div>
 
@@ -702,6 +808,8 @@ const InternInformationPage = () => {
                                 : ""
                             )
                           }}
+                          validate={errors.internUniversity ? "Error" : "Normal"}
+                          typeError={errors.internUniversity}
                         />
 
                         <InfoRow
@@ -721,6 +829,8 @@ const InternInformationPage = () => {
                               selectedCareer ? selectedCareer.id : ""
                             );
                           }}
+                          validate={errors.internProgram ? "Error" : "Normal"}
+                          typeError={errors.internProgram}
                         />
 
                         <InfoRow
@@ -741,6 +851,7 @@ const InternInformationPage = () => {
                           editable={false}
                           show={InternType === "Externo"}
                           onChange={(value) => setInternID(value || "")}
+
                         />
 
                         <InternSupervisorsModal
@@ -756,22 +867,17 @@ const InternInformationPage = () => {
                           ModalClose={ClickCloseEmergency}
                         />
                         <InternFilesModal
-                          data={Files}
+                          internId={internData?.id || ""}
+                          filesId={internData?.internFiles?.id || ""}
                           open={ModalFiles}
                           ModalClose={ClickCloseFiles}
+                          onUpdate={() => fetchData()}
                         />
                       </section>
 
                       <section className="info-section-right">
                         <div className="info-section-right-options">
                         <Avatar alt="Remy Sharp" sx={{ width:  170, height: 170,marginBottom: "2%" }} src={Photo} />
-                          <a
-                            href={File}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Ver PDF
-                          </a>
                           <div className="info-section-right-options-buttons">
                             {userRol != "SUPERVISOR" && (
                               <>
@@ -785,7 +891,7 @@ const InternInformationPage = () => {
                                    sx={{
                                      bgcolor: "#A0522D",
                                      "&:hover": { bgcolor: "#8b4513" },
-                                   }} onClick={() => setEditable(false) }>Cancelar</Button>
+                                   }} onClick={() => { fetchData();setEditable(false); setErrors({});} }>Cancelar</Button>
                                 )}
                                
                                 <ButtonComponent
@@ -796,6 +902,7 @@ const InternInformationPage = () => {
                                         `/${internData?.id}`
                                     )
                                   }
+                                  style={{ maxHeight: "45px" }}
                                 />
                               </>
                             )}
@@ -817,6 +924,9 @@ const InternInformationPage = () => {
                           editable={editable}
                           show={InternType === "Interno"}
                           onChange={(value) => setInternWorkCode(value || "")}
+                          validate={errors.internWorkCode ? "Error" : "Normal"}
+                          typeError={errors.internWorkCode}
+
                         />
                         <InfoRow
                           label="Propiedad:"
@@ -845,6 +955,8 @@ const InternInformationPage = () => {
                               selectedProperty ? selectedProperty.id : ""
                             );
                           }}
+                          validate={errors.internProperty ? "Error" : "Normal"}
+                          typeError={errors.internProperty}
                         />
                         <InfoRow
                           label="Fecha de inicio:"
@@ -856,6 +968,9 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternBeginDate(value || "")}
+                          validate={errors.internBeginDate ? "Error" : "Normal"}
+                          typeError={errors.internBeginDate}
+                          
                         />
                         <InfoRow
                           label="Fecha de fin:"
@@ -867,6 +982,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternEndDate(value || "")}
+                          validate={errors.internEndDate ? "Error" : "Normal"}
+                          typeError={errors.internEndDate}
                         />
                         <InfoRow
                           label="Total de tiempo a cubrir:"
@@ -878,6 +995,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternTotalTime(value || "")}
+                          validate={errors.internTotalTime ? "Error" : "Normal"}
+                          typeError={errors.internTotalTime}
                         />
                       </section>
                       <div className="intern-progress-space-container">
@@ -885,31 +1004,28 @@ const InternInformationPage = () => {
                           <p>Progreso del practicante</p>
                           <div className="progress-section">
                             <span>
-                              {progreso === 100
+                              {internData?.totalInternshipCompletion === 100
                                 ? "¡Completado!"
-                                : `${progreso}%`}
+                                : `${internData?.totalInternshipCompletion}%`}
                             </span>
                             <div className="progress-bar">
                               <div
                                 className="progress"
-                                style={{ width: `${progreso}%` }}
+                                style={{ width: `${internData?.totalInternshipCompletion}%` }}
                               ></div>
                             </div>
                           </div>
                         </div>
-                        <div className="intern-progress-space-buttons">
-                          <ButtonComponent
-                            text="Generar un reporte"
-                            onClick={Click}
-                          />
-                        </div>
+
                       </div>
                     </div>
                     <div className="comments-container">
                       <CommentsTable internId={internData?.id || ""} />
                     </div>
                   </TabPanel>
-                  <TabPanel value="2">Item Two</TabPanel>
+                  <TabPanel  value="2"  style={{ padding: "0px",minWidth: "75vw" }}>
+                    <InternsSchedule internId={internData?.id || ""}  />
+                  </TabPanel>
                 </Box>
               </TabContext>
             </section>
@@ -917,18 +1033,7 @@ const InternInformationPage = () => {
         )}
       </div>
       <Footer />
-      <FormModal
-        open={open}
-        onConfirm={onConfirm}
-        onCancel={Close}
-        data={{
-          initialDate: internData?.internshipStart || "",
-          finalDate: internData?.internshipEnd || "",
-        }}
-        title="Generar reporte del practicante"
-        type="Generete"
-        entity="report"
-      />
+    
     </div>
   );
 };

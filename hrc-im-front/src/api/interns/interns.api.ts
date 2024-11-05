@@ -90,3 +90,47 @@ export async function postIntern(Token: string, data: PostIntern): Promise<PostI
       return null;
     }
   }
+
+
+  export async function getInternOwnData(Token: string, userId: string): Promise<GetByIDInternInterface  | null> {
+    try {
+      const response = await fetch(apiUrl + "/interns/" + userId + "/user", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        console.error("Error al traer los datos del practicante");
+        throw new Error("Error al traer los datos del practicante");
+      }
+  
+      const InternsData: GetByIDInternInterface  = await response.json(); 
+      return InternsData;
+    } catch (error) {
+      return null;
+    }
+  }
+
+
+  export async function getInternsCount(Token: string): Promise<any | null> {
+    try {
+      const response = await fetch(apiUrl + "/users/count-active-interns", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        console.error("Error al traer el conteo de practicantes");
+        throw new Error("Error al traer el conteo de practicantes");
+      }
+  
+      const InternsData: any = await response.json(); 
+      return InternsData;
+    } catch (error) {
+      return null;
+    }
+  }

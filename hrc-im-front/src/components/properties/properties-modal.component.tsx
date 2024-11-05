@@ -112,7 +112,7 @@ export const PropertiesFormModal: React.FC<FormModalProps> = ({
                 variant="contained"
                 color="secondary"
                 sx={{
-                  bgcolor: "#A0522D",
+                  bgcolor: "#D32F2F",
                   "&:hover": { bgcolor: "#8b4513" },
                 }}
                 onClick={onCancel}
@@ -144,8 +144,8 @@ export const PropertiesFormModal: React.FC<FormModalProps> = ({
                 variant="contained"
                 color="secondary"
                 sx={{
-                  bgcolor: "#A0522D",
-                  "&:hover": { bgcolor: "#8b4513" },
+                  bgcolor: "#D32F2F",
+                  "&:hover": { bgcolor: "#C62828" },
                 }}
                 onClick={onCancel}
               >

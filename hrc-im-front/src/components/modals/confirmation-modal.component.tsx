@@ -5,11 +5,12 @@ interface ConfirmationModalProps {
   open: boolean;
   onConfirm: () => void;  
   onCancel: () => void;   
-  title: string;        
+  title: string;       
+  informationModal?: boolean; 
   message: string;     
 }
 
-export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, title, message }) => {
+export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onConfirm, onCancel, informationModal, title, message }) => {
 
   const Close = (event: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
@@ -31,18 +32,17 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCo
           transform: 'translate(-50%, -50%)',
           width: 400,
           bgcolor: 'background.paper',
-          borderRadius: '8px',
+          borderRadius: '5px',
           boxShadow: 24,
           p: 0,
         }}
       >
         <Box
           sx={{
-            bgcolor: '#2C3E50',
-            color: '#fff',
+            bgcolor: '#EDEDED',
+            color: '#2E3B4E',
             padding: '10px 16px',
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
+            borderRadius: '5px',
             display: 'flex',
             justifyContent: 'space-between',
           }}
@@ -52,28 +52,31 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ open, onCo
           </Typography>
         </Box>
 
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3,bgcolor: '#EDEDED' }}>
           <Typography variant="body1" mb={2}>
             {message}
           </Typography>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ bgcolor: '#007BFF', '&:hover': { bgcolor: '#0056b3' } }}
-              onClick={onConfirm}
-            >
-              Confirmar
-            </Button>
+          <Box sx={{ display: 'flex', justifyContent: informationModal ? 'center' : 'space-between' }}>
+            {!informationModal && (
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ bgcolor: '#007BFF', '&:hover': { bgcolor: '#0056b3' } }}
+                        onClick={onConfirm}
+                      >
+                        Confirmar
+                      </Button>
+            )}
+  
 
             <Button
               variant="contained"
               color="secondary"
-              sx={{ bgcolor: '#A0522D', '&:hover': { bgcolor: '#8b4513' } }}
+              sx={informationModal ? { bgcolor: '#007BFF', '&:hover': { bgcolor: '#0056b3' } } : { bgcolor: '#D32F2F', '&:hover': { bgcolor: '#8b4513' } } }
               onClick={onCancel}
             >
-              Cancelar
+             {informationModal ? "Aceptar" : "Cancelar"}
             </Button>
           </Box>
         </Box>

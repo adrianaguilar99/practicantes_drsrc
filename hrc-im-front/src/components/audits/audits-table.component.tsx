@@ -13,7 +13,7 @@ export interface TableProps {
 }
 
 interface AuditsTableProps {
-  data?: AuditsInterface[]; // data es opcional
+  data?: AuditsInterface[];
   onUpdate: () => void;
 }
 
@@ -40,24 +40,19 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
     window.addEventListener("resize", ResizePage);
     return () => window.removeEventListener("resize", ResizePage);
   }, []);
-
-  // Manejo de la paginación
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const PageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
-  // Filtro de las auditorías que se deben mostrar en la página actual
   const displayedAudits = data.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
 
-  // Estado para almacenar la entidad sobre la cual se hace hover
   const [hoveredEntityId, setHoveredEntityId] = useState<null | string>(null);
 
-  // Generar un ID único para cada fila (combina el id de la entidad y el índice de la fila)
   const generateUniqueEntityId = (entityId: string, index: number) => {
     return `${entityId}-${index}`;
   };
@@ -138,7 +133,7 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
                               left: "0",
                             }}
                           >
-                            <EntityInfoModal entity={audit.entityAffected} />
+                            <EntityInfoModal entity={audit.entityAffected} type={audit.action.split(" ")[1]}/>
                           </div>
                         )}
                       </span>

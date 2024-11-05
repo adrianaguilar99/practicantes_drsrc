@@ -5,10 +5,11 @@ import "../components.css";
 interface ButtonComponentProps {
   text: string;
   type?: "cancel";
+  style?: React.CSSProperties;
   onClick: () => void;  // Añadir onClick como prop
 }
 
-export const ButtonComponent = ({ text,type, onClick }: ButtonComponentProps) => {
+export const ButtonComponent = ({ text,type, style, onClick }: ButtonComponentProps) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
@@ -40,6 +41,7 @@ export const ButtonComponent = ({ text,type, onClick }: ButtonComponentProps) =>
         fontStyle: "normal",
         fontSize: "0.7rem",
         minHeight: "40px",
+        ...style,
       }}
     >
       {loading && (

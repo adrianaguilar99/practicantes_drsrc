@@ -1,15 +1,14 @@
-import { SetStateAction, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { Pagination, Avatar, IconButton, Tooltip } from "@mui/material";
-import PhoneEnabledOutlinedIcon from '@mui/icons-material/PhoneEnabledOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { formatPhoneNumber, LightstringToColor, stringAvatar } from '../../functions/utils.functions';
+import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
+import {  LightstringToColor, stringAvatar } from '../../functions/utils.functions';
 import { TableProps } from "../audits/audits-table.component";
 import { FormModal } from "../modals/form-modal.component";
 import { DataUser } from "../../interfaces/users.interface";
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { enqueueSnackbar } from "notistack";
-import { activateUser, deleteUser, patchUser } from "../../api/users/users.api";
+import { activateUser, deleteUser} from "../../api/users/users.api";
 import { ConfirmationModal } from "../modals/confirmation-modal.component";
 export const AdminsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -155,7 +154,7 @@ const ActiveAdministrator = () => {
                     </IconButton>
                     {administrator.isActive  ? (
                     <IconButton aria-label="delete" onClick={() => {DeleteClick(administrator);setTypeAction("delete")}}>
-                      <DeleteOutlineOutlinedIcon />
+                      <PersonOffOutlinedIcon />
                       </IconButton>
                     ):(
                       <IconButton aria-label="active" onClick={() => {DeleteClick(administrator);setTypeAction("active")}}>

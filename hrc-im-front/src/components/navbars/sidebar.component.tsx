@@ -88,7 +88,7 @@ export const Sidebar = () => {
     {icon: <ExitToAppIcon />, label: "Entradas y salidas", path: "/interns/checkin-checkout"},
       
     { icon: <MapsHomeWorkOutlinedIcon />, label: "Departamentos", path: "/departments" },
-    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:""},
+    {icon : <ApartmentOutlinedIcon/> , label: "Propiedades", path:"/properties"},
   ];
 
   const menuItemsSupervisor: MenuItem[] = [

@@ -16,7 +16,6 @@ export async function getCareersData(Token: string): Promise<CareersInterface | 
       }
   
       const CareersData: CareersInterface = await response.json(); 
-      console.log(CareersData);
       return CareersData;
     } catch (error) {
       console.error("Error:", error);

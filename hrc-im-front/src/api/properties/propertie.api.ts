@@ -16,7 +16,6 @@ export async function getPropertiesData(Token: string): Promise<PropertiesInterf
       }
   
       const PropertiesData: PropertiesInterface= await response.json(); 
-      console.log(PropertiesData);
       return PropertiesData;
     } catch (error) {
       console.error("Error:", error);

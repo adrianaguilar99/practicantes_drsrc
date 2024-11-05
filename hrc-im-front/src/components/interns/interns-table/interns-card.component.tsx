@@ -104,12 +104,12 @@ const InternCardComponent: React.FC<InternCardProps> = ({
         </div>
         <div className="progress-section">
           <span>
-            {data.phone.length === 100 ? "¡Completado!" : `${90}%`}
+            {data.totalInternshipCompletion === 100 ? "¡Completado!" : `${data.totalInternshipCompletion}%`}
           </span>
           <div className="progress-bar">
             <div
               className="progress"
-              style={{ width: `${90}%` }}
+              style={{ width: `${data.totalInternshipCompletion}%` }}
             ></div>
           </div>
         </div>
@@ -155,12 +155,13 @@ const InternCardComponent: React.FC<InternCardProps> = ({
      
       <ConfirmationModal
         open={confirmationOpen}
+        informationModal={(userRol != "ADMINISTRATOR" && typeAction === "active")  === true}
         onConfirm={typeAction == "active" ? ActiveSupervisor : DeleteSupervisor}
         onCancel={ConfirmationModalClose}
         title="Desactivar Cuenta de Practicante"
         message={
           typeAction == "active"
-            ? "¿Estas seguro de activar la cuenta de este practicante?"
+            ? userRol != "ADMINISTRATOR" ? "Para volver a activar la cuenta del practicante debes hablar con un administrador" :"¿Estas seguro de activar la cuenta de este practicante?"
             : "¿Estas seguro que quieres desactivar la cuenta de este practicante?"
         }
       />

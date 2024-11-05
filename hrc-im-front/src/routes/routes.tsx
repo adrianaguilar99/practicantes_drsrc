@@ -16,6 +16,7 @@ import InternCredentialPage from '../pages/Interns/intern-credential.page';
 import AdminsPage from '../pages/supervisors/admins.page';
 import PropertiesPage from '../pages/properties/properties.page';
 import LoadingPage from '../pages/login/loading.page';
+import TimeCheck from '../pages/home/time-check';
 import { InternsPage } from '../pages/Interns/Interns.page';
 import ProtectedRoute from '../components/utils/protect-routes.component';
 import { useState } from 'react';
@@ -25,7 +26,8 @@ function RoutesConfig() {
     <BrowserRouter>
       <Routes>
          <Route path="/not-found-page" element={<NotFoundPage />} />
-         {/* <Route path="*" element={<NotFoundPage />} /> */}
+         <Route path="*" element={<NotFoundPage />} />
+         <Route path="/time-check" element={<TimeCheck />} />
          <Route path="/" element={<Login />} />
          <Route
            path="/home"
