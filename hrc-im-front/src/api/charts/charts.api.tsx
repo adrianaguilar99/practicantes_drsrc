@@ -38,4 +38,51 @@ export interface UserData {
         throw error;
       }
   }
+
+
+  export async function getInternsByDepartment(Token: string): Promise<any | null> {
+    try {
+      const response = await fetch(apiUrl + "/departments/intern-count", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      });
   
+      if (!response.ok) {
+        console.error("Error al traer el conteo de practicantes por departamento");
+        throw new Error("Error al traer el conteo de practicantes por departamento");
+      }
+  
+      const InternsData: any = await response.json(); 
+      return InternsData;
+    } catch (error) {
+      return null;
+    }
+  }
+  
+
+  async function getInternsByCompletion( Token: string): Promise<string[]> {
+    try {
+        const response = await fetch(apiUrl + "/interns", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${Token}`,
+            },
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        const filteredInterns = result.data
+            .filter((intern: any) => intern.totalInternshipCompletion > 90)
+            .map((intern: any) => `${intern.user.firstName} ${intern.user.lastName}`);
+
+        return filteredInterns;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
+    }
+}
+

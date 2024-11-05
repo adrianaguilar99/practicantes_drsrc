@@ -21,21 +21,35 @@ import {
   DataInstitution,
   InstitutionsInterface,
 } from "../../interfaces/institutions/institutions.interface";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { formatPhoneNumber } from "../../functions/utils.functions";
 import { getDepartmentsData } from "../../api/departments/departments.api";
-import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
+import {
+  DataDepartment,
+  DepartmentsInterface,
+} from "../../interfaces/departments/departments.interface";
 import { getPropertiesData } from "../../api/properties/propertie.api";
-import { DataProperty, PropertiesInterface } from "../../interfaces/properties/properties.interface";
+import {
+  DataProperty,
+  PropertiesInterface,
+} from "../../interfaces/properties/properties.interface";
 import { postInternFunction } from "../../functions/intern-functions/post-intern.function";
 import { DataEmergencyContact } from "../../interfaces/interns/emergency-contacts/emergency-contacts.interface";
 import { set } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Contacts } from "@mui/icons-material";
-import { InternScheduleModal, ScheduleRegister } from "../../components/interns/interns-schedule/intern-schedule-modal.component";
-import { DataSchedule, PostSchedule } from "../../interfaces/interns/intern-schedule/intern-schedule.interface";
+import {
+  InternScheduleModal,
+  ScheduleRegister,
+} from "../../components/interns/interns-schedule/intern-schedule-modal.component";
+import {
+  DataSchedule,
+  PostSchedule,
+} from "../../interfaces/interns/intern-schedule/intern-schedule.interface";
 import Backdrop from "@mui/material/Backdrop";
 import { CircularProgress } from "@mui/material";
+import { FileUpload, imageAccept, pdfAccept } from "../../components/inputs/file-input.component";
+import { Accept } from "react-dropzone";
 
 const InternRegisterPage = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -67,7 +81,9 @@ const InternRegisterPage = () => {
   const defaultPassword = import.meta.env.VITE_DEFAULT_PASSWORD || "";
   const [InternPassword, setInternPassword] = useState<string>(defaultPassword);
   const [InternBloodType, setInternBloodType] = useState("");
-  const [InternContacts = [], setInternContacts] = useState<DataEmergencyContact[]>([]);
+  const [InternContacts = [], setInternContacts] = useState<
+    DataEmergencyContact[]
+  >([]);
   const [InternSchedule, setInternSchedule] = useState<any>(null);
 
   interface EmergencyContacts {
@@ -96,7 +112,7 @@ const InternRegisterPage = () => {
     internEndDate: undefined,
     internTotalTime: undefined,
     internPicture: undefined,
-    internFiles : undefined,
+    internFiles: undefined,
     internWorkCode: undefined,
     InternProperty: undefined,
     InternContacts: undefined,
@@ -143,10 +159,10 @@ const InternRegisterPage = () => {
       if (fetchedData) {
         setDepartments(fetchedData.data);
       }
-    }catch (error) {
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const fetchInstitutions = async () => {
     try {
@@ -217,11 +233,9 @@ const InternRegisterPage = () => {
       newErrors.internPassword = resultPassword;
     }
 
-
     if (InternBloodType === "Seleccione un tipo" || InternBloodType === "") {
       newErrors.internBloodType = "Seleccione un tipo";
     }
-
 
     if (InternType === "Interno") {
       const resultOldDepartment = validators.string(InternOldDepartment);
@@ -233,10 +247,9 @@ const InternRegisterPage = () => {
       if (resultWorkCode) {
         newErrors.internWorkCode = resultWorkCode;
       }
-      if(InternWorkCode.length < 6){
+      if (InternWorkCode.length < 6) {
         newErrors.internWorkCode = "El código debe tener 6 dígitos";
       }
-
     }
 
     if (InternType === "Externo") {
@@ -271,11 +284,13 @@ const InternRegisterPage = () => {
       newErrors.internEndDate = resultEndDate;
     }
 
-    if(InterBeginDate > InternEndDate){
-      newErrors.internEndDate = "La fecha de inicio debe ser menor a la fecha de finalización";
+    if (InterBeginDate > InternEndDate) {
+      newErrors.internEndDate =
+        "La fecha de inicio debe ser menor a la fecha de finalización";
     }
-    if(InternEndDate < InterBeginDate){
-      newErrors.internBeginDate = "La fecha de finalización debe ser mayor a la fecha de inicio";
+    if (InternEndDate < InterBeginDate) {
+      newErrors.internBeginDate =
+        "La fecha de finalización debe ser mayor a la fecha de inicio";
     }
 
     const resultTotalTime = validators.string(InternTotalTime);
@@ -283,8 +298,9 @@ const InternRegisterPage = () => {
       newErrors.internTotalTime = resultTotalTime;
     }
 
-    if(InternTotalTime < "120"){
-      newErrors.internTotalTime = "La duración mínima de practicas es de 120 horas";
+    if (InternTotalTime < "120") {
+      newErrors.internTotalTime =
+        "La duración mínima de practicas es de 120 horas";
     }
 
     const resultPicture = validators.fileImage(InternPicture as File);
@@ -297,25 +313,24 @@ const InternRegisterPage = () => {
       newErrors.internFiles = resultFiles;
     }
 
-    
-
     const resultPropertie = validators.string(InternProperty);
     if (resultPropertie) {
       newErrors.internProperty = resultPropertie;
     }
 
-    if(InternContacts.length < 2){
+    if (InternContacts.length < 2) {
       newErrors.internContacts = "Debe agregar al menos dos contactos";
     }
 
-    if(InternSchedule.length < 1){
+    if (InternSchedule.length < 1) {
       newErrors.internSchedule = "Debe agregar al menos un horario";
     }
 
     setErrors(newErrors);
-    if(!newErrors.internProperty && 
-      !newErrors.internName && 
-      !newErrors.internEmail && 
+    if (
+      !newErrors.internProperty &&
+      !newErrors.internName &&
+      !newErrors.internEmail &&
       !newErrors.internPhone &&
       !newErrors.internAddress &&
       !newErrors.internDepartment &&
@@ -327,94 +342,92 @@ const InternRegisterPage = () => {
       !newErrors.internBeginDate &&
       !newErrors.internEndDate &&
       !newErrors.internWorkCode &&
-      !newErrors.internPicture && 
+      !newErrors.internPicture &&
       !newErrors.internFiles &&
       !newErrors.internTotalTime &&
       !newErrors.internContacts &&
       !newErrors.internSchedule
-    ){
+    ) {
       setSummitPressed(true);
       setHasErrors(false);
       setFormAction(true);
-      setSendingState(true)
-    }
-    else{
+      setSendingState(true);
+    } else {
       setHasErrors(true);
       setFormAction(false);
-      setSummitPressed(false)
-      setSendingState(false)
+      setSummitPressed(false);
+      setSendingState(false);
     }
-  }
-  const formSubmit = () => { 
-     if(hasErrors === false && formAction === true){
-        postInternFunction({
-          userToken: userToken,
-          internType: InternType,
-          dataUser: {
-            firstName: InternFirstName,
-            lastName: InternLastName,
-            email: InternEmail,
-            password: InternPassword,
-          },
-          dataIntern: {
-            bloodType: InternBloodType,
-            phone: InternPhone,
-            address: InternAddress,
-            schoolEnrollment: InternID,
-            internshipStart: InterBeginDate,
-            internshipEnd: InternEndDate,
-            internshipDuration: InternTotalTime + " hours",
-            status: "ACTIVE",    
-            internalInternCode: InternWorkCode,
-            careerId: InternProgram,
-            departmentId: InternOldDepartment,
-            internshipDepartmentId: InternDepartment,
-            institutionId: InternUniversity,
-            propertyId: InternProperty,
-          },
-          contacts: InternContacts,
-          dataFiles: {
-            photo: InternPicture as File,
-            compiledDocuments: InternFiles as File,
-          },
-          dataSchedule: InternSchedule,
-          
-
-          onSuccess: () => {
-            setSendingState(false)
-            setInternContacts([]);
-            console.log("Usuario registrado correctamente");
-            navigate("/interns");
-          },
-          onError: () => {
-            setSendingState(false)
-            setHasErrors(true);
-            setSummitPressed(false);
-            console.log("Error al registrar el usuario");
-          }
-        })
-      }
-      else{ 
-        setSummitPressed(false)
-        setSendingState(false)
-      }
   };
 
-useEffect(() => { 
-  if(summitPressed){
-    formSubmit();
-  }
-}, [summitPressed]);
 
+  
+  const formSubmit = () => {
+    if (hasErrors === false && formAction === true) {
+      postInternFunction({
+        userToken: userToken,
+        internType: InternType,
+        dataUser: {
+          firstName: InternFirstName,
+          lastName: InternLastName,
+          email: InternEmail,
+          password: InternPassword,
+        },
+        dataIntern: {
+          bloodType: InternBloodType,
+          phone: InternPhone,
+          address: InternAddress,
+          schoolEnrollment: InternID,
+          internshipStart: InterBeginDate,
+          internshipEnd: InternEndDate,
+          internshipDuration: InternTotalTime + " hours",
+          status: "ACTIVE",
+          internalInternCode: InternWorkCode,
+          careerId: InternProgram,
+          departmentId: InternOldDepartment,
+          internshipDepartmentId: InternDepartment,
+          institutionId: InternUniversity,
+          propertyId: InternProperty,
+        },
+        contacts: InternContacts,
+        dataFiles: {
+          photo: InternPicture as File,
+          compiledDocuments: InternFiles as File,
+        },
+        dataSchedule: InternSchedule,
 
+        onSuccess: () => {
+          setSendingState(false);
+          setInternContacts([]);
+          console.log("Usuario registrado correctamente");
+          navigate("/interns");
+        },
+        onError: () => {
+          setSendingState(false);
+          setHasErrors(true);
+          setSummitPressed(false);
+          console.log("Error al registrar el usuario");
+        },
+      });
+    } else {
+      setSummitPressed(false);
+      setSendingState(false);
+    }
+  };
 
-  const ReceiveContacts = (contacts : DataEmergencyContact[]) => {
+  useEffect(() => {
+    if (summitPressed) {
+      formSubmit();
+    }
+  }, [summitPressed]);
+
+  const ReceiveContacts = (contacts: DataEmergencyContact[]) => {
     setInternContacts(contacts);
-  }
+  };
 
-  const ReceiveSchedule = (schedule : DataSchedule[]) => {
+  const ReceiveSchedule = (schedule: DataSchedule[]) => {
     setInternSchedule(schedule);
-  }
+  };
 
   return (
     <div className="body-page">
@@ -429,371 +442,414 @@ useEffect(() => {
         <section className="interns-register-body">
           <div className="nav-space"></div>
           {sendingState ? (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh", width: "100%"}}>
-               <CircularProgress  />
-               <h2 style={{marginLeft: "5%"}}>Registrando a { " " + InternFirstName + " " + InternLastName}</h2>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "60vh",
+                width: "100%",
+              }}
+            >
+              <CircularProgress />
+              <h2 style={{ marginLeft: "5%" }}>
+                Registrando a {" " + InternFirstName + " " + InternLastName}
+              </h2>
             </div>
-        
-        ):(
+          ) : (
+            <div>
+              <div className="register-section-interns">
+                <div className="register-container">
+                  <section className="register-section-left">
+                    <RegisterRow
+                      label="Nombres del practicante:"
+                      onChange={(value) =>
+                        setInternFirstName((value as string) || "")
+                      }
+                      id="firstname"
+                      type="text"
+                      show={true}
+                      validate={errors.internName ? "Error" : "Normal"}
+                      typeError={errors.internName}
+                    />
+                    <RegisterRow
+                      label="Apellidos del practicante:"
+                      onChange={(value) =>
+                        setInternLastName((value as string) || "")
+                      }
+                      id="lastname"
+                      type="text"
+                      show={true}
+                      validate={errors.internLastName ? "Error" : "Normal"}
+                      typeError={errors.internLastName}
+                    />
 
-          <div>
-       
- 
+                    <RegisterRow
+                      label="Correo:"
+                      onChange={(value) =>
+                        setInternEmail((value as string) || "")
+                      }
+                      id="email"
+                      type="text"
+                      show={true}
+                      validate={errors.internEmail ? "Error" : "Normal"}
+                      typeError={errors.internEmail}
+                    />
+                    <RegisterRow
+                      label="Tel Personal:"
+                      onChange={(value) =>
+                        setInternPhone((value as string) || "")
+                      }
+                      value={formatPhoneNumber(InternPhone)}
+                      id="celphone"
+                      type="phone"
+                      maxLength={10}
+                      show={true}
+                      validate={errors.internPhone ? "Error" : "Normal"}
+                      typeError={errors.internPhone}
+                    />
+                    <div className="info-row">
+                      <label htmlFor="type">Tipo:</label>
+                      <select
+                        id="type"
+                        className="edit-mode"
+                        value={selectedType}
+                        onChange={TypeChange}
+                      >
+                        <option value="Interno">Interno</option>
+                        <option value="Externo">Externo</option>
+                      </select>
+                    </div>
+                    <RegisterRow
+                      label="Dirección:"
+                      onChange={(value) =>
+                        setInternAddress((value as string) || "")
+                      }
+                      id="address"
+                      type="text"
+                      show={true}
+                      validate={errors.internAddress ? "Error" : "Normal"}
+                      typeError={errors.internAddress}
+                    />
+                    <RegisterRow
+                      label="Tipo de sangre:"
+                      onChange={(value) =>
+                        setInternBloodType((value as string) || "")
+                      }
+                      id="bloodtype"
+                      type="select"
+                      show={true}
+                      options={[
+                        "Seleccione un tipo",
+                        "A+",
+                        "A-",
+                        "B+",
+                        "B-",
+                        "AB+",
+                        "AB-",
+                        "O+",
+                        "O-",
+                      ]}
+                      validate={errors.internBloodType ? "Error" : "Normal"}
+                      typeError={errors.internBloodType}
+                    />
+                    <p
+                      className="register-intern-suggestion"
+                      onClick={() => {
+                        setEntity("departments");
+                        ModalOpen();
+                      }}
+                    >
+                      ¿No encuetra el departamento que busca? Registrar un
+                      departamento
+                    </p>
+                    <RegisterRow
+                      label="Departamento de practicas:"
+                      onChange={(value) => {
+                        const selectedDepartment = Departments.find(
+                          (department) => department.name === value
+                        );
+                        setInternDepartment(
+                          selectedDepartment
+                            ? selectedDepartment.id.toString()
+                            : ""
+                        );
+                      }}
+                      id="department"
+                      type="select"
+                      show={true}
+                      options={[
+                        { id: "", name: "Seleccione un departamento" },
+                        ...Departments.map((department) => ({
+                          id: department.id,
+                          name: department.name,
+                        })),
+                      ].map((department) => department.name)}
+                      validate={errors.internDepartment ? "Error" : "Normal"}
+                      typeError={errors.internDepartment}
+                    />
 
-          <div className="register-section-interns">
-            <div className="register-container">
-              <section className="register-section-left">
-                <RegisterRow
-                  label="Nombres del practicante:"
-                  onChange={(value) => setInternFirstName(value as string  || "")}
-                  id="firstname"
-                  type="text"
-                  show={true}
-                  validate={errors.internName ? "Error" : "Normal"}
-                  typeError={errors.internName}
-                />
-                <RegisterRow
-                  label="Apellidos del practicante:"
-                  onChange={(value) => setInternLastName(value as string  || "")}
-                  id="lastname"
-                  type="text"
-                  show={true}
-                  validate={errors.internLastName ? "Error" : "Normal"}
-                  typeError={errors.internLastName}
-                />
+                    <RegisterRow
+                      label="Departamento de procedencia:"
+                      onChange={(value) => {
+                        const selectedDepartment = Departments.find(
+                          (department) => department.name === value
+                        );
+                        setInternOldDepartment(
+                          selectedDepartment
+                            ? selectedDepartment.id.toString()
+                            : ""
+                        );
+                      }}
+                      id="department"
+                      type="select"
+                      options={[
+                        { id: "", name: "Seleccione un departamento" },
+                        ...Departments.map((department) => ({
+                          id: department.id,
+                          name: department.name,
+                        })),
+                      ].map((department) => department.name)}
+                      show={selectedType === "Interno"}
+                      validate={errors.internOldDepartment ? "Error" : "Normal"}
+                      typeError={errors.internOldDepartment}
+                    />
 
-                <RegisterRow
-                  label="Correo:"
-                  onChange={(value) => setInternEmail(value as string  || "")}
-                  id="email"
-                  type="text"
-                  show={true}
-                  validate={errors.internEmail ? "Error" : "Normal"}
-                  typeError={errors.internEmail}
-                />
-                <RegisterRow
-                  label="Tel Personal:"
-                  onChange={(value) => setInternPhone(value as string  || "")}
-                  value={formatPhoneNumber(InternPhone)}
-                  id="celphone"
-                  type="phone"
-                  maxLength={10}
-                  show={true}
-                  validate={errors.internPhone ? "Error" : "Normal"}
-                  typeError={errors.internPhone}
-                />
-                <div className="info-row">
-                  <label htmlFor="type">Tipo:</label>
-                  <select
-                    id="type"
-                    className="edit-mode"
-                    value={selectedType}
-                    onChange={TypeChange}
-                  >
-                    <option value="Interno">Interno</option>
-                    <option value="Externo">Externo</option>
-                  </select>
+                    {selectedType === "Externo" && (
+                      <div className="register-intern-divider">
+                        <SchoolRoundedIcon />{" "}
+                        <h3>Información de la institución</h3>
+                      </div>
+                    )}
+                    {selectedType === "Externo" && (
+                      <p
+                        className="register-intern-suggestion"
+                        onClick={() => {
+                          setEntity("interns-institutions");
+                          ModalOpen();
+                        }}
+                      >
+                        ¿No encuetra una institución? Registrar una institución
+                      </p>
+                    )}
+                    <RegisterRow
+                      label="Institución de procedencia:"
+                      onChange={(value) => {
+                        const selectedInstitution = Institutions.find(
+                          (institution) => institution.name === value
+                        );
+                        setInternUniversity(
+                          selectedInstitution
+                            ? selectedInstitution.id.toString()
+                            : ""
+                        );
+                        setInternInstitutePhone(
+                          selectedInstitution
+                            ? selectedInstitution.phone.toString()
+                            : ""
+                        );
+                      }}
+                      id="institution"
+                      type="autocomplete"
+                      coincidences={Institutions.map(
+                        (institution: { name: any }) => institution.name
+                      )}
+                      show={selectedType === "Externo"}
+                      validate={errors.internUniversity ? "Error" : "Normal"}
+                      typeError={errors.internUniversity}
+                    />
+                    {selectedType === "Externo" && (
+                      <p
+                        className="register-intern-suggestion"
+                        onClick={() => {
+                          setEntity("interns-careers");
+                          ModalOpen();
+                        }}
+                      >
+                        ¿No encuetra una carrera? Registrar una carrera
+                      </p>
+                    )}
+
+                    <RegisterRow
+                      label="Carrera:"
+                      onChange={(value) => {
+                        const selectedCareer = Careers.find(
+                          (career) => career.name === value
+                        );
+                        setInternProgram(
+                          selectedCareer ? selectedCareer.id.toString() : ""
+                        );
+                      }}
+                      id="career"
+                      type="autocomplete"
+                      coincidences={Careers.map(
+                        (career: { name: any }) => career.name
+                      )}
+                      show={selectedType === "Externo"}
+                      validate={errors.internProgram ? "Error" : "Normal"}
+                      typeError={errors.internProgram}
+                    />
+
+                    <RegisterRow
+                      label="Matrícula escolar:"
+                      onChange={(value) => setInternID((value as string) || "")}
+                      id="matricula"
+                      type="number"
+                      show={selectedType === "Externo"}
+                      validate={errors.internID ? "Error" : "Normal"}
+                      typeError={errors.internID}
+                    />
+                    <RegisterRow
+                      label="Tel Institucional:"
+                      onChange={(value) =>
+                        setInternInstitutePhone((value as string) || "")
+                      }
+                      type="phone"
+                      value={InternInstitutePhone}
+                      id="telInstitutional"
+                      show={selectedType === "Externo"}
+                      validate={
+                        errors.internInstitutePhone ? "Error" : "Normal"
+                      }
+                      typeError={errors.internInstitutePhone}
+                      editable={false}
+                    />
+                  </section>
+
+                  <section className="register-section-middle">
+                    <RegisterRow
+                      label="Codigo de empleado:"
+                      onChange={(value) =>
+                        setInternWorkCode((value as string) || "")
+                      }
+                      id="workCode"
+                      value={InternWorkCode}
+                      type="text"
+                      maxLength={6}
+                      show={selectedType === "Interno"}
+                      validate={errors.internWorkCode ? "Error" : "Normal"}
+                      typeError={errors.internWorkCode}
+                    />
+                    <RegisterRow
+                      label="Constraseña:"
+                      onChange={(value) =>
+                        setInternPassword((value as string) || "")
+                      }
+                      id="password"
+                      value={InternPassword}
+                      type="password"
+                      show={true}
+                      validate={errors.internPassword ? "Error" : "Normal"}
+                      typeError={errors.internPassword}
+                    />
+                    <RegisterRow
+                      label="Propiedad:"
+                      onChange={(value) => {
+                        const selectedProperty = Properties.find(
+                          (property) => property.name === value
+                        );
+                        setInternProperty(
+                          selectedProperty ? selectedProperty.id.toString() : ""
+                        );
+                      }}
+                      id="property"
+                      type="select"
+                      show={true}
+                      options={[
+                        { id: "", name: "Seleccione una propiedad" },
+                        ...Properties.map((property) => ({
+                          id: property.id,
+                          name: property.name,
+                        })),
+                      ].map((property) => property.name)}
+                      validate={errors.internProperty ? "Error" : "Normal"}
+                      typeError={errors.internProperty}
+                    />
+                    <RegisterRow
+                      label="Fecha de inicio:"
+                      onChange={(value) =>
+                        setInternBeginDate((value as string) || "")
+                      }
+                      id="startDate"
+                      type="date"
+                      show={true}
+                      validate={errors.internBeginDate ? "Error" : "Normal"}
+                      typeError={errors.internBeginDate}
+                    />
+                    <RegisterRow
+                      label="Fecha de fin:"
+                      onChange={(value) =>
+                        setInternEndDate((value as string) || "")
+                      }
+                      id="endDate"
+                      type="date"
+                      show={true}
+                      validate={errors.internEndDate ? "Error" : "Normal"}
+                      typeError={errors.internEndDate}
+                    />
+                    <RegisterRow
+                      label="Total de horas a cubrir:"
+                      onChange={(value) =>
+                        setInternTotalTime((value as string) || "")
+                      }
+                      id="tiempoTotal"
+                      type="number"
+                      show={true}
+                      validate={errors.internTotalTime ? "Error" : "Normal"}
+                      typeError={errors.internTotalTime}
+                    />
+
+                    <div className="register-intern-divider">
+                      <CalendarMonthIcon /> <h3>Horario</h3>
+                    </div>
+                    {errors.internSchedule && (
+                      <p className="register-error">{errors.internSchedule}</p>
+                    )}
+                    <ScheduleRegister onSendSchedule={ReceiveSchedule} />
+                  </section>
+                  <section className="register-section-right">
+                    <div className="register-intern-divider">
+                      <UploadFileOutlinedIcon />{" "}
+                      <h3>Archivos del practicante</h3>
+                    </div>
+                    {errors.internFiles || errors.internPicture && (
+                      <p className="register-error">Rellene todos los campos</p>
+                    )}
+                    <FileUpload
+                      label="Foto:"
+                      accept={imageAccept}
+                      onChange={setInternPicture}
+                    />
+                    <br></br>
+                    <FileUpload
+                      label="Archivos del practicante:"
+                      accept={pdfAccept}
+                      onChange={setInternFiles}
+                    />
+                    <div className="register-intern-divider">
+                      <ContactPhoneRoundedIcon />{" "}
+                      <h3>Contactos de emergencia</h3>
+                    </div>
+                    {errors.internContacts && (
+                      <p className="register-error">{errors.internContacts}</p>
+                    )}
+                    <EmergencyContactsRegister
+                      onReceiveContacts={ReceiveContacts}
+                    />
+                  </section>
                 </div>
-                <RegisterRow
-                  label="Dirección:"
-                  onChange={(value) => setInternAddress(value as string  || "")}
-                  id="address"
-                  type="text"
-                  show={true}
-                  validate={errors.internAddress ? "Error" : "Normal"}
-                  typeError={errors.internAddress}
-                />
-                <RegisterRow
-                  label="Tipo de sangre:"
-                  onChange={(value) => setInternBloodType(value as string  || "")}
-                  id="bloodtype"
-                  type="select"
-                  show={true}
-                  options={["Seleccione un tipo","A+", "A-", "B+","B-","AB+","AB-","O+","O-"]}
-                  validate={errors.internBloodType  ? "Error" : "Normal"}
-                  typeError={errors.internBloodType }
-                />
-                <p
-                    className="register-intern-suggestion"
-                    onClick={() => {
-                      setEntity("departments");
-                      ModalOpen();
-                    }}
-                  >
-                    ¿No encuetra el departamento que busca? Registrar un departamento
-                  </p>
-                <RegisterRow
-                  label="Departamento de practicas:"
-                  onChange={(value) => {
-                    const selectedDepartment = Departments.find(
-                      (department) => department.name === value
-                    );
-                    setInternDepartment(
-                      selectedDepartment
-                        ? selectedDepartment.id.toString()
-                        : ""
-                    );
-                  }}
-                  id="department"
-                  type="select"
-                  show={true}
-                  options={[
-                    { id: "", name: "Seleccione un departamento" },
-                    ...Departments.map((department) => ({ id: department.id, name: department.name }))
-                  ].map((department) => department.name)}
-                  validate={errors.internDepartment ? "Error" : "Normal"}
-                  typeError={errors.internDepartment}
-                />
+              </div>
 
-<RegisterRow
-                  label="Departamento de procedencia:"
-                  onChange={(value) => {
-                    const selectedDepartment = Departments.find(
-                      (department) => department.name === value
-                    );
-                    setInternOldDepartment(
-                      selectedDepartment
-                        ? selectedDepartment.id.toString()
-                        : ""
-                    );
-                  }}
-                  id="department"
-                  type="select"
-                  options={[
-                    { id: "", name: "Seleccione un departamento" },
-                    ...Departments.map((department) => ({ id: department.id, name: department.name }))
-                  ].map((department) => department.name)}
-                  show={selectedType === "Interno"}
-                  validate={errors.internOldDepartment ? "Error" : "Normal"}
-                  typeError={errors.internOldDepartment}
+              <div className="button-container-intern">
+                <ButtonComponent text="Guardar" onClick={InputValidation} />
+                <ButtonComponent
+                  text="Cancelar"
+                  onClick={() => history.back()}
+                  style={{ backgroundColor: "#D32F2F" }}
                 />
-
-                {selectedType === "Externo" && (
-                  <div className="register-intern-divider">
-                    <SchoolRoundedIcon />{" "}
-                    <h3>Información de la institución</h3>
-                  </div>
-                )}
-                {selectedType === "Externo" && (
-                  <p
-                    className="register-intern-suggestion"
-                    onClick={() => {
-                      setEntity("interns-institutions");
-                      ModalOpen();
-                    }}
-                  >
-                    ¿No encuetra una institución? Registrar una institución
-                  </p>
-                )}
-                <RegisterRow
-                  label="Institución de procedencia:"
-                  onChange={(value) => {
-                    const selectedInstitution = Institutions.find(
-                      (institution) => institution.name === value
-                    );
-                    setInternUniversity(
-                      selectedInstitution
-                        ? selectedInstitution.id.toString()
-                        : ""
-                    );
-                    setInternInstitutePhone(
-                      selectedInstitution
-                        ? selectedInstitution.phone.toString()
-                        : ""
-                    );
-                  }}
-                  id="institution"
-                  type="autocomplete"
-                  coincidences={Institutions.map(
-                    (institution: { name: any }) => institution.name
-                  )}
-                  show={selectedType === "Externo"}
-                  validate={errors.internUniversity ? "Error" : "Normal"}
-                  typeError={errors.internUniversity}
-                />
-                {selectedType === "Externo" && (
-                  <p
-                    className="register-intern-suggestion"
-                    onClick={() => {
-                      setEntity("interns-careers");
-                      ModalOpen();
-                    }}
-                  >
-                    ¿No encuetra una carrera? Registrar una carrera
-                  </p>
-                )}
-
-                <RegisterRow
-                  label="Carrera:"
-                  onChange={(value) => {
-                    const selectedCareer = Careers.find(
-                      (career) => career.name === value
-                    );
-                    setInternProgram(
-                      selectedCareer ? selectedCareer.id.toString() : ""
-                    );
-                  }}
-                  id="career"
-                  type="autocomplete"
-                  coincidences={Careers.map(
-                    (career: { name: any }) => career.name
-                  )}
-                  show={selectedType === "Externo"}
-                  validate={errors.internProgram ? "Error" : "Normal"}
-                  typeError={errors.internProgram}
-                />
-
-                <RegisterRow
-                  label="Matrícula escolar:"
-                  onChange={(value) => setInternID(value as string || "")}
-                  id="matricula"
-                  type="number"
-                  show={selectedType === "Externo"}
-                  validate={errors.internID ? "Error" : "Normal"}
-                  typeError={errors.internID}
-                />
-                <RegisterRow
-                  label="Tel Institucional:"
-                  onChange={(value) => setInternInstitutePhone(value  as string || "")}
-                  type="phone"
-                  value={InternInstitutePhone} 
-                  id="telInstitutional"
-                  show={selectedType === "Externo"}
-                  validate={errors.internInstitutePhone ? "Error" : "Normal"}
-                  typeError={errors.internInstitutePhone}
-                  editable={false} 
-                />
-
-               
-              </section>
-
-              <section className="register-section-middle">
-              <RegisterRow
-                  label="Codigo de empleado:"
-                  onChange={(value) => setInternWorkCode(value as string || "")}
-                  id="workCode"
-                  value={InternWorkCode}
-                  type="text"
-                  maxLength={6}
-                  show={selectedType === "Interno"}
-                  validate={errors.internWorkCode ? "Error" : "Normal"}
-                  typeError={errors.internWorkCode}
-                />
-              <RegisterRow
-                  label="Constraseña:"
-                  onChange={(value) => setInternPassword(value as string  || "")}
-                  id="password"
-                  value={InternPassword}
-                  type="password"
-                  show={true}
-                  validate={errors.internPassword ? "Error" : "Normal"}
-                  typeError={errors.internPassword}
-                />
-              <RegisterRow
-                  label="Propiedad:"
-                  onChange={(value) => {
-                    const selectedProperty = Properties.find(
-                      (property) => property.name === value
-                    );
-                    setInternProperty(
-                      selectedProperty
-                        ? selectedProperty.id.toString()
-                        : ""
-                    );
-                  }}
-                  id="property"
-                  type="select"
-                  show={true}
-                  options={[
-                    { id: "", name: "Seleccione una propiedad" },
-                    ...Properties.map((property) => ({ id: property.id, name: property.name }))
-                  ].map((property) => property.name)}
-                  validate={errors.internProperty ? "Error" : "Normal"}
-                  typeError={errors.internProperty}
-                />
-                <RegisterRow
-                  label="Fecha de inicio:"
-                  onChange={(value) => setInternBeginDate(value as string  || "")}
-                  id="startDate"
-                  type="date"
-                  show={true}
-                  validate={errors.internBeginDate ? "Error" : "Normal"}
-                  typeError={errors.internBeginDate}
-                />
-                <RegisterRow
-                  label="Fecha de fin:"
-                  onChange={(value) => setInternEndDate(value as string  || "")}
-                  id="endDate"
-                  type="date"
-                  show={true}
-                  validate={errors.internEndDate ? "Error" : "Normal"}
-                  typeError={errors.internEndDate}
-                />
-                <RegisterRow
-                  label="Total de horas a cubrir:"
-                  onChange={(value) => setInternTotalTime(value as string  || "")}
-                  id="tiempoTotal"
-                  type="number"
-                  show={true}
-                  validate={errors.internTotalTime ? "Error" : "Normal"}
-                  typeError={errors.internTotalTime}
-                />
-
-                <div className="register-intern-divider">
-                  <CalendarMonthIcon /> <h3>Horario</h3>
-                </div>
-                {errors.internSchedule && (
-                  <p className="register-error">{errors.internSchedule}</p>
-                )}
-                <ScheduleRegister onSendSchedule={ReceiveSchedule}/>    
-              </section>
-              <section className="register-section-right">
-                <div className="register-intern-divider">
-                  <UploadFileOutlinedIcon /> <h3>Archivos del practicante</h3>
-                </div>
-                <RegisterRow
-                  label="Foto:"
-                  onChange={(file) => setInternPicture(file as File)}
-                  id="internPicture"
-                  type="file"
-                  show={true}
-                  validate={errors.internPicture ? "Error" : "Normal"}
-                  typeError={errors.internPicture}
-                  accept=".jpg, .jpeg, .png"
-                />
-                <RegisterRow
-                  label="Archivos del practicante:"
-                  onChange={(file) => setInternFiles(file as File)}
-                  id="internFiles"
-                  type="file"
-                  show={true}
-                  validate={errors.internFiles ? "Error" : "Normal"}
-                  typeError={errors.internFiles}
-                  accept=".pdf"
-                />
-                 <div className="register-intern-divider">
-                  <ContactPhoneRoundedIcon /> <h3>Contactos de emergencia</h3>
-                </div>
-                {errors.internContacts && (
-                 <p className="register-error">{errors.internContacts}</p>
-                )}
-                <EmergencyContactsRegister onReceiveContacts={ReceiveContacts}/>
-              </section>
+              </div>
             </div>
-          </div>
-
-          <div className="button-container-intern">
-            
-            <ButtonComponent
-              text="Guardar"
-              onClick={InputValidation}
-            />
-            <ButtonComponent text="Cancelar" onClick={() => history.back()} style={{backgroundColor: "#A0522D"}} />
-          </div>
-         
-        </div>
-        )}
-        
+          )}
         </section>
       </div>
       <FormModal
@@ -812,6 +868,5 @@ useEffect(() => {
     </div>
   );
 };
-
 
 export default InternRegisterPage;

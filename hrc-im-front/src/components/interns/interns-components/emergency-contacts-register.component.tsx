@@ -126,8 +126,8 @@ export const EmergencyContactModal = ({
     >
         <DialogTitle
       sx={{
-        bgcolor: "#2E3B4E", 
-        color: "#fff",      
+        bgcolor: "#EDEDED", 
+        color: "#2E3B4E",      
         padding: 2,
         textAlign: "start",
         fontSize: ".9rem",
@@ -194,7 +194,7 @@ export const EmergencyContactModal = ({
                 variant="contained"
                 color="secondary"
                 sx={{
-                  bgcolor: "#A0522D",
+                  bgcolor: "#D32F2F",
                   "&:hover": { bgcolor: "#8b4513" },
                 }}
                 onClick={onClose}

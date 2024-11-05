@@ -1,5 +1,6 @@
 import { Department } from "../supervisors/supervisor.interface";
 import { DataInternFiles } from "./intern-files/intern-files.interface";
+import { DataSchedule} from "./intern-schedule/intern-schedule.interface";
 
 export interface InternsInterface {
     message: string;
@@ -118,8 +119,6 @@ export interface GetByIDDataInter {
     internshipEnd:        Date;
     internshipDuration :   internshipDuration;
     totalInternshipCompletion:   number;
-    entryTime:            string;
-    exitTime:             string;
     status:               string;
     career:               Career;
     department:           Department;
@@ -128,6 +127,7 @@ export interface GetByIDDataInter {
     property:             Career;
     internFiles?:          DataInternFiles
     emergencyContacts:    EmergencyContact[];
+    internSchedule:       DataSchedule[];
     user:                 User;
 }
 
@@ -160,3 +160,5 @@ export interface User {
     createdAt: Date;
     isActive:  boolean;
 }
+
+

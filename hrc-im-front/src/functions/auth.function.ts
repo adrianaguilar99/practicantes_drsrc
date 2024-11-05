@@ -60,6 +60,30 @@ export function convertToken(accessToken: string) {
 }
 
 
+export const getUserId = (token: string) => {
+
+    if (!token) {
+        throw new Error('No se encontró el token en sessionStorage');
+    }
+
+    const tokenData = convertToken(token);
+
+    if (!tokenData.sub) {
+        throw new Error('No se encontró el id en el token');
+    } 
+    // Verifica si el token ha expirado
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (tokenData.exp && currentTime > tokenData.exp) {
+        throw new Error('El token ha expirado');
+    } else if (tokenData.exp) {
+        const expirationDate = new Date(tokenData.exp * 1000);
+        sessionStorage.setItem('_exp_token', tokenData.exp.toString());
+        console.log(`El token expira el: ${expirationDate.toLocaleString()}`);
+    }
+    return tokenData.sub; 
+}
+
+
 export function useLogout() {
     const dispatch = useDispatch();
     const logoutfunction = () => {

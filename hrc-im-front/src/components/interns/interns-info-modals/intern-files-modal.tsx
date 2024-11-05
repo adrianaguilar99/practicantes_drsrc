@@ -19,6 +19,10 @@ import { ButtonComponent } from "../../buttons/buttons.component";
 import { RegisterRow } from "../../inputs/register-row.component";
 import { InputValidators } from "../../../functions/input-validators.functions";
 import { enqueueSnackbar } from "notistack";
+import PDFIcon from "../../../assets/images/icons/pdf_9496432.png";
+import JPGIcon from "../../../assets/images/icons/jpg_9496440.png";
+import PNGIcon from "../../../assets/images/icons/png_9496443.png";
+import { FileUpload, imageAccept, pdfAccept } from "../../inputs/file-input.component";
 
 interface InternFilesModalProps {
   internId: string;
@@ -142,8 +146,8 @@ export const InternFilesModal: React.FC<InternFilesModalProps> = ({
   >
     <DialogTitle
       sx={{
-        bgcolor: "#2E3B4E", 
-        color: "#fff",      
+        bgcolor: "#EDEDED", 
+        color: "#2E3B4E",      
         padding: 2,
         textAlign: "start",
         fontSize: ".9rem",
@@ -163,46 +167,29 @@ export const InternFilesModal: React.FC<InternFilesModalProps> = ({
         <div style={{ display: "flex", flexDirection: "column" }}>
           {photoUrl && fileUrl && mode === "view" ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: "300px" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<InsertPhotoIcon />}
-                onClick={() => window.open(photoUrl, "_blank")}
-              >
-                Ver foto
-              </Button>
-  
-              <Button
-                variant="contained"
-                color="error"
-                startIcon={<InsertDriveFileIcon />}
-                onClick={() => window.open(fileUrl, "_blank")}
-              >
-                Ver PDF
-              </Button>
+              <div className="intern-files-modal-photo-container"    onClick={() => window.open(photoUrl, "_blank")}>
+                <img src={photo.split(".").pop() === "png"  ? PNGIcon : JPGIcon} alt="photo" />
+                <p>{photo.split("/").pop()}</p>
+              </div>
+              <div className="intern-files-modal-file-container"  onClick={() => window.open(fileUrl, "_blank")}>
+              <img src={PDFIcon} alt="photo" />
+                <p>{compiledDocuments.split("/").pop()}</p>
+              </div>
             </div>
           ) : (
             <>
-              <RegisterRow
-                label="Foto:"
-                onChange={(file) => setNewInternPicture(file as File)}
-                id="internPicture"
-                type="file"
-                show={true}
-                validate={errors.internPicture ? "Error" : "Normal"}
-                typeError={errors.internPicture}
-                accept=".jpg, .jpeg, .png"
-              />
-              <RegisterRow
-                label="Archivos del practicante:"
-                onChange={(file) => setNewInternFile(file as File)}
-                id="internFiles"
-                type="file"
-                show={true}
-                validate={errors.internFiles ? "Error" : "Normal"}
-                typeError={errors.internFiles}
-                accept=".pdf"
-              />
+              <FileUpload
+                      label="Foto:"
+                      accept={imageAccept}
+                      onChange={(file) => setNewInternPicture(file as File)}
+                    />
+                    <br></br>
+             <FileUpload
+                      label="Archivos del practicante:"
+                      accept={pdfAccept}
+                      onChange={(file) => setNewInternFile(file as File)}
+                    />
+          
             </>
           )}
           <Box

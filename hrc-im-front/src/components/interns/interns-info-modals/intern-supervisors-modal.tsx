@@ -45,9 +45,9 @@ export const InternSupervisorsModal: React.FC<InternSupervisorsModalProps> = ({
       aria-describedby="alert-dialog-description"
     >
        <DialogTitle
-      sx={{
-        bgcolor: "#2E3B4E", 
-        color: "#fff",      
+       sx={{
+        bgcolor: "#EDEDED", 
+        color: "#2E3B4E",      
         padding: 2,
         textAlign: "start",
         fontSize: ".9rem",

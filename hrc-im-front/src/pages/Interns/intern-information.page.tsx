@@ -107,8 +107,6 @@ const InternInformationPage = () => {
   const [InternOldDepartment, setInternOldDepartment] = useState("");
   const [InterBeginDate, setInternBeginDate] = useState("");
   const [InternEndDate, setInternEndDate] = useState("");
-  const [InternCheckIn, setInternCheckIn] = useState("");
-  const [InternCheckOut, setInternCheckOut] = useState("");
   const [InternTotalTime, setInternTotalTime] = useState("");
   const [InternWorkCode, setInternWorkCode] = useState("");
   const [InternPhoto, setInternPhoto] = useState("");
@@ -135,10 +133,6 @@ const InternInformationPage = () => {
 
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const Open = () => setOpen(true);
-  const Close = () => setOpen(false);
-
   const [value, setValue] = useState("1");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -158,8 +152,6 @@ const InternInformationPage = () => {
     internInstitutePhone: undefined,
     internBeginDate: undefined,
     internEndDate: undefined,
-    internCheckIn: undefined,
-    internCheckOut: undefined,
     internTotalTime: undefined,
     internWorkCode: undefined,
     InternProperty: undefined,
@@ -335,8 +327,6 @@ const InternInformationPage = () => {
         setInternAddress(fetchedData.data.address);
         setInternBeginDate(fetchedData.data.internshipStart.toString());
         setInternEndDate(fetchedData.data.internshipEnd.toString());
-        setInternCheckIn(fetchedData.data.entryTime);
-        setInternCheckOut(fetchedData.data.exitTime);
         setInternPhoto(fetchedData.data.internFiles?.photo || "");
         setInternProperty(fetchedData.data.property.name || "");  
         setPropertyID(fetchedData.data.property.id);
@@ -511,10 +501,6 @@ const InternInformationPage = () => {
   };
   const ClickCloseFiles = () => {
     setModalFiles(false);
-  };
-
-  const Click = () => {
-    Open();
   };
 
   return (
@@ -1030,19 +1016,14 @@ const InternInformationPage = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="intern-progress-space-buttons">
-                          <ButtonComponent
-                            text="Generar un reporte"
-                            onClick={Click}
-                          />
-                        </div>
+
                       </div>
                     </div>
                     <div className="comments-container">
                       <CommentsTable internId={internData?.id || ""} />
                     </div>
                   </TabPanel>
-                  <TabPanel  value="2"  style={{ padding: "0px" }}>
+                  <TabPanel  value="2"  style={{ padding: "0px",minWidth: "75vw" }}>
                     <InternsSchedule internId={internData?.id || ""}  />
                   </TabPanel>
                 </Box>
@@ -1052,18 +1033,7 @@ const InternInformationPage = () => {
         )}
       </div>
       <Footer />
-      <FormModal
-        open={open}
-        onConfirm={onConfirm}
-        onCancel={Close}
-        data={{
-          initialDate: internData?.internshipStart || "",
-          finalDate: internData?.internshipEnd || "",
-        }}
-        title="Generar reporte del practicante"
-        type="Generete"
-        entity="report"
-      />
+    
     </div>
   );
 };

@@ -1,15 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./interns.page.css";
-import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import LinesLogo from "../../assets/images/lines_logo.png";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
 import { motion } from "framer-motion";
+import { InternChartProgress } from "../../components/charts/intern-chart-progress.component";
+import { useEffect, useState } from "react";
+import { GetByIDDataInter, GetByIDInternInterface } from "../../interfaces/interns/interns.interface";
+import { getInternOwnData } from "../../api/interns/interns.api";
+import { getUserId } from "../../functions/auth.function";
 
 export const InternViewPage = () => {
   const navigate = useNavigate();
+  const [data, setData] = useState<GetByIDDataInter | null>(null);
   const customColors = ["#4AAF80", "#C2C2C2"];
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const userToken = sessionStorage.getItem("_Token") || "";
+  const internId = getUserId(userToken) || "";
 
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedData: GetByIDInternInterface | null = await getInternOwnData(userToken, internId || "");
+      if (fetchedData) {
+        setData(fetchedData?.data);
+        setIsLoading(false);
+      }
+    }catch (error) {
+
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [userToken, internId]);
+
+  
   const pageVariants = {
     initial: { opacity: 0, scale: 0.8 },
     in: { opacity: 1, scale: 1 },
@@ -63,27 +91,8 @@ export const InternViewPage = () => {
         <section className="intern-view-right-container">
           <h2>Mi progreso</h2>
           <div className="intern-view-pie-container">
-            <PieChart
-              series={[
-                {
-                  arcLabel: (item) => `${item.value}%`,
-                  arcLabelMinAngle: 35,
-                  arcLabelRadius: "60%",
-                  data: data.data.map((item, index) => ({
-                    ...item,
-                    color: customColors[index],
-                  })),
-                },
-              ]}
-              sx={{
-                [`& .${pieArcLabelClasses.root}`]: {
-                  fontWeight: "bold",
-                  fill: "white",
-                  zIndex: 1,
-                },
-              }}
-            />
-            <img
+          <InternChartProgress dataProgress={data?.totalInternshipCompletion || 0}/>
+          <img
               className="intern-view-lines-logo"
               src={LinesLogo}
               alt="Lines Logo"
@@ -95,15 +104,4 @@ export const InternViewPage = () => {
   );
 };
 
-const data = {
-  data: [
-    {
-      name: "Completado",
-      value: 65,
-    },
-    {
-      name: "Pendiente",
-      value: 35,
-    },
-  ],
-};
+

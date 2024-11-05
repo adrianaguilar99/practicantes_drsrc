@@ -8,11 +8,14 @@ export async function postAttendance(data: PostAttendance): Promise<PostAttendan
         method: "POST",
         body: JSON.stringify(data),
       });
+      alert(data.internCode)
       if (!response.ok) {
         const errorResponse = await response.json();
+     
         throw new Error(errorResponse.message || "Error al enviar los datos de la asistencia");
       }
   
+     
       const responseJson: PostAttendanceResponse = await response.json();
       return responseJson;
     } catch (error: any) {

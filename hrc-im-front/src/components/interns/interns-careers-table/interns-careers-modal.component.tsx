@@ -162,7 +162,7 @@ export const CareerFormModal: React.FC<FormModalProps> = ({
                 variant="contained"
                 color="secondary"
                 sx={{
-                  bgcolor: "#A0522D",
+                  bgcolor: "#D32F2F",
                   "&:hover": { bgcolor: "#8b4513" },
                 }}
                 onClick={onCancel}

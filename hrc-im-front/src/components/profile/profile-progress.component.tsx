@@ -1,21 +1,16 @@
 import { pieArcLabelClasses, PieChart } from "@mui/x-charts";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+import { InternChartProgress } from "../charts/intern-chart-progress.component";
 
-export const ProfileProgress = () => {
-  const customColors = ["#4AAF80", "#C2C2C2"];
 
-  // Variantes de animación
-  const pageVariants = {
-    initial: { opacity: 0, scale: 0.8 },
-    in: { opacity: 1, scale: 1 },
-    out: { opacity: 0, scale: 0.8 },
-  };
+interface ProfileProgressProps {
+  dataProgress: number;
+}
 
-  const pageTransition = {
-    type: "spring",
-    stiffness: 50,
-    damping: 20,
-  };
+export const ProfileProgress: React.FC<ProfileProgressProps> = ({ dataProgress }) => {
+
+
+
   return (
     <>
       <div className="profile-data-container-header">
@@ -24,41 +19,10 @@ export const ProfileProgress = () => {
       </div>
       <div className="profile-progress">
         <div className="intern-view-pie-container">
-          <PieChart
-            series={[
-              {
-                arcLabel: (item) => `${item.value}%`,
-                arcLabelMinAngle: 35,
-                arcLabelRadius: "60%",
-                data: data.data.map((item, index) => ({
-                  ...item,
-                  color: customColors[index],
-                })),
-              },
-            ]}
-            sx={{
-              [`& .${pieArcLabelClasses.root}`]: {
-                fontWeight: "bold",
-                fill: "white",
-                zIndex: 1,
-              },
-            }}
-          />
+          <InternChartProgress dataProgress={dataProgress}/>
         </div>
       </div>
+      
     </>
   );
-};
-
-const data = {
-  data: [
-    {
-      name: "Completado",
-      value: 65,
-    },
-    {
-      name: "Pendiente",
-      value: 35,
-    },
-  ],
 };

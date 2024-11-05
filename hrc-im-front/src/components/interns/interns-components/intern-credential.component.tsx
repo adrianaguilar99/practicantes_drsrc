@@ -53,7 +53,7 @@ export const InternCredentialComponent: React.FC<InternCredentialProps> = ({
 
       <div className="intern-credential-footer">
         <ButtonComponent text="Imprimir credencial" onClick={reactToPrintFn} />
-        <ButtonComponent  text="Cancelar" style={{backgroundColor: "#A0522D"}} onClick={() => navigate(-1)} />
+        <ButtonComponent  text="Cancelar" style={{backgroundColor: "#D32F2F"}} onClick={() => navigate(-1)} />
       </div>
     </div>
   );

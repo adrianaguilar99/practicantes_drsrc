@@ -55,13 +55,18 @@ useEffect(() => {
       );
     }
     if (filters.type) {
-      results = results.filter(intern => intern.department === filters.type);
+      results = results.filter(intern => 
+        (filters.type === "EXTERNO" && intern.externalInternCode) ||
+        (filters.type === "INTERNO" && !intern.externalInternCode)
+      );
     }
-    // if (filters.progress) {
-    //   if (filters.progress === "Completado") {
-    //     results = results.filter(intern => intern.progreso === 100);
-    //   }
-    // }
+
+    
+    if (filters.progress) {
+      if (filters.progress === "Completado") {
+        results = results.filter(intern => intern.totalInternshipCompletion === 100);
+      }
+    }
     if (Array.isArray(filters.department) && filters.department.length > 0) {
       results = results.filter(intern => filters.department!.includes(intern.internshipDepartment.name));
     }
@@ -75,11 +80,15 @@ useEffect(() => {
     const searchData = data.map(intern => ({
       name: intern.user.firstName + " " + intern.user.lastName,
       intershipDepartment: intern.internshipDepartment.name,
+      internCode: intern.externalInternCode || intern.internalInternCode,
+      internType: intern.externalInternCode? "externo" : "interno"
     }));
-    const results = search(searchData, query, { keys: ['name', 'intershipDepartment' ]  });
+    const results = search(searchData, query, { keys: ['name', 'intershipDepartment', 'internCode', 'internType' ]  });
     const filteredResults = data.filter(intern =>
       results.some(result => result.name === intern.user.firstName + " " + intern.user.lastName) ||
-      results.some(result => result.intershipDepartment === intern.internshipDepartment.name)
+      results.some(result => result.intershipDepartment === intern.internshipDepartment.name) ||
+      results.some(result => result.internCode === intern.externalInternCode || result.internCode === intern.internalInternCode) ||
+      results.some(result => result.internType === (intern.externalInternCode? "externo" : "interno"))
 
     );
     setFilteredData(filteredResults);

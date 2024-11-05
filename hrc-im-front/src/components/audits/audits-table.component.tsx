@@ -133,7 +133,7 @@ export const AuditsTable: React.FC<AuditsTableProps> = ({
                               left: "0",
                             }}
                           >
-                            <EntityInfoModal entity={audit.entityAffected} />
+                            <EntityInfoModal entity={audit.entityAffected} type={audit.action.split(" ")[1]}/>
                           </div>
                         )}
                       </span>
