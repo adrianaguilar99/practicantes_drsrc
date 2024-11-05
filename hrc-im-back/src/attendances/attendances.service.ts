@@ -34,6 +34,7 @@ export class AttendancesService {
 
   async registerEntry(internCode: string, timestamp: Date) {
     // Mediante el servicio buscamos al practicante mediante su codigo unico
+
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
 
