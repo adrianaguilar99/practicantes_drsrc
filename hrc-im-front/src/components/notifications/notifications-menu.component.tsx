@@ -51,13 +51,16 @@ export const NotificationsMenu : React.FC<NotificationProps> = ({ anchorEl, onCl
 
     const markAsReadNotification = async (notificationId : string) => {
         setDisappearingNotification(notificationId);
+        
         setTimeout(async () => {
             await patchNotification(userToken, notificationId);
             setNotifications((prev) =>
                 prev.filter((notification) => notification.notification.id !== notificationId)
             );
             setDisappearingNotification(null);
+            dispatch(setNotificationsLength(initialNotifications.length - 1));
         }, 300);
+ 
     };
 
     useEffect(() => {
