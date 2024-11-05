@@ -80,6 +80,19 @@ export class DepartmentsService {
     return department;
   }
 
+  async countInternsByDepartment(): Promise<Record<string, number>> {
+    const departments = await this.departmentsRepository.find({
+      relations: { interns: true },
+    });
+
+    const result: Record<string, number> = {};
+    departments.forEach((department) => {
+      result[department.name] = department.interns.length;
+    });
+
+    return result;
+  }
+
   async update(
     id: string,
     updateDepartmentDto: UpdateDepartmentDto,

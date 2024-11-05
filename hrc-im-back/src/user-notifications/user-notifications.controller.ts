@@ -65,6 +65,28 @@ export class UserNotificationsController {
     };
   }
 
+  @Get('unread')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} ${ACCESS_TO_ALL}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+    type: [UserNotification],
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  async findAllUnreadByUser(@Req() req): Promise<IApiResponse<any>> {
+    const user = req.user;
+    const allUserNotifications =
+      await this.userNotificationsService.findAllUnreadByUser(user);
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: allUserNotifications,
+      records: allUserNotifications.length,
+    };
+  }
+
   @ApiOperation({
     summary: `${READ_RECORD} ${ACCESS_TO_ALL}`,
   })
