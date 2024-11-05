@@ -1,10 +1,6 @@
 import type { StyleDictionary, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { headerSection } from './sections/hearder.section';
 
-// interface ReportOptions {
-//   name: string;
-// }
-
 const style: StyleDictionary = {
   header: {
     fontSize: 22,
@@ -28,9 +24,7 @@ const style: StyleDictionary = {
   },
 };
 
-export const getEmploymentLetter = () // options: ReportOptions,
-: TDocumentDefinitions => {
-  // const { name } = options;
+export const getEmploymentLetter = (): TDocumentDefinitions => {
   const docDefinition: TDocumentDefinitions = {
     styles: style,
     pageMargins: [40, 60, 40, 60],

@@ -37,7 +37,7 @@ const style: StyleDictionary = {
 };
 
 export const getEmploymentLetterById = (
-  values: ReportValues, // options: ReportOptions,
+  values: ReportValues,
 ): TDocumentDefinitions => {
   const {
     employeeHours,

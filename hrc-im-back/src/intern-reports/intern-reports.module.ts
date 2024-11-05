@@ -19,6 +19,12 @@ import { Property } from 'src/properties/entities/property.entity';
 import { Supervisor } from 'src/supervisors/entities/supervisor.entity';
 import { SystemAudit } from 'src/system-audits/entities/system-audit.entity';
 import { User } from 'src/users/entities/user.entity';
+import { AttendancesService } from 'src/attendances/attendances.service';
+import { Attendance } from 'src/attendances/entities/attendance.entity';
+import { UserNotificationsGateway } from 'src/user-notifications/user-notifications.gateway';
+import { UserNotificationsService } from 'src/user-notifications/user-notifications.service';
+import { UserNotification } from 'src/user-notifications/entities/user-notification.entity';
+import { UserNotificationStatus } from 'src/user-notifications/entities/user-notification-status.entity';
 
 @Module({
   controllers: [InternReportsController],
@@ -32,6 +38,9 @@ import { User } from 'src/users/entities/user.entity';
     SupervisorsService,
     SystemAuditsService,
     UsersService,
+    AttendancesService,
+    UserNotificationsGateway,
+    UserNotificationsService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -43,6 +52,9 @@ import { User } from 'src/users/entities/user.entity';
       Supervisor,
       SystemAudit,
       User,
+      Attendance,
+      UserNotification,
+      UserNotificationStatus,
     ]),
     PdfPrinterModule,
   ],

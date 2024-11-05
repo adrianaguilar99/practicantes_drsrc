@@ -105,7 +105,7 @@ export class AttendancesController {
     const user = req.user;
     const allAttendances = await this.attendancesService.findAll(user);
     return {
-      message: SUCCESSFUL_FETCH,
+      message: 'SUCCESSFUL_FETCH',
       data: allAttendances,
       records: allAttendances.length,
     };
@@ -224,10 +224,4 @@ export class AttendancesController {
     const resetInternExit = await this.attendancesService.resetExit(id, user);
     return { message: SUCCESSFUL_UPDATE, data: resetInternExit };
   }
-
-  // @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
-  // @Delete(':id')
-  // remove(@Param('id', ParseUUIDPipe) id: string) {
-  //   return this.attendancesService.remove(id);
-  // }
 }
