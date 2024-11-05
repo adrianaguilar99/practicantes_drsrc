@@ -69,7 +69,7 @@ export class AttendancesService {
           exitTime: null,
           intern: existingIntern,
           attendanceStatuses: AttendanceStatuses.ABSENCE,
-          worked_hours: null,
+          workedHours: null,
           isLate: true,
         });
         this.userNotificationsGateway.emitEvent('attendance', {
@@ -189,13 +189,12 @@ export class AttendancesService {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
         AttendanceStatuses.EARLY_EXIT_ATTENDANCE;
-      attendanceRecord.worked_hours = calculateWorkedHoursInHHMMSS(
+      attendanceRecord.workedHours = calculateWorkedHoursInHHMMSS(
         attendanceRecord.entryTime,
         exitTime,
       );
       try {
-        const registerExit =
-          await this.attendancesRepository.save(attendanceRecord);
+        await this.attendancesRepository.save(attendanceRecord);
         this.userNotificationsGateway.emitEvent('attendance', {
           internFullName: `${existingIntern.user.firstName} ${existingIntern.user.lastName}`,
           internInternshipDepartment: existingIntern.internshipDepartment.name,
@@ -210,7 +209,7 @@ export class AttendancesService {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
         AttendanceStatuses.NORMAL_ATTENDANCE;
-      attendanceRecord.worked_hours = calculateWorkedHoursInHHMMSS(
+      attendanceRecord.workedHours = calculateWorkedHoursInHHMMSS(
         attendanceRecord.entryTime,
         exitTime,
       );
@@ -385,6 +384,94 @@ export class AttendancesService {
     return filteredAttendances;
   }
 
+  async findAllToMakeReport(startDate: string, endDate: string) {
+    // convertimos los argumentos en objetos date para hacer la comparacion correctamente
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const allAttendances = await this.attendancesRepository.find();
+
+    // empezamos la logica para filtrar y limpiar las asistencias
+    const filteredAttendances = allAttendances
+      .filter((attendance) => {
+        const attendanceDate = new Date(attendance.attendanceDate);
+        return attendanceDate >= start && attendanceDate <= end;
+      })
+      .map((attendance) => {
+        // Filtra datos innecesarios del practicante para no sobrecargar el front
+        const {
+          bloodType,
+          phone,
+          address,
+          schoolEnrollment,
+          internshipStart,
+          internshipEnd,
+          internshipDuration,
+          status,
+          totalInternshipCompletion,
+          career,
+          department,
+          property,
+          emergencyContacts,
+          internComents,
+          internFiles,
+          internSchedule,
+          ...filteredIntern
+        } = attendance.intern;
+
+        // Filtra datos innecesarios del departamento de prácticas
+        const { supervisors, ...filteredInternshipDepartment } =
+          filteredIntern.internshipDepartment;
+
+        // Retorna la data limpia
+        return {
+          ...attendance,
+          intern: {
+            ...filteredIntern,
+            internshipDepartment: filteredInternshipDepartment,
+          },
+        };
+      });
+
+    // variables para respuestas opcionales
+    let optionalResponseStart = null;
+    let optionalResponseEnd = null;
+
+    // encuentra la fecha más cercana al inicio, si existe
+    const firstDate = filteredAttendances.length
+      ? new Date(filteredAttendances[0].attendanceDate)
+      : null;
+    if (firstDate && firstDate > start) {
+      optionalResponseStart = `Se encontraron datos a partir de ${firstDate.toISOString().split('T')[0]}`;
+    }
+
+    // encuentra la fecha más cercana al fin, si existe
+    const lastDate = filteredAttendances.length
+      ? new Date(
+          filteredAttendances[filteredAttendances.length - 1].attendanceDate,
+        )
+      : null;
+    if (lastDate && lastDate < end) {
+      optionalResponseEnd = `Se encontraron datos hasta ${lastDate.toISOString().split('T')[0]}`;
+    }
+
+    let internalInternsCount = 0;
+    let externalInternsCount = 0;
+    filteredAttendances.map((attendance) => {
+      if (attendance.intern.internalInternCode) internalInternsCount++;
+      else externalInternsCount++;
+    });
+
+    // Devuelve la respuesta con datos y las respuestas opcionales si es necesario
+    return [
+      ...filteredAttendances,
+      ...(optionalResponseStart ? [optionalResponseStart] : []),
+      ...(optionalResponseEnd ? [optionalResponseEnd] : []),
+      ...(internalInternsCount ? [internalInternsCount] : []),
+      ...(externalInternsCount ? [externalInternsCount] : []),
+    ];
+  }
+
   async findOne(id: string) {
     const attendance = await this.attendancesRepository.findOne({
       where: { id },
@@ -440,7 +527,7 @@ export class AttendancesService {
         updateAttendanceDto.attendanceStatuses;
     if (updateAttendanceDto.isLate !== undefined)
       existingAttendace.isLate = updateAttendanceDto.isLate;
-    existingAttendace.worked_hours = calculateWorkedHoursInHHMMSS(
+    existingAttendace.workedHours = calculateWorkedHoursInHHMMSS(
       updateAttendanceDto.entryTime,
       updateAttendanceDto.exitTime,
     );
@@ -495,8 +582,4 @@ export class AttendancesService {
       handleInternalServerError(error.message);
     }
   }
-
-  // remove(id: string) {
-  //   return `This action removes a #${id} attendance`;
-  // }
 }

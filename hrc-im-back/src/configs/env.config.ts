@@ -37,4 +37,10 @@ export const ENV = {
     CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
   },
   FRONT_URL_REDIRECT: process.env.FRONT_URL_REDIRECT,
+  ADMIN: {
+    FIRST_NAME: process.env.ADMIN_FIRST_NAME,
+    LAST_NAME: process.env.ADMIN_LAST_NAME,
+    EMAIL: process.env.ADMIN_EMAIL,
+    PASSWORD: process.env.ADMIN_PASSWORD,
+  },
 };

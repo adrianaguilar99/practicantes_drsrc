@@ -74,7 +74,7 @@ export class Attendance {
     nullable: true,
   })
   @Column({ name: 'worked_hours', type: 'time', nullable: true })
-  worked_hours: string;
+  workedHours: string;
 
   @ApiProperty({
     type: () => Intern,

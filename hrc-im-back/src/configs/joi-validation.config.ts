@@ -1,5 +1,6 @@
 import * as Joi from 'joi';
 
+// Configuracion necesaria del entorno
 export const JoiValidationSchema = Joi.object({
   // --> ENVIRONMENT
   NODE_ENV: Joi.string().required(),
@@ -22,4 +23,9 @@ export const JoiValidationSchema = Joi.object({
   GOOGLE_SECRET: Joi.string().required(),
   GOOGLE_CALLBACK_URL: Joi.string().required(),
   FRONT_URL_REDIRECT: Joi.string().optional(),
+  // ADMIN CREDENTIALS
+  ADMIN_FIRST_NAME: Joi.string().required(),
+  ADMIN_LAST_NAME: Joi.string().required(),
+  ADMIN_EMAIL: Joi.string().required(),
+  ADMIN_PASSWORD: Joi.string().required(),
 });

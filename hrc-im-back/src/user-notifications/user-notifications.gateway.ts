@@ -28,10 +28,6 @@ export class UserNotificationsGateway
   @WebSocketServer()
   server: Server;
 
-  // handleConnection(client: Socket) {
-  //   console.log(`Client connected: ${client.id}`);
-  // }
-
   handleConnection(client: Socket) {
     console.log(
       `Client connected: ${client.id} - Total clients: ${this.server.engine.clientsCount}`,
