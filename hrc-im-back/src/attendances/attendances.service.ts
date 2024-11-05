@@ -34,8 +34,15 @@ export class AttendancesService {
 
   async registerEntry(internCode: string, timestamp: Date) {
     // Mediante el servicio buscamos al practicante mediante su codigo unico
+
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
+
+    // validar practicante no activo
+    if (!existingIntern.user.isActive)
+      throw new BadRequestException(
+        'Your account is inactive, and check-in is unavailable. Please contact your supervisor or administrator for assistance.',
+      );
 
     // Validacion de que registre asistencias solo en su periodo
     validateAttendancePeriod(existingIntern, timestamp);
@@ -47,6 +54,7 @@ export class AttendancesService {
     const existingRecord = await this.attendancesRepository.findOne({
       where: { intern: existingIntern, attendanceDate },
     });
+
     if (existingRecord) {
       if (!existingRecord.exitTime) {
         throw new BadRequestException(

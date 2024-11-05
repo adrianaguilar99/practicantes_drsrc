@@ -65,22 +65,31 @@ export class AttendancesController {
     @Body() { internCode }: { internCode: string },
   ): Promise<IApiResponse<any>> {
     const date = new Date();
+    const offsetInMs = date.getTimezoneOffset() * 60000;
+    const localTimestamp = date.getTime() - offsetInMs;
+
+    // console.log({
+    //   local: new Date(localTimestamp).toISOString(),
+    //   localTimestamp,
+    //   localDate: new Date(localTimestamp),
+    // });
 
     const existingRecord = await this.attendancesService.findAttendanceRecord(
       internCode,
-      date.toDateString(),
+      new Date(localTimestamp).toISOString(),
     );
+
     if (existingRecord && !existingRecord.exitTime) {
       const registeredExit = await this.attendancesService.registerExit(
         internCode,
-        date,
+        new Date(localTimestamp),
       );
       return { message: registeredExit };
     }
 
     const registeredEntry = await this.attendancesService.registerEntry(
       internCode,
-      date,
+      new Date(localTimestamp),
     );
     return { message: registeredEntry };
   }
