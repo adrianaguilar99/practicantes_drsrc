@@ -55,6 +55,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post()
+  @HttpCode(201)
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
@@ -67,8 +69,6 @@ export class UsersController {
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(201)
-  @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
     @Req() req,
@@ -78,6 +78,8 @@ export class UsersController {
     return { message: USER_REGISTERED, data: createdUser };
   }
 
+  @Get()
+  @HttpCode(200)
   @UserRoles(
     UserRole.ADMINISTRATOR,
     UserRole.SUPERVISOR,
@@ -92,8 +94,6 @@ export class UsersController {
     type: [User],
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Get()
   async findAll(@Req() req): Promise<IApiResponse<any>> {
     const user = req.user;
     const allUsers = await this.usersService.findAll(user);
@@ -104,6 +104,8 @@ export class UsersController {
     };
   }
 
+  @Get('admins')
+  @HttpCode(200)
   @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({
     summary: `${READ_ALL_RECORDS} Use to find all administrators. Only: ${UserRole.ADMINISTRATOR}`,
@@ -114,8 +116,6 @@ export class UsersController {
     type: [User],
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Get('admins')
   async findAdmins(): Promise<IApiResponse<any>> {
     const allUsers = await this.usersService.findAdmins();
     return {
@@ -125,6 +125,31 @@ export class UsersController {
     };
   }
 
+  @Get('count-active-interns')
+  @HttpCode(200)
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR_RH,
+    UserRole.SUPERVISOR,
+  )
+  @ApiOperation({
+    summary: `${READ_ALL_RECORDS} Use to find all administrators. Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the count of active interns.',
+  })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  async countActiveInterns(): Promise<IApiResponse<number>> {
+    const count = await this.usersService.countActiveInterns();
+    return {
+      message: 'Count of active interns retrieved successfully',
+      data: count,
+    };
+  }
+
+  @Get('profile')
+  @HttpCode(200)
   @ApiOperation({
     summary:
       'Action to obtain your profile data using the authentication token.',
@@ -135,8 +160,6 @@ export class UsersController {
     type: User,
   })
   @ApiResponse({ status: 404, description: BAD_REQUEST })
-  @HttpCode(200)
-  @Get('profile')
   async getProfile(@Req() req): Promise<IApiResponse<any>> {
     const { userId }: IRequestUser = req.user;
     // console.log({ user: req.user });
@@ -148,6 +171,8 @@ export class UsersController {
     };
   }
 
+  @Get(':id')
+  @HttpCode(200)
   @UserRoles(
     UserRole.ADMINISTRATOR,
     UserRole.SUPERVISOR,
@@ -162,8 +187,6 @@ export class UsersController {
     type: User,
   })
   @ApiResponse({ status: 404, description: BAD_REQUEST })
-  @HttpCode(200)
-  @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
@@ -174,6 +197,8 @@ export class UsersController {
     };
   }
 
+  @Get(':id/unfiltered')
+  @HttpCode(200)
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
@@ -184,8 +209,6 @@ export class UsersController {
     type: User,
   })
   @ApiResponse({ status: 404, description: BAD_REQUEST })
-  @HttpCode(200)
-  @Get(':id/unfiltered')
   async findOneRegardlessStatus(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
@@ -196,6 +219,8 @@ export class UsersController {
     };
   }
 
+  @Patch(':id')
+  @HttpCode(200)
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
@@ -215,8 +240,6 @@ export class UsersController {
     description: `${CONFLICT_ERROR} Not allowed some properties to update.`,
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateInternDto: UpdateUserDto,
@@ -231,6 +254,8 @@ export class UsersController {
     return { message: SUCCESSFUL_UPDATE, data: updatedIntern };
   }
 
+  @Patch(':id/active')
+  @HttpCode(200)
   @UserRoles(UserRole.ADMINISTRATOR)
   @ApiOperation({
     summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}`,
@@ -242,14 +267,14 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Patch(':id/active')
   async active(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     const user = req.user;
     const updatedIntern = await this.usersService.active(id, user);
     return { message: SUCCESSFUL_MARKED_ACTIVE, data: updatedIntern };
   }
 
+  @Delete(':id/deactive')
+  @HttpCode(200)
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
@@ -262,8 +287,6 @@ export class UsersController {
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Delete(':id/deactive')
   async deactivate(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,

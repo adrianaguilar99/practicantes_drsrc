@@ -392,7 +392,8 @@ export class InternsService {
     let codeExists: boolean;
 
     do {
-      code = Math.floor(100000 + Math.random() * 900000).toString();
+      // Genera un número aleatorio entre 500000 y 999999
+      code = Math.floor(500000 + Math.random() * 500000).toString();
       codeExists = !!(await this.internsRepository.findOne({
         where: [{ externalInternCode: code }, { internalInternCode: code }],
       }));
