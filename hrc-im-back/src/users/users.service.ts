@@ -329,4 +329,15 @@ export class UsersService {
       handleInternalServerError(error.message);
     }
   }
+
+  async countActiveInterns(): Promise<number> {
+    try {
+      const count = await this.usersRepository.count({
+        where: { userRole: UserRole.INTERN, isActive: true },
+      });
+      return count;
+    } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
 }
