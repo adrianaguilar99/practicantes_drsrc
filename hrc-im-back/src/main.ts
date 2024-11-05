@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger();
 
-  // Configuración de la aplicación
+  // Configuración de la aplicación para el estilo de retorno de las respuestas de peticiones
   app.useGlobalPipes(createValidationPipe());
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -26,7 +26,6 @@ async function bootstrap() {
   }
 
   await app.listen(ENV.PORT);
-  // await app.listen(ENV.PORT, '0.0.0.0');
 
   const baseUrl = (await app.getUrl()).replace('[::1]', 'localhost');
 

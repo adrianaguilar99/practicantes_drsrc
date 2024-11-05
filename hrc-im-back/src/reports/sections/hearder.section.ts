@@ -3,18 +3,18 @@ import { DateFormatter } from 'src/common/utils';
 
 const rcdLogo: Content = {
   image: 'src/assets/images/rcd-logo.png',
-  width: 50,
-  height: 50,
+  width: 35,
+  height: 35,
   alignment: 'center',
-  margin: [70, 20, 0, 0],
+  margin: [30, 12, 0, 0],
 };
 
 const hrcLogo: Content = {
   image: 'src/assets/images/hrc-logo.png',
-  width: 80,
-  height: 45,
+  width: 60,
+  height: 33,
   alignment: 'center',
-  margin: [0, 20, 0, 0],
+  margin: [0, 12, 0, 0],
 };
 
 const currentDate: Content = {
@@ -67,7 +67,7 @@ export const headerSection = (options: HeaderOptions): Content => {
             alignment: 'center',
             style: {
               bold: true,
-              fontSize: 22,
+              fontSize: 20,
             },
             margin: [0, 20, 0, 0],
           },
@@ -87,6 +87,6 @@ export const headerSection = (options: HeaderOptions): Content => {
       { width: '*', stack: [headerTitle] },
       { width: 'auto', stack: [headerDate] },
     ],
-    columnGap: 20, // Espacio entre las columnas
+    columnGap: 20, // el espacio entre las columnas
   };
 };

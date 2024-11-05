@@ -15,77 +15,29 @@ export class InternReportsService {
     private readonly attendancesService: AttendancesService,
   ) {}
 
-  create(createInternReportDto: CreateInternReportDto) {
-    return 'This action adds a new internReport';
-  }
-
   hello() {
     const docDefinition = getInternReport({ name: 'Martin Martinez Arias' });
-
     const doc = this.pdfPrinterService.createPdf(docDefinition);
-
     return doc;
   }
 
   employmentLetter() {
     const docDefinition = getEmploymentLetter();
-
     const doc = this.pdfPrinterService.createPdf(docDefinition);
-
     return doc;
   }
 
-  // async employmentLetterById(id: string) {
-  //   const intern = await this.internsService.findOne(id);
-  //   const docDefinition = getEmploymentLetterById({
-  //     employeeHours: +intern.internshipDuration,
-  //     employeeName: intern.user.firstName,
-  //     employeePosition: intern.bloodType,
-  //     employeeStartDate: new Date(intern.internshipStart),
-  //     employeeWorkSchedule: intern.internSchedule.fridayIn,
-  //     employerCompany: intern.property.name,
-  //     employerName: intern.user.lastName,
-  //     employerPosition: intern.address,
-  //   });
+  async internsReport(createInternReportDto: CreateInternReportDto) {
+    const allInternsAttendances =
+      await this.attendancesService.findAllToMakeReport(
+        createInternReportDto.start,
+        createInternReportDto.end,
+      );
 
-  //   const doc = this.pdfPrinterService.createPdf(docDefinition);
-
-  //   return doc;
-  // }
-
-  async internsReport() {
-    const allInternsAttendances = await this.attendancesService.findAll();
-    // allInternsAttendances.map(i=> {
-    //   i.attendanceDate,
-    //   i.attendanceStatuses,
-    //   i.entryTime,
-    //   i.exitTime,
-    //   i.id,
-    //   i.intern.user.firstName,
-    //   i.intern.user.lastName,
-    //   i.isLate,
-    //   i.worked_hours,
-    //   i.intern.institution
-    // })
-
-    const docDefinition = getInternsReport({ allInternsAttendances });
+    const docDefinition = getInternsReport({
+      allInternsAttendances,
+    });
 
     return this.pdfPrinterService.createPdf(docDefinition);
   }
-
-  // findAll() {
-  //   return `This action returns all internReports`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} internReport`;
-  // }
-
-  // update(id: number, updateInternReportDto: UpdateInternReportDto) {
-  //   return `This action updates a #${id} internReport`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} internReport`;
-  // }
 }

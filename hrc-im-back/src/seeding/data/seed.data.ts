@@ -1,3 +1,4 @@
+import { ENV } from 'src/configs';
 import { UserRole } from 'src/common/enums';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,48 +20,12 @@ export const initialData: SeedData = {
   users: [
     {
       id: uuidv4(),
-      firstName: 'MARTIN',
-      lastName: 'MARTINEZ ARIAS',
-      email: 'for.any.app.testing@gmail.com',
-      password: 'Generico2024$$',
+      firstName: ENV.ADMIN.FIRST_NAME,
+      lastName: ENV.ADMIN.LAST_NAME,
+      email: ENV.ADMIN.EMAIL,
+      password: ENV.ADMIN.PASSWORD,
       userRole: UserRole.ADMINISTRATOR,
       createdAt: new Date(),
     },
-    // {
-    //   id: uuidv4(),
-    //   firstName: 'Jane',
-    //   lastName: 'Doe',
-    //   email: 'jane.doe@facebook.com',
-    //   password: '',
-    //   userRole: UserRole.SUPERVISOR,
-    //   createdAt: new Date().toISOString(),
-    // },
-    // {
-    //   id: uuidv4(),
-    //   firstName: 'Mark',
-    //   lastName: 'Smith',
-    //   email: 'mark.smith@intern.com',
-    //   password: '',
-    //   userRole: UserRole.INTERN,
-    //   createdAt: new Date().toISOString(),
-    // },
-    // {
-    //   id: uuidv4(),
-    //   firstName: 'Susan',
-    //   lastName: 'Lee',
-    //   email: 'susan.lee@google.com',
-    //   password: '',
-    //   userRole: UserRole.ADMINISTRATOR,
-    //   createdAt: new Date().toISOString(),
-    // },
-    // {
-    //   id: uuidv4(),
-    //   firstName: 'Michael',
-    //   lastName: 'Jones',
-    //   email: 'michael.jones@facebook.com',
-    //   password: '',
-    //   userRole: UserRole.SUPERVISOR,
-    //   createdAt: new Date().toISOString(),
-    // },
   ],
 };

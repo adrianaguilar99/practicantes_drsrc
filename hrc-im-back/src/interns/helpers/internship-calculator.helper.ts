@@ -2,7 +2,7 @@ export const internshipCalculator = (
   internshipDuration: any,
   attendances: any[],
 ): number => {
-  const requiredHours = internshipDuration.hours; // lo pasamos a numero ya que en la db esta en string
+  const requiredHours = internshipDuration.hours;
 
   const totalWorkedHours = attendances.reduce((total, attendance) => {
     if (attendance.workedHours) {
