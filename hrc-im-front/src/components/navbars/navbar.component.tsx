@@ -8,7 +8,7 @@ import Avatar from "@mui/material/Avatar";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Typography from "@mui/material/Typography";
 import { Badge, Divider } from "@mui/material";
-import { notifications, NotificationsMenu } from "../notifications/notifications-menu.component";
+import {  NotificationsMenu } from "../notifications/notifications-menu.component";
 import { Sidebar } from "./sidebar.component";
 import { toggleSidebar, setSidebarOpen } from "../../redux/sidebar-redux/sidebarSlice";
 import { AppDispatch, RootState } from "../../redux/store";
@@ -21,7 +21,7 @@ import { decryptData } from "../../functions/encrypt-data.function";
 import { stringAvatar } from "../../functions/utils.functions";
 import { getProfileData } from "../../api/api-request";
 import { enqueueSnackbar } from "notistack";
-import { ProfileInterface } from "../../interfaces/profile.interface";
+import { styled } from '@mui/material/styles';
 import { setUserNameRedux } from "../../redux/auth-redux/profileSlice";
 
 export const Navbar = () => {
@@ -32,6 +32,7 @@ export const Navbar = () => {
   const [isNotificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const notificationsLength = useSelector((state: RootState) => state.profile.notificationsLength) || 0;
   
   const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isSidebarOpen);
   const sidebarToggleRef = useRef<HTMLButtonElement>(null);
@@ -62,6 +63,34 @@ export const Navbar = () => {
       OpenUserMenu(event);
   };
 
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      backgroundColor: '#44b700',
+      color: '#44b700',
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+      '&::after': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        animation: 'ripple 1.2s infinite ease-in-out',
+        border: '1px solid currentColor',
+        content: '""',
+      },
+    },
+    '@keyframes ripple': {
+      '0%': {
+        transform: 'scale(.8)',
+        opacity: 1,
+      },
+      '100%': {
+        transform: 'scale(2.4)',
+        opacity: 0,
+      },
+    },
+  }));
   
   function useGetProfile(token: string): [string, () => void] {
     const dispatch = useDispatch();
@@ -165,7 +194,7 @@ export const Navbar = () => {
           <div className="notifications-container" ref={notificationMenuRef}>
             <NotificationsMenu anchorEl={isNotificationMenuOpen} />
             <IconButton color="inherit" onClick={toggleNotificationMenu}>
-              <Badge badgeContent={notifications().length} color="error">
+              <Badge badgeContent={notificationsLength} color="error">
                 <NotificationsNoneIcon />
               </Badge>
             </IconButton>
@@ -187,7 +216,13 @@ export const Navbar = () => {
             />
             <h3 className="user-name-navbar">{userName.split(" ")[0]}</h3>
             <IconButton edge="end">
+            <StyledBadge
+  overlap="circular"
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+  variant="dot"
+>
             <Avatar {...stringAvatar(userName)} />
+</StyledBadge>
             </IconButton>
           </div>
         </Toolbar>

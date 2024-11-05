@@ -17,6 +17,7 @@ export interface DataIntern {
     schoolEnrollment:     string;
     internshipStart:      Date;
     internshipEnd:        Date;
+    totalInternshipCompletion : number;
     internshipDuration: string;
     entryTime: string,
     exitTime: string,
@@ -116,6 +117,7 @@ export interface GetByIDDataInter {
     internshipStart:      Date;
     internshipEnd:        Date;
     internshipDuration :   internshipDuration;
+    totalInternshipCompletion:   number;
     entryTime:            string;
     exitTime:             string;
     status:               string;

@@ -153,9 +153,24 @@ export const InternEmergenciesModal: React.FC<InternEmergenciesModalProps> = ({
         },
       }}
     >
-      <DialogTitle>{"Contactos de emergencia"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
+       <DialogTitle
+      sx={{
+        bgcolor: "#2E3B4E", 
+        color: "#fff",      
+        padding: 2,
+        textAlign: "start",
+        fontSize: ".9rem",
+        height: 5,
+        lineHeight: 1,
+      }}
+    >
+      {"Contactos de Emergencia"}
+    </DialogTitle>
+      <DialogContent sx={{
+      backgroundColor: "#EDEDED",
+    }
+    }>
+        <DialogContentText sx={{ marginTop: 2 }}>
           <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
             <div style={mode === "normal" ? { width: "100%" } : { width: "50%" }}> 
               {data.map((emergency, index) => (

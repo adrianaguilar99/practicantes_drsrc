@@ -104,12 +104,12 @@ const InternCardComponent: React.FC<InternCardProps> = ({
         </div>
         <div className="progress-section">
           <span>
-            {data.phone.length === 100 ? "¡Completado!" : `${90}%`}
+            {data.totalInternshipCompletion === 100 ? "¡Completado!" : `${data.totalInternshipCompletion}%`}
           </span>
           <div className="progress-bar">
             <div
               className="progress"
-              style={{ width: `${90}%` }}
+              style={{ width: `${data.totalInternshipCompletion}%` }}
             ></div>
           </div>
         </div>

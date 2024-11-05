@@ -1,7 +1,6 @@
 import { Notifications } from "@mui/icons-material";
 import { Navbar } from "../../components/navbars/navbar.component";
 import './notifications.page.css';
-import { NotificationsTable } from "../../components/notifications/notifications.component";
 import { useState } from "react";
 import { NotificationsInternPage } from "./notifications-intern.page";
 import { Breadcrumb } from "../../components/utils/breadcrumb.component";
@@ -31,7 +30,7 @@ const NotificationsPage = () => {
           : (
             null
           )}
-              <NotificationsTable />
+              {/* <NotificationsTable /> */}
         </section>
       </div>
       <Footer />

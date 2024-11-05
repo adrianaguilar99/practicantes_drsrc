@@ -9,13 +9,14 @@ interface InfoRowProps {
   value?: string;
   id: string;
   options?: { id: string; name: string }[];
+  typeError?: String;
   coincidences?: string[];
   validate?: "Error" | "Normal";
   editable?: boolean;
   show?: boolean;
   }
   
-  export const InfoRow: React.FC<InfoRowProps> = ({ label, value, id,type, editable, show, onChange, options = [], coincidences = [],validate }) => {
+  export const InfoRow: React.FC<InfoRowProps> = ({ label, value, id,type, typeError, editable, show, onChange, options = [], coincidences = [],validate }) => {
     const [inputValue, setInputValue] = useState(value);
     const ValueChange = (newValue: string) => {
       setInputValue(newValue);
@@ -25,14 +26,24 @@ interface InfoRowProps {
     const errorClass = validate === "Error" ? "error-input" : "";
 
     return (
+
+      <>
+       {validate === "Error" && (
+          <label htmlFor={id} className="error-label">
+            {typeError}
+          </label>
+        )}
       <div className="info-row" style={{ display: show ? "flex" : "none" }}>
         <label htmlFor={id}>{label}</label>
+
         {type === "textarea" && (
          <textarea 
          id={id} 
+         value={value}
          typeof={type}
+         onChange={(e) => ValueChange(e.target.value)}
          defaultValue={value} 
-         className={editable ? "edit-mode" : "view-mode"} 
+         className={editable ? `edit-mode ${errorClass}` : "view-mode"} 
          readOnly={!editable}
        />
         ) }
@@ -44,7 +55,7 @@ interface InfoRowProps {
                 typeof={type}
                 defaultValue={value} 
                 onChange={(e) => ValueChange(e.target.value)}
-                className={editable ? "edit-mode" : "view-mode"} 
+                className={editable ? `edit-mode ${errorClass}` : "view-mode"} 
                 readOnly={!editable}
               />
         )}
@@ -58,7 +69,7 @@ interface InfoRowProps {
               defaultValue={value}
               value={value}
               onChange={(e) => ValueChange(e.target.value)}
-              className={`edit-mode ${errorClass}`}
+              className={editable ? `edit-mode ${errorClass}` : "view-mode"} 
               readOnly={!editable}
               typeof={type}
             />
@@ -149,6 +160,9 @@ interface InfoRowProps {
             />
           )}
         </div>
+      </>
+      
+      
     );
   };
   

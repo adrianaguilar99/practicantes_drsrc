@@ -21,6 +21,7 @@ import {
   DataInstitution,
   InstitutionsInterface,
 } from "../../interfaces/institutions/institutions.interface";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { formatPhoneNumber } from "../../functions/utils.functions";
 import { getDepartmentsData } from "../../api/departments/departments.api";
 import { DataDepartment, DepartmentsInterface } from "../../interfaces/departments/departments.interface";
@@ -741,7 +742,7 @@ useEffect(() => {
                   />
 
                   <div className="register-intern-divider">
-                    <ContactPhoneRoundedIcon /> <h3>Horario</h3>
+                    <CalendarMonthIcon /> <h3>Horario</h3>
                   </div>
 
                   <ScheduleRegister />

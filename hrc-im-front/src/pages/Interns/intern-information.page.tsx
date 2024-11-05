@@ -72,6 +72,7 @@ import { patchInternFunction } from "../../functions/intern-functions/patch-inte
 import { enqueueSnackbar } from "notistack";
 import { ca } from "date-fns/locale";
 import { InternsSchedule } from "../../components/interns/interns-schedule/intern-schedule.component";
+import { InputValidators } from "../../functions/input-validators.functions";
 
 const InternInformationPage = () => {
   const userToken = sessionStorage.getItem("_Token") || "";
@@ -164,44 +165,141 @@ const InternInformationPage = () => {
     InternProperty: undefined,
   });
 
+  const validateInputs = () => {
+
+    const validators = InputValidators();
+
+    const resultName = validators.string(InternFirstName);
+    if (resultName) {
+      newErrors.internName = resultName;
+    }
+
+    const resultLastName = validators.string(InternLastName);
+    if (resultLastName) {
+      newErrors.internLastName = resultLastName;
+    }
+
+    const resultPhone = validators.phone(InternPhone);
+    if (resultPhone) {
+      newErrors.internPhone = resultPhone;
+    }
+
+    if(InternBloodType === ""){ 
+        newErrors.internBloodType = "Seleccione un tipo de sangre valido";
+    }
+
+    const resultAddress = validators.string(InternAddress);
+    if (resultAddress) {
+      newErrors.internAddress = resultAddress;
+    }
+
+    if(InternType === "Interno"){
+      const resultDepartment = validators.string(DeparmentID); 
+      if (resultDepartment) {
+        newErrors.internDepartment = resultDepartment;
+      }
+
+      const resultWorkCode = validators.string(InternWorkCode);
+    if (resultWorkCode) { 
+      newErrors.internWorkCode = resultWorkCode;
+    }
+    }
+ 
+
+    const resultOldDepartment = validators.string(InternShipDepartmentID);
+    if (resultOldDepartment) {
+      newErrors.internOldDepartment = resultOldDepartment;
+    }
+
+    if(InternType === "Externo"){
+      const resultUniversity = validators.string(InstitutionID);
+      if (resultUniversity) {
+        newErrors.internUniversity = resultUniversity;
+      }
+
+      const resultInternID = validators.string(InternID); 
+      if (resultInternID) {
+        newErrors.internID = resultInternID;
+      }
+  
+      const resultProgram = validators.string(CareerID); 
+      if (resultProgram) {
+        newErrors.internProgram = resultProgram;
+      }
+  
+      const resultInstitutePhone = validators.phone(InternInstitutePhone);
+      if (resultInstitutePhone) {
+        newErrors.internInstitutePhone = resultInstitutePhone;
+      }
+    }
+
+    const resultBeginDate = validators.date(InterBeginDate);
+    if (resultBeginDate) {
+      newErrors.internBeginDate = resultBeginDate;
+    }
+
+    const resultEndDate = validators.date(InternEndDate);
+    if (resultEndDate) {
+      newErrors.internEndDate = resultEndDate;
+    }
+
+    if(InterBeginDate > InternEndDate){
+      newErrors.internEndDate = "La fecha de fin debe ser mayor a la fecha de inicio";
+    }
+
+    const resultTotalTime = validators.string(InternTotalTime);
+    if (resultTotalTime) {
+      newErrors.internTotalTime = resultTotalTime;
+    }
+
+
+    
+
+
+    setErrors(newErrors);
+  }
+
   const formSubmit = () => {
-    // if(InternContacts.length > 1 && hasErrors === false && formAction === true){
-    patchInternFunction({
-      userToken: userToken,
-      internType: InternType,
-      userId: internData?.user.id || "",
-      dataUser: {
-        firstName: InternFirstName,
-        lastName: InternLastName,
-      },
-      dataIntern: {
-        bloodType: InternBloodType,
-        phone: InternPhone,
-        address: InternAddress,
-        schoolEnrollment: InternID,
-        internshipStart: InterBeginDate,
-        internshipEnd: InternEndDate,
-        externalInternCode: internData?.externalInternCode || "",
-        internshipDuration: InternTotalTime + " hours",
-        status: "ACTIVE",
-        internalInternCode: InternWorkCode,
-        careerId: CareerID,
-        departmentId: DeparmentID,
-        internshipDepartmentId: InternShipDepartmentID,
-        institutionId: InstitutionID,
-        propertyId: PropertyID,
-      },
-      internId: internId || "",
-      onSuccess: () => {
-        fetchData();
-        setShowModal(false);
-      },
-      onError: () => {
-        enqueueSnackbar("No se pudo actualizar el practicante: ", {
-          variant: "error",
-        });
-      },
-    });
+   
+
+      patchInternFunction({
+        userToken: userToken,
+        internType: InternType,
+        userId: internData?.user.id || "",
+        dataUser: {
+          firstName: InternFirstName,
+          lastName: InternLastName,
+        },
+        dataIntern: {
+          bloodType: InternBloodType,
+          phone: InternPhone,
+          address: InternAddress,
+          schoolEnrollment: InternID,
+          internshipStart: InterBeginDate,
+          internshipEnd: InternEndDate,
+          externalInternCode: internData?.externalInternCode || "",
+          internshipDuration: InternTotalTime + " hours",
+          status: "ACTIVE",
+          internalInternCode: InternWorkCode,
+          careerId: CareerID,
+          departmentId: DeparmentID,
+          internshipDepartmentId: InternShipDepartmentID,
+          institutionId: InstitutionID,
+          propertyId: PropertyID,
+        },
+        internId: internId || "",
+        onSuccess: () => {
+          fetchData();
+          setShowModal(false);
+        },
+        onError: () => {
+          enqueueSnackbar("No se pudo actualizar el practicante: ", {
+            variant: "error",
+          });
+        },
+      });
+    
+   
   };
 
   const fetchData = async () => {
@@ -360,7 +458,10 @@ const InternInformationPage = () => {
 
   const EditPage = () => {
     if (editable) {     
+     validateInputs();
+     if (Object.keys(newErrors).length === 0) {
      setSaveEdit(true);
+     }
     } else {
    
         setEditable(true);
@@ -479,6 +580,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternFirstName(value || "")}
+                          validate={errors.internName ? "Error" : "Normal"}
+                          typeError={errors.internName}
                         />
                           <InfoRow
                           label="Apellidos:"
@@ -490,6 +593,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternLastName(value || "")}
+                          validate={errors.internLastName ? "Error" : "Normal"}
+                          typeError={errors.internLastName}
                         />
                           </>
                         ):(
@@ -509,6 +614,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternPhone(value || "")}
+                          validate={errors.internPhone ? "Error" : "Normal"}
+                          typeError={errors.internPhone}
                         />
                         <InfoRow
                           label="Correo:"
@@ -520,6 +627,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternEmail(value || "")}
+                          validate={errors.internEmail ? "Error" : "Normal"}
+                          typeError={errors.internEmail}
                         />
                         <InfoRow
                           label="Dirección:"
@@ -531,6 +640,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternAddress(value || "")}
+                          validate={errors.internAddress ? "Error" : "Normal"}
+                          typeError={errors.internAddress}
                         />
                         <InfoRow
                           label="Tipo de sangre:"
@@ -555,6 +666,8 @@ const InternInformationPage = () => {
                           onChange={(selectedId) =>
                             setInternBloodType(selectedId || "")
                           }
+                          validate={errors.internBloodType ? "Error" : "Normal"}
+                          typeError={errors.internBloodType}
                         />
 
                         <InfoRow
@@ -584,6 +697,9 @@ const InternInformationPage = () => {
                             );
                             setInternShipDepartmentID(selectedId || "");
                           }}
+                          validate={errors.internDepartment ? "Error" : "Normal"}
+                          typeError={errors.internDepartment}
+                          
                         />
 
                         <InfoRow
@@ -609,6 +725,7 @@ const InternInformationPage = () => {
                             );
                             setDeparmentID(selectedId || "");
                           }}
+
                         />
 
                         <div className="info-section-left-options">
@@ -705,6 +822,8 @@ const InternInformationPage = () => {
                                 : ""
                             )
                           }}
+                          validate={errors.internUniversity ? "Error" : "Normal"}
+                          typeError={errors.internUniversity}
                         />
 
                         <InfoRow
@@ -724,6 +843,8 @@ const InternInformationPage = () => {
                               selectedCareer ? selectedCareer.id : ""
                             );
                           }}
+                          validate={errors.internProgram ? "Error" : "Normal"}
+                          typeError={errors.internProgram}
                         />
 
                         <InfoRow
@@ -744,6 +865,7 @@ const InternInformationPage = () => {
                           editable={false}
                           show={InternType === "Externo"}
                           onChange={(value) => setInternID(value || "")}
+
                         />
 
                         <InternSupervisorsModal
@@ -783,7 +905,7 @@ const InternInformationPage = () => {
                                    sx={{
                                      bgcolor: "#A0522D",
                                      "&:hover": { bgcolor: "#8b4513" },
-                                   }} onClick={() => setEditable(false) }>Cancelar</Button>
+                                   }} onClick={() => { fetchData();setEditable(false); setErrors({});} }>Cancelar</Button>
                                 )}
                                
                                 <ButtonComponent
@@ -816,6 +938,9 @@ const InternInformationPage = () => {
                           editable={editable}
                           show={InternType === "Interno"}
                           onChange={(value) => setInternWorkCode(value || "")}
+                          validate={errors.internWorkCode ? "Error" : "Normal"}
+                          typeError={errors.internWorkCode}
+
                         />
                         <InfoRow
                           label="Propiedad:"
@@ -844,6 +969,8 @@ const InternInformationPage = () => {
                               selectedProperty ? selectedProperty.id : ""
                             );
                           }}
+                          validate={errors.internProperty ? "Error" : "Normal"}
+                          typeError={errors.internProperty}
                         />
                         <InfoRow
                           label="Fecha de inicio:"
@@ -855,6 +982,9 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternBeginDate(value || "")}
+                          validate={errors.internBeginDate ? "Error" : "Normal"}
+                          typeError={errors.internBeginDate}
+                          
                         />
                         <InfoRow
                           label="Fecha de fin:"
@@ -866,6 +996,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternEndDate(value || "")}
+                          validate={errors.internEndDate ? "Error" : "Normal"}
+                          typeError={errors.internEndDate}
                         />
                         <InfoRow
                           label="Total de tiempo a cubrir:"
@@ -877,6 +1009,8 @@ const InternInformationPage = () => {
                             InternType === "Externo" || InternType === "Interno"
                           }
                           onChange={(value) => setInternTotalTime(value || "")}
+                          validate={errors.internTotalTime ? "Error" : "Normal"}
+                          typeError={errors.internTotalTime}
                         />
                       </section>
                       <div className="intern-progress-space-container">
@@ -884,14 +1018,14 @@ const InternInformationPage = () => {
                           <p>Progreso del practicante</p>
                           <div className="progress-section">
                             <span>
-                              {progreso === 100
+                              {internData?.totalInternshipCompletion === 100
                                 ? "¡Completado!"
-                                : `${progreso}%`}
+                                : `${internData?.totalInternshipCompletion}%`}
                             </span>
                             <div className="progress-bar">
                               <div
                                 className="progress"
-                                style={{ width: `${progreso}%` }}
+                                style={{ width: `${internData?.totalInternshipCompletion}%` }}
                               ></div>
                             </div>
                           </div>

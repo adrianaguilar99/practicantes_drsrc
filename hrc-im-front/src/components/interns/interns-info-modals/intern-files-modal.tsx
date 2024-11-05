@@ -135,82 +135,97 @@ export const InternFilesModal: React.FC<InternFilesModalProps> = ({
 
   return (
     <Dialog
-      open={open}
-      onClose={ModalClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      
+    open={open}
+    onClose={ModalClose}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+  >
+    <DialogTitle
+      sx={{
+        bgcolor: "#2E3B4E", 
+        color: "#fff",      
+        padding: 2,
+        textAlign: "start",
+        fontSize: ".9rem",
+        height: 5,
+        lineHeight: 1,
+      }}
     >
-      <DialogTitle>{"Archivos del practicante"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {photoUrl && fileUrl && mode === "view" ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: "300px" }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<InsertPhotoIcon />}
-                  onClick={() => window.open(photoUrl, "_blank")}
-                >
-                  Ver foto
-                </Button>
-
-                <Button
-                  variant="contained"
-                  color="error"
-                  startIcon={<InsertDriveFileIcon />}
-                  onClick={() => window.open(fileUrl, "_blank")}
-                >
-                  Ver PDF
-                </Button>
-              </div>
-              
-            ):(
-              <>
-               <RegisterRow
-                    label="Foto:"
-                    onChange={(file) => setNewInternPicture(file as File)}
-                    id="internPicture"
-                    type="file"
-                    show={true}
-                    validate={errors.internPicture ? "Error" : "Normal"}
-                    typeError={errors.internPicture}
-                    accept=".jpg, .jpeg, .png"
-                  />
-                  <RegisterRow
-                    label="Archivos del practicante:"
-                    onChange={(file) => setNewInternFile(file as File)}
-                    id="internFiles"
-                    type="file"
-                    show={true}
-                    validate={errors.internFiles ? "Error" : "Normal"}
-                    typeError={errors.internFiles}
-                    accept=".pdf"
-                  />
-              </>
-            )}
-              <Box
+      {"Archivos del practicante"}
+    </DialogTitle>
+    <DialogContent
+    sx={{
+      backgroundColor: "#EDEDED",
+    }
+    }
+    >
+      <DialogContentText sx={{ marginTop: 2 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {photoUrl && fileUrl && mode === "view" ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: "300px" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<InsertPhotoIcon />}
+                onClick={() => window.open(photoUrl, "_blank")}
+              >
+                Ver foto
+              </Button>
+  
+              <Button
+                variant="contained"
+                color="error"
+                startIcon={<InsertDriveFileIcon />}
+                onClick={() => window.open(fileUrl, "_blank")}
+              >
+                Ver PDF
+              </Button>
+            </div>
+          ) : (
+            <>
+              <RegisterRow
+                label="Foto:"
+                onChange={(file) => setNewInternPicture(file as File)}
+                id="internPicture"
+                type="file"
+                show={true}
+                validate={errors.internPicture ? "Error" : "Normal"}
+                typeError={errors.internPicture}
+                accept=".jpg, .jpeg, .png"
+              />
+              <RegisterRow
+                label="Archivos del practicante:"
+                onChange={(file) => setNewInternFile(file as File)}
+                id="internFiles"
+                type="file"
+                show={true}
+                validate={errors.internFiles ? "Error" : "Normal"}
+                typeError={errors.internFiles}
+                accept=".pdf"
+              />
+            </>
+          )}
+          <Box
             sx={{
               display: "flex",
               justifyContent: mode === "view" ? "center" : "space-between",
               alignItems: "flex-end",
-              marginTop:6,
+              marginTop: 6,
             }}
           >
             <Button
-                variant="contained"
-                color="secondary"
-                sx={{
-                  bgcolor: "#B88A54",
-                  "&:hover": { bgcolor: "#B98A54" },
-                }}
-                onClick={() => {mode === "view" ? setMode("edit") : SubmitForm()}} 
-              >
-                {mode === "view" ? "Editar" : "Guardar"}
-              </Button>
+              variant="contained"
+              color="secondary"
+              sx={{
+                bgcolor: "#B88A54",
+                "&:hover": { bgcolor: "#B98A54" },
+              }}
+              onClick={() => {mode === "view" ? setMode("edit") : SubmitForm()}} 
+            >
+              {mode === "view" ? "Editar" : "Guardar"}
+            </Button>
             {mode === "edit" && (
-                <Button
+              <Button
                 variant="contained"
                 color="secondary"
                 sx={{
@@ -222,11 +237,10 @@ export const InternFilesModal: React.FC<InternFilesModalProps> = ({
                 Cancelar
               </Button>
             )}
-       
           </Box>
-          </div>
-        </DialogContentText>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </DialogContentText>
+    </DialogContent>
+  </Dialog>  
   );
 };

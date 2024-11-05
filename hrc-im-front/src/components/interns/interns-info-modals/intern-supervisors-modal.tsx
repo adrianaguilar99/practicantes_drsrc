@@ -44,12 +44,27 @@ export const InternSupervisorsModal: React.FC<InternSupervisorsModalProps> = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle>{"Encargados del practicante"}</DialogTitle>
-      <DialogContent>
+       <DialogTitle
+      sx={{
+        bgcolor: "#2E3B4E", 
+        color: "#fff",      
+        padding: 2,
+        textAlign: "start",
+        fontSize: ".9rem",
+        height: 5,
+        lineHeight: 1,
+      }}
+    >
+      {"Encargados"}
+    </DialogTitle>
+      <DialogContent sx={{
+      backgroundColor: "#EDEDED",
+    }}>
         <DialogContentText>
           {data.map((supervisor: any, index: any) => (
-            <LightTooltip title={supervisor.user.email}>
+            
               <div className="supervisor-info">
+                
                 <Avatar
                   {...stringAvatar(
                     supervisor.user.firstName + " " + supervisor.user.lastName,
@@ -57,11 +72,13 @@ export const InternSupervisorsModal: React.FC<InternSupervisorsModalProps> = ({
                     12
                   )}
                 />
+                <LightTooltip title={supervisor.user.email}>
                 <p>
                   {supervisor.user.firstName + " " + supervisor.user.lastName}
                 </p>
+                </LightTooltip>
               </div>
-            </LightTooltip>
+        
           ))}
         </DialogContentText>
       </DialogContent>

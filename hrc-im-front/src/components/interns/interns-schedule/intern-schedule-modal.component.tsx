@@ -34,20 +34,20 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
   onClose
 
 }) => {
-  const [mondayIn, setMondayIn] = useState(data?.mondayIn || "");
-  const [mondayOut, setMondayOut] = useState(data?.mondayOut || "");
-  const [tuesdayIn, setTuesdayIn] = useState(data?.tuesdayIn || "");
-  const [tuesdayOut, setTuesdayOut] = useState(data?.tuesdayOut || "");
-  const [wednesdayIn, setWednesdayIn] = useState(data?.wednesdayIn || "");
-  const [wednesdayOut, setWednesdayOut] = useState(data?.wednesdayOut || "");
-  const [thursdayIn, setThursdayIn] = useState(data?.thursdayIn || "");
-  const [thursdayOut, setThursdayOut] = useState(data?.thursdayOut || "");
-  const [fridayIn, setFridayIn] = useState(data?.fridayIn || "");
-  const [fridayOut, setFridayOut] = useState(data?.fridayOut || "");
-  const [saturdayIn, setSaturdayIn] = useState(data?.saturdayIn || "");
-  const [saturdayOut, setSaturdayOut] = useState(data?.saturdayOut || "");
-  const [sundayIn, setSundayIn] = useState(data?.sundayIn || "");
-  const [sundayOut, setSundayOut] = useState(data?.sundayOut || "");
+  const [mondayIn, setMondayIn] = useState(data?.mondayIn || "09:00");
+  const [mondayOut, setMondayOut] = useState(data?.mondayOut || "17:00");
+  const [tuesdayIn, setTuesdayIn] = useState(data?.tuesdayIn || "09:00");
+  const [tuesdayOut, setTuesdayOut] = useState(data?.tuesdayOut || "17:00");
+  const [wednesdayIn, setWednesdayIn] = useState(data?.wednesdayIn || "09:00");
+  const [wednesdayOut, setWednesdayOut] = useState(data?.wednesdayOut || "17:00");
+  const [thursdayIn, setThursdayIn] = useState(data?.thursdayIn || "09:00");
+  const [thursdayOut, setThursdayOut] = useState(data?.thursdayOut || "17:00");
+  const [fridayIn, setFridayIn] = useState(data?.fridayIn || "09:00");
+  const [fridayOut, setFridayOut] = useState(data?.fridayOut || "17:00");
+  const [saturdayIn, setSaturdayIn] = useState(data?.saturdayIn || "09:00");
+  const [saturdayOut, setSaturdayOut] = useState(data?.saturdayOut || "17:00");
+  const [sundayIn, setSundayIn] = useState(data?.sundayIn || "09:00");
+  const [sundayOut, setSundayOut] = useState(data?.sundayOut || "17:00");
 
   const [mondayChecked, setMondayChecked] = useState(data?.mondayIn ||false);
   const [tuesdayChecked, setTuesdayChecked] = useState(data?.tuesdayIn || false);
@@ -56,6 +56,16 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
   const [fridayChecked, setFridayChecked] = useState(data?.fridayIn || false);
   const [saturdayChecked, setSaturdayChecked] = useState(data?.saturdayIn || false);
   const [sundayChecked, setSundayChecked] = useState(data?.sundayIn || false);
+
+  const parseTime = (timeStr : string) => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
+
+  const startTime = parseTime("07:00");
+  const endTime = parseTime("18:00");
 
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({
     MondayIn: undefined,
@@ -91,8 +101,10 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.MondayOut = "La hora de salida debe ser mayor a la hora de entrada";
         }
 
-        if(mondayIn < "07:00" || mondayIn > "18:00" || mondayOut < "07:00" || mondayOut > "18:00"){
+        if (mondayIn < startTime || mondayIn > endTime) {
           newErrors.MondayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (mondayOut < startTime || mondayOut > endTime) {
           newErrors.MondayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
@@ -110,8 +122,11 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.TuesdayIn = "La hora de salida debe ser mayor a la hora de entrada";
           newErrors.TuesdayOut = "La hora de salida debe ser mayor a la hora de entrada";
         }
-        if(tuesdayIn < "07:00" || tuesdayIn > "18:00" || tuesdayOut < "07:00" || tuesdayOut > "18:00"){
+
+        if (tuesdayIn < startTime || tuesdayIn > endTime) {
           newErrors.TuesdayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (tuesdayOut < startTime || tuesdayOut > endTime) {
           newErrors.TuesdayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
@@ -129,8 +144,11 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.WednesdayIn = "La hora de salida debe ser mayor a la hora de entrada";
           newErrors.WednesdayOut = "La hora de salida debe ser mayor a la hora de entrada";
         }
-        if(wednesdayIn < "07:00" || wednesdayIn > "18:00" || wednesdayOut < "07:00" || wednesdayOut > "18:00"){
+
+        if (wednesdayIn < startTime || wednesdayIn > endTime) {
           newErrors.WednesdayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (wednesdayOut < startTime || wednesdayOut > endTime) {
           newErrors.WednesdayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
@@ -148,8 +166,11 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.ThursdayOut = "La hora de salida debe ser mayor a la hora de entrada";
           newErrors.ThursdayIn = "La hora de salida debe ser mayor a la hora de entrada";
         }
-        if(thursdayIn < "07:00" || thursdayIn > "18:00" || thursdayOut < "07:00" || thursdayOut > "18:00"){
+
+        if (thursdayIn < startTime || thursdayIn > endTime) {
           newErrors.ThursdayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (thursdayOut < startTime || thursdayOut > endTime) {
           newErrors.ThursdayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
@@ -167,8 +188,11 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.FridayOut = "La hora de salida debe ser mayor a la hora de entrada";
           newErrors.FridayIn = "La hora de salida debe ser mayor a la hora de entrada";
         }
-        if(fridayIn < "07:00" || fridayIn > "18:00" || fridayOut < "07:00" || fridayOut > "18:00"){
+
+        if (fridayIn < startTime || fridayIn > endTime) {
           newErrors.FridayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (fridayOut < startTime || fridayOut > endTime) {
           newErrors.FridayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
@@ -186,8 +210,11 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.SaturdayOut = "La hora de salida debe ser mayor a la hora de entrada";
           newErrors.SaturdayIn = "La hora de salida debe ser mayor a la hora de entrada";
         }
-        if(saturdayIn < "07:00" || saturdayIn > "18:00" || saturdayOut < "07:00" || saturdayOut > "18:00"){
+
+        if (saturdayIn < startTime || saturdayIn > endTime) {
           newErrors.SaturdayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (saturdayOut < startTime || saturdayOut > endTime) {
           newErrors.SaturdayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
@@ -205,15 +232,22 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
           newErrors.SundayOut = "La hora de salida debe ser mayor a la hora de entrada";
           newErrors.SundayIn = "La hora de salida debe ser mayor a la hora de entrada";
         }
-        if(sundayIn < "07:00" || sundayIn > "18:00" || sundayOut < "07:00" || sundayOut > "18:00"){
+
+        if (sundayIn < startTime || sundayIn > endTime) {
           newErrors.SundayIn = "La hora de entrada debe estar entre las 07:00 y las 18:00";
+        }
+        if (sundayOut < startTime || sundayOut > endTime) {
           newErrors.SundayOut = "La hora de salida debe estar entre las 07:00 y las 18:00";
         }
     }
 
     setErrors(newErrors);
+  
     const userToken = sessionStorage.getItem("_Token") || "";
     if (Object.keys(newErrors).length === 0) {
+      if(mondayChecked || tuesdayChecked || wednesdayChecked || thursdayChecked || fridayChecked || saturdayChecked || sundayChecked){
+        
+    
         const scheduleData = {
             ...(mondayChecked ? { mondayIn: formatTime(mondayIn), mondayOut: formatTime(mondayOut)} : {mondayIn: null, mondayOut: null}),
             ...(tuesdayChecked ? { tuesdayIn: formatTime(tuesdayIn), tuesdayOut: formatTime(tuesdayOut) } : {tuesdayIn: null, tuesdayOut: null}),
@@ -232,7 +266,9 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
                 enqueueSnackbar("Horario actualizado correctamente", {
                     variant: "success",
                 });
+                
                 onSuccess();
+                onCancel();
             }).catch((error) => {
                 enqueueSnackbar("Error al actualizar el horario: " + error, {
                     variant: "error",
@@ -248,6 +284,12 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
         }
          
       }
+    }
+    else{
+      enqueueSnackbar("Seleccione al menos un dia" , {
+        variant: "warning",
+    });
+    }
     }
  
 
@@ -391,8 +433,23 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
         aria-describedby="alert-dialog-description"
         fullWidth
       >
-        <DialogTitle id="alert-dialog-title">{"Agregar un horario"}</DialogTitle>
-        <DialogContent>
+         <DialogTitle
+      sx={{
+        bgcolor: "#2E3B4E", 
+        color: "#fff",      
+        padding: 2,
+        textAlign: "start",
+        fontSize: ".9rem",
+        height: 5,
+        lineHeight: 1,
+      }}
+    >
+      {"Agregar un horario"}
+    </DialogTitle>
+        <DialogContent  sx={{
+      backgroundColor: "#EDEDED",
+    }
+    }>
         <>
          <div className="schedule-modal-container">
       <table style={{ borderCollapse: "collapse", width: "100%" }}>
@@ -473,7 +530,7 @@ export const InternScheduleModal: React.FC<FormScheduleModalProps> = ({
               <td><label className="error-label">
                 {errors.SaturdayIn}
                 </label>
-                <input className="edit-mode" value={saturdayIn} onChange={(e) => setSaturdayIn(e.target.value)} type="time" hidden={!saturdayChecked} /></td>
+                <input className="edit-mode" value={saturdayIn}  onChange={(e) => setSaturdayIn(e.target.value)} type="time" hidden={!saturdayChecked} /></td>
               <td><label className="error-label">
                 {errors.SaturdayOut}
                 </label>

@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Pagination, Avatar, IconButton, Tooltip } from "@mui/material";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
@@ -13,7 +13,7 @@ import { ConfirmationModal } from "../modals/confirmation-modal.component";
 import { decryptData } from "../../functions/encrypt-data.function";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { activateUser, patchUser } from "../../api/users/users.api";
+import { activateUser } from "../../api/users/users.api";
 
 export const SupervisorsTable: React.FC<TableProps> = ({onUpdate,  data = [] }) => {
   const userToken = sessionStorage.getItem("_Token") || "";

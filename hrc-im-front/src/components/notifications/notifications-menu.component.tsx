@@ -1,87 +1,68 @@
-import {
-  useEffect,
-  useState,
-} from "react";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import InfoIcon from "@mui/icons-material/Info";
-import CloseIcon from "@mui/icons-material/Close";
-import {
-  NotificationsInterface,
-  NotificationsMenuProps,
-} from "../../interfaces/notifications/notifications-menu/notification-menu.interface";
-import {  Grow } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../redux/store"; // Asegúrate de que la ruta sea la correcta
+import { DataNotification, NotificationsInterface } from "../../interfaces/notifications/notifications-menu/notification-menu.interface";
+import { Grow } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { getNotificationsData } from "../../api/notifications/notifications.api";
+import io, { Socket } from "socket.io-client";
+import { setNotificationsLength } from "../../redux/auth-redux/profileSlice";
+import { formatDateOther } from "../../functions/date-conversor.function";
 
-export const notifications = (): NotificationsInterface[] => {
-  return [
-      {
-        type: "ENTRADA",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "green",
-      },
-      {
-        type: "ENTRADA",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "green",
-      },
-      {
-        type: "RETARDO REGISTRADO",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "yellow",
-      },
-      {
-        type: "FALTA",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "grey",
-      },
-      {
-        type: "RETARDO REGISTRADO",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "yellow",
-      },
-      {
-        type: "RETARDO REGISTRADO",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "yellow",
-      },
-      {
-        type: "RETARDO REGISTRADO",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "yellow",
-      },
-      {
-        type: "RETARDO REGISTRADO",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "yellow",
-      },
-      {
-        type: "RETARDO REGISTRADO",
-        date: "05 de septiembre a las 08:55 a. m.",
-        color: "yellow",
-      },
+const socketEndpoint = (import.meta.env.VITE_API_KEY as string).replace("/api", "");
 
+export interface NotificationsMenuProps {
+  anchorEl: boolean;
+}
 
-
-  ];
-};
-export const NotificationsMenu: React.FC<NotificationsMenuProps> = ({anchorEl,}) => {
-  const [initialNotifications, setNotifications] = useState<NotificationsInterface[]>([]);
+export const NotificationsMenu: React.FC<NotificationsMenuProps> = ({ anchorEl }) => {
+  const [initialNotifications, setNotifications] = useState<DataNotification[]>([]);
   const [showAll] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>(); 
+  const [isLoading, setIsLoading] = useState(true); 
+  const [hasError, setHasError] = useState(false);   
+  const userToken = sessionStorage.getItem("_Token") || "";
+  let socket: Socket;
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedData: NotificationsInterface | null = await getNotificationsData(userToken);
+      if (fetchedData && fetchedData.data.length > 0) {
+        setNotifications(fetchedData.data);
+        setHasError(false); 
+        dispatch(setNotificationsLength(fetchedData.records)); 
+      } else {
+        setNotifications([]);
+        setHasError(false);
+        dispatch(setNotificationsLength(0)); 
+      }
+    } catch (error) {
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const recibedNotifications = notifications();
+    fetchData();
+    socket = io(socketEndpoint);
+    socket.on('comment', fetchData);
+    socket.on('attendance', fetchData);
 
-    setNotifications(recibedNotifications);
-  }, []);
-
-  const notificationsToShow = showAll
-    ? initialNotifications
-    : initialNotifications.slice(0, 4);
-
-    const SeeMore = () => {
-      navigate('/notifications'); 
+    return () => {
+      socket.off('comment', fetchData);
+      socket.off('attendance', fetchData);
+      socket.disconnect();
     };
+  }, [userToken]);
+
+  const notificationsToShow = showAll ? initialNotifications : initialNotifications.slice(0, 4);
+
+  const SeeMore = () => {
+    navigate('/notifications'); 
+  };
 
   return (
     <Grow in={Boolean(anchorEl)}>
@@ -95,34 +76,21 @@ export const NotificationsMenu: React.FC<NotificationsMenuProps> = ({anchorEl,})
           )}
           {notificationsToShow.map((notification, index) => (
             <div className="notification-item" key={index}>
+               <div className="notification-date">
+                <p>{formatDateOther(notification.createdAt.toString())}</p>
+              </div>
               <div className="notification-type">
-                <strong>{notification.type}</strong>
+                <strong>{notification.notificationData}</strong>
               </div>
-              <div className="notification-icon">
-                {notification.color === "green" && (
-                  <CheckCircleIcon style={{ color: "#4CAF50" }} />
-                )}
-                {notification.color === "orange" && (
-                  <InfoIcon style={{ color: "#FF9800" }} />
-                )}
-                {notification.color === "red" && (
-                  <CloseIcon style={{ color: "#F44336" }} />
-                )}
-              </div>
-              <div className="notification-date">
-                <p>{notification.date}</p>
-              </div>
-              <div className="notification-close">
-                <CloseIcon style={{ cursor: "pointer", color: "#757575" }} />
-              </div>
+             
             </div>
           ))}
         </div>
         {!showAll && initialNotifications.length > 4 && (
-  <button className="see-more-button" onClick={SeeMore}>
-    Ver más
-  </button>
-)}
+          <button className="see-more-button" onClick={SeeMore}>
+            Ver más
+          </button>
+        )}
       </div>
     </Grow>
   );

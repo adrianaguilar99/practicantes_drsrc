@@ -125,10 +125,25 @@ export const EmergencyContactModal = ({
       onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      fullWidth={true}
     >
-      <DialogTitle>{"Agregar Contacto de Emergencia"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
+        <DialogTitle
+      sx={{
+        bgcolor: "#2E3B4E", 
+        color: "#fff",      
+        padding: 2,
+        textAlign: "start",
+        fontSize: ".9rem",
+        height: 5,
+        lineHeight: 1,
+      }}
+    >
+      {"Agregar contacto de emergencia"}
+    </DialogTitle>
+      <DialogContent  sx={{
+      backgroundColor: "#EDEDED"
+    }}>
+        <DialogContentText sx={{marginTop: 2}}>
           <RegisterRow
             label="Nombre:"
             onChange={(value) => setContactName(value as string || "")}

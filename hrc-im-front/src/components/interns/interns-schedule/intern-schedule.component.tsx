@@ -12,6 +12,9 @@ import {
 } from "../../utils/circular-progress.component";
 import { RetryElement } from "../../utils/retry-element.component";
 import { Tooltip } from "@mui/material";
+import { decryptData } from "../../../functions/encrypt-data.function";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 interface InternsScheduleProps {
   internId: string;
@@ -26,7 +29,7 @@ export const InternsSchedule: React.FC<InternsScheduleProps> = ({
   const [data, setData] = useState<DataSchedule | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-
+  const userRol = useSelector((state: RootState) => decryptData(state.auth.rol || "") || "");
   const userToken = sessionStorage.getItem("_Token") || "";
 
   const fetchData = async () => {
@@ -150,12 +153,15 @@ const isHighlighted = (day: string, hourRange: string) => {
               </tbody>
             </table>
           </section>
-          <section className="schedule-buttons">
-            <ButtonComponent
-              text="Editar horario"
-              onClick={() => setOpen(true)}
-            />
-          </section>
+          {userRol != "SUPERVISOR" && (
+             <section className="schedule-buttons">
+             <ButtonComponent
+               text="Editar horario"
+               onClick={() => setOpen(true)}
+             />
+           </section>
+          )}
+         
         </div>
       )}
 

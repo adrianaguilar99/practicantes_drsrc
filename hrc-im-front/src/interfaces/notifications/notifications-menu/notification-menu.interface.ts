@@ -1,9 +1,14 @@
-export interface NotificationsMenuProps {
-    anchorEl: boolean;
-  }
 
 export interface NotificationsInterface {
-  type: string;
-  date: string
-  color: string;
-  }
+  message: string;
+  data:    DataNotification[];
+  records: number;
+}
+
+export interface DataNotification {
+  id:               string;
+  notificationData: string;
+  createdAt:        Date;
+}
+
+
