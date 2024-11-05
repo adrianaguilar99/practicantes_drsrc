@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 
-const envFileName = `.env.${process.env.NODE_ENV}`;
+const envFileName = '.env';
 
 function loadEnv(envFileName: string) {
   const result = dotenv.config({ path: envFileName });
