@@ -29,7 +29,7 @@ import dbConfigProduction from './configs/db.config.production';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${ENV.NODE_ENV}`,
+      envFilePath: ENV.NODE_ENV,
       load: [dbConfig, dbConfigProduction],
       validationSchema: JoiValidationSchema,
     }),
