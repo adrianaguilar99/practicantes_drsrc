@@ -22,6 +22,7 @@ import { Public } from './decorators';
 import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 import { LoginAuthDto } from './dtos/login-auth.dto';
 import {
+  CORS_POLICY,
   INTERNAL_SERVER_ERROR,
   INVALID_CREDENTIALS,
   INVALID_USER_OR_MISSING_REFRESH_TOKEN,
@@ -45,6 +46,7 @@ export class AuthController {
   @ApiOperation({ summary: LOGIN_USER })
   @ApiResponse({ status: 201, description: USER_LOGGED })
   @ApiResponse({ status: 401, description: INVALID_CREDENTIALS })
+  @ApiResponse({ status: 403, description: CORS_POLICY })
   @ApiResponse({ status: 404, description: USER_NOT_FOUND })
   @HttpCode(201)
   @Post('login')

@@ -5,9 +5,11 @@ import { ForbiddenException } from '@nestjs/common';
 export const corsConfig: CorsOptions = {
   origin: (origin, callback) => {
     if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-      // console.log('Origin:', origin);
+      console.log('Good Origin:', origin);
       callback(null, true);
     } else {
+      console.log('Bad Origin:', origin);
+
       callback(new ForbiddenException(`${CORS_POLICY}`));
     }
   },

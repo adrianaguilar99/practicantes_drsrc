@@ -8,7 +8,11 @@ export const LIMIT_RECORDS = 5;
 export const OFFSET_RECORDS = 0;
 
 // ALLOWED ORIGINS
-export const ALLOWED_ORIGINS = [ENV.HOST_API, ENV.FRONT_URL_REDIRECT];
+export const ALLOWED_ORIGINS = [
+  ENV.HOST_API,
+  ENV.FRONT_URL_REDIRECT,
+  ENV.GOOGLE_OAUTH.URL,
+];
 
 // JWT MESSAGES
 export const PUBLIC_ROUTE = 'This route is public, anyone can make requests.';
