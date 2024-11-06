@@ -37,7 +37,6 @@ import {
 import { Attendance } from './entities/attendance.entity';
 import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces';
-import { RegisterAttendance } from './decorators';
 
 @ApiTags('Attendances')
 @Controller('attendances')
@@ -45,9 +44,8 @@ export class AttendancesController {
   constructor(private readonly attendancesService: AttendancesService) {}
 
   @Public()
-  @Post('register')
+  @Post(':internCode/register')
   @HttpCode(201)
-  @RegisterAttendance()
   @ApiOperation({ summary: `${CREATE_RECORD} ${PUBLIC_ROUTE}` })
   @ApiResponse({
     status: 201,
@@ -62,7 +60,7 @@ export class AttendancesController {
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
   async registerAttendance(
-    @Body() { internCode }: { internCode: string },
+    @Param('internCode') internCode: string,
   ): Promise<IApiResponse<any>> {
     const date = new Date();
     const offsetInMs = date.getTimezoneOffset() * 60000;
