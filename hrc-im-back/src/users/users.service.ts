@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  BCRYPT_SALT_ROUNDS,
   INVALID_CREDENTIALS,
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
@@ -17,6 +18,7 @@ import { IRequestUser } from 'src/common/interfaces';
 import { SystemAuditsService } from 'src/system-audits/system-audits.service';
 import { UserRole } from 'src/common/enums';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -337,6 +339,36 @@ export class UsersService {
       });
       return count;
     } catch (error) {
+      handleInternalServerError(error.message);
+    }
+  }
+
+  async updatePassword(
+    userId: string,
+    newPassword: string,
+    { fullName, role, userId: adminId }: IRequestUser,
+  ) {
+    const user = await this.findOne(userId);
+
+    user.password = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
+
+    try {
+      const updatedUser = await this.usersRepository.save(user);
+      await this.systemAuditsService.createSystemAudit(
+        { id: adminId, fullName, role },
+        'UPDATE PASSWORD',
+        { userId },
+        'SUCCESS',
+      );
+      return updatedUser;
+    } catch (error) {
+      await this.systemAuditsService.createSystemAudit(
+        { id: adminId, fullName, role },
+        'TRY TO UPDATE PASSWORD',
+        { userId },
+        'FAILED TO UPDATE PASSWORD',
+        error.message,
+      );
       handleInternalServerError(error.message);
     }
   }

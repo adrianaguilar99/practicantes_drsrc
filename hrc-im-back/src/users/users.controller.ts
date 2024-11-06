@@ -44,6 +44,7 @@ import { UserRole } from 'src/common/enums';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
 import { IRequestUser } from 'src/common/interfaces';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -271,6 +272,37 @@ export class UsersController {
     const user = req.user;
     const updatedIntern = await this.usersService.active(id, user);
     return { message: SUCCESSFUL_MARKED_ACTIVE, data: updatedIntern };
+  }
+
+  @Patch(':id/password')
+  @HttpCode(200)
+  @UserRoles(UserRole.ADMINISTRATOR)
+  @ApiOperation({
+    summary: 'Update user password. Only accessible by administrators.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_UPDATE,
+    type: User,
+  })
+  @ApiResponse({
+    status: 400,
+    description: `${BAD_REQUEST} Please verify your data.`,
+  })
+  @ApiResponse({ status: 404, description: NOT_FOUND })
+  @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
+  async updatePassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+    @Req() req,
+  ) {
+    const user = req.user;
+    const updatedUser = await this.usersService.updatePassword(
+      id,
+      updatePasswordDto.password,
+      user,
+    );
+    return { message: 'Password updated successfully!' };
   }
 
   @Delete(':id/deactive')
