@@ -49,9 +49,9 @@ import { Supervisor } from './entities/supervisor.entity';
 export class SupervisorsController {
   constructor(private readonly supervisorsService: SupervisorsService) {}
 
-  @UserRoles(UserRole.ADMINISTRATOR)
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
-    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR}`,
+    summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
   })
   @ApiResponse({
     status: 201,
