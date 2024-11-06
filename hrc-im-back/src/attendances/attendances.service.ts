@@ -397,6 +397,13 @@ export class AttendancesService {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
+    console.log({ startDate, endDate, start, end });
+
+    // Sumamos un día a la fecha de fin
+    end.setDate(end.getDate() + 1);
+
+    console.log({ end });
+
     const allAttendances = await this.attendancesRepository.find();
 
     // empezamos la logica para filtrar y limpiar las asistencias
@@ -475,8 +482,8 @@ export class AttendancesService {
       ...filteredAttendances,
       ...(optionalResponseStart ? [optionalResponseStart] : []),
       ...(optionalResponseEnd ? [optionalResponseEnd] : []),
-      internalInternsCount, // Asegúrate de incluir siempre este valor
-      externalInternsCount, // Asegúrate de incluir siempre este valor
+      internalInternsCount,
+      externalInternsCount,
     ];
   }
 
