@@ -33,8 +33,10 @@ export class AttendancesService {
   ) {}
 
   async registerEntry(internCode: string, timestamp: Date) {
-    // Mediante el servicio buscamos al practicante mediante su codigo unico
+    if (!internCode)
+      throw new BadRequestException('The intern code does not exist.');
 
+    // Mediante el servicio buscamos al practicante mediante su codigo unico
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
 
@@ -134,6 +136,8 @@ export class AttendancesService {
       }
     }
 
+    console.log({ internCodeEntrada: internCode });
+
     // si pasa todo lo anterior tiene una entrada normal exitosa
     try {
       await this.attendancesRepository.save({
@@ -156,6 +160,9 @@ export class AttendancesService {
   }
 
   async registerExit(internCode: string, timestamp: Date) {
+    if (!internCode)
+      throw new BadRequestException('The intern code does not exist.');
+
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);
     const attendanceDate = timestamp.toDateString();
@@ -193,6 +200,8 @@ export class AttendancesService {
     );
     // console.log('registerExit', { minutesDifference });
     // si los minutos de diferencia son menores a 0 es porque salio antes
+
+    console.log({ internCodeSalida: internCode });
     if (minutesDifference < 0) {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
