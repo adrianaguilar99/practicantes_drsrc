@@ -63,8 +63,12 @@ export class AttendancesController {
     @Param('internCode') internCode: string,
   ): Promise<IApiResponse<any>> {
     const date = new Date();
-    const offsetInMs = date.getTimezoneOffset() * 60000;
-    const localTimestamp = date.getTime() - offsetInMs;
+
+    // Intento de convertir a hora local
+    // const offsetInMs = date.getTimezoneOffset() * 60000;
+    // const localTimestamp = date.getTime() - offsetInMs;
+
+    // console.log({ date, localTimestamp, offsetInMs });
 
     // console.log({
     //   local: new Date(localTimestamp).toISOString(),
@@ -74,20 +78,20 @@ export class AttendancesController {
 
     const existingRecord = await this.attendancesService.findAttendanceRecord(
       internCode,
-      new Date(localTimestamp).toISOString(),
+      date.toISOString(),
     );
 
     if (existingRecord && !existingRecord.exitTime) {
       const registeredExit = await this.attendancesService.registerExit(
         internCode,
-        new Date(localTimestamp),
+        date,
       );
       return { message: registeredExit };
     }
 
     const registeredEntry = await this.attendancesService.registerEntry(
       internCode,
-      new Date(localTimestamp),
+      date,
     );
     return { message: registeredEntry };
   }
