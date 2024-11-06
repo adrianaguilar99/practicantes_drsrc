@@ -52,6 +52,8 @@ export class CareersController {
   constructor(private readonly careersService: CareersService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Post()
+  @HttpCode(201)
   @ApiOperation({
     summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
   })
@@ -59,8 +61,6 @@ export class CareersController {
   @ApiResponse({ status: 403, description: FORBIDDEN_RESOURCE })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(201)
-  @Post()
   async create(
     @Body() createCareerDto: CreateCareerDto,
     @Req() req,
@@ -74,13 +74,13 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Get()
+  @HttpCode(200)
   @ApiOperation({
     summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
   })
   @ApiResponse({ status: 200, description: SUCCESSFUL_FETCH, type: [Career] })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Get()
   async findAll(): Promise<IApiResponse<any>> {
     const allCareers = await this.careersService.findAll();
     return {
@@ -91,6 +91,8 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Get(':id')
+  @HttpCode(200)
   @ApiOperation({
     summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
   })
@@ -100,8 +102,6 @@ export class CareersController {
     type: Career,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
-  @HttpCode(200)
-  @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
@@ -109,8 +109,12 @@ export class CareersController {
     return { message: SUCCESSFUL_FETCH, data: career };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Patch(':id')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: `${UPDATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_UPDATE,
@@ -120,8 +124,6 @@ export class CareersController {
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCareerDto: UpdateCareerDto,
@@ -136,16 +138,18 @@ export class CareersController {
     return { message: SUCCESSFUL_UPDATE, data: updatedCareer };
   }
 
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({ summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR}` })
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Delete(':id')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: `${REMOVE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_DELETION,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,
@@ -156,6 +160,8 @@ export class CareersController {
   }
 
   @UserRoles(UserRole.ADMINISTRATOR)
+  @Delete()
+  @HttpCode(200)
   @ApiOperation({
     summary: `${REMOVE_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}`,
   })
@@ -164,8 +170,6 @@ export class CareersController {
     description: SUCCESSFUL_DELETION,
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Delete()
   async removeAll(@Req() req): Promise<IApiResponse<any>> {
     const user = req.user;
     const removedCareers = await this.careersService.removeAll(user);
