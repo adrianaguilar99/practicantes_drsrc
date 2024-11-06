@@ -20,7 +20,7 @@ const hrcLogo: Content = {
 const currentDate: Content = {
   text: DateFormatter.getDDMMMMYYYY(new Date()),
   alignment: 'right',
-  margin: [0, 30, 50, 30],
+  margin: [0, 30, 20, 30],
   width: 200,
 };
 
