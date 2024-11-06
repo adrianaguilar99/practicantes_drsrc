@@ -34,6 +34,8 @@ export class InternReportsService {
         createInternReportDto.end,
       );
 
+    console.log(allInternsAttendances);
+
     const docDefinition = getInternsReport({
       allInternsAttendances,
     });

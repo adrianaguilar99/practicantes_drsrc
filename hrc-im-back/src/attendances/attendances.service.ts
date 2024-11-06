@@ -467,7 +467,7 @@ export class AttendancesService {
     let externalInternsCount = 0;
     filteredAttendances.map((attendance) => {
       if (attendance.intern.internalInternCode) internalInternsCount++;
-      else externalInternsCount++;
+      if (attendance.intern.externalInternCode) externalInternsCount++;
     });
 
     // Devuelve la respuesta con datos y las respuestas opcionales si es necesario
@@ -475,8 +475,8 @@ export class AttendancesService {
       ...filteredAttendances,
       ...(optionalResponseStart ? [optionalResponseStart] : []),
       ...(optionalResponseEnd ? [optionalResponseEnd] : []),
-      ...(internalInternsCount ? [internalInternsCount] : []),
-      ...(externalInternsCount ? [externalInternsCount] : []),
+      internalInternsCount, // Asegúrate de incluir siempre este valor
+      externalInternsCount, // Asegúrate de incluir siempre este valor
     ];
   }
 

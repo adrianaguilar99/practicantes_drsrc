@@ -86,7 +86,7 @@ export const getInternsReport = (
       {
         layout: 'noBorders',
         table: {
-          widths: ['*'],
+          widths: ['auto'],
           body: [
             [
               {
@@ -97,17 +97,17 @@ export const getInternsReport = (
                 },
               },
             ],
-            [{ text: optionalStartMessage, alignment: 'left' }],
-            [{ text: optionalEndMessage, alignment: 'left' }],
+            [{ text: optionalStartMessage ?? '', alignment: 'left' }],
+            [{ text: optionalEndMessage ?? '', alignment: 'left' }],
             [
               {
-                text: 'Total de practicantes internos: ' + internalInternsCount,
+                text: `Total de practicantes internos: ${internalInternsCount ?? 0}`,
                 alignment: 'left',
               },
             ],
             [
               {
-                text: 'Total de practicantes externos: ' + externalInternsCount,
+                text: `Total de practicantes externos: ${externalInternsCount ?? 0}`,
                 alignment: 'left',
               },
             ],
