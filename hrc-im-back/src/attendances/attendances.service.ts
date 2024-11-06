@@ -475,8 +475,8 @@ export class AttendancesService {
       ...filteredAttendances,
       ...(optionalResponseStart ? [optionalResponseStart] : []),
       ...(optionalResponseEnd ? [optionalResponseEnd] : []),
-      internalInternsCount, // Asegúrate de incluir siempre este valor
-      externalInternsCount, // Asegúrate de incluir siempre este valor
+      internalInternsCount,
+      externalInternsCount,
     ];
   }
 
