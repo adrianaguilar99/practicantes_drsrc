@@ -5,19 +5,15 @@ import { footerSection } from './sections/footer.section';
 interface ReportOptions {
   title?: string;
   subtitle?: string;
-  allInternsAttendances: any[];
+  allInternAttendances: any[];
 }
 
-export const getInternsReport = (
+export const getInternReportById = (
   options: ReportOptions,
 ): TDocumentDefinitions => {
-  const { subtitle, title, allInternsAttendances } = options;
-  const [
-    optionalStartMessage,
-    optionalEndMessage,
-    internalInternsCount,
-    externalInternsCount,
-  ] = allInternsAttendances.slice(-4);
+  const { subtitle, title, allInternAttendances } = options;
+  const [optionalStartMessage, optionalEndMessage] =
+    allInternAttendances.slice(-2);
 
   return {
     header: headerSection({
@@ -25,13 +21,14 @@ export const getInternsReport = (
       subtitle: subtitle ?? '',
     }),
     footer: footerSection,
-    pageMargins: [20, 80, 20, 50],
+    pageMargins: [10, 80, 20, 50],
     content: [
       {
         layout: 'cumtomLayout01',
         table: {
           headerRows: 1,
           widths: [
+            'auto',
             'auto',
             'auto',
             'auto',
@@ -56,9 +53,10 @@ export const getInternsReport = (
               { text: 'Hora de salida', fontSize: 8, bold: true },
               { text: 'Total de horas', fontSize: 8, bold: true },
               { text: 'Retardo', fontSize: 8, bold: true },
+              { text: 'Falta', fontSize: 8, bold: true },
               { text: 'Activo', fontSize: 8, bold: true },
             ],
-            ...allInternsAttendances.slice(0, -4).map((internAttendance) => [
+            ...allInternAttendances.slice(0, -2).map((internAttendance) => [
               {
                 text: internAttendance.intern.institution
                   ? internAttendance.intern.externalInternCode
@@ -81,9 +79,14 @@ export const getInternsReport = (
               { text: internAttendance.workedHours, fontSize: 8 },
               { text: internAttendance.isLate ? 'RETARDO' : 'NO', fontSize: 8 },
               {
-                text: internAttendance.intern?.user.isActive
-                  ? 'ACTIVO'
-                  : 'INACTIVO',
+                text:
+                  !internAttendance.entryTime && !internAttendance.exitTime
+                    ? 'SI'
+                    : null,
+                fontSize: 8,
+              },
+              {
+                text: internAttendance.intern?.user.isActive ? 'SI' : 'NO',
                 fontSize: 8,
               },
             ]),
@@ -109,8 +112,7 @@ export const getInternsReport = (
             ],
             [
               {
-                text:
-                  allInternsAttendances.length === 0 ? 'No hay datos' : null,
+                text: allInternAttendances.length === 0 ? 'No hay datos' : null,
                 alignment: 'left',
                 style: { fontSize: 8 },
               },
@@ -125,20 +127,6 @@ export const getInternsReport = (
             [
               {
                 text: optionalEndMessage ?? '',
-                alignment: 'left',
-                style: { fontSize: 8 },
-              },
-            ],
-            [
-              {
-                text: `Total de practicantes internos: ${internalInternsCount ?? 0}`,
-                alignment: 'left',
-                style: { fontSize: 8 },
-              },
-            ],
-            [
-              {
-                text: `Total de practicantes externos: ${externalInternsCount ?? 0}`,
                 alignment: 'left',
                 style: { fontSize: 8 },
               },

@@ -64,18 +64,6 @@ export class AttendancesController {
   ): Promise<IApiResponse<any>> {
     const date = new Date();
 
-    // Intento de convertir a hora local
-    // const offsetInMs = date.getTimezoneOffset() * 60000;
-    // const localTimestamp = date.getTime() - offsetInMs;
-
-    // console.log({ date, localTimestamp, offsetInMs });
-
-    // console.log({
-    //   local: new Date(localTimestamp).toISOString(),
-    //   localTimestamp,
-    //   localDate: new Date(localTimestamp),
-    // });
-
     const existingRecord = await this.attendancesService.findAttendanceRecord(
       internCode,
       date.toISOString(),

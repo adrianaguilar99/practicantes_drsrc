@@ -136,8 +136,6 @@ export class AttendancesService {
       }
     }
 
-    console.log({ internCodeEntrada: internCode });
-
     // si pasa todo lo anterior tiene una entrada normal exitosa
     try {
       await this.attendancesRepository.save({
@@ -200,8 +198,6 @@ export class AttendancesService {
     );
     // console.log('registerExit', { minutesDifference });
     // si los minutos de diferencia son menores a 0 es porque salio antes
-
-    console.log({ internCodeSalida: internCode });
     if (minutesDifference < 0) {
       attendanceRecord.exitTime = exitTime;
       attendanceRecord.attendanceStatuses =
@@ -406,12 +402,8 @@ export class AttendancesService {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    console.log({ startDate, endDate, start, end });
-
-    // Sumamos un día a la fecha de fin
+    // sumamos un día a la fecha de fin para el envio correcto de fechas
     end.setDate(end.getDate() + 1);
-
-    console.log({ end });
 
     const allAttendances = await this.attendancesRepository.find();
 
@@ -493,6 +485,164 @@ export class AttendancesService {
       ...(optionalResponseEnd ? [optionalResponseEnd] : []),
       internalInternsCount,
       externalInternsCount,
+    ];
+  }
+
+  async findAllToMakeTypeInternReport(
+    startDate: string,
+    endDate: string,
+    internType: string,
+  ) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    end.setDate(end.getDate() + 1);
+
+    const allAttendances = await this.attendancesRepository.find();
+
+    const filteredAttendances = allAttendances
+      .filter((attendance) => {
+        const attendanceDate = new Date(attendance.attendanceDate);
+        const isInDateRange = attendanceDate >= start && attendanceDate <= end;
+        const isInternal = attendance.intern.internalInternCode !== null;
+        const isExternal = attendance.intern.externalInternCode !== null;
+
+        // filtro para discriminar el tipo de practicante
+        if (internType === 'internal') return isInDateRange && isInternal;
+        if (internType === 'external') return isInDateRange && isExternal;
+
+        // si no se especifica, devuelve todas las asistencias en el rango de fechas
+        return isInDateRange;
+      })
+      .map((attendance) => {
+        const {
+          bloodType,
+          phone,
+          address,
+          schoolEnrollment,
+          internshipStart,
+          internshipEnd,
+          internshipDuration,
+          status,
+          totalInternshipCompletion,
+          career,
+          department,
+          property,
+          emergencyContacts,
+          internComents,
+          internFiles,
+          internSchedule,
+          ...filteredIntern
+        } = attendance.intern;
+
+        const { supervisors, ...filteredInternshipDepartment } =
+          filteredIntern.internshipDepartment;
+
+        return {
+          ...attendance,
+          intern: {
+            ...filteredIntern,
+            internshipDepartment: filteredInternshipDepartment,
+          },
+        };
+      });
+
+    let optionalResponseStart = null;
+    let optionalResponseEnd = null;
+    const firstDate = filteredAttendances.length
+      ? new Date(filteredAttendances[0].attendanceDate)
+      : null;
+    if (firstDate && firstDate > start) {
+      optionalResponseStart = `Se encontraron datos a partir de ${firstDate.toISOString().split('T')[0]}`;
+    }
+    const lastDate = filteredAttendances.length
+      ? new Date(
+          filteredAttendances[filteredAttendances.length - 1].attendanceDate,
+        )
+      : null;
+    if (lastDate && lastDate < end) {
+      optionalResponseEnd = `Se encontraron datos hasta ${lastDate.toISOString().split('T')[0]}`;
+    }
+
+    return [
+      ...filteredAttendances,
+      ...(optionalResponseStart ? [optionalResponseStart] : []),
+      ...(optionalResponseEnd ? [optionalResponseEnd] : []),
+    ];
+  }
+
+  async findAllToMakeInternReportById(
+    internId: string,
+    startDate: string,
+    endDate: string,
+  ) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setDate(end.getDate() + 1);
+
+    const allAttendances = await this.attendancesRepository.find({
+      where: { intern: { id: internId } },
+    });
+
+    const filteredAttendances = allAttendances
+      .filter((attendance) => {
+        const attendanceDate = new Date(attendance.attendanceDate);
+        return attendanceDate >= start && attendanceDate <= end;
+      })
+      .map((attendance) => {
+        const {
+          bloodType,
+          phone,
+          address,
+          schoolEnrollment,
+          internshipStart,
+          internshipEnd,
+          internshipDuration,
+          status,
+          totalInternshipCompletion,
+          career,
+          department,
+          property,
+          emergencyContacts,
+          internComents,
+          internFiles,
+          internSchedule,
+          ...filteredIntern
+        } = attendance.intern;
+
+        const { supervisors, ...filteredInternshipDepartment } =
+          filteredIntern.internshipDepartment;
+
+        return {
+          ...attendance,
+          intern: {
+            ...filteredIntern,
+            internshipDepartment: filteredInternshipDepartment,
+          },
+        };
+      });
+
+    let optionalResponseStart = null;
+    let optionalResponseEnd = null;
+    const firstDate = filteredAttendances.length
+      ? new Date(filteredAttendances[0].attendanceDate)
+      : null;
+    if (firstDate && firstDate > start) {
+      optionalResponseStart = `Se encontraron datos a partir de ${firstDate.toISOString().split('T')[0]}`;
+    }
+    const lastDate = filteredAttendances.length
+      ? new Date(
+          filteredAttendances[filteredAttendances.length - 1].attendanceDate,
+        )
+      : null;
+    if (lastDate && lastDate < end) {
+      optionalResponseEnd = `Se encontraron datos hasta ${lastDate.toISOString().split('T')[0]}`;
+    }
+
+    return [
+      ...filteredAttendances,
+      ...(optionalResponseStart ? [optionalResponseStart] : []),
+      ...(optionalResponseEnd ? [optionalResponseEnd] : []),
     ];
   }
 

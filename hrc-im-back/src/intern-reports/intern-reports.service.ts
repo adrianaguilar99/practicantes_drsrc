@@ -4,9 +4,12 @@ import { PdfPrinterService } from 'src/pdf-printer/pdf-printer.service';
 import {
   getEmploymentLetter,
   getInternReport,
+  getInternReportById,
   getInternsReport,
+  getTypeInternReport,
 } from 'src/reports';
 import { AttendancesService } from 'src/attendances/attendances.service';
+import { CreateTypeInternReportDto } from './dto/create-type-intern-report.dto';
 
 @Injectable()
 export class InternReportsService {
@@ -34,10 +37,43 @@ export class InternReportsService {
         createInternReportDto.end,
       );
 
-    console.log(allInternsAttendances);
-
     const docDefinition = getInternsReport({
       allInternsAttendances,
+    });
+
+    return this.pdfPrinterService.createPdf(docDefinition);
+  }
+
+  async typeInternReport(createTypeInternReportDto: CreateTypeInternReportDto) {
+    const allTypeInternAttendances =
+      await this.attendancesService.findAllToMakeTypeInternReport(
+        createTypeInternReportDto.start,
+        createTypeInternReportDto.end,
+        createTypeInternReportDto.type,
+      );
+
+    const docDefinition = getTypeInternReport({
+      allTypeInternAttendances,
+    });
+
+    return this.pdfPrinterService.createPdf(docDefinition);
+  }
+
+  async internReportById(
+    internId: string,
+    createInternReportDto: CreateInternReportDto,
+  ) {
+    const allInternAttendances =
+      await this.attendancesService.findAllToMakeInternReportById(
+        internId,
+        createInternReportDto.start,
+        createInternReportDto.end,
+      );
+
+    console.log({ allInternAttendances });
+
+    const docDefinition = getInternReportById({
+      allInternAttendances,
     });
 
     return this.pdfPrinterService.createPdf(docDefinition);
