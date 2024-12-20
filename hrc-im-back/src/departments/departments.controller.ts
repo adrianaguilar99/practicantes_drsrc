@@ -96,29 +96,6 @@ export class DepartmentsController {
     };
   }
 
-  @UserRoles(
-    UserRole.ADMINISTRATOR,
-    UserRole.SUPERVISOR_RH,
-    UserRole.SUPERVISOR,
-  )
-  @ApiOperation({ summary: 'Get the number of interns by department' })
-  @ApiResponse({
-    status: 200,
-    description: SUCCESSFUL_FETCH,
-  })
-  @HttpCode(200)
-  @Get('intern-count')
-  async getInternCountByDepartment(): Promise<
-    IApiResponse<Record<string, number>>
-  > {
-    const internCount =
-      await this.departmentsService.countInternsByDepartment();
-    return {
-      message: SUCCESSFUL_FETCH,
-      data: internCount,
-    };
-  }
-
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @ApiOperation({
     summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,

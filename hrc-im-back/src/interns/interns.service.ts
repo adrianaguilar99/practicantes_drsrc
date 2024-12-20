@@ -19,7 +19,7 @@ import { PropertiesService } from 'src/properties/properties.service';
 import { IRequestUser } from 'src/common/interfaces';
 import { handleInternalServerError } from 'src/common/utils';
 import { SupervisorsService } from 'src/supervisors/supervisors.service';
-import { internshipCalculator } from './helpers';
+import { calculateTotalWorkedTime, internshipCalculator } from './helpers';
 
 @Injectable()
 export class InternsService {
@@ -171,8 +171,27 @@ export class InternsService {
         relations: { attendances: true },
       });
     }
+
+    const filteredInterns = allInterns.map((intern) => {
+      const filteredAttendances = intern.attendances.map((attendance) => {
+        const {
+          attendanceDate,
+          attendanceStatuses,
+          entryTime,
+          exitTime,
+          intern,
+          isLate,
+          ...workedHours
+        } = attendance;
+        return workedHours;
+      });
+      return {
+        ...intern,
+        attendances: filteredAttendances,
+      };
+    });
     return Promise.all(
-      allInterns.map(async (intern) => this.updateCompletion(intern)),
+      filteredInterns.map(async (intern) => this.updateCompletion(intern)),
     );
   }
 
@@ -188,7 +207,6 @@ export class InternsService {
 
   async findOneByUserId(id: string) {
     const intern = await this.internsRepository.findOne({
-      relations: { attendances: true },
       where: { user: { id } },
     });
     if (!intern)
@@ -205,6 +223,23 @@ export class InternsService {
       throw new NotFoundException(`Intern with code: ${code} not found.`);
 
     return intern;
+  }
+
+  async countInternsByInternshipDepartment(): Promise<Record<string, number>> {
+    const result = await this.internsRepository
+      .createQueryBuilder('intern')
+      .innerJoin('intern.internshipDepartment', 'internshipDepartment')
+      .select('internshipDepartment.name', 'departmentName')
+      .addSelect('COUNT(intern.id)', 'internCount')
+      .groupBy('internshipDepartment.name')
+      .getRawMany();
+
+    const departmentCount: Record<string, number> = {};
+    result.forEach((row) => {
+      departmentCount[row.departmentName] = Number(row.internCount);
+    });
+
+    return departmentCount;
   }
 
   async update(
@@ -402,11 +437,12 @@ export class InternsService {
     return code;
   }
 
-  private async updateCompletion(intern: Intern) {
+  private async updateCompletion(intern: any) {
     intern.totalInternshipCompletion = internshipCalculator(
       intern.internshipDuration,
       intern.attendances,
     );
+    intern.totalWorkedTime = calculateTotalWorkedTime(intern.attendances);
     try {
       return this.internsRepository.save(intern);
     } catch (error) {

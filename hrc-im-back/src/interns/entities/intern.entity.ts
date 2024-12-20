@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { AttendancesService } from 'src/attendances/attendances.service';
 import { Attendance } from 'src/attendances/entities/attendance.entity';
 import { Career } from 'src/careers/entities/career.entity';
 import { BloodType, InternStatus } from 'src/common/enums';
@@ -163,6 +162,12 @@ export class Intern {
   totalInternshipCompletion: number;
 
   @ApiProperty({
+    description: 'The total general hours of the intern.',
+  })
+  @Column({ name: 'total_worked_time', type: 'varchar', nullable: true })
+  totalWorkedTime: string;
+
+  @ApiProperty({
     type: () => Career,
     example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
     description: 'Career ID to make the relationship.',
@@ -262,7 +267,6 @@ export class Intern {
   })
   internSchedule: InternSchedule;
 
-  @Exclude()
   @OneToMany(() => Attendance, (attendances) => attendances.intern)
   attendances: Attendance[];
 

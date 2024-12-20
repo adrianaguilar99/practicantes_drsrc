@@ -106,15 +106,6 @@ export class AuthService {
     return { message: `${USER_LOGGED}` };
   }
 
-  // valido cuando el rol es dinamico
-  // async validateJwtUser(userId: string) {
-  //   const user = await this.userService.findOne(userId);
-  //   if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
-
-  //   const currentUser: CurrentUser = { id: user.id, userRole: user.userRole };
-  //   return currentUser;
-  // }
-
   async validateGoogleUser(googleUser: CreateUserDto) {
     const user = await this.usersService.findByEmail(googleUser.email);
 

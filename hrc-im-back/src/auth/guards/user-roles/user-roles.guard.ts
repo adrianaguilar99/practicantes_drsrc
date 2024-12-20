@@ -13,12 +13,6 @@ export class UserRolesGuard implements CanActivate {
     );
     if (!requiredUserRoles) return true;
     const user = context.switchToHttp().getRequest().user;
-
-    // valido cuando el rol es dinamico
-    // const hasRequiredUserRole = requiredUserRoles.some(
-    //   (userRole) => user.userRole === userRole,
-    // );
-
     return requiredUserRoles.includes(user.role);
   }
 }

@@ -26,6 +26,7 @@ export const CORS_POLICY = 'CORS policy: This origin is not allowed.';
 // MESSAGES FOR RESPONSES
 // 200 - 299
 export const SUCCESSFUL_CREATION = 'Resource successfully created.';
+export const SUCCESSFUL_GENERATE_REPORT = 'Report generated successfully';
 export const SUCCESSFUL_SEED = 'Action to register users using a seed.';
 export const SUCCESSFUL_DELETION = 'Resource(s) successfully deleted.';
 export const SUCCESSFUL_UPDATE = 'Resource successfully updated.';

@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateInternReportDto } from './dto/create-intern-report.dto';
 import { PdfPrinterService } from 'src/pdf-printer/pdf-printer.service';
 import {
-  getEmploymentLetter,
-  getInternReport,
   getInternReportById,
   getInternsReport,
   getTypeInternReport,
@@ -17,18 +15,6 @@ export class InternReportsService {
     private readonly pdfPrinterService: PdfPrinterService,
     private readonly attendancesService: AttendancesService,
   ) {}
-
-  hello() {
-    const docDefinition = getInternReport({ name: 'Martin Martinez Arias' });
-    const doc = this.pdfPrinterService.createPdf(docDefinition);
-    return doc;
-  }
-
-  employmentLetter() {
-    const docDefinition = getEmploymentLetter();
-    const doc = this.pdfPrinterService.createPdf(docDefinition);
-    return doc;
-  }
 
   async internsReport(createInternReportDto: CreateInternReportDto) {
     const allInternsAttendances =

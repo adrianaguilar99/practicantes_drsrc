@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserNotification } from './user-notification.entity';
 import { User } from 'src/users/entities/user.entity';
 
@@ -8,6 +14,7 @@ export class UserNotificationStatus {
   id: string;
 
   @ManyToOne(() => User, (user) => user.notificationStatuses)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(
@@ -15,6 +22,7 @@ export class UserNotificationStatus {
     (notification) => notification.userStatuses,
     { eager: true },
   )
+  @JoinColumn({ name: 'user_notification_id' })
   notification: UserNotification;
 
   @Column({ type: 'boolean', default: false })

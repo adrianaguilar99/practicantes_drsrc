@@ -33,6 +33,9 @@ export class AttendancesService {
   ) {}
 
   async registerEntry(internCode: string, timestamp: Date) {
+    if (!internCode)
+      throw new BadRequestException('The intern code does not exist.');
+
     // Mediante el servicio buscamos al practicante mediante su codigo unico
     const existingIntern =
       await this.internsService.findOneByInternCode(internCode);

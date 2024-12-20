@@ -1,17 +1,25 @@
-import { Controller, Post, Body, Get, Res, Param } from '@nestjs/common';
+import { Controller, Post, Body, Res, Param } from '@nestjs/common';
 import { InternReportsService } from './intern-reports.service';
 import { CreateInternReportDto } from './dto/create-intern-report.dto';
 import { CreateTypeInternReportDto } from './dto/create-type-intern-report.dto';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  BAD_REQUEST,
   FORBIDDEN_RESOURCE,
+  SUCCESSFUL_GENERATE_REPORT,
   UNAUTHORIZED_ACCESS,
 } from 'src/common/constants/constants';
-import { Public, UserRoles } from 'src/auth/decorators';
+import { UserRoles } from 'src/auth/decorators';
 import { UserRole } from 'src/common/enums';
 
 @ApiBearerAuth()
+@ApiResponse({ status: 400, description: BAD_REQUEST })
 @ApiResponse({
   status: 401,
   description: `${UNAUTHORIZED_ACCESS} Please login`,
@@ -24,6 +32,10 @@ export class InternReportsController {
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @Post()
+  @ApiOperation({
+    summary: `Get intern attendance report for a date range. Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({ status: 201, description: SUCCESSFUL_GENERATE_REPORT })
   async interns(
     @Body() createInternReportDto: CreateInternReportDto,
     @Res() res: Response,
@@ -39,6 +51,10 @@ export class InternReportsController {
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @Post('typeIntern')
+  @ApiOperation({
+    summary: `Get intern attendance report by date range and intern type. Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({ status: 201, description: SUCCESSFUL_GENERATE_REPORT })
   async typeIntern(
     @Body() createTypeInternReportDto: CreateTypeInternReportDto,
     @Res() res: Response,
@@ -52,8 +68,12 @@ export class InternReportsController {
     pdfDoc.end();
   }
 
-  @Public()
+  @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
   @Post(':internId')
+  @ApiOperation({
+    summary: `Get attendance report for a specific intern by ID and date range. Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
+  })
+  @ApiResponse({ status: 201, description: SUCCESSFUL_GENERATE_REPORT })
   async internById(
     @Param('internId') internId: string,
     @Body() createInternReportDto: CreateInternReportDto,

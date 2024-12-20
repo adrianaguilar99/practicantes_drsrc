@@ -39,7 +39,6 @@ export const getTypeInternReport = (
             'auto',
             'auto',
             'auto',
-            'auto',
           ],
           body: [
             [
@@ -53,7 +52,6 @@ export const getTypeInternReport = (
               { text: 'Hora de salida', fontSize: 8, bold: true },
               { text: 'Total de horas', fontSize: 8, bold: true },
               { text: 'Retardo', fontSize: 8, bold: true },
-              { text: 'Falta', fontSize: 8, bold: true },
               { text: 'Activo', fontSize: 8, bold: true },
             ],
             ...allTypeInternAttendances.slice(0, -2).map((internAttendance) => [
@@ -78,13 +76,6 @@ export const getTypeInternReport = (
               { text: internAttendance.exitTime, fontSize: 8 },
               { text: internAttendance.workedHours, fontSize: 8 },
               { text: internAttendance.isLate ? 'RETARDO' : 'NO', fontSize: 8 },
-              {
-                text:
-                  !internAttendance.entryTime && !internAttendance.exitTime
-                    ? 'SI'
-                    : null,
-                fontSize: 8,
-              },
               {
                 text: internAttendance.intern?.user.isActive ? 'SI' : 'NO',
                 fontSize: 8,

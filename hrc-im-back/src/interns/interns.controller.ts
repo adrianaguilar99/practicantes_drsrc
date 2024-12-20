@@ -54,6 +54,8 @@ export class InternsController {
   constructor(private readonly internsService: InternsService) {}
 
   @UserRoles(UserRole.ADMINISTRATOR, UserRole.SUPERVISOR_RH)
+  @Post()
+  @HttpCode(201)
   @ApiOperation({
     summary: `${CREATE_RECORD} Only: ${UserRole.ADMINISTRATOR} and ${UserRole.SUPERVISOR_RH}`,
   })
@@ -66,8 +68,6 @@ export class InternsController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 409, description: CONFLICT_ERROR })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(201)
-  @Post()
   async create(
     @Body() createInternDto: CreateInternDto,
     @Req() req,
@@ -85,6 +85,8 @@ export class InternsController {
     UserRole.SUPERVISOR,
     UserRole.SUPERVISOR_RH,
   )
+  @Get()
+  @HttpCode(200)
   @ApiOperation({
     summary: `${READ_ALL_RECORDS} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
   })
@@ -94,8 +96,6 @@ export class InternsController {
     type: [Intern],
   })
   @ApiResponse({ status: 500, description: INTERNAL_SERVER_ERROR })
-  @HttpCode(200)
-  @Get()
   async findAll(@Req() req): Promise<IApiResponse<any>> {
     const user = req.user;
     // console.log(user);
@@ -110,9 +110,34 @@ export class InternsController {
 
   @UserRoles(
     UserRole.ADMINISTRATOR,
+    UserRole.SUPERVISOR_RH,
+    UserRole.SUPERVISOR,
+  )
+  @Get('intern-count')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get the number of interns by department' })
+  @ApiResponse({
+    status: 200,
+    description: SUCCESSFUL_FETCH,
+  })
+  async getInternCountByDepartment(): Promise<
+    IApiResponse<Record<string, number>>
+  > {
+    const internCount =
+      await this.internsService.countInternsByInternshipDepartment();
+    return {
+      message: SUCCESSFUL_FETCH,
+      data: internCount,
+    };
+  }
+
+  @UserRoles(
+    UserRole.ADMINISTRATOR,
     UserRole.SUPERVISOR,
     UserRole.SUPERVISOR_RH,
   )
+  @Get(':id')
+  @HttpCode(200)
   @ApiOperation({
     summary: `${READ_RECORD} Only: ${UserRole.ADMINISTRATOR}, ${UserRole.SUPERVISOR_RH} and ${UserRole.SUPERVISOR}`,
   })
@@ -122,8 +147,6 @@ export class InternsController {
     type: Intern,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
-  @HttpCode(200)
-  @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
@@ -134,14 +157,14 @@ export class InternsController {
   @ApiOperation({
     summary: `${READ_RECORD} Retrieve the intern associated with the given user ID. ${ACCESS_TO_ALL}`,
   })
+  @Get(':id/user')
+  @HttpCode(200)
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_FETCH,
     type: Intern,
   })
   @ApiResponse({ status: 404, description: NOT_FOUND })
-  @HttpCode(200)
-  @Get(':id/user')
   async findOneByUserId(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<IApiResponse<any>> {
