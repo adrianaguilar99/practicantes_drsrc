@@ -32,15 +32,9 @@ async function bootstrap() {
 
   const baseUrl = (await app.getUrl()).replace('[::1]', host);
 
-  if (ENV.NODE_ENV !== 'production') {
-    logger.log('Server information');
-    logger.log(`Server running on: ${baseUrl}`);
-    logger.log(`Welcome on: ${baseUrl}/api/tests/ok`);
-    logger.log(
-      `Swagger documentation available at: ${baseUrl}/api/v1/docs 🚀📒`,
-    );
-  }
+  logger.log(`Server running on: ${baseUrl}`);
+  logger.log(`Welcome on: ${baseUrl}/api/tests/ok`);
+  logger.log(`Swagger documentation available at: ${baseUrl}/api/v1/docs 🚀📒`);
 }
-console.log({ env: process.env.NODE_ENV });
 
 bootstrap();
