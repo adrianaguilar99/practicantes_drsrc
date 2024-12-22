@@ -41,5 +41,6 @@ async function bootstrap() {
     );
   }
 }
+console.log({ env: process.env.NODE_ENV });
 
 bootstrap();
