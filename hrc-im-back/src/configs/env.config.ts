@@ -1,24 +1,41 @@
 import * as dotenv from 'dotenv';
 
-const envFileName = `.env.${process.env.NODE_ENV}`;
+function loadEnv() {
+  // Si estamos en Railway o producción, usa las variables de entorno directamente
+  if (
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.NODE_ENV === 'production'
+  ) {
+    return process.env;
+  }
 
-function loadEnv(envFileName: string) {
+  // Para desarrollo local, intenta cargar el archivo .env
+  const envFileName = `.env.${process.env.NODE_ENV}`;
   const result = dotenv.config({ path: envFileName });
 
-  if (result.error) throw new Error(`Error: ${result.error}`);
+  // Si hay error al cargar el archivo, intenta cargar .env por defecto
+  if (result.error) {
+    const defaultResult = dotenv.config();
+    if (defaultResult.error) {
+      console.warn(
+        `No se pudo cargar el archivo de variables de entorno ${envFileName}`,
+      );
+    }
+  }
 
   return process.env;
 }
-const loadedEnv = loadEnv(envFileName);
+
+const loadedEnv = loadEnv();
 
 export const ENV = {
-  NODE_ENV: loadedEnv.NODE_ENV,
-  PORT: +process.env.PORT,
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: +(process.env.PORT || 3000), // Valor por defecto para PORT
   HOST_API: process.env.HOST_API,
   INTERN_FILES_PATH: process.env.INTERN_FILES_PATH,
   DB: {
     HOST: process.env.DB_HOST,
-    PORT: +process.env.DB_PORT,
+    PORT: +(process.env.DB_PORT || 5432), // Valor por defecto para DB_PORT
     NAME: process.env.DB_NAME,
     USERNAME: process.env.DB_USERNAME,
     PASSWORD: process.env.DB_PASSWORD,
