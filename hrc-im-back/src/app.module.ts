@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ENV, JoiValidationSchema } from './configs';
 import { AuthModule } from './auth/auth.module';
 import { CareersModule } from './careers/careers.module';
 import { CommonModule } from './common/common.module';
@@ -24,17 +23,29 @@ import { UserNotificationsModule } from './user-notifications/user-notifications
 import { InternReportsModule } from './intern-reports/intern-reports.module';
 import { PdfPrinterModule } from './pdf-printer/pdf-printer.module';
 import dbConfig from './configs/db.config';
-import dbConfigProduction from './configs/db.config.production';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${ENV.NODE_ENV}`,
-      load: [dbConfig, dbConfigProduction],
-      validationSchema: JoiValidationSchema,
+      // Esto hará que si NODE_ENV=development, lea .env.development;
+      // si NODE_ENV=production, lea .env.production, etc.
+      // Y si no lo encuentra, al menos leerá el .env "normal".
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
+
+      // Cargamos la configuración de DB (registerAs('dbConfig', ...))
+      load: [dbConfig],
+
+      // Hace disponible el ConfigService de forma global
+      isGlobal: true,
     }),
+
+    // Configuramos TypeORM usando la config que acabamos de registrar
     TypeOrmModule.forRootAsync({
-      useFactory: ENV.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return configService.get('dbConfig');
+        // 'dbConfig' coincide con registerAs('dbConfig')
+      },
     }),
     AuthModule,
     CareersModule,
