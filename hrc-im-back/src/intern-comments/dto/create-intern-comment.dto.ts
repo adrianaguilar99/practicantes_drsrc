@@ -1,0 +1,26 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Intern } from 'src/interns/entities/intern.entity';
+
+export class CreateInternCommentDto {
+  @ApiProperty({
+    example:
+      'Sit consectetur fugiat minim mollit aliqua sit fugiat laboris voluptate ut deserunt elit et. Duis deserunt ullamco dolor adipisicing in aute fugiat pariatur et quis.',
+    description: 'The content of the comment written by the supervisor.',
+    nullable: false,
+  })
+  @IsString()
+  @IsNotEmpty()
+  postedComment: string;
+
+  @ApiProperty({
+    type: () => Intern,
+    example: 'b7ba0f09-5a6e-4146-93c2-0c9b934162fe',
+    description:
+      'The intern to whom the comment is related, identified by Intern ID (UUID).',
+    nullable: false,
+  })
+  @IsUUID()
+  @IsNotEmpty()
+  internId: string;
+}
