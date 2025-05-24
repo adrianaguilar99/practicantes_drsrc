@@ -12,6 +12,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(createValidationPipe());
 
+  // para correcta serializacion de los objetos y la opcion de excluir, exponer o tranformar un objeto en la respuesta de un json
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.setGlobalPrefix('api');

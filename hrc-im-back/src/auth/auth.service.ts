@@ -15,6 +15,7 @@ import {
 } from 'src/common/constants/constants';
 import { AuthJwtPayload } from './types';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginAuthDto } from './dtos/login-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -106,7 +107,7 @@ export class AuthService {
     return { message: `${USER_LOGGED}` };
   }
 
-  async validateGoogleUser(googleUser: CreateUserDto) {
+  async validateGoogleUser(googleUser: LoginAuthDto) {
     const user = await this.usersService.findByEmail(googleUser.email);
 
     if (user) return user;

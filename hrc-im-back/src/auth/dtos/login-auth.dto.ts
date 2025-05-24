@@ -13,4 +13,7 @@ export class LoginAuthDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  firstName: string;
+  lastName: string;
 }
