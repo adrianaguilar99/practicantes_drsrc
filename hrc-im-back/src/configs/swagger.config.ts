@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 
 export function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
-    .setTitle('HRC Intern Management Platform')
+    .setTitle('Dreams Sapphire Resort & Spa-Intern Management Platform')
     .setDescription("Here's the description")
     .setVersion('1.0')
     .addBearerAuth()

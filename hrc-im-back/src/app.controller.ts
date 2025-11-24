@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Public } from './auth/decorators';
 
-@ApiTags('HRC Tests')
+@ApiTags('Dreams Sapphire Resort & Spa Tests')
 @Controller('tests')
 export class AppController {
   constructor(

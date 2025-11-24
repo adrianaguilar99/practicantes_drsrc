@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePropertyDto {
   @ApiProperty({
-    example: 'Hard Rock Hotel Cancún',
+    example: 'Dreams Sapphire Resort & Spa',
     description: 'Name of the property.',
     uniqueItems: true,
     nullable: false,

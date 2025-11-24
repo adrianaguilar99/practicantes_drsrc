@@ -22,7 +22,7 @@ export class Property {
   id: string;
 
   @ApiProperty({
-    example: 'Hard Rock Hotel Cancún',
+    example: 'Dreams Sapphire Resort & Spa',
     description: 'Name of the property.',
     uniqueItems: true,
     nullable: false,

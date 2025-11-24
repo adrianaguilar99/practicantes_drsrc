@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
 import { SeedingService } from './seeding.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserRoles } from 'src/auth/decorators';
+import { Public, UserRoles } from 'src/auth/decorators';
 import { SUCCESSFUL_SEED } from 'src/common/constants/constants';
 import { UserRole } from 'src/common/enums';
 
@@ -10,10 +10,11 @@ import { UserRole } from 'src/common/enums';
 export class SeedingController {
   constructor(private readonly seedingService: SeedingService) {}
 
-  @UserRoles(UserRole.ADMINISTRATOR)
-  @ApiOperation({
-    summary: `${SUCCESSFUL_SEED} Only: ${UserRole.ADMINISTRATOR}`,
-  })
+  // @UserRoles(UserRole.ADMINISTRATOR)
+  // @ApiOperation({
+  //   summary: `${SUCCESSFUL_SEED} Only: ${UserRole.ADMINISTRATOR}`,
+  // })
+  @Public()
   @ApiResponse({
     status: 200,
     description: SUCCESSFUL_SEED,
